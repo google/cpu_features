@@ -19,6 +19,7 @@ filegroup(
     name = "opensource_filegroup",
     srcs = [
         ".clang-format",
+        ".travis.yml",
         "BUILD",
         "CMakeLists.txt",
         "CMakeLists.txt.in",

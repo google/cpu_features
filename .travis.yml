@@ -1,0 +1,17 @@
+sudo: required
+dist: trusty
+language: c
+
+os:
+  - linux
+  - osx
+
+compiler:
+  - clang
+  - gcc
+
+script:
+  - cmake --version
+  - cmake -H. -Bbuild
+  - cmake --build build --target all
+  - CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
