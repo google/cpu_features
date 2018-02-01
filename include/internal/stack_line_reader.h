@@ -14,8 +14,8 @@
 
 // Reads a file line by line and stores the data on the stack. This allows
 // parsing files in one go without allocating.
-#ifndef THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_STACK_LINE_READER_H_
-#define THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_STACK_LINE_READER_H_
+#ifndef CPU_FEATURES_INCLUDE_INTERNAL_STACK_LINE_READER_H_
+#define CPU_FEATURES_INCLUDE_INTERNAL_STACK_LINE_READER_H_
 
 #include <stdbool.h>
 
@@ -46,4 +46,4 @@ LineResult StackLineReader_NextLine(StackLineReader* reader);
 
 END_CPP_NAMESPACE
 
-#endif  // THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_STACK_LINE_READER_H_
+#endif  // CPU_FEATURES_INCLUDE_INTERNAL_STACK_LINE_READER_H_

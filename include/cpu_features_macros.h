@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef THIRD_PARTY_CPU_FEATURES_INCLUDE_CPU_FEATURES_MACROS_H_
-#define THIRD_PARTY_CPU_FEATURES_INCLUDE_CPU_FEATURES_MACROS_H_
+#ifndef CPU_FEATURES_INCLUDE_CPU_FEATURES_MACROS_H_
+#define CPU_FEATURES_INCLUDE_CPU_FEATURES_MACROS_H_
 
 ////////////////////////////////////////////////////////////////////////////////
 // Architectures
@@ -118,4 +118,4 @@
 #define CPU_FEATURES_COMPILED_MIPS_MSA defined(__mips_msa)
 #endif
 
-#endif  // THIRD_PARTY_CPU_FEATURES_INCLUDE_CPU_FEATURES_MACROS_H_
+#endif  // CPU_FEATURES_INCLUDE_CPU_FEATURES_MACROS_H_

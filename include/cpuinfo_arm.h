@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef THIRD_PARTY_CPU_FEATURES_INCLUDE_CPUINFO_ARM_H_
-#define THIRD_PARTY_CPU_FEATURES_INCLUDE_CPUINFO_ARM_H_
+#ifndef CPU_FEATURES_INCLUDE_CPUINFO_ARM_H_
+#define CPU_FEATURES_INCLUDE_CPUINFO_ARM_H_
 
 #include "cpu_features_macros.h"
 
@@ -77,4 +77,4 @@ const char* GetArmFeaturesEnumName(ArmFeaturesEnum);
 
 END_CPP_NAMESPACE
 
-#endif  // THIRD_PARTY_CPU_FEATURES_INCLUDE_CPUINFO_ARM_H_
+#endif  // CPU_FEATURES_INCLUDE_CPUINFO_ARM_H_

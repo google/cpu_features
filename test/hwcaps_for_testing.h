@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef THIRD_PARTY_CPU_FEATURES_TEST_HWCAPS_FOR_TESTING_H_
-#define THIRD_PARTY_CPU_FEATURES_TEST_HWCAPS_FOR_TESTING_H_
+#ifndef CPU_FEATURES_TEST_HWCAPS_FOR_TESTING_H_
+#define CPU_FEATURES_TEST_HWCAPS_FOR_TESTING_H_
 
 #include "internal/hwcaps.h"
 
@@ -23,4 +23,4 @@ void SetHardwareCapabilities(uint32_t hwcaps, uint32_t hwcaps2);
 
 }  // namespace cpu_features
 
-#endif  // THIRD_PARTY_CPU_FEATURES_TEST_HWCAPS_FOR_TESTING_H_
+#endif  // CPU_FEATURES_TEST_HWCAPS_FOR_TESTING_H_

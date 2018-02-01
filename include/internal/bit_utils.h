@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_BIT_UTILS_H_
-#define THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_BIT_UTILS_H_
+#ifndef CPU_FEATURES_INCLUDE_INTERNAL_BIT_UTILS_H_
+#define CPU_FEATURES_INCLUDE_INTERNAL_BIT_UTILS_H_
 
 #include <assert.h>
 #include <stdbool.h>
@@ -36,4 +36,4 @@ inline static uint32_t ExtractBitRange(uint32_t reg, uint32_t msb,
 
 END_CPP_NAMESPACE
 
-#endif  // THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_BIT_UTILS_H_
+#endif  // CPU_FEATURES_INCLUDE_INTERNAL_BIT_UTILS_H_

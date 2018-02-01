@@ -14,8 +14,8 @@
 
 // Interface to retrieve hardware capabilities. It relies on Linux's getauxval
 // or `/proc/self/auxval` under the hood.
-#ifndef THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_HWCAPS_H_
-#define THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_HWCAPS_H_
+#ifndef CPU_FEATURES_INCLUDE_INTERNAL_HWCAPS_H_
+#define CPU_FEATURES_INCLUDE_INTERNAL_HWCAPS_H_
 
 #include <stdint.h>
 #include "cpu_features_macros.h"
@@ -70,4 +70,4 @@ HardwareCapabilities GetHardwareCapabilities(void);
 
 END_CPP_NAMESPACE
 
-#endif  // THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_HWCAPS_H_
+#endif  // CPU_FEATURES_INCLUDE_INTERNAL_HWCAPS_H_

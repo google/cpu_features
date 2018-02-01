@@ -14,8 +14,8 @@
 
 // An interface for the filesystem that allows mocking the filesystem in
 // unittests.
-#ifndef THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_FILESYSTEM_H_
-#define THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_FILESYSTEM_H_
+#ifndef CPU_FEATURES_INCLUDE_INTERNAL_FILESYSTEM_H_
+#define CPU_FEATURES_INCLUDE_INTERNAL_FILESYSTEM_H_
 
 #include <stddef.h>
 #include <stdint.h>
@@ -35,4 +35,4 @@ void CloseFile(int file_descriptor);
 
 END_CPP_NAMESPACE
 
-#endif  // THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_FILESYSTEM_H_
+#endif  // CPU_FEATURES_INCLUDE_INTERNAL_FILESYSTEM_H_

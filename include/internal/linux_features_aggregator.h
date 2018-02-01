@@ -15,8 +15,8 @@
 // CapabilityConfig provides a way to map cpu features to hardware caps and
 // /proc/cpuinfo flags. We then provide functions to update capabilities from
 // either source.
-#ifndef THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_LINUX_FEATURES_AGGREGATOR_H_
-#define THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_LINUX_FEATURES_AGGREGATOR_H_
+#ifndef CPU_FEATURES_INCLUDE_INTERNAL_LINUX_FEATURES_AGGREGATOR_H_
+#define CPU_FEATURES_INCLUDE_INTERNAL_LINUX_FEATURES_AGGREGATOR_H_
 
 #include <ctype.h>
 #include <stdint.h>
@@ -55,4 +55,4 @@ void OverrideFromHwCaps(const size_t configs_size,
                         void* const features);
 
 END_CPP_NAMESPACE
-#endif  // THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_LINUX_FEATURES_AGGREGATOR_H_
+#endif  // CPU_FEATURES_INCLUDE_INTERNAL_LINUX_FEATURES_AGGREGATOR_H_

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 // A view over a piece of string. The view is not 0 terminated.
-#ifndef THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_STRING_VIEW_H_
-#define THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_STRING_VIEW_H_
+#ifndef CPU_FEATURES_INCLUDE_INTERNAL_STRING_VIEW_H_
+#define CPU_FEATURES_INCLUDE_INTERNAL_STRING_VIEW_H_
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -98,4 +98,4 @@ bool GetAttributeKeyValue(const StringView line, StringView* key,
 
 END_CPP_NAMESPACE
 
-#endif  // THIRD_PARTY_CPU_FEATURES_INCLUDE_INTERNAL_STRING_VIEW_H_
+#endif  // CPU_FEATURES_INCLUDE_INTERNAL_STRING_VIEW_H_

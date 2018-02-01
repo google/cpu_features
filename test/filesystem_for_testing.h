@@ -13,8 +13,8 @@
 // limitations under the License.
 
 // Implements a fake filesystem, useful for tests.
-#ifndef THIRD_PARTY_CPU_FEATURES_TEST_FILESYSTEM_FOR_TESTING_H_
-#define THIRD_PARTY_CPU_FEATURES_TEST_FILESYSTEM_FOR_TESTING_H_
+#ifndef CPU_FEATURES_TEST_FILESYSTEM_FOR_TESTING_H_
+#define CPU_FEATURES_TEST_FILESYSTEM_FOR_TESTING_H_
 
 #include <memory>
 #include <string>
@@ -58,4 +58,4 @@ FakeFilesystem& GetEmptyFilesystem();
 
 }  // namespace cpu_features
 
-#endif  // THIRD_PARTY_CPU_FEATURES_TEST_FILESYSTEM_FOR_TESTING_H_
+#endif  // CPU_FEATURES_TEST_FILESYSTEM_FOR_TESTING_H_
