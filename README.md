@@ -1,8 +1,27 @@
-# cpu features [![Build Status](https://travis-ci.org/google/cpu_features.svg?branch=master)](https://travis-ci.org/google/cpu_features)
+# cpu_features [![Build Status](https://travis-ci.org/google/cpu_features.svg?branch=master)](https://travis-ci.org/google/cpu_features)
 
-A cross platform C89 library to get cpu features at runtime.
+A cross-platform C library to retrieve CPU features (such as available
+instructions) at runtime.
 
-### Checking features at runtime.
+## Design Rationale
+
+-   **Simple to use.** See the snippets below for examples.
+-   **Extensible.** Easy to add missing features or architectures.
+-   **Compatible with old compilers** and available on many architectures so it
+    can be used widely. To ensure that cpu_features works on as many platforms
+    as possible, we implemented it in a highly portable version of C: gnu89.
+-   **Sandbox-compatible.** The library uses a variety of strategies to cope
+    with sandboxed environments or when `cpuid` is unavailable. This is useful
+    when running integration tests in hermetic environments.
+-   **Thread safe, no memory allocation, and raises no exceptions.**
+    cpu_features is suitable for implementing fundamental libc functions like
+    `malloc`, `memcpy`, and `memcmp`.
+-   **Unit tested.**
+
+### Checking features at runtime
+
+Here's a simple example that executes a codepath if the CPU supports both the
+AES and the SSE4.2 instruction sets:
 
 ```c
 #include "cpuinfo_x86.h"
@@ -18,11 +37,11 @@ void Compute(void) {
 }
 ```
 
-### Caching for faster evaluation of complex checks.
+### Caching for faster evaluation of complex checks
 
-Features are bit packed and some compilers generate poor code when combining
-them. A simple solution is to read them once and store the result in a global
-variable.
+If you wish, you can read all the features at once into a global variable, and
+then query for the specific features you care about. Below, we store all the ARM
+features and then check whether AES and NEON are supported.
 
 ```c
 #include "cpuinfo_arm.h"
@@ -33,7 +52,14 @@ static const bool has_aes_and_neon = features.aes && features.neon;
 // use has_aes_and_neon.
 ```
 
-### Checking compile time flags as well.
+This is a good approach to take if you're checking for combinations of features
+when using a compiler that is slow to extract individual bits from bit-packed
+structures.
+
+### Checking compile time flags
+
+The following code determines whether the compiler was told to use the AVX
+instruction set (e.g., `g++ -mavx`) and sets `has_avx` accordingly.
 
 ```c
 #include "cpuinfo_x86.h"
@@ -44,10 +70,17 @@ static const bool has_avx = CPU_FEATURES_COMPILED_X86_AVX || features.avx;
 // use has_avx.
 ```
 
-`CPU_FEATURES_COMPILED_X86_AVX` is set to 1 if the compiler is instructed to use
-AVX, 0 otherwise. This allows combining compile time and runtime knowledge.
+`CPU_FEATURES_COMPILED_X86_AVX` is set to 1 if the compiler was instructed to
+use AVX and 0 otherwise, combining compile time and runtime knowledge.
 
-### Use x86 microarchitecture to reject poor hardware implementations.
+### Rejecting poor hardware implementations based on microarchitecture
+
+On x86, the first incarnation of a feature in a microarchitecture might not be
+the most efficient (e.g., AVX on Sandy Bridge). We provide a function to
+retrieve the underlying microarchitecture so you can decide whether to use it.
+
+Below, `has_fast_avx` is set to 1 if the CPU supports the AVX instruction
+set&mdash;but only if it's not Sandy Bridge.
 
 ```c
 #include "cpuinfo_x86.h"
@@ -59,42 +92,27 @@ static const bool has_fast_avx = info.features.avx && uarch != INTEL_SNB;
 // use has_fast_avx.
 ```
 
-On x86, the first incarnation of a feature in a microarchitecture may not be
-very efficient (e.g. AVX on Sandybridge). We provide a function to retrieve the
-underlying microarchitecture so clients can decide whether they want to use it
-or not.
+This feature is currently available only for x86 microarchitectures.
 
-## What does it currently support
+## What's supported
 
-|                             | x86 | ARM | aarch64 |  mips  |  POWER  |
-|---------------------------- | :-: | :-: | :-----: | :----: | :-----: |
-|Features From cpu            | yes | no* | no*     | no yet | not yet |
-|Features From Linux          | no  | yes | yes     | yes    | not yet |
-|Micro Architecture Detection | yes | no  | no      | no     | not yet |
-|Windows support              | yes | no  | no      | no     | not yet |
+|                             | x86 | ARM | AArch64 |  MIPS   |  POWER  |
+|---------------------------- | :-: | :-: | :-----: | :----:  | :-----: |
+|Features revealed from CPU   | yes | no* | no*     | not yet | not yet |
+|Features revealed from Linux | no  | yes | yes     | yes     | not yet |
+|Microarchitecture detection  | yes | no  | no      | no      | not yet |
+|Windows support              | yes | no  | no      | no      | not yet |
 
--   **Features From Cpuid**: features are retrieved by using the cpuid
-    instruction. (*) Unfortunately this instruction is privileged for some
-    architectures; in this case we fall back to Linux.
--   **Features From Linux**: we gather data from several sources depending on
-    what's available:
+-   **Features revealed from CPU.** features are retrieved by using the `cpuid`
+    instruction. *Unfortunately this instruction is privileged for some
+    architectures, in which case we fall back to Linux.
+-   **Features revealed from Linux.** We gather data from several sources
+    depending on availability:
     +   from glibc's
         [getauxval](https://www.gnu.org/software/libc/manual/html_node/Auxiliary-Vector.html)
     +   by parsing `/proc/self/auxv`
     +   by parsing `/proc/cpuinfo`
--   **Micro Architecture Detection**: On x86 some features are not always
+-   **Microarchitecture detection.** On x86 some features are not always
     implemented efficiently in hardware (e.g. AVX on Sandybridge). Exposing the
-    microarchitecture allows the client to reject some microarchitectures.
+    microarchitecture allows the client to reject particular microarchitectures.
 
-## Design Rationale
-
--   Simple to use, API should be straightforward from the snippets above.
--   Unit tested.
--   Extensible. It should be easy to add missing features or architectures.
--   Compatible with old compilers and available on many architectures so it can
-    be used widely. We target gnu89.
--   Works in sandboxed environment: some architectures rely on parsing files
-    that may not be available in a sandboxed environment. It is useful when
-    running integration tests in hermetic environments.
--   Thread safe, no allocation, no exception: suitable for implementation of
-    fundamental libc functions like malloc, memcpy, memcmp...
