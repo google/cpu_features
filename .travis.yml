@@ -1,5 +1,4 @@
 sudo: required
-dist: trusty
 language: c
 
 os:
@@ -12,6 +11,8 @@ compiler:
 
 script:
   - cmake --version
-  - mkdir build && cd build && cmake ..
-  - cmake --build build --target all
-  - CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
+  - mkdir build
+  - cd build
+  - cmake ..
+  - cmake --build . --target all
+  - CTEST_OUTPUT_ON_FAILURE=1 cmake --build . --target test
