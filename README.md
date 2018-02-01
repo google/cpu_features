@@ -66,12 +66,12 @@ or not.
 
 ## What does it currently support
 
-                             | x86 | ARM | aarch64 | mips   | POWER
----------------------------- | :-: | :-: | :-----: | :----: | :-----:
-Features From cpu            | yes | no* | no*     | no yet | not yet
-Features From Linux          | no  | yes | yes     | yes    | not yet
-Micro Architecture Detection | yes | no  | no      | no     | not yet
-Windows support              | yes | no  | no      | no     | not yet
+|                             | x86 | ARM | aarch64 |  mips  |  POWER  |
+|---------------------------- | :-: | :-: | :-----: | :----: | :-----: |
+|Features From cpu            | yes | no* | no*     | no yet | not yet |
+|Features From Linux          | no  | yes | yes     | yes    | not yet |
+|Micro Architecture Detection | yes | no  | no      | no     | not yet |
+|Windows support              | yes | no  | no      | no     | not yet |
 
 -   **Features From Cpuid**: features are retrieved by using the cpuid
     instruction. (*) Unfortunately this instruction is privileged for some
