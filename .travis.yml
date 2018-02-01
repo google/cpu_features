@@ -12,6 +12,6 @@ compiler:
 
 script:
   - cmake --version
-  - cmake -H. -Bbuild
+  - mkdir build && cd build && cmake ..
   - cmake --build build --target all
   - CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test

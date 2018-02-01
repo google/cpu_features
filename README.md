@@ -1,4 +1,4 @@
-# cpu features
+# cpu features [![Build Status](https://travis-ci.org/google/cpu_features.svg?branch=master)](https://travis-ci.org/google/cpu_features)
 
 A cross platform C89 library to get cpu features at runtime.
 
