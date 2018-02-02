@@ -28,6 +28,7 @@ filegroup(
         "OWNERS",
         "README.md",
         "WORKSPACE",
+        "appveyor.yml",
         "include/cpu_features_macros.h",
         "include/cpuinfo_aarch64.h",
         "include/cpuinfo_arm.h",
