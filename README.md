@@ -1,4 +1,4 @@
-# cpu_features [![Build Status](https://travis-ci.org/google/cpu_features.svg?branch=master)](https://travis-ci.org/google/cpu_features)
+# cpu_features [![Build Status](https://travis-ci.org/google/cpu_features.svg?branch=master)](https://travis-ci.org/google/cpu_features) [![Build status](https://ci.appveyor.com/api/projects/status/46d1owsj7n8dsylq/branch/master?svg=true)](https://ci.appveyor.com/project/gchatelet/cpu-features/branch/master)
 
 A cross-platform C library to retrieve CPU features (such as available
 instructions) at runtime.
