@@ -2,6 +2,17 @@ cmake_minimum_required(VERSION 3.0)
 
 project(CpuFeatures)
 
+# Default Build Type to be Release
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
+      FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
+# BUILD_TESTING is a standard CMake variable, but we declare it here to make it
+# prominent in the GUI.
+option(BUILD_TESTING "Enable test (depends on googletest)." OFF)
+
 #
 # library : cpu_features
 #
@@ -88,6 +99,6 @@ if(BUILD_TESTING)
   if (CMAKE_VERSION VERSION_LESS 2.8.11)
     include_directories("${gtest_SOURCE_DIR}/include")
   endif()
-  
+
   add_subdirectory(test)
 endif()
