@@ -3,7 +3,7 @@
 #
 
 set(CMAKE_CXX_STANDARD 11)
-set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) # prefer use of -std11 instead of -gnustd11
 
 include_directories(../include)
