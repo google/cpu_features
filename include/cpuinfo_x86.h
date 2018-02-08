@@ -25,7 +25,7 @@ typedef struct {
   int erms : 1;
   int f16c : 1;
   int fma3 : 1;
-  int vpclmulqdq : 1;
+  int pclmulqdq : 1;
   int bmi1 : 1;
   int bmi2 : 1;
 
@@ -110,7 +110,7 @@ typedef enum {
   X86_ERMS,
   X86_F16C,
   X86_FMA3,
-  X86_VPCLMULQDQ,
+  X86_PCLMULQDQ,
   X86_BMI1,
   X86_BMI2,
   X86_SSSE3,
