@@ -65,7 +65,7 @@ instruction set (e.g., `g++ -mavx`) and sets `has_avx` accordingly.
 #include "cpuinfo_x86.h"
 
 static const X86Features features = GetX86Info().features;
-static const bool has_avx = CPU_FEATURES_COMPILED_X86_AVX || features.avx;
+static const bool has_avx = CPU_FEATURES_COMPILED_X86_AVX && features.avx;
 
 // use has_avx.
 ```
