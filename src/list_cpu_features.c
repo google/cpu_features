@@ -39,7 +39,7 @@ static int cmp(const void* p1, const void* p2) {
 #define DEFINE_PRINT_FLAGS(HasFeature, FeatureName, FeatureType, LastEnum) \
   void PrintFlags(const FeatureType* features) {                           \
     size_t i;                                                              \
-    const char* ptrs[LastEnum] = {};                                       \
+    const char* ptrs[LastEnum] = {0};                                      \
     size_t count = 0;                                                      \
     for (i = 0; i < LastEnum; ++i) {                                       \
       if (HasFeature(features, i)) {                                       \
