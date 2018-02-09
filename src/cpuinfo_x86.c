@@ -100,7 +100,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   features->f16c = IsBitSet(leaf_1.ecx, 29);
   features->bmi1 = IsBitSet(leaf_7.ebx, 3);
   features->bmi2 = IsBitSet(leaf_7.ebx, 8);
-  features->pclmulqdq = IsBitSet(leaf_7.ecx, 10);
+  features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
 
   if (have_sse_os_support) {
     features->ssse3 = IsBitSet(leaf_1.ecx, 9);
@@ -267,8 +267,8 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->f16c;
     case X86_FMA3:
       return features->fma3;
-    case X86_PCLMULQDQ:
-      return features->pclmulqdq;
+    case X86_VPCLMULQDQ:
+      return features->vpclmulqdq;
     case X86_BMI1:
       return features->bmi1;
     case X86_BMI2:
@@ -329,8 +329,8 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "f16c";
     case X86_FMA3:
       return "fma3";
-    case X86_PCLMULQDQ:
-      return "pclmulqdq";
+    case X86_VPCLMULQDQ:
+      return "vpclmulqdq";
     case X86_BMI1:
       return "bmi1";
     case X86_BMI2:
