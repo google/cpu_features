@@ -49,6 +49,13 @@ target_include_directories(cpu_features PRIVATE include/internal)
 target_compile_definitions(cpu_features PUBLIC STACK_LINE_READER_BUFFER_SIZE=1024)
 target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
 
+# The use of shared libraries is discouraged.
+# For API / ABI compatibility reasons, it is recommended to build and use
+# cpu_features in a subdirectory of your project or as an embedded dependency.
+if(BUILD_SHARED_LIBS)
+  set_property(TARGET cpu_features PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
+
 #
 # program : list_cpu_features
 #
