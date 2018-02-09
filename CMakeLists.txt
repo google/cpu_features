@@ -53,9 +53,8 @@ target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
 # program : list_cpu_features
 #
 
-add_executable(list_cpu_features src/list_cpu_features.cc)
+add_executable(list_cpu_features src/list_cpu_features.c)
 target_link_libraries(list_cpu_features PRIVATE cpu_features)
-target_compile_features(list_cpu_features PRIVATE cxx_range_for)
 
 #
 # tests
