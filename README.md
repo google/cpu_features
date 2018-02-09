@@ -3,6 +3,15 @@
 A cross-platform C library to retrieve CPU features (such as available
 instructions) at runtime.
 
+## Table of Contents
+
+- [Design Rationale](#rationale)
+- [Code samples](#codesample)
+- [What's supported](#support)
+- [License](#license)
+- [Build with cmake](#cmake)
+
+<a name="rationale"></a>
 ## Design Rationale
 
 -   **Simple to use.** See the snippets below for examples.
@@ -18,6 +27,7 @@ instructions) at runtime.
     `malloc`, `memcpy`, and `memcmp`.
 -   **Unit tested.**
 
+<a name="codesample"></a>
 ### Checking features at runtime
 
 Here's a simple example that executes a codepath if the CPU supports both the
@@ -94,6 +104,7 @@ static const bool has_fast_avx = info.features.avx && uarch != INTEL_SNB;
 
 This feature is currently available only for x86 microarchitectures.
 
+<a name="support"></a>
 ## What's supported
 
 |                             | x86 | ARM | AArch64 |  MIPS   |  POWER  |
@@ -116,3 +127,14 @@ This feature is currently available only for x86 microarchitectures.
     implemented efficiently in hardware (e.g. AVX on Sandybridge). Exposing the
     microarchitecture allows the client to reject particular microarchitectures.
 
+
+<a name="license"></a>
+## License
+
+The cpu_features library is licensed under the terms of the Apache license.
+See [LICENSE](LICENSE) for more information.
+
+<a name="cmake"></a>
+## Build with CMake
+
+Please check the [CMake build instructions](cmake/README.md)
