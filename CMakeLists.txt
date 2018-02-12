@@ -143,7 +143,7 @@ install(EXPORT CpuFeaturesTargets
 )
 include(CMakePackageConfigHelpers)
 configure_package_config_file(cmake/CpuFeaturesConfig.cmake.in
-  ${PROJECT_BINARY_DIR}/CpuFeaturesConfig.cmake"
+  "${PROJECT_BINARY_DIR}/CpuFeaturesConfig.cmake"
   INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/CpuFeatures"
   NO_SET_AND_CHECK_MACRO
   NO_CHECK_REQUIRED_COMPONENTS_MACRO
