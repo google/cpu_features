@@ -19,7 +19,7 @@
 
 Leaf CpuId(uint32_t leaf_id) {
   Leaf leaf;
-  __cpuid(leaf_id, leaf.eax, leaf.ebx, leaf.ecx, leaf.edx);
+  __cpuid_count(leaf_id, 0, leaf.eax, leaf.ebx, leaf.ecx, leaf.edx);
   return leaf;
 }
 
