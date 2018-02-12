@@ -24,7 +24,7 @@
 #include "internal/hwcaps.h"
 #include "internal/string_view.h"
 
-START_CPP_NAMESPACE
+CPU_FEATURES_START_CPP_NAMESPACE
 
 // Use the following macro to declare setter functions to be used in
 // CapabilityConfig.
@@ -54,5 +54,5 @@ void OverrideFromHwCaps(const size_t configs_size,
                         const HardwareCapabilities hwcaps,
                         void* const features);
 
-END_CPP_NAMESPACE
+CPU_FEATURES_END_CPP_NAMESPACE
 #endif  // CPU_FEATURES_INCLUDE_INTERNAL_LINUX_FEATURES_AGGREGATOR_H_

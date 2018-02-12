@@ -78,15 +78,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #if defined(__cplusplus)
-#define START_CPP_NAMESPACE \
+#define CPU_FEATURES_START_CPP_NAMESPACE \
   namespace cpu_features {  \
   extern "C" {
-#define END_CPP_NAMESPACE \
+#define CPU_FEATURES_END_CPP_NAMESPACE \
   }                       \
   }
 #else
-#define START_CPP_NAMESPACE
-#define END_CPP_NAMESPACE
+#define CPU_FEATURES_START_CPP_NAMESPACE
+#define CPU_FEATURES_END_CPP_NAMESPACE
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////

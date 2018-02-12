@@ -17,7 +17,7 @@
 
 #include "cpu_features_macros.h"
 
-START_CPP_NAMESPACE
+CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
   int msa : 1;  // MIPS SIMD Architecture
@@ -48,6 +48,6 @@ int GetMipsFeaturesEnumValue(const MipsFeatures* features,
 
 const char* GetMipsFeaturesEnumName(MipsFeaturesEnum);
 
-END_CPP_NAMESPACE
+CPU_FEATURES_END_CPP_NAMESPACE
 
 #endif  // CPU_FEATURES_INCLUDE_CPUINFO_MIPS_H_

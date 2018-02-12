@@ -17,7 +17,7 @@
 
 #include "cpu_features_macros.h"
 
-START_CPP_NAMESPACE
+CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
   int vfp : 1;       // Vector Floating Point.
@@ -75,6 +75,6 @@ int GetArmFeaturesEnumValue(const ArmFeatures* features, ArmFeaturesEnum value);
 
 const char* GetArmFeaturesEnumName(ArmFeaturesEnum);
 
-END_CPP_NAMESPACE
+CPU_FEATURES_END_CPP_NAMESPACE
 
 #endif  // CPU_FEATURES_INCLUDE_CPUINFO_ARM_H_

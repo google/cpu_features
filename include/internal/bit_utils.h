@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include "cpu_features_macros.h"
 
-START_CPP_NAMESPACE
+CPU_FEATURES_START_CPP_NAMESPACE
 
 inline static bool IsBitSet(uint32_t reg, uint32_t bit) {
   return (reg >> bit) & 0x1;
@@ -34,6 +34,6 @@ inline static uint32_t ExtractBitRange(uint32_t reg, uint32_t msb,
   return (reg >> lsb) & mask;
 }
 
-END_CPP_NAMESPACE
+CPU_FEATURES_END_CPP_NAMESPACE
 
 #endif  // CPU_FEATURES_INCLUDE_INTERNAL_BIT_UTILS_H_

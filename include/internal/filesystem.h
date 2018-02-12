@@ -21,7 +21,7 @@
 #include <stdint.h>
 #include "cpu_features_macros.h"
 
-START_CPP_NAMESPACE
+CPU_FEATURES_START_CPP_NAMESPACE
 
 // Same as linux "open(filename, O_RDONLY)", retries automatically on EINTR.
 int OpenFile(const char* filename);
@@ -33,6 +33,6 @@ int ReadFile(int file_descriptor, void* buffer, size_t buffer_size);
 // Same as linux "close(file_descriptor)".
 void CloseFile(int file_descriptor);
 
-END_CPP_NAMESPACE
+CPU_FEATURES_END_CPP_NAMESPACE
 
 #endif  // CPU_FEATURES_INCLUDE_INTERNAL_FILESYSTEM_H_

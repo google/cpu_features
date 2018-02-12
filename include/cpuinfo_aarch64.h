@@ -17,7 +17,7 @@
 
 #include "cpu_features_macros.h"
 
-START_CPP_NAMESPACE
+CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
   int fp : 1;     // Floating-point.
@@ -60,6 +60,6 @@ int GetAarch64FeaturesEnumValue(const Aarch64Features* features,
 
 const char* GetAarch64FeaturesEnumName(Aarch64FeaturesEnum);
 
-END_CPP_NAMESPACE
+CPU_FEATURES_END_CPP_NAMESPACE
 
 #endif  // CPU_FEATURES_INCLUDE_CPUINFO_AARCH64_H_

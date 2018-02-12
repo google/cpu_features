@@ -22,7 +22,7 @@
 #include "cpu_features_macros.h"
 #include "internal/string_view.h"
 
-START_CPP_NAMESPACE
+CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
   char buffer[STACK_LINE_READER_BUFFER_SIZE];
@@ -44,6 +44,6 @@ typedef struct {
 // Reads the file pointed to by fd and tries to read a full line.
 LineResult StackLineReader_NextLine(StackLineReader* reader);
 
-END_CPP_NAMESPACE
+CPU_FEATURES_END_CPP_NAMESPACE
 
 #endif  // CPU_FEATURES_INCLUDE_INTERNAL_STACK_LINE_READER_H_

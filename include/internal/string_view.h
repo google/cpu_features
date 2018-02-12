@@ -21,7 +21,7 @@
 #include <string.h>
 #include "cpu_features_macros.h"
 
-START_CPP_NAMESPACE
+CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
   const char* ptr;
@@ -96,6 +96,6 @@ bool HasWord(const StringView line, const char* const word);
 bool GetAttributeKeyValue(const StringView line, StringView* key,
                           StringView* value);
 
-END_CPP_NAMESPACE
+CPU_FEATURES_END_CPP_NAMESPACE
 
 #endif  // CPU_FEATURES_INCLUDE_INTERNAL_STRING_VIEW_H_

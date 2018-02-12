@@ -17,7 +17,7 @@
 
 #include "cpu_features_macros.h"
 
-START_CPP_NAMESPACE
+CPU_FEATURES_START_CPP_NAMESPACE
 
 // See https://en.wikipedia.org/wiki/CPUID for a list of x86 cpu features.
 typedef struct {
@@ -142,6 +142,6 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum);
 
 const char* GetX86MicroarchitectureName(X86Microarchitecture);
 
-END_CPP_NAMESPACE
+CPU_FEATURES_END_CPP_NAMESPACE
 
 #endif  // CPU_FEATURES_INCLUDE_CPUINFO_X86_H_

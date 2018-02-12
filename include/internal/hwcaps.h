@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include "cpu_features_macros.h"
 
-START_CPP_NAMESPACE
+CPU_FEATURES_START_CPP_NAMESPACE
 
 // To avoid depending on the linux kernel we reproduce the architecture specific
 // constants here.
@@ -68,6 +68,6 @@ typedef struct {
 
 HardwareCapabilities GetHardwareCapabilities(void);
 
-END_CPP_NAMESPACE
+CPU_FEATURES_END_CPP_NAMESPACE
 
 #endif  // CPU_FEATURES_INCLUDE_INTERNAL_HWCAPS_H_

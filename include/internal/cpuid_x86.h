@@ -19,7 +19,7 @@
 
 #include "cpu_features_macros.h"
 
-START_CPP_NAMESPACE
+CPU_FEATURES_START_CPP_NAMESPACE
 
 // A struct to hold the result of a call to cpuid.
 typedef struct {
@@ -32,6 +32,6 @@ Leaf CpuId(uint32_t leaf_id);
 // Returns the eax value of the XCR0 register.
 uint32_t GetXCR0Eax(void);
 
-END_CPP_NAMESPACE
+CPU_FEATURES_END_CPP_NAMESPACE
 
 #endif  // CPU_FEATURES_INCLUDE_INTERNAL_CPUID_X86_H_
