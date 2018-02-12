@@ -18,7 +18,7 @@ instructions) at runtime.
 -   **Extensible.** Easy to add missing features or architectures.
 -   **Compatible with old compilers** and available on many architectures so it
     can be used widely. To ensure that cpu_features works on as many platforms
-    as possible, we implemented it in a highly portable version of C: gnu89.
+    as possible, we implemented it in a highly portable version of C: C99.
 -   **Sandbox-compatible.** The library uses a variety of strategies to cope
     with sandboxed environments or when `cpuid` is unavailable. This is useful
     when running integration tests in hermetic environments.
