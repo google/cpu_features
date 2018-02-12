@@ -7,6 +7,7 @@ instructions) at runtime.
 
 - [Design Rationale](#rationale)
 - [Code samples](#codesample)
+- [Running sample code](#usagesample)
 - [What's supported](#support)
 - [License](#license)
 - [Build with cmake](#cmake)
@@ -103,6 +104,22 @@ static const bool has_fast_avx = info.features.avx && uarch != INTEL_SNB;
 ```
 
 This feature is currently available only for x86 microarchitectures.
+
+<a name="usagesample"></a>
+### Running sample code
+
+Building `cpu_features` brings a small executable to test the library.
+
+```shell
+ % ./build/list_cpu_features
+arch            : x86
+brand           :        Intel(R) Xeon(R) CPU E5-1650 0 @ 3.20GHz
+family          :   6 (0x06)
+model           :  45 (0x2D)
+stepping        :   7 (0x07)
+uarch           : INTEL_SNB
+flags           : aes, avx, sse4_1, sse4_2, ssse3
+```
 
 <a name="support"></a>
 ## What's supported
