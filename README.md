@@ -40,7 +40,7 @@ AES and the SSE4.2 instruction sets:
 static const X86Features features = GetX86Info().features;
 
 void Compute(void) {
-  if(features.aes && features.sse4_2) {
+  if (features.aes && features.sse4_2) {
     // Run optimized code.
   } else {
     // Run standard code.
@@ -55,6 +55,7 @@ then query for the specific features you care about. Below, we store all the ARM
 features and then check whether AES and NEON are supported.
 
 ```c
+#include <stdbool.h>
 #include "cpuinfo_arm.h"
 
 static const ArmFeatures features = GetArmInfo().features;
@@ -73,6 +74,7 @@ The following code determines whether the compiler was told to use the AVX
 instruction set (e.g., `g++ -mavx`) and sets `has_avx` accordingly.
 
 ```c
+#include <stdbool.h>
 #include "cpuinfo_x86.h"
 
 static const X86Features features = GetX86Info().features;
@@ -87,13 +89,14 @@ use AVX and 0 otherwise, combining compile time and runtime knowledge.
 ### Rejecting poor hardware implementations based on microarchitecture
 
 On x86, the first incarnation of a feature in a microarchitecture might not be
-the most efficient (e.g., AVX on Sandy Bridge). We provide a function to
-retrieve the underlying microarchitecture so you can decide whether to use it.
+the most efficient (e.g. AVX on Sandy Bridge). We provide a function to retrieve
+the underlying microarchitecture so you can decide whether to use it.
 
 Below, `has_fast_avx` is set to 1 if the CPU supports the AVX instruction
 set&mdash;but only if it's not Sandy Bridge.
 
 ```c
+#include <stdbool.h>
 #include "cpuinfo_x86.h"
 
 static const X86Info info = GetX86Info();
@@ -154,4 +157,4 @@ See [LICENSE](LICENSE) for more information.
 <a name="cmake"></a>
 ## Build with CMake
 
-Please check the [CMake build instructions](cmake/README.md)
+Please check the [CMake build instructions](cmake/README.md).
