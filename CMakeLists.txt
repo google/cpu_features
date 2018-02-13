@@ -59,7 +59,8 @@ target_include_directories(cpu_features
   include/internal
 )
 set_target_properties(cpu_features PROPERTIES PUBLIC_HEADER "${_HDRS}")
-target_compile_definitions(cpu_features PUBLIC STACK_LINE_READER_BUFFER_SIZE=1024)
+target_compile_definitions(cpu_features
+  PUBLIC STACK_LINE_READER_BUFFER_SIZE=1024)
 target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
 
 # The use of shared libraries is discouraged.
@@ -84,41 +85,42 @@ add_executable(CpuFeature::list_cpu_features ALIAS list_cpu_features)
 
 include(CTest)
 if(BUILD_TESTING)
-  # Download and unpack googletest at configure time.
-  configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
+  # Automatically incorporate googletest into the CMake Project if target not
+  # found.
+  if(NOT TARGET gtest OR NOT TARGET gmock_main)
+    # Download and unpack googletest at configure time.
+    configure_file(
+      cmake/googletest.CMakeLists.txt.in
+      googletest-download/CMakeLists.txt
+    )
 
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-    RESULT_VARIABLE result
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+      RESULT_VARIABLE result
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download)
 
-  if(result)
-    message(FATAL_ERROR "CMake step for googletest failed: ${result}")
-  endif()
+    if(result)
+      message(FATAL_ERROR "CMake step for googletest failed: ${result}")
+    endif()
 
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} --build .
-    RESULT_VARIABLE result
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} --build .
+      RESULT_VARIABLE result
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download)
 
-  if(result)
-    message(FATAL_ERROR "Build step for googletest failed: ${result}")
-  endif()
+    if(result)
+      message(FATAL_ERROR "Build step for googletest failed: ${result}")
+    endif()
 
-  # Prevent overriding the parent project's compiler/linker settings on Windows.
-  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    # Prevent overriding the parent project's compiler/linker settings on
+    # Windows.
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-  # Add googletest directly to our build. This defines the gtest and gtest_main
-  # targets.
-  add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
-                   ${CMAKE_BINARY_DIR}/googletest-build
-                   EXCLUDE_FROM_ALL)
-
-  # The gtest/gtest_main targets carry header search path dependencies
-  # automatically when using CMake 2.8.11 or later. Otherwise we have to add
-  # them here ourselves.
-  if (CMAKE_VERSION VERSION_LESS 2.8.11)
-    include_directories("${gtest_SOURCE_DIR}/include")
+    # Add googletest directly to our build. This defines the gtest and
+    # gtest_main targets.
+    add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
+                     ${CMAKE_BINARY_DIR}/googletest-build
+                     EXCLUDE_FROM_ALL)
   endif()
 
   add_subdirectory(test)
