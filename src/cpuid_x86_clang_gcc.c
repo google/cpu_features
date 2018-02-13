@@ -14,12 +14,14 @@
 
 #include "internal/cpuid_x86.h"
 
-#if defined(CPU_FEATURES_ARCH_X86) && defined(CPU_FEATURES_COMPILER_GCC)
+#if defined(CPU_FEATURES_ARCH_X86)
+#if defined(CPU_FEATURES_COMPILER_CLANG) || defined(CPU_FEATURES_COMPILER_GCC)
+
 #include <cpuid.h>
 
 Leaf CpuId(uint32_t leaf_id) {
   Leaf leaf;
-  __cpuid(leaf_id, leaf.eax, leaf.ebx, leaf.ecx, leaf.edx);
+  __cpuid_count(leaf_id, 0, leaf.eax, leaf.ebx, leaf.ecx, leaf.edx);
   return leaf;
 }
 
@@ -29,4 +31,6 @@ uint32_t GetXCR0Eax(void) {
   return eax;
 }
 
-#endif  // defined(CPU_FEATURES_ARCH_X86) && defined(CPU_FEATURES_COMPILER_GCC)
+#endif  // defined(CPU_FEATURES_COMPILER_CLANG) ||
+        // defined(CPU_FEATURES_COMPILER_GCC)
+#endif  // defined(CPU_FEATURES_ARCH_X86)

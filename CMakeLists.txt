@@ -38,8 +38,7 @@ add_library(cpu_features
   include/internal/string_view.h
   include/cpu_features_macros.h
   src/linux_features_aggregator.c
-  src/cpuid_x86_clang.c
-  src/cpuid_x86_gcc.c
+  src/cpuid_x86_clang_gcc.c
   src/cpuid_x86_msvc.c
   src/cpuinfo_aarch64.c
   src/cpuinfo_arm.c
