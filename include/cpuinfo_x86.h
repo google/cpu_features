@@ -52,6 +52,9 @@ typedef struct {
   int avx512_4vnniw : 1;
   int avx512_4vbmi2 : 1;
 
+  int smx : 1;
+  int sgx : 1;
+
   // Make sure to update X86FeaturesEnum below if you add a field here.
 } X86Features;
 
@@ -133,6 +136,8 @@ typedef enum {
   X86_AVX512VPOPCNTDQ,
   X86_AVX512_4VNNIW,
   X86_AVX512_4VBMI2,
+  X86_SMX,
+  X86_SGX,
   X86_LAST_,
 } X86FeaturesEnum;
 
