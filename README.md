@@ -124,13 +124,13 @@ flags           : aes, avx, sse4_1, sse4_2, ssse3
 <a name="support"></a>
 ## What's supported
 
-|         |   x86³  |   ARM   | AArch64 |  MIPSel |  POWER  |
-|---------|:-------:|:-------:|:-------:|:-------:|:-------:|
-| Android |   yes²  |   yes¹  |   yes¹  |   yes¹  | not yet |
-| iOS     | not yet | not yet | not yet | not yet | not yet |
-| Linux   |   yes²  |   yes¹  |   yes¹  |   yes¹  | not yet |
-| MacOs   |   yes²  |   yes¹  |   yes¹  |   yes¹  | not yet |
-| Windows |   yes²  | not yet | not yet |    no   |    no   |
+|         | x86³ |   ARM   | AArch64 | MIPSel |  POWER  |
+|---------|:----:|:-------:|:-------:|:------:|:-------:|
+| Android | yes² |   yes¹  |   yes¹  |  yes¹  |   N/A   |
+| iOS     |  N/A | not yet | not yet |   N/A  |   N/A   |
+| Linux   | yes² |   yes¹  |   yes¹  |  yes¹  | not yet |
+| MacOs   | yes² |   N/A   | not yet |   N/A  |    no   |
+| Windows | yes² | not yet | not yet |   N/A  |   N/A   |
 
 1.  **Features revealed from Linux.** We gather data from several sources
     depending on availability:
