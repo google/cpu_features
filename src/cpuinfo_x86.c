@@ -95,15 +95,14 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   info->model = (extended_model << 4) + model;
   info->stepping = ExtractBitRange(leaf_1.eax, 3, 0);
 
+  features->smx = IsBitSet(leaf_1.ecx, 6);
   features->aes = IsBitSet(leaf_1.ecx, 25);
-  features->erms = IsBitSet(leaf_7.ebx, 9);
   features->f16c = IsBitSet(leaf_1.ecx, 29);
+  features->sgx = IsBitSet(leaf_7.ebx, 2);
   features->bmi1 = IsBitSet(leaf_7.ebx, 3);
   features->bmi2 = IsBitSet(leaf_7.ebx, 8);
+  features->erms = IsBitSet(leaf_7.ebx, 9);
   features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
-
-  features->smx = IsBitSet(leaf_1.ecx, 6);
-  features->sgx = IsBitSet(leaf_7.ebx, 2);
 
   if (have_sse_os_support) {
     features->ssse3 = IsBitSet(leaf_1.ecx, 9);
