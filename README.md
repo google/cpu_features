@@ -124,23 +124,23 @@ flags           : aes, avx, sse4_1, sse4_2, ssse3
 <a name="support"></a>
 ## What's supported
 
-|                             | x86 | ARM | AArch64 |  MIPS   |  POWER  |
-|---------------------------- | :-: | :-: | :-----: | :----:  | :-----: |
-|Features revealed from CPU   | yes | no* | no*     | not yet | not yet |
-|Features revealed from Linux | no  | yes | yes     | yes     | not yet |
-|Microarchitecture detection  | yes | no  | no      | no      | not yet |
-|Windows support              | yes | no  | no      | no      | not yet |
+|         |   x86³  |   ARM   | AArch64 |  MIPSel |  POWER  |
+|---------|:-------:|:-------:|:-------:|:-------:|:-------:|
+| Android |   yes²  |   yes¹  |   yes¹  |   yes¹  | not yet |
+| iOS     | not yet | not yet | not yet | not yet | not yet |
+| Linux   |   yes²  |   yes¹  |   yes¹  |   yes¹  | not yet |
+| MacOs   |   yes²  |   yes¹  |   yes¹  |   yes¹  | not yet |
+| Windows |   yes²  | not yet | not yet |    no   |    no   |
 
--   **Features revealed from CPU.** features are retrieved by using the `cpuid`
-    instruction. *Unfortunately this instruction is privileged for some
-    architectures, in which case we fall back to Linux.
--   **Features revealed from Linux.** We gather data from several sources
+1.  **Features revealed from Linux.** We gather data from several sources
     depending on availability:
     +   from glibc's
         [getauxval](https://www.gnu.org/software/libc/manual/html_node/Auxiliary-Vector.html)
     +   by parsing `/proc/self/auxv`
     +   by parsing `/proc/cpuinfo`
--   **Microarchitecture detection.** On x86 some features are not always
+2.  **Features revealed from CPU.** features are retrieved by using the `cpuid`
+    instruction.
+3.  **Microarchitecture detection.** On x86 some features are not always
     implemented efficiently in hardware (e.g. AVX on Sandybridge). Exposing the
     microarchitecture allows the client to reject particular microarchitectures.
 
