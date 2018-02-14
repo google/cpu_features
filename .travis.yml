@@ -5,6 +5,7 @@ sudo: false
 cache:
   directories:
     - $HOME/qemu
+    - $HOME/toolchains
 
 matrix:
   include:

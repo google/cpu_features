@@ -14,7 +14,7 @@ if [[ -n "${CROSS_COMPILE}" ]]; then
   : "${QEMU_ARCH:?Need to set QEMU_ARCH non-empty}"
   ${SCRIPT_FOLDER}/setup_qemu.sh
   ${SCRIPT_FOLDER}/setup_toolchain.sh
-  export TOOLCHAIN=${HOME}/${TOOLCHAIN_NAME}
+  export TOOLCHAIN=${HOME}/toolchains/${TOOLCHAIN_NAME}
   export PATH=${TOOLCHAIN}/bin:${HOME}/qemu/bin:${PATH}
   export CMAKE_TOOLCHAIN_FILE=cmake/${TARGET}.cmake
   if [[ ! -f ${CMAKE_TOOLCHAIN_FILE} ]]; then
