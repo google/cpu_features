@@ -1,16 +1,28 @@
-sudo: required
 language: c
 
-os:
-  - linux
-  - osx
+sudo: false
 
-compiler:
-  - clang
-  - gcc
+cache:
+  directories:
+    - $HOME/qemu
+
+matrix:
+  include:
+  - os: linux
+    compiler: gcc
+  - os: linux
+    compiler: clang
+  - os: osx
+    compiler: gcc
+  - os: osx
+    compiler: clang
+  - os: linux
+    env:
+      CROSS_COMPILE=1
+      TOOLCHAIN_NAME=gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabihf
+      TARGET=arm-linux-gnueabihf
+      QEMU_ARCH=arm
 
 script:
   - cmake --version
-  - cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -H. -Bcmake_build
-  - cmake --build cmake_build --target all
-  - CTEST_OUTPUT_ON_FAILURE=1 cmake --build cmake_build --target test
+  - bash -e -x ./scripts/run_integration.sh
