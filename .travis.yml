@@ -22,12 +22,14 @@ matrix:
       CROSS_COMPILE=1
       TOOLCHAIN_NAME=gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabihf
       TARGET=arm-linux-gnueabihf
+      QEMU_ARCHES=arm
       QEMU_ARCH=arm
   - os: linux
     env:
       CROSS_COMPILE=1
       TOOLCHAIN_NAME=gcc-linaro-7.2.1-2017.11-x86_64_aarch64-linux-gnu
       TARGET=aarch64-linux-gnu
+      QEMU_ARCHES=aarch64
       QEMU_ARCH=aarch64
 
 script:
