@@ -28,7 +28,6 @@ if [[ -n "${CROSS_COMPILE}" ]]; then
   # Run tests
   export QEMU=qemu-${QEMU_ARCH}
   export QEMU_LD_PREFIX=${TOOLCHAIN}/${TARGET}/libc
-  export LD_LIBRARY_PATH=${TOOLCHAIN}/${TARGET}/libc
   for test_binary in ${BUILD_DIR}/test/*_test; do
     ${QEMU} ${test_binary}
   done

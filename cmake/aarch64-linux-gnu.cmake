@@ -2,9 +2,9 @@ SET(CMAKE_SYSTEM_NAME Linux)
 SET(CMAKE_SYSTEM_VERSION 1)
 
 # specify the cross compiler
-SET(CMAKE_C_COMPILER   arm-linux-gnueabihf-gcc -mfloat-abi=hard)
-SET(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++ -mfloat-abi=hard)
-SET(CMAKE_AR           arm-linux-gnueabihf-ar CACHE FILEPATH "Archiver")
+SET(CMAKE_C_COMPILER   aarch64-linux-gnu-gcc)
+SET(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)
+SET(CMAKE_AR           aarch64-linux-gnu-ar CACHE FILEPATH "Archiver")
 
 SET(THREADS_PTHREAD_ARG "2" CACHE STRING "Forcibly set by CMakeLists.txt." FORCE)
 
