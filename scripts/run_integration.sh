@@ -97,7 +97,7 @@ function integrate_cross() {
 
   if [[ -n "${QEMU_ARCH}" ]]; then
     installqemuifneeded
-    QEMU="qemu-${QEMU_ARCH} -L ${SYSROOT_FOLDER}"
+    QEMU="${QEMU_INSTALL}/bin/qemu-${QEMU_ARCH} -L ${SYSROOT_FOLDER}"
     # Run tests
     for test_binary in ${BUILD_DIR}/test/*_test; do ${QEMU} ${test_binary}; done
     # Run demo program
@@ -127,6 +127,13 @@ function expand_linaro_config() {
   SYSROOT_RELATIVE_FOLDER=sysroot-glibc-linaro-2.25-2017.11-${TARGET}
 }
 
+function expand_codescape_config() {
+http://codescape-mips-sdk.imgtec.com/components/toolchain/2016.05-03/Codescape.GNU.Tools.Package.2016.05-03.for.MIPS.MTI.Linux.CentOS-5.x86_64.tar.gz
+  assert_defined ${TARGET}
+  local LINARO_ROOT_URL=https://releases.linaro.org/components/toolchain/binaries/7.2-2017.11
+
+}
+
 function expand_environment_and_integrate() {
   assert_defined ${PROJECT_FOLDER}
   assert_defined ${TARGET}
@@ -148,5 +155,6 @@ function expand_environment_and_integrate() {
 }
 
 if [ "${CONTINUOUS_INTEGRATION}" = "true" ]; then
+  QEMU_ARCHES=${QEMU_ARCH}
   expand_environment_and_integrate
 fi
