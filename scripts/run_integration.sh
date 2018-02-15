@@ -146,3 +146,7 @@ function expand_environment_and_integrate() {
               exit 1
   esac
 }
+
+if [ "${CONTINUOUS_INTEGRATION}" = "true" ]; then
+  expand_environment_and_integrate
+fi
