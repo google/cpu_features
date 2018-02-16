@@ -1,10 +1,10 @@
 #!/bin/bash
 
-SCRIPT_FOLDER=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-PROJECT_FOLDER=`realpath "${SCRIPT_FOLDER}/.."`
-ARCHIVE_FOLDER=~/archives
-QEMU_INSTALL=${ARCHIVE_FOLDER}/qemu
-DEFAULT_CMAKE_ARGS=" -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON"
+readonly SCRIPT_FOLDER=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+readonly PROJECT_FOLDER="${SCRIPT_FOLDER}/.."
+readonly ARCHIVE_FOLDER=~/archives
+readonly QEMU_INSTALL=${ARCHIVE_FOLDER}/qemu
+readonly DEFAULT_CMAKE_ARGS=" -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON"
 
 function extract() {
   case $1 in
@@ -76,7 +76,7 @@ function assert_defined(){
 function integrate() {
   cd ${PROJECT_FOLDER}
   cmake -H. -B${BUILD_DIR} ${DEFAULT_CMAKE_ARGS} ${CMAKE_ADDITIONAL_ARGS}
-  cmake --build ${BUILD_DIR} --target all -- -j `nproc`
+  cmake --build ${BUILD_DIR} --target all
 
   if [[ -n "${QEMU_ARCH}" ]]; then
     if [[ "${QEMU_ARCH}" == "DISABLED" ]]; then
