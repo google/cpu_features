@@ -4,7 +4,7 @@ sudo: false
 
 cache:
   directories:
-    - $HOME/archives
+    - $HOME/cpu_features_archives
 
 matrix:
   include:
