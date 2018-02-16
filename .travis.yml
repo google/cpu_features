@@ -57,19 +57,24 @@ matrix:
     env:
       TOOLCHAIN=LINARO
       TARGET=aarch64_be-linux-gnu
-      QEMU_ARCH=""
+      QEMU_ARCH=DISABLED
   # Toolchains for big-endian, hard-float, 32-bit ARMv7 (and earlier) for GNU/Linux systems
   - os: linux
     env:
       TOOLCHAIN=LINARO
       TARGET=armeb-linux-gnueabihf
-      QEMU_ARCH=""
+      QEMU_ARCH=DISABLED
   # Toolchains for big-endian, soft-float, 32-bit ARMv7 (and earlier) for GNU/Linux systems
   - os: linux
     env:
       TOOLCHAIN=LINARO
       TARGET=armeb-linux-gnueabi
-      QEMU_ARCH=""
+      QEMU_ARCH=DISABLED
+  - os: linux
+    env:
+      TOOLCHAIN=CODESCAPE
+      TARGET=mips-mti-linux-gnu
+      QEMU_ARCH=DISABLED
 
 script:
   - cmake --version
