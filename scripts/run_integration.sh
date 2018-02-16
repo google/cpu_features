@@ -128,7 +128,7 @@ function expand_codescape_config() {
   local CODESCAPE_URL=http://codescape-mips-sdk.imgtec.com/components/toolchain/${DATE}/Codescape.GNU.Tools.Package.${DATE}.for.MIPS.MTI.Linux.CentOS-5.x86_64.tar.gz
   
   local GCC_URL=${CODESCAPE_URL}
-  local GCC_RELATIVE_FOLDER=mips-mti-linux-gnu/${DATE}
+  local GCC_RELATIVE_FOLDER=${TARGET}/${DATE}
   unpackifnotexists ${GCC_URL} ${GCC_RELATIVE_FOLDER}
 
   local SYSROOT_URL=${CODESCAPE_URL}
@@ -138,7 +138,7 @@ function expand_codescape_config() {
   CMAKE_ADDITIONAL_ARGS+=" -DENABLE_MSA=1"
   CMAKE_ADDITIONAL_ARGS+=" -DMIPS_CPU=p5600"
   CMAKE_ADDITIONAL_ARGS+=" -DCMAKE_TOOLCHAIN_FILE=cmake/mips32-linux-gcc.cmake"
-  CMAKE_ADDITIONAL_ARGS+=" -DCROSS=mips-mti-linux-gnu-"
+  CMAKE_ADDITIONAL_ARGS+=" -DCROSS=${TARGET}-"
   CMAKE_ADDITIONAL_ARGS+=" -DCMAKE_FIND_ROOT_PATH=${ARCHIVE_FOLDER}/${GCC_RELATIVE_FOLDER}"
 
   QEMU_ARGS+=" -L ${SYSROOT_FOLDER}"
