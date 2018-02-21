@@ -63,20 +63,16 @@ function set_native() {
 }
 
 ENVIRONMENTS="
-  set_aarch64-linux-gnu 
-  set_arm-linux-gnueabihf 
-  set_armv8l-linux-gnueabihf 
-  set_arm-linux-gnueabi 
-  set_aarch64_be-linux-gnu 
-  set_armeb-linux-gnueabihf 
+  set_aarch64-linux-gnu
+  set_arm-linux-gnueabihf
+  set_armv8l-linux-gnueabihf
+  set_arm-linux-gnueabi
+  set_aarch64_be-linux-gnu
+  set_armeb-linux-gnueabihf
   set_armeb-linux-gnueabi
   set_native
   set_mips
 "
-
-# ENVIRONMENTS="
-#   set_mips
-# "
 
 for SET_ENVIRONMENT in ${ENVIRONMENTS}; do
   ${SET_ENVIRONMENT}
