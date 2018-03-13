@@ -96,6 +96,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   info->stepping = ExtractBitRange(leaf_1.eax, 3, 0);
 
   features->smx = IsBitSet(leaf_1.ecx, 6);
+  features->cx16 = IsBitSet(leaf_1.ecx, 13);
   features->aes = IsBitSet(leaf_1.ecx, 25);
   features->f16c = IsBitSet(leaf_1.ecx, 29);
   features->sgx = IsBitSet(leaf_7.ebx, 2);
@@ -319,6 +320,8 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->smx;
     case X86_SGX:
       return features->sgx;
+    case X86_CX16:
+      return features->cx16;
     case X86_LAST_:
       break;
   }
@@ -385,6 +388,8 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "smx";
     case X86_SGX:
       return "sgx";
+    case X86_CX16:
+      return "cx16";
     case X86_LAST_:
       break;
   }
