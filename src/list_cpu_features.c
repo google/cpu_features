@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 
 #include "cpu_features_macros.h"
 #include "cpuinfo_aarch64.h"
@@ -22,14 +23,44 @@
 #include "cpuinfo_mips.h"
 #include "cpuinfo_x86.h"
 
+// Json file handle
+FILE *jsonFile = (void *)0;
+
+// Variables to to manage user parameters
+static const char shortOptions[] = "hlj:";
+static const struct option longOptions[] = {
+  { "help",       no_argument,        NULL, 'h' },
+  { "list",       no_argument,        NULL, 'l' },
+  { "json",       required_argument,  NULL, 'j' },
+  { 0, 0, 0, 0 }
+};
+
+// Helper function to print usage
+static void showUsage(int argc, char **argv) {
+  fprintf(stdout,
+          "\n"
+          "Usage: %s [options]\n"
+          "      Options:\n"
+          "      -h | --help     Show help message\n"
+          "      -l | --list     List cpu features (default)\n"
+          "      -j | --json     Redirect info to json file [filename]\n"
+          "\n",
+          argv[0]
+  );
+}
+
 // Prints a named numeric value in both decimal and hexadecimal.
 void PrintN(const char* field, int value) {
-  printf("%-15s : %3d (0x%02X)\n", field, value, value);
+  fprintf(stdout, "%-15s : %3d (0x%02X)\n", field, value, value);
+  if (jsonFile)
+    fprintf(jsonFile, "    \"%s\": %d,\n", field, value);
 }
 
 // Prints a named string.
 void PrintS(const char* field, const char* value) {
-  printf("%-15s : %s\n", field, value);
+  fprintf(stdout, "%-15s : %s\n", field, value);
+  if (jsonFile)
+    fprintf(jsonFile, "    \"%s\": \"%s\",\n", field, value);
 }
 
 static int cmp(const void* p1, const void* p2) {
@@ -48,12 +79,18 @@ static int cmp(const void* p1, const void* p2) {
       }                                                                    \
     }                                                                      \
     qsort(ptrs, count, sizeof(char*), cmp);                                \
-    printf("%-15s : ", "flags");                                           \
+    fprintf(stdout, "%-15s : ", "flags");                                  \
+    if (jsonFile) fprintf(jsonFile, "    \"%s\" : [\n", "flags");          \
     for (i = 0; i < count; ++i) {                                          \
-      if (i > 0) printf(", ");                                             \
-      printf("%s", ptrs[i]);                                               \
+      if (i > 0) {                                                         \
+        fprintf(stdout, ", ");                                             \
+        if (jsonFile) fprintf(jsonFile, ",\n");                            \
+      }                                                                    \
+      fprintf(stdout, "%s", ptrs[i]);                                      \
+      if (jsonFile) fprintf(jsonFile, "        \"%s\"", ptrs[i]);          \
     }                                                                      \
-    printf("\n");                                                          \
+    fprintf(stdout, "\n");                                                 \
+    if (jsonFile) fprintf(jsonFile, "\n    ]\n");                          \
   }
 
 #if defined(CPU_FEATURES_ARCH_X86)
@@ -70,11 +107,58 @@ DEFINE_PRINT_FLAGS(GetMipsFeaturesEnumValue, GetMipsFeaturesEnumName,
                    MipsFeatures, MIPS_LAST_)
 #endif
 
+//
+// Program entry
+//
 int main(int argc, char** argv) {
+
+  char *optionJsonFile = NULL;
+
+  int optIdx;
+  int opt;
+
+  for (;;) {
+    
+    // Parse commandline options
+    opt = getopt_long(argc, argv, shortOptions, longOptions, &optIdx);
+
+    // All user passed options are parsed
+    if (opt == -1)
+      break;
+
+    switch (opt)
+    {
+    case 'l':
+      // Nothing to do
+      break;
+
+
+    case 'j':
+      optionJsonFile = optarg;
+      break;
+
+    case 'h':
+    default:
+      showUsage(argc, argv);
+      exit(EXIT_FAILURE);
+      break;
+    }
+  }
+
+  if (optionJsonFile != 0) {
+    jsonFile = fopen(optionJsonFile, "w+");
+  
+    if (jsonFile) {
+      fprintf(jsonFile, "# cpu_features\n");
+      fprintf(jsonFile, "{\n");
+    }
+  }
+
 #if defined(CPU_FEATURES_ARCH_X86)
   char brand_string[49];
   const X86Info info = GetX86Info();
   FillX86BrandString(brand_string);
+
   PrintS("arch", "x86");
   PrintS("brand", brand_string);
   PrintN("family", info.family);
@@ -82,8 +166,10 @@ int main(int argc, char** argv) {
   PrintN("stepping", info.stepping);
   PrintS("uarch", GetX86MicroarchitectureName(GetX86Microarchitecture(&info)));
   PrintFlags(&info.features);
+
 #elif defined(CPU_FEATURES_ARCH_ARM)
   const ArmInfo info = GetArmInfo();
+
   PrintS("arch", "ARM");
   PrintN("implementer", info.implementer);
   PrintN("architecture", info.architecture);
@@ -91,18 +177,29 @@ int main(int argc, char** argv) {
   PrintN("part", info.part);
   PrintN("revision", info.revision);
   PrintFlags(&info.features);
+
 #elif defined(CPU_FEATURES_ARCH_AARCH64)
   const Aarch64Info info = GetAarch64Info();
+
   PrintS("arch", "aarch64");
   PrintN("implementer", info.implementer);
   PrintN("variant", info.variant);
   PrintN("part", info.part);
   PrintN("revision", info.revision);
   PrintFlags(&info.features);
+
 #elif defined(CPU_FEATURES_ARCH_MIPS)
   const MipsInfo info = GetMipsInfo();
+
   PrintS("arch", "mips");
   PrintFlags(&info.features);
+
 #endif
+
+  if (jsonFile) {
+    fprintf(jsonFile, "}\n");
+    fclose(jsonFile);
+  }
+
   return 0;
 }
