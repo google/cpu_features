@@ -15,7 +15,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <getopt.h>
 
 #include "cpu_features_macros.h"
 #include "cpuinfo_aarch64.h"
@@ -25,15 +24,6 @@
 
 // Json file handle
 FILE *jsonFile = (void *)0;
-
-// Variables to to manage user parameters
-static const char shortOptions[] = "hlj:";
-static const struct option longOptions[] = {
-  { "help",       no_argument,        NULL, 'h' },
-  { "list",       no_argument,        NULL, 'l' },
-  { "json",       required_argument,  NULL, 'j' },
-  { 0, 0, 0, 0 }
-};
 
 // Helper function to print usage
 static void showUsage(int argc, char **argv) {
@@ -113,41 +103,26 @@ DEFINE_PRINT_FLAGS(GetMipsFeaturesEnumValue, GetMipsFeaturesEnumName,
 int main(int argc, char** argv) {
 
   char *optionJsonFile = NULL;
+  int idx = 0;
 
-  int optIdx;
-  int opt;
+  for (idx = 1; idx < argc; ++idx) {
 
-  for (;;) {
-    
-    // Parse commandline options
-    opt = getopt_long(argc, argv, shortOptions, longOptions, &optIdx);
-
-    // All user passed options are parsed
-    if (opt == -1)
-      break;
-
-    switch (opt)
-    {
-    case 'l':
+    if ((strcmp(argv[idx], "-h") == 0) || (strcmp(argv[idx], "--h") == 0)) {
+        showUsage(argc, argv);
+        exit(EXIT_FAILURE);
+    }
+    else if ((strcmp(argv[idx], "-l") == 0) || (strcmp(argv[idx], "--list") == 0)) {
       // Nothing to do
-      break;
-
-
-    case 'j':
-      optionJsonFile = optarg;
-      break;
-
-    case 'h':
-    default:
-      showUsage(argc, argv);
-      exit(EXIT_FAILURE);
-      break;
+    }
+    else if ((strcmp(argv[idx], "-j") == 0) || (strcmp(argv[idx], "--json") == 0)) {
+      if (argv[idx + 1])
+        optionJsonFile = argv[++idx];
     }
   }
 
   if (optionJsonFile != 0) {
     jsonFile = fopen(optionJsonFile, "w+");
-  
+
     if (jsonFile) {
       fprintf(jsonFile, "# cpu_features\n");
       fprintf(jsonFile, "{\n");
