@@ -74,7 +74,7 @@ add_library(CpuFeature::cpu_features ALIAS cpu_features)
 # program : list_cpu_features
 #
 
-add_executable(list_cpu_features src/list_cpu_features.c)
+add_executable(list_cpu_features src/utils/list_cpu_features.c)
 target_link_libraries(list_cpu_features PRIVATE cpu_features)
 add_executable(CpuFeature::list_cpu_features ALIAS list_cpu_features)
 
