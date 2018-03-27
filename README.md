@@ -121,7 +121,12 @@ family          :   6 (0x06)
 model           :  45 (0x2D)
 stepping        :   7 (0x07)
 uarch           : INTEL_SNB
-flags           : aes, avx, sse4_1, sse4_2, ssse3
+flags           : aes,avx,cx16,smx,sse4_1,sse4_2,ssse3
+```
+
+```shell
+% ./build/list_cpu_features --json
+{"arch":"x86","brand":"       Intel(R) Xeon(R) CPU E5-1650 0 @ 3.20GHz","family":6,"model":45,"stepping":7,"uarch":"INTEL_SNB","flags":["aes","avx","cx16","smx","sse4_1","sse4_2","ssse3"]}
 ```
 
 <a name="support"></a>
