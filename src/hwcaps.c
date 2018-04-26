@@ -159,7 +159,7 @@ HardwareCapabilities GetHardwareCapabilities(void) {
 ////////////////////////////////////////////////////////////////////////////////
 
 const HardwareCapabilities kEmptyHardwareCapabilities;
-HardwareCapabilities GetHardwareCapabilities(void) {
+HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void) {
   return kEmptyHardwareCapabilities;
 }
 #endif

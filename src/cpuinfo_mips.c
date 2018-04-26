@@ -32,16 +32,16 @@ static bool HandleMipsLine(const LineResult result,
                            MipsFeatures* const features) {
   StringView key, value;
   // See tests for an example.
-  if (GetAttributeKeyValue(result.line, &key, &value)) {
-    if (IsEquals(key, str("ASEs implemented"))) {
-      SetFromFlags(kConfigsSize, kConfigs, value, features);
+  if (CpuFeatures_StringView_GetAttributeKeyValue(result.line, &key, &value)) {
+    if (CpuFeatures_StringView_IsEquals(key, str("ASEs implemented"))) {
+      CpuFeatures_SetFromFlags(kConfigsSize, kConfigs, value, features);
     }
   }
   return !result.eof;
 }
 
 static void FillProcCpuInfoData(MipsFeatures* const features) {
-  const int fd = OpenFile("/proc/cpuinfo");
+  const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");
   if (fd >= 0) {
     StackLineReader reader;
     StackLineReader_Initialize(&reader, fd);
@@ -50,7 +50,7 @@ static void FillProcCpuInfoData(MipsFeatures* const features) {
         break;
       }
     }
-    CloseFile(fd);
+    CpuFeatures_CloseFile(fd);
   }
 }
 
@@ -63,7 +63,7 @@ MipsInfo GetMipsInfo(void) {
   MipsInfo info = kEmptyMipsInfo;
 
   FillProcCpuInfoData(&info.features);
-  OverrideFromHwCaps(kConfigsSize, kConfigs, GetHardwareCapabilities(),
+  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs, CpuFeatures_GetHardwareCapabilities(),
                      &info.features);
   return info;
 }
