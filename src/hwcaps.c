@@ -48,7 +48,7 @@
 #if defined(HWCAPS_REGULAR_LINUX)
 #include <dlfcn.h>
 #include <sys/auxv.h>
-static uint32_t GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
+static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
   return getauxval(hwcap_type);
 }
 #endif  // defined(HWCAPS_REGULAR_LINUX)
@@ -136,8 +136,8 @@ static uint32_t GetElfHwcapFromProcSelfAuxv(uint32_t hwcap_type) {
 
 // Retrieves hardware capabilities by first trying to call getauxval, if not
 // available falls back to reading "/proc/self/auxv".
-static uint32_t GetHardwareCapabilitiesFor(uint32_t type) {
-  uint32_t hwcaps = GetElfHwcapFromGetauxval(type);
+static unsigned long GetHardwareCapabilitiesFor(uint32_t type) {
+  unsigned long hwcaps = GetElfHwcapFromGetauxval(type);
   if (!hwcaps) {
     D("Parsing /proc/self/auxv to extract ELF hwcaps!\n");
     hwcaps = GetElfHwcapFromProcSelfAuxv(type);
