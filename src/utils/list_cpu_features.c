@@ -198,6 +198,8 @@ static void PrintFeatures(const Printer printer) {
   PrintS(printer, "model", strings.model);
   PrintS(printer, "machine", strings.machine);
   PrintS(printer, "cpu", strings.cpu);
+  PrintS(printer, "instruction set", strings.type.platform);
+  PrintS(printer, "microarchitecture", strings.type.base_platform);
   PrintFlags(printer, &info.features);
 #endif
 }

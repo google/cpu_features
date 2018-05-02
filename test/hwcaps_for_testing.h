@@ -20,6 +20,7 @@
 namespace cpu_features {
 
 void SetHardwareCapabilities(uint32_t hwcaps, uint32_t hwcaps2);
+void SetPlatformTypes(const char *platform, const char *base_platform);
 
 }  // namespace cpu_features
 

@@ -119,6 +119,13 @@ typedef struct {
 
 HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void);
 
+typedef struct {
+  char platform[64];       // 0 terminated string
+  char base_platform[64];  // 0 terminated string
+} PlatformType;
+
+PlatformType CpuFeatures_GetPlatformType(void);
+
 CPU_FEATURES_END_CPP_NAMESPACE
 
 #endif  // CPU_FEATURES_INCLUDE_INTERNAL_HWCAPS_H_
