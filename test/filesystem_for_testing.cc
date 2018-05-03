@@ -81,7 +81,7 @@ FakeFilesystem& GetEmptyFilesystem() {
   return *kFilesystem;
 }
 
-extern "C" int OpenFile(const char* filename) {
+extern "C" int CpuFeatures_OpenFile(const char* filename) {
   auto* const file = kFilesystem->FindFileOrNull(filename);
   if (file) {
     file->Open();
@@ -90,11 +90,11 @@ extern "C" int OpenFile(const char* filename) {
   return -1;
 }
 
-extern "C" void CloseFile(int file_descriptor) {
+extern "C" void CpuFeatures_CloseFile(int file_descriptor) {
   kFilesystem->FindFileOrDie(file_descriptor)->Close();
 }
 
-extern "C" int ReadFile(int file_descriptor, void* buf, size_t count) {
+extern "C" int CpuFeatures_ReadFile(int file_descriptor, void* buf, size_t count) {
   return kFilesystem->FindFileOrDie(file_descriptor)
       ->Read(file_descriptor, buf, count);
 }

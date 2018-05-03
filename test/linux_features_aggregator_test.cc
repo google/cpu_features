@@ -42,7 +42,7 @@ class LinuxFeatureAggregatorTest : public testing::Test {
 
 TEST_F(LinuxFeatureAggregatorTest, FromFlagsEmpty) {
   Features features;
-  SetFromFlags(kConfigs.size(), kConfigs.data(), str(""), &features);
+  CpuFeatures_SetFromFlags(kConfigs.size(), kConfigs.data(), str(""), &features);
   EXPECT_FALSE(features.a);
   EXPECT_FALSE(features.b);
   EXPECT_FALSE(features.c);
@@ -50,7 +50,7 @@ TEST_F(LinuxFeatureAggregatorTest, FromFlagsEmpty) {
 
 TEST_F(LinuxFeatureAggregatorTest, FromFlagsAllSet) {
   Features features;
-  SetFromFlags(kConfigs.size(), kConfigs.data(), str("a c b"), &features);
+  CpuFeatures_SetFromFlags(kConfigs.size(), kConfigs.data(), str("a c b"), &features);
   EXPECT_TRUE(features.a);
   EXPECT_TRUE(features.b);
   EXPECT_TRUE(features.c);
@@ -58,7 +58,7 @@ TEST_F(LinuxFeatureAggregatorTest, FromFlagsAllSet) {
 
 TEST_F(LinuxFeatureAggregatorTest, FromFlagsOnlyA) {
   Features features;
-  SetFromFlags(kConfigs.size(), kConfigs.data(), str("a"), &features);
+  CpuFeatures_SetFromFlags(kConfigs.size(), kConfigs.data(), str("a"), &features);
   EXPECT_TRUE(features.a);
   EXPECT_FALSE(features.b);
   EXPECT_FALSE(features.c);
@@ -69,7 +69,7 @@ TEST_F(LinuxFeatureAggregatorTest, FromHwcapsNone) {
   capability.hwcaps = 0;   // matches none
   capability.hwcaps2 = 0;  // matches none
   Features features;
-  OverrideFromHwCaps(kConfigs.size(), kConfigs.data(), capability, &features);
+  CpuFeatures_OverrideFromHwCaps(kConfigs.size(), kConfigs.data(), capability, &features);
   EXPECT_FALSE(features.a);
   EXPECT_FALSE(features.b);
   EXPECT_FALSE(features.c);
@@ -80,7 +80,7 @@ TEST_F(LinuxFeatureAggregatorTest, FromHwcapsSet) {
   capability.hwcaps = 0b0010;   // matches b but not a
   capability.hwcaps2 = 0b1111;  // matches c
   Features features;
-  OverrideFromHwCaps(kConfigs.size(), kConfigs.data(), capability, &features);
+  CpuFeatures_OverrideFromHwCaps(kConfigs.size(), kConfigs.data(), capability, &features);
   EXPECT_FALSE(features.a);
   EXPECT_TRUE(features.b);
   EXPECT_TRUE(features.c);

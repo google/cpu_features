@@ -19,7 +19,7 @@
 namespace cpu_features {
 
 bool operator==(const StringView& a, const StringView& b) {
-  return IsEquals(a, b);
+  return CpuFeatures_StringView_IsEquals(a, b);
 }
 
 namespace {
@@ -35,95 +35,95 @@ TEST(StringViewTest, Build) {
   EXPECT_EQ(view.size, 4);
 }
 
-TEST(StringViewTest, IndexOfChar) {
+TEST(StringViewTest, CpuFeatures_StringView_IndexOfChar) {
   // Found.
-  EXPECT_EQ(IndexOfChar(str("test"), 'e'), 1);
+  EXPECT_EQ(CpuFeatures_StringView_IndexOfChar(str("test"), 'e'), 1);
   // Not found.
-  EXPECT_EQ(IndexOfChar(str("test"), 'z'), -1);
+  EXPECT_EQ(CpuFeatures_StringView_IndexOfChar(str("test"), 'z'), -1);
   // Empty.
-  EXPECT_EQ(IndexOfChar(kEmptyStringView, 'z'), -1);
+  EXPECT_EQ(CpuFeatures_StringView_IndexOfChar(kEmptyStringView, 'z'), -1);
 }
 
-TEST(StringViewTest, IndexOf) {
+TEST(StringViewTest, CpuFeatures_StringView_IndexOf) {
   // Found.
-  EXPECT_EQ(IndexOf(str("test"), str("es")), 1);
+  EXPECT_EQ(CpuFeatures_StringView_IndexOf(str("test"), str("es")), 1);
   // Not found.
-  EXPECT_EQ(IndexOf(str("test"), str("aa")), -1);
+  EXPECT_EQ(CpuFeatures_StringView_IndexOf(str("test"), str("aa")), -1);
   // Empty.
-  EXPECT_EQ(IndexOf(kEmptyStringView, str("aa")), -1);
-  EXPECT_EQ(IndexOf(str("aa"), kEmptyStringView), -1);
+  EXPECT_EQ(CpuFeatures_StringView_IndexOf(kEmptyStringView, str("aa")), -1);
+  EXPECT_EQ(CpuFeatures_StringView_IndexOf(str("aa"), kEmptyStringView), -1);
 }
 
-TEST(StringViewTest, StartsWith) {
-  EXPECT_TRUE(StartsWith(str("test"), str("te")));
-  EXPECT_FALSE(StartsWith(str("test"), str("")));
-  EXPECT_FALSE(StartsWith(str("test"), kEmptyStringView));
-  EXPECT_FALSE(StartsWith(kEmptyStringView, str("test")));
+TEST(StringViewTest, CpuFeatures_StringView_StartsWith) {
+  EXPECT_TRUE(CpuFeatures_StringView_StartsWith(str("test"), str("te")));
+  EXPECT_FALSE(CpuFeatures_StringView_StartsWith(str("test"), str("")));
+  EXPECT_FALSE(CpuFeatures_StringView_StartsWith(str("test"), kEmptyStringView));
+  EXPECT_FALSE(CpuFeatures_StringView_StartsWith(kEmptyStringView, str("test")));
 }
 
-TEST(StringViewTest, IsEquals) {
-  EXPECT_TRUE(IsEquals(kEmptyStringView, kEmptyStringView));
-  EXPECT_TRUE(IsEquals(kEmptyStringView, str("")));
-  EXPECT_TRUE(IsEquals(str(""), kEmptyStringView));
-  EXPECT_TRUE(IsEquals(str("a"), str("a")));
-  EXPECT_FALSE(IsEquals(str("a"), str("b")));
-  EXPECT_FALSE(IsEquals(str("a"), kEmptyStringView));
-  EXPECT_FALSE(IsEquals(kEmptyStringView, str("a")));
+TEST(StringViewTest, CpuFeatures_StringView_IsEquals) {
+  EXPECT_TRUE(CpuFeatures_StringView_IsEquals(kEmptyStringView, kEmptyStringView));
+  EXPECT_TRUE(CpuFeatures_StringView_IsEquals(kEmptyStringView, str("")));
+  EXPECT_TRUE(CpuFeatures_StringView_IsEquals(str(""), kEmptyStringView));
+  EXPECT_TRUE(CpuFeatures_StringView_IsEquals(str("a"), str("a")));
+  EXPECT_FALSE(CpuFeatures_StringView_IsEquals(str("a"), str("b")));
+  EXPECT_FALSE(CpuFeatures_StringView_IsEquals(str("a"), kEmptyStringView));
+  EXPECT_FALSE(CpuFeatures_StringView_IsEquals(kEmptyStringView, str("a")));
 }
 
-TEST(StringViewTest, PopFront) {
-  EXPECT_EQ(PopFront(str("test"), 2), str("st"));
-  EXPECT_EQ(PopFront(str("test"), 0), str("test"));
-  EXPECT_EQ(PopFront(str("test"), 4), str(""));
-  EXPECT_EQ(PopFront(str("test"), 100), str(""));
+TEST(StringViewTest, CpuFeatures_StringView_PopFront) {
+  EXPECT_EQ(CpuFeatures_StringView_PopFront(str("test"), 2), str("st"));
+  EXPECT_EQ(CpuFeatures_StringView_PopFront(str("test"), 0), str("test"));
+  EXPECT_EQ(CpuFeatures_StringView_PopFront(str("test"), 4), str(""));
+  EXPECT_EQ(CpuFeatures_StringView_PopFront(str("test"), 100), str(""));
 }
 
-TEST(StringViewTest, ParsePositiveNumber) {
-  EXPECT_EQ(ParsePositiveNumber(str("42")), 42);
-  EXPECT_EQ(ParsePositiveNumber(str("0x2a")), 42);
-  EXPECT_EQ(ParsePositiveNumber(str("0x2A")), 42);
+TEST(StringViewTest, CpuFeatures_StringView_ParsePositiveNumber) {
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("42")), 42);
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("0x2a")), 42);
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("0x2A")), 42);
 
-  EXPECT_EQ(ParsePositiveNumber(str("-0x2A")), -1);
-  EXPECT_EQ(ParsePositiveNumber(str("abc")), -1);
-  EXPECT_EQ(ParsePositiveNumber(str("")), -1);
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("-0x2A")), -1);
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("abc")), -1);
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("")), -1);
 }
 
-TEST(StringViewTest, CopyString) {
+TEST(StringViewTest, CpuFeatures_StringView_CopyString) {
   char buf[4];
   buf[0] = 'X';
 
   // Empty
-  CopyString(str(""), buf, sizeof(buf));
+  CpuFeatures_StringView_CopyString(str(""), buf, sizeof(buf));
   EXPECT_STREQ(buf, "");
 
   // Less
-  CopyString(str("a"), buf, sizeof(buf));
+  CpuFeatures_StringView_CopyString(str("a"), buf, sizeof(buf));
   EXPECT_STREQ(buf, "a");
 
   // exact
-  CopyString(str("abc"), buf, sizeof(buf));
+  CpuFeatures_StringView_CopyString(str("abc"), buf, sizeof(buf));
   EXPECT_STREQ(buf, "abc");
 
   // More
-  CopyString(str("abcd"), buf, sizeof(buf));
+  CpuFeatures_StringView_CopyString(str("abcd"), buf, sizeof(buf));
   EXPECT_STREQ(buf, "abc");
 }
 
-TEST(StringViewTest, HasWord) {
+TEST(StringViewTest, CpuFeatures_StringView_HasWord) {
   // Find flags at beginning, middle and end.
-  EXPECT_TRUE(HasWord(str("first middle last"), "first"));
-  EXPECT_TRUE(HasWord(str("first middle last"), "middle"));
-  EXPECT_TRUE(HasWord(str("first middle last"), "last"));
+  EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("first middle last"), "first"));
+  EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("first middle last"), "middle"));
+  EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("first middle last"), "last"));
   // Do not match partial flags
-  EXPECT_FALSE(HasWord(str("first middle last"), "irst"));
-  EXPECT_FALSE(HasWord(str("first middle last"), "mid"));
-  EXPECT_FALSE(HasWord(str("first middle last"), "las"));
+  EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("first middle last"), "irst"));
+  EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("first middle last"), "mid"));
+  EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("first middle last"), "las"));
 }
 
-TEST(StringViewTest, GetAttributeKeyValue) {
+TEST(StringViewTest, CpuFeatures_StringView_GetAttributeKeyValue) {
   const StringView line = str(" key :   first middle last   ");
   StringView key, value;
-  EXPECT_TRUE(GetAttributeKeyValue(line, &key, &value));
+  EXPECT_TRUE(CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value));
   EXPECT_EQ(key, str("key"));
   EXPECT_EQ(value, str("first middle last"));
 }
@@ -131,7 +131,7 @@ TEST(StringViewTest, GetAttributeKeyValue) {
 TEST(StringViewTest, FailingGetAttributeKeyValue) {
   const StringView line = str("key  first middle last");
   StringView key, value;
-  EXPECT_FALSE(GetAttributeKeyValue(line, &key, &value));
+  EXPECT_FALSE(CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value));
 }
 
 }  // namespace

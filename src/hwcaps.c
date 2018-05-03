@@ -145,7 +145,7 @@ static uint32_t GetHardwareCapabilitiesFor(uint32_t type) {
   return hwcaps;
 }
 
-HardwareCapabilities GetHardwareCapabilities(void) {
+HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void) {
   HardwareCapabilities capabilities;
   capabilities.hwcaps = GetHardwareCapabilitiesFor(AT_HWCAP);
   capabilities.hwcaps2 = GetHardwareCapabilitiesFor(AT_HWCAP2);
