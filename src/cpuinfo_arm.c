@@ -87,12 +87,15 @@ static bool HandleArmLine(const LineResult result, ArmInfo* const info,
     } else if (CpuFeatures_StringView_IsEquals(key, str("CPU architecture"))) {
       // CPU architecture is a number that may be followed by letters. e.g.
       // "6TEJ", "7".
-      const StringView digits = CpuFeatures_StringView_KeepFront(value, IndexOfNonDigit(value));
+      const StringView digits =
+          CpuFeatures_StringView_KeepFront(value, IndexOfNonDigit(value));
       info->architecture = CpuFeatures_StringView_ParsePositiveNumber(digits);
     } else if (CpuFeatures_StringView_IsEquals(key, str("Processor"))) {
-      proc_info->processor_reports_armv6 = CpuFeatures_StringView_IndexOf(value, str("(v6l)")) >= 0;
+      proc_info->processor_reports_armv6 =
+          CpuFeatures_StringView_IndexOf(value, str("(v6l)")) >= 0;
     } else if (CpuFeatures_StringView_IsEquals(key, str("Hardware"))) {
-      proc_info->hardware_reports_goldfish = CpuFeatures_StringView_IsEquals(value, str("Goldfish"));
+      proc_info->hardware_reports_goldfish =
+          CpuFeatures_StringView_IsEquals(value, str("Goldfish"));
     }
   }
   return !result.eof;
@@ -174,8 +177,9 @@ ArmInfo GetArmInfo(void) {
   ProcCpuInfoData proc_cpu_info_data = kEmptyProcCpuInfoData;
 
   FillProcCpuInfoData(&info, &proc_cpu_info_data);
-  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs, CpuFeatures_GetHardwareCapabilities(),
-                     &info.features);
+  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs,
+                                 CpuFeatures_GetHardwareCapabilities(),
+                                 &info.features);
 
   FixErrors(&info, &proc_cpu_info_data);
 

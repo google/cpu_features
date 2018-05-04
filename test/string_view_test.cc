@@ -57,12 +57,15 @@ TEST(StringViewTest, CpuFeatures_StringView_IndexOf) {
 TEST(StringViewTest, CpuFeatures_StringView_StartsWith) {
   EXPECT_TRUE(CpuFeatures_StringView_StartsWith(str("test"), str("te")));
   EXPECT_FALSE(CpuFeatures_StringView_StartsWith(str("test"), str("")));
-  EXPECT_FALSE(CpuFeatures_StringView_StartsWith(str("test"), kEmptyStringView));
-  EXPECT_FALSE(CpuFeatures_StringView_StartsWith(kEmptyStringView, str("test")));
+  EXPECT_FALSE(
+      CpuFeatures_StringView_StartsWith(str("test"), kEmptyStringView));
+  EXPECT_FALSE(
+      CpuFeatures_StringView_StartsWith(kEmptyStringView, str("test")));
 }
 
 TEST(StringViewTest, CpuFeatures_StringView_IsEquals) {
-  EXPECT_TRUE(CpuFeatures_StringView_IsEquals(kEmptyStringView, kEmptyStringView));
+  EXPECT_TRUE(
+      CpuFeatures_StringView_IsEquals(kEmptyStringView, kEmptyStringView));
   EXPECT_TRUE(CpuFeatures_StringView_IsEquals(kEmptyStringView, str("")));
   EXPECT_TRUE(CpuFeatures_StringView_IsEquals(str(""), kEmptyStringView));
   EXPECT_TRUE(CpuFeatures_StringView_IsEquals(str("a"), str("a")));
@@ -111,11 +114,14 @@ TEST(StringViewTest, CpuFeatures_StringView_CopyString) {
 
 TEST(StringViewTest, CpuFeatures_StringView_HasWord) {
   // Find flags at beginning, middle and end.
-  EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("first middle last"), "first"));
-  EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("first middle last"), "middle"));
+  EXPECT_TRUE(
+      CpuFeatures_StringView_HasWord(str("first middle last"), "first"));
+  EXPECT_TRUE(
+      CpuFeatures_StringView_HasWord(str("first middle last"), "middle"));
   EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("first middle last"), "last"));
   // Do not match partial flags
-  EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("first middle last"), "irst"));
+  EXPECT_FALSE(
+      CpuFeatures_StringView_HasWord(str("first middle last"), "irst"));
   EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("first middle last"), "mid"));
   EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("first middle last"), "las"));
 }

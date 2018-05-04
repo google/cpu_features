@@ -63,8 +63,9 @@ MipsInfo GetMipsInfo(void) {
   MipsInfo info = kEmptyMipsInfo;
 
   FillProcCpuInfoData(&info.features);
-  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs, CpuFeatures_GetHardwareCapabilities(),
-                     &info.features);
+  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs,
+                                 CpuFeatures_GetHardwareCapabilities(),
+                                 &info.features);
   return info;
 }
 

@@ -28,8 +28,8 @@ void StackLineReader_Initialize(StackLineReader* reader, int fd) {
 
 // Replaces the content of buffer with bytes from the file.
 static int LoadFullBuffer(StackLineReader* reader) {
-  const int read =
-      CpuFeatures_ReadFile(reader->fd, reader->buffer, STACK_LINE_READER_BUFFER_SIZE);
+  const int read = CpuFeatures_ReadFile(reader->fd, reader->buffer,
+                                        STACK_LINE_READER_BUFFER_SIZE);
   assert(read >= 0);
   reader->view.ptr = reader->buffer;
   reader->view.size = read;
@@ -71,7 +71,8 @@ static void SkipToNextLine(StackLineReader* reader) {
     } else {
       const int eol_index = IndexOfEol(reader);
       if (eol_index >= 0) {
-        reader->view = CpuFeatures_StringView_PopFront(reader->view, eol_index + 1);
+        reader->view =
+            CpuFeatures_StringView_PopFront(reader->view, eol_index + 1);
         break;
       }
     }
@@ -120,8 +121,10 @@ LineResult StackLineReader_NextLine(StackLineReader* reader) {
       return CreateTruncatedLineResult(reader->view);
     }
     {
-      StringView line = CpuFeatures_StringView_KeepFront(reader->view, eol_index);
-      reader->view = CpuFeatures_StringView_PopFront(reader->view, eol_index + 1);
+      StringView line =
+          CpuFeatures_StringView_KeepFront(reader->view, eol_index);
+      reader->view =
+          CpuFeatures_StringView_PopFront(reader->view, eol_index + 1);
       return CreateValidLineResult(line);
     }
   }

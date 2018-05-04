@@ -28,11 +28,13 @@ int CpuFeatures_StringView_IndexOfChar(const StringView view, char c) {
   return -1;
 }
 
-int CpuFeatures_StringView_IndexOf(const StringView view, const StringView sub_view) {
+int CpuFeatures_StringView_IndexOf(const StringView view,
+                                   const StringView sub_view) {
   if (sub_view.size) {
     StringView remainder = view;
     while (remainder.size >= sub_view.size) {
-      const int found_index = CpuFeatures_StringView_IndexOfChar(remainder, sub_view.ptr[0]);
+      const int found_index =
+          CpuFeatures_StringView_IndexOfChar(remainder, sub_view.ptr[0]);
       if (found_index < 0) break;
       remainder = CpuFeatures_StringView_PopFront(remainder, found_index);
       if (CpuFeatures_StringView_StartsWith(remainder, sub_view)) {
@@ -57,21 +59,24 @@ bool CpuFeatures_StringView_StartsWith(const StringView a, const StringView b) {
              : false;
 }
 
-StringView CpuFeatures_StringView_PopFront(const StringView str_view, size_t count) {
+StringView CpuFeatures_StringView_PopFront(const StringView str_view,
+                                           size_t count) {
   if (count > str_view.size) {
     return kEmptyStringView;
   }
   return view(str_view.ptr + count, str_view.size - count);
 }
 
-StringView CpuFeatures_StringView_PopBack(const StringView str_view, size_t count) {
+StringView CpuFeatures_StringView_PopBack(const StringView str_view,
+                                          size_t count) {
   if (count > str_view.size) {
     return kEmptyStringView;
   }
   return view(str_view.ptr, str_view.size - count);
 }
 
-StringView CpuFeatures_StringView_KeepFront(const StringView str_view, size_t count) {
+StringView CpuFeatures_StringView_KeepFront(const StringView str_view,
+                                            size_t count) {
   return count <= str_view.size ? view(str_view.ptr, count) : str_view;
 }
 
@@ -87,8 +92,10 @@ char CpuFeatures_StringView_Back(const StringView view) {
 }
 
 StringView CpuFeatures_StringView_TrimWhitespace(StringView view) {
-  while (view.size && isspace(CpuFeatures_StringView_Front(view))) view = CpuFeatures_StringView_PopFront(view, 1);
-  while (view.size && isspace(CpuFeatures_StringView_Back(view))) view = CpuFeatures_StringView_PopBack(view, 1);
+  while (view.size && isspace(CpuFeatures_StringView_Front(view)))
+    view = CpuFeatures_StringView_PopFront(view, 1);
+  while (view.size && isspace(CpuFeatures_StringView_Back(view)))
+    view = CpuFeatures_StringView_PopBack(view, 1);
   return view;
 }
 
@@ -103,7 +110,8 @@ static int HexValue(const char c) {
 static int ParsePositiveNumberWithBase(const StringView view, int base) {
   int result = 0;
   StringView remainder = view;
-  for (; remainder.size; remainder = CpuFeatures_StringView_PopFront(remainder, 1)) {
+  for (; remainder.size;
+       remainder = CpuFeatures_StringView_PopFront(remainder, 1)) {
     const int value = HexValue(CpuFeatures_StringView_Front(remainder));
     if (value < 0 || value >= base) return -1;
     result = (result * base) + value;
@@ -115,7 +123,8 @@ int CpuFeatures_StringView_ParsePositiveNumber(const StringView view) {
   if (view.size) {
     const StringView hex_prefix = str("0x");
     if (CpuFeatures_StringView_StartsWith(view, hex_prefix)) {
-      const StringView span_no_prefix = CpuFeatures_StringView_PopFront(view, hex_prefix.size);
+      const StringView span_no_prefix =
+          CpuFeatures_StringView_PopFront(view, hex_prefix.size);
       return ParsePositiveNumberWithBase(span_no_prefix, 16);
     }
     return ParsePositiveNumberWithBase(view, 10);
@@ -123,7 +132,8 @@ int CpuFeatures_StringView_ParsePositiveNumber(const StringView view) {
   return -1;
 }
 
-void CpuFeatures_StringView_CopyString(const StringView src, char* dst, size_t dst_size) {
+void CpuFeatures_StringView_CopyString(const StringView src, char* dst,
+                                       size_t dst_size) {
   if (dst_size > 0) {
     const size_t max_copy_size = dst_size - 1;
     const size_t copy_size =
@@ -133,7 +143,8 @@ void CpuFeatures_StringView_CopyString(const StringView src, char* dst, size_t d
   }
 }
 
-bool CpuFeatures_StringView_HasWord(const StringView line, const char* const word_str) {
+bool CpuFeatures_StringView_HasWord(const StringView line,
+                                    const char* const word_str) {
   const StringView word = str(word_str);
   StringView remainder = line;
   for (;;) {
@@ -141,23 +152,31 @@ bool CpuFeatures_StringView_HasWord(const StringView line, const char* const wor
     if (index_of_word < 0) {
       return false;
     } else {
-      const StringView before = CpuFeatures_StringView_KeepFront(line, index_of_word);
-      const StringView after = CpuFeatures_StringView_PopFront(line, index_of_word + word.size);
-      const bool valid_before = before.size == 0 || CpuFeatures_StringView_Back(before) == ' ';
-      const bool valid_after = after.size == 0 || CpuFeatures_StringView_Front(after) == ' ';
+      const StringView before =
+          CpuFeatures_StringView_KeepFront(line, index_of_word);
+      const StringView after =
+          CpuFeatures_StringView_PopFront(line, index_of_word + word.size);
+      const bool valid_before =
+          before.size == 0 || CpuFeatures_StringView_Back(before) == ' ';
+      const bool valid_after =
+          after.size == 0 || CpuFeatures_StringView_Front(after) == ' ';
       if (valid_before && valid_after) return true;
-      remainder = CpuFeatures_StringView_PopFront(remainder, index_of_word + word.size);
+      remainder =
+          CpuFeatures_StringView_PopFront(remainder, index_of_word + word.size);
     }
   }
   return false;
 }
 
-bool CpuFeatures_StringView_GetAttributeKeyValue(const StringView line, StringView* key,
-                          StringView* value) {
+bool CpuFeatures_StringView_GetAttributeKeyValue(const StringView line,
+                                                 StringView* key,
+                                                 StringView* value) {
   const StringView sep = str(": ");
   const int index_of_separator = CpuFeatures_StringView_IndexOf(line, sep);
   if (index_of_separator < 0) return false;
-  *value = CpuFeatures_StringView_TrimWhitespace(CpuFeatures_StringView_PopFront(line, index_of_separator + sep.size));
-  *key = CpuFeatures_StringView_TrimWhitespace(CpuFeatures_StringView_KeepFront(line, index_of_separator));
+  *value = CpuFeatures_StringView_TrimWhitespace(
+      CpuFeatures_StringView_PopFront(line, index_of_separator + sep.size));
+  *key = CpuFeatures_StringView_TrimWhitespace(
+      CpuFeatures_StringView_KeepFront(line, index_of_separator));
   return true;
 }

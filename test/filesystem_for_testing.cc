@@ -94,7 +94,8 @@ extern "C" void CpuFeatures_CloseFile(int file_descriptor) {
   kFilesystem->FindFileOrDie(file_descriptor)->Close();
 }
 
-extern "C" int CpuFeatures_ReadFile(int file_descriptor, void* buf, size_t count) {
+extern "C" int CpuFeatures_ReadFile(int file_descriptor, void* buf,
+                                    size_t count) {
   return kFilesystem->FindFileOrDie(file_descriptor)
       ->Read(file_descriptor, buf, count);
 }

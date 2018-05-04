@@ -85,8 +85,9 @@ Aarch64Info GetAarch64Info(void) {
   Aarch64Info info = kEmptyAarch64Info;
 
   FillProcCpuInfoData(&info);
-  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs, CpuFeatures_GetHardwareCapabilities(),
-                     &info.features);
+  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs,
+                                 CpuFeatures_GetHardwareCapabilities(),
+                                 &info.features);
 
   return info;
 }

@@ -15,12 +15,15 @@
 #include "internal/linux_features_aggregator.h"
 #include "internal/string_view.h"
 
-void CpuFeatures_SetFromFlags(const size_t configs_size, const CapabilityConfig* configs,
-                  const StringView flags_line, void* const features) {
+void CpuFeatures_SetFromFlags(const size_t configs_size,
+                              const CapabilityConfig* configs,
+                              const StringView flags_line,
+                              void* const features) {
   size_t i = 0;
   for (; i < configs_size; ++i) {
     const CapabilityConfig config = configs[i];
-    config.set_bit(features, CpuFeatures_StringView_HasWord(flags_line, config.proc_cpuinfo_flag));
+    config.set_bit(features, CpuFeatures_StringView_HasWord(
+                                 flags_line, config.proc_cpuinfo_flag));
   }
 }
 
@@ -35,9 +38,9 @@ static bool IsHwCapsSet(const HardwareCapabilities hwcaps_mask,
 }
 
 void CpuFeatures_OverrideFromHwCaps(const size_t configs_size,
-                        const CapabilityConfig* configs,
-                        const HardwareCapabilities hwcaps,
-                        void* const features) {
+                                    const CapabilityConfig* configs,
+                                    const HardwareCapabilities hwcaps,
+                                    void* const features) {
   size_t i = 0;
   for (; i < configs_size; ++i) {
     const CapabilityConfig* config = &configs[i];
