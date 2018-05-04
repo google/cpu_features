@@ -110,13 +110,13 @@ static uint32_t GetElfHwcapFromProcSelfAuxv(uint32_t hwcap_type) {
   } entry;
   uint32_t result = 0;
   const char filepath[] = "/proc/self/auxv";
-  const int fd = OpenFile(filepath);
+  const int fd = CpuFeatures_OpenFile(filepath);
   if (fd < 0) {
     D("Could not open %s\n", filepath);
     return 0;
   }
   for (;;) {
-    const int ret = ReadFile(fd, (char*)&entry, sizeof entry);
+    const int ret = CpuFeatures_ReadFile(fd, (char*)&entry, sizeof entry);
     if (ret < 0) {
       D("Error while reading %s\n", filepath);
       break;
@@ -130,7 +130,7 @@ static uint32_t GetElfHwcapFromProcSelfAuxv(uint32_t hwcap_type) {
       break;
     }
   }
-  CloseFile(fd);
+  CpuFeatures_CloseFile(fd);
   return result;
 }
 
