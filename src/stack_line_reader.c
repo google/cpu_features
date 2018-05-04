@@ -28,8 +28,8 @@ void StackLineReader_Initialize(StackLineReader* reader, int fd) {
 
 // Replaces the content of buffer with bytes from the file.
 static int LoadFullBuffer(StackLineReader* reader) {
-  const int read =
-      ReadFile(reader->fd, reader->buffer, STACK_LINE_READER_BUFFER_SIZE);
+  const int read = CpuFeatures_ReadFile(reader->fd, reader->buffer,
+                                        STACK_LINE_READER_BUFFER_SIZE);
   assert(read >= 0);
   reader->view.ptr = reader->buffer;
   reader->view.size = read;
@@ -40,7 +40,7 @@ static int LoadFullBuffer(StackLineReader* reader) {
 static int LoadMore(StackLineReader* reader) {
   char* const ptr = reader->buffer + reader->view.size;
   const size_t size_to_read = STACK_LINE_READER_BUFFER_SIZE - reader->view.size;
-  const int read = ReadFile(reader->fd, ptr, size_to_read);
+  const int read = CpuFeatures_ReadFile(reader->fd, ptr, size_to_read);
   assert(read >= 0);
   assert(read <= (int)size_to_read);
   reader->view.size += read;
@@ -48,7 +48,7 @@ static int LoadMore(StackLineReader* reader) {
 }
 
 static int IndexOfEol(StackLineReader* reader) {
-  return IndexOfChar(reader->view, '\n');
+  return CpuFeatures_StringView_IndexOfChar(reader->view, '\n');
 }
 
 // Relocate buffer's pending bytes at the beginning of the array and fills the
@@ -71,7 +71,8 @@ static void SkipToNextLine(StackLineReader* reader) {
     } else {
       const int eol_index = IndexOfEol(reader);
       if (eol_index >= 0) {
-        reader->view = PopFront(reader->view, eol_index + 1);
+        reader->view =
+            CpuFeatures_StringView_PopFront(reader->view, eol_index + 1);
         break;
       }
     }
@@ -120,8 +121,10 @@ LineResult StackLineReader_NextLine(StackLineReader* reader) {
       return CreateTruncatedLineResult(reader->view);
     }
     {
-      StringView line = KeepFront(reader->view, eol_index);
-      reader->view = PopFront(reader->view, eol_index + 1);
+      StringView line =
+          CpuFeatures_StringView_KeepFront(reader->view, eol_index);
+      reader->view =
+          CpuFeatures_StringView_PopFront(reader->view, eol_index + 1);
       return CreateValidLineResult(line);
     }
   }

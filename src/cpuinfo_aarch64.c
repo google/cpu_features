@@ -46,24 +46,24 @@ static bool HandleAarch64Line(const LineResult result,
                               Aarch64Info* const info) {
   StringView line = result.line;
   StringView key, value;
-  if (GetAttributeKeyValue(line, &key, &value)) {
-    if (IsEquals(key, str("Features"))) {
-      SetFromFlags(kConfigsSize, kConfigs, value, &info->features);
-    } else if (IsEquals(key, str("CPU implementer"))) {
-      info->implementer = ParsePositiveNumber(value);
-    } else if (IsEquals(key, str("CPU variant"))) {
-      info->variant = ParsePositiveNumber(value);
-    } else if (IsEquals(key, str("CPU part"))) {
-      info->part = ParsePositiveNumber(value);
-    } else if (IsEquals(key, str("CPU revision"))) {
-      info->revision = ParsePositiveNumber(value);
+  if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
+    if (CpuFeatures_StringView_IsEquals(key, str("Features"))) {
+      CpuFeatures_SetFromFlags(kConfigsSize, kConfigs, value, &info->features);
+    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU implementer"))) {
+      info->implementer = CpuFeatures_StringView_ParsePositiveNumber(value);
+    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU variant"))) {
+      info->variant = CpuFeatures_StringView_ParsePositiveNumber(value);
+    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU part"))) {
+      info->part = CpuFeatures_StringView_ParsePositiveNumber(value);
+    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU revision"))) {
+      info->revision = CpuFeatures_StringView_ParsePositiveNumber(value);
     }
   }
   return !result.eof;
 }
 
 static void FillProcCpuInfoData(Aarch64Info* const info) {
-  const int fd = OpenFile("/proc/cpuinfo");
+  const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");
   if (fd >= 0) {
     StackLineReader reader;
     StackLineReader_Initialize(&reader, fd);
@@ -72,7 +72,7 @@ static void FillProcCpuInfoData(Aarch64Info* const info) {
         break;
       }
     }
-    CloseFile(fd);
+    CpuFeatures_CloseFile(fd);
   }
 }
 
@@ -85,8 +85,9 @@ Aarch64Info GetAarch64Info(void) {
   Aarch64Info info = kEmptyAarch64Info;
 
   FillProcCpuInfoData(&info);
-  OverrideFromHwCaps(kConfigsSize, kConfigs, GetHardwareCapabilities(),
-                     &info.features);
+  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs,
+                                 CpuFeatures_GetHardwareCapabilities(),
+                                 &info.features);
 
   return info;
 }

@@ -62,8 +62,8 @@ typedef struct {
 
 static int IndexOfNonDigit(StringView str) {
   size_t index = 0;
-  while (str.size && isdigit(Front(str))) {
-    str = PopFront(str, 1);
+  while (str.size && isdigit(CpuFeatures_StringView_Front(str))) {
+    str = CpuFeatures_StringView_PopFront(str, 1);
     ++index;
   }
   return index;
@@ -73,26 +73,29 @@ static bool HandleArmLine(const LineResult result, ArmInfo* const info,
                           ProcCpuInfoData* const proc_info) {
   StringView line = result.line;
   StringView key, value;
-  if (GetAttributeKeyValue(line, &key, &value)) {
-    if (IsEquals(key, str("Features"))) {
-      SetFromFlags(kConfigsSize, kConfigs, value, &info->features);
-    } else if (IsEquals(key, str("CPU implementer"))) {
-      info->implementer = ParsePositiveNumber(value);
-    } else if (IsEquals(key, str("CPU variant"))) {
-      info->variant = ParsePositiveNumber(value);
-    } else if (IsEquals(key, str("CPU part"))) {
-      info->part = ParsePositiveNumber(value);
-    } else if (IsEquals(key, str("CPU revision"))) {
-      info->revision = ParsePositiveNumber(value);
-    } else if (IsEquals(key, str("CPU architecture"))) {
+  if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
+    if (CpuFeatures_StringView_IsEquals(key, str("Features"))) {
+      CpuFeatures_SetFromFlags(kConfigsSize, kConfigs, value, &info->features);
+    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU implementer"))) {
+      info->implementer = CpuFeatures_StringView_ParsePositiveNumber(value);
+    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU variant"))) {
+      info->variant = CpuFeatures_StringView_ParsePositiveNumber(value);
+    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU part"))) {
+      info->part = CpuFeatures_StringView_ParsePositiveNumber(value);
+    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU revision"))) {
+      info->revision = CpuFeatures_StringView_ParsePositiveNumber(value);
+    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU architecture"))) {
       // CPU architecture is a number that may be followed by letters. e.g.
       // "6TEJ", "7".
-      const StringView digits = KeepFront(value, IndexOfNonDigit(value));
-      info->architecture = ParsePositiveNumber(digits);
-    } else if (IsEquals(key, str("Processor"))) {
-      proc_info->processor_reports_armv6 = IndexOf(value, str("(v6l)")) >= 0;
-    } else if (IsEquals(key, str("Hardware"))) {
-      proc_info->hardware_reports_goldfish = IsEquals(value, str("Goldfish"));
+      const StringView digits =
+          CpuFeatures_StringView_KeepFront(value, IndexOfNonDigit(value));
+      info->architecture = CpuFeatures_StringView_ParsePositiveNumber(digits);
+    } else if (CpuFeatures_StringView_IsEquals(key, str("Processor"))) {
+      proc_info->processor_reports_armv6 =
+          CpuFeatures_StringView_IndexOf(value, str("(v6l)")) >= 0;
+    } else if (CpuFeatures_StringView_IsEquals(key, str("Hardware"))) {
+      proc_info->hardware_reports_goldfish =
+          CpuFeatures_StringView_IsEquals(value, str("Goldfish"));
     }
   }
   return !result.eof;
@@ -148,7 +151,7 @@ static void FixErrors(ArmInfo* const info,
 
 static void FillProcCpuInfoData(ArmInfo* const info,
                                 ProcCpuInfoData* proc_cpu_info_data) {
-  const int fd = OpenFile("/proc/cpuinfo");
+  const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");
   if (fd >= 0) {
     StackLineReader reader;
     StackLineReader_Initialize(&reader, fd);
@@ -158,7 +161,7 @@ static void FillProcCpuInfoData(ArmInfo* const info,
         break;
       }
     }
-    CloseFile(fd);
+    CpuFeatures_CloseFile(fd);
   }
 }
 
@@ -174,8 +177,9 @@ ArmInfo GetArmInfo(void) {
   ProcCpuInfoData proc_cpu_info_data = kEmptyProcCpuInfoData;
 
   FillProcCpuInfoData(&info, &proc_cpu_info_data);
-  OverrideFromHwCaps(kConfigsSize, kConfigs, GetHardwareCapabilities(),
-                     &info.features);
+  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs,
+                                 CpuFeatures_GetHardwareCapabilities(),
+                                 &info.features);
 
   FixErrors(&info, &proc_cpu_info_data);
 

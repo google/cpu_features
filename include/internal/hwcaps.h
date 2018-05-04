@@ -66,7 +66,7 @@ typedef struct {
   uint32_t hwcaps2;
 } HardwareCapabilities;
 
-HardwareCapabilities GetHardwareCapabilities(void);
+HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void);
 
 CPU_FEATURES_END_CPP_NAMESPACE
 

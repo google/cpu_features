@@ -43,16 +43,18 @@ typedef struct {
 // For every config, looks into flags_line for the presence of the
 // corresponding proc_cpuinfo_flag, calls `set_bit` accordingly.
 // Note: features is a pointer to the underlying Feature struct.
-void SetFromFlags(const size_t configs_size, const CapabilityConfig* configs,
-                  const StringView flags_line, void* const features);
+void CpuFeatures_SetFromFlags(const size_t configs_size,
+                              const CapabilityConfig* configs,
+                              const StringView flags_line,
+                              void* const features);
 
 // For every config, looks into hwcaps for the presence of the feature. Calls
 // `set_bit` with true if the hardware capability is found.
 // Note: features is a pointer to the underlying Feature struct.
-void OverrideFromHwCaps(const size_t configs_size,
-                        const CapabilityConfig* configs,
-                        const HardwareCapabilities hwcaps,
-                        void* const features);
+void CpuFeatures_OverrideFromHwCaps(const size_t configs_size,
+                                    const CapabilityConfig* configs,
+                                    const HardwareCapabilities hwcaps,
+                                    void* const features);
 
 CPU_FEATURES_END_CPP_NAMESPACE
 #endif  // CPU_FEATURES_INCLUDE_INTERNAL_LINUX_FEATURES_AGGREGATOR_H_

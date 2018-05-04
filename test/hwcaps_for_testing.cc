@@ -25,7 +25,7 @@ void SetHardwareCapabilities(uint32_t hwcaps, uint32_t hwcaps2) {
   g_hardware_capabilities->hwcaps2 = hwcaps2;
 }
 
-HardwareCapabilities GetHardwareCapabilities(void) {
+HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void) {
   return *g_hardware_capabilities;
 }
 

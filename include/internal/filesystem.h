@@ -24,14 +24,14 @@
 CPU_FEATURES_START_CPP_NAMESPACE
 
 // Same as linux "open(filename, O_RDONLY)", retries automatically on EINTR.
-int OpenFile(const char* filename);
+int CpuFeatures_OpenFile(const char* filename);
 
 // Same as linux "read(file_descriptor, buffer, buffer_size)", retries
 // automatically on EINTR.
-int ReadFile(int file_descriptor, void* buffer, size_t buffer_size);
+int CpuFeatures_ReadFile(int file_descriptor, void* buffer, size_t buffer_size);
 
 // Same as linux "close(file_descriptor)".
-void CloseFile(int file_descriptor);
+void CpuFeatures_CloseFile(int file_descriptor);
 
 CPU_FEATURES_END_CPP_NAMESPACE
 
