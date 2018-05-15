@@ -136,7 +136,7 @@ flags           : aes,avx,cx16,smx,sse4_1,sse4_2,ssse3
 |---------|:----:|:-------:|:-------:|:------:|:-------:|
 | Android | yes² |   yes¹  |   yes¹  |  yes¹  |   N/A   |
 | iOS     |  N/A | not yet | not yet |   N/A  |   N/A   |
-| Linux   | yes² |   yes¹  |   yes¹  |  yes¹  | not yet |
+| Linux   | yes² |   yes¹  |   yes¹  |  yes¹  |   yes¹  |
 | MacOs   | yes² |   N/A   | not yet |   N/A  |    no   |
 | Windows | yes² | not yet | not yet |   N/A  |   N/A   |
 
