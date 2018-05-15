@@ -24,6 +24,7 @@ set(_HDRS
   include/cpuinfo_aarch64.h
   include/cpuinfo_arm.h
   include/cpuinfo_mips.h
+  include/cpuinfo_ppc.h
   include/cpuinfo_x86.h
 )
 
@@ -43,6 +44,7 @@ add_library(cpu_features
   src/cpuinfo_aarch64.c
   src/cpuinfo_arm.c
   src/cpuinfo_mips.c
+  src/cpuinfo_ppc.c
   src/cpuinfo_x86.c
   src/filesystem.c
   src/hwcaps.c

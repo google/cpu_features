@@ -72,3 +72,8 @@ add_test(NAME cpuinfo_aarch64_test COMMAND cpuinfo_aarch64_test)
 add_executable(cpuinfo_mips_test cpuinfo_mips_test.cc  ../src/cpuinfo_mips.c)
 target_link_libraries(cpuinfo_mips_test all_libraries)
 add_test(NAME cpuinfo_mips_test COMMAND cpuinfo_mips_test)
+##------------------------------------------------------------------------------
+## cpuinfo_ppc_test
+add_executable(cpuinfo_ppc_test cpuinfo_ppc_test.cc  ../src/cpuinfo_ppc.c)
+target_link_libraries(cpuinfo_ppc_test all_libraries)
+add_test(NAME cpuinfo_ppc_test COMMAND cpuinfo_ppc_test)

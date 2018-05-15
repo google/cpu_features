@@ -12,9 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "internal/hwcaps.h"
+#include <stdlib.h>
+#include <string.h>
+
 #include "cpu_features_macros.h"
 #include "internal/filesystem.h"
+#include "internal/hwcaps.h"
+#include "internal/string_view.h"
 
 #if defined(NDEBUG)
 #define D(...)
@@ -48,7 +52,7 @@
 #if defined(HWCAPS_REGULAR_LINUX)
 #include <dlfcn.h>
 #include <sys/auxv.h>
-static uint32_t GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
+static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
   return getauxval(hwcap_type);
 }
 #endif  // defined(HWCAPS_REGULAR_LINUX)
@@ -71,6 +75,9 @@ static uint32_t GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
 #include <dlfcn.h>
 #define AT_HWCAP 16
 #define AT_HWCAP2 26
+#define AT_PLATFORM 15
+#define AT_BASE_PLATFORM 24
+
 typedef unsigned long getauxval_func_t(unsigned long);
 
 static uint32_t GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
@@ -136,8 +143,8 @@ static uint32_t GetElfHwcapFromProcSelfAuxv(uint32_t hwcap_type) {
 
 // Retrieves hardware capabilities by first trying to call getauxval, if not
 // available falls back to reading "/proc/self/auxv".
-static uint32_t GetHardwareCapabilitiesFor(uint32_t type) {
-  uint32_t hwcaps = GetElfHwcapFromGetauxval(type);
+static unsigned long GetHardwareCapabilitiesFor(uint32_t type) {
+  unsigned long hwcaps = GetElfHwcapFromGetauxval(type);
   if (!hwcaps) {
     D("Parsing /proc/self/auxv to extract ELF hwcaps!\n");
     hwcaps = GetElfHwcapFromProcSelfAuxv(type);
@@ -152,6 +159,21 @@ HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void) {
   return capabilities;
 }
 
+PlatformType kEmptyPlatformType;
+
+PlatformType CpuFeatures_GetPlatformType(void) {
+  PlatformType type = kEmptyPlatformType;
+  char *platform = (char *)GetHardwareCapabilitiesFor(AT_PLATFORM);
+  char *base_platform = (char *)GetHardwareCapabilitiesFor(AT_BASE_PLATFORM);
+
+  if (platform != NULL)
+    CpuFeatures_StringView_CopyString(str(platform), type.platform,
+                                      sizeof(type.platform));
+  if (base_platform != NULL)
+    CpuFeatures_StringView_CopyString(str(base_platform), type.base_platform,
+                                      sizeof(type.base_platform));
+  return type;
+}
 #else  // (defined(HWCAPS_SUPPORTED)
 
 ////////////////////////////////////////////////////////////////////////////////

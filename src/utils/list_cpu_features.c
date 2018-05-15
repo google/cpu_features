@@ -20,6 +20,7 @@
 #include "cpuinfo_aarch64.h"
 #include "cpuinfo_arm.h"
 #include "cpuinfo_mips.h"
+#include "cpuinfo_ppc.h"
 #include "cpuinfo_x86.h"
 
 static void PrintEscapedAscii(const char* str) {
@@ -150,6 +151,9 @@ DEFINE_PRINT_FLAGS(GetAarch64FeaturesEnumValue, GetAarch64FeaturesEnumName,
 #elif defined(CPU_FEATURES_ARCH_MIPS)
 DEFINE_PRINT_FLAGS(GetMipsFeaturesEnumValue, GetMipsFeaturesEnumName,
                    MipsFeatures, MIPS_LAST_)
+#elif defined(CPU_FEATURES_ARCH_PPC)
+DEFINE_PRINT_FLAGS(GetPPCFeaturesEnumValue, GetPPCFeaturesEnumName, PPCFeatures,
+                   PPC_LAST_)
 #endif
 
 static void PrintFeatures(const Printer printer) {
@@ -185,6 +189,17 @@ static void PrintFeatures(const Printer printer) {
 #elif defined(CPU_FEATURES_ARCH_MIPS)
   const MipsInfo info = GetMipsInfo();
   PrintS(printer, "arch", "mips");
+  PrintFlags(printer, &info.features);
+#elif defined(CPU_FEATURES_ARCH_PPC)
+  const PPCInfo info = GetPPCInfo();
+  const PPCPlatformStrings strings = GetPPCPlatformStrings();
+  PrintS(printer, "arch", "ppc");
+  PrintS(printer, "platform", strings.platform);
+  PrintS(printer, "model", strings.model);
+  PrintS(printer, "machine", strings.machine);
+  PrintS(printer, "cpu", strings.cpu);
+  PrintS(printer, "instruction set", strings.type.platform);
+  PrintS(printer, "microarchitecture", strings.type.base_platform);
   PrintFlags(printer, &info.features);
 #endif
 }
