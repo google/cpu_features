@@ -52,6 +52,10 @@ add_library(cpu_features
   src/string_view.c
 )
 
+include(CheckIncludeFiles)
+check_include_files(sys/auxv.h HAVE_SYS_AUXV_H)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h)
+
 target_include_directories(cpu_features
   PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>

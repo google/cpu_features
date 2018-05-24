@@ -19,6 +19,7 @@
 #include "internal/filesystem.h"
 #include "internal/hwcaps.h"
 #include "internal/string_view.h"
+#include "config.h"
 
 #if defined(NDEBUG)
 #define D(...)
@@ -51,10 +52,20 @@
 // On Linux we simply use getauxval.
 #if defined(HWCAPS_REGULAR_LINUX)
 #include <dlfcn.h>
+#if defined(HAVE_SYS_AUXV_H)
 #include <sys/auxv.h>
 static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
   return getauxval(hwcap_type);
 }
+#else // Without sys/auxv.h return 0 to fallback to GetElfHwcapFromProcSelfAuxv
+#include <elf.h>
+#ifndef AT_HWCAP2
+#define AT_HWCAP2 26
+#endif
+static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
+  return 0;
+}
+#endif  // defined(HAVE_SYS_AUXV_H)
 #endif  // defined(HWCAPS_REGULAR_LINUX)
 
 // On Android we probe the system's C library for a 'getauxval' function and
