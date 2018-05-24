@@ -1,0 +1,6 @@
+#ifndef _CPU_FEATURES_CONFIG_H
+#define _CPU_FEATURES_CONFIG_H
+
+#cmakedefine HAVE_SYS_AUXV_H @HAVE_SYS_AUXV_H@
+
+#endif /* _CPU_FEATURES_CONFIG_H */
