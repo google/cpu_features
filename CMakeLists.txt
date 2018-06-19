@@ -26,6 +26,7 @@ set(_HDRS
   include/cpuinfo_mips.h
   include/cpuinfo_ppc.h
   include/cpuinfo_x86.h
+  include/cpu_features_macros.h
 )
 
 add_library(cpu_features
