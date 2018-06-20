@@ -61,7 +61,8 @@ bool CpuFeatures_StringView_StartsWith(const StringView a, const StringView b);
 
 // Removes count characters from the beginning of view or kEmptyStringView if
 // count if greater than view.size.
-StringView CpuFeatures_StringView_PopFront(const StringView view, size_t count);
+StringView CpuFeatures_StringView_PopFront(const StringView str_view,
+                                           size_t count);
 
 // Removes count characters from the end of view or kEmptyStringView if count if
 // greater than view.size.
@@ -70,7 +71,7 @@ StringView CpuFeatures_StringView_PopBack(const StringView str_view,
 
 // Keeps the count first characters of view or view if count if greater than
 // view.size.
-StringView CpuFeatures_StringView_KeepFront(const StringView view,
+StringView CpuFeatures_StringView_KeepFront(const StringView str_view,
                                             size_t count);
 
 // Retrieves the first character of view. If view is empty the behavior is
