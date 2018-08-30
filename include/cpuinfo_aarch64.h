@@ -20,13 +20,13 @@
 CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
-  int fp : 1;     // Floating-point.
-  int asimd : 1;  // Advanced SIMD.
-  int aes : 1;    // Hardware-accelerated Advanced Encryption Standard.
-  int pmull : 1;  // Polynomial multiply long.
-  int sha1 : 1;   // Hardware-accelerated SHA1.
-  int sha2 : 1;   // Hardware-accelerated SHA2-256.
-  int crc32 : 1;  // Hardware-accelerated CRC-32.
+  unsigned int fp : 1;     // Floating-point.
+  unsigned int asimd : 1;  // Advanced SIMD.
+  unsigned int aes : 1;    // Hardware-accelerated Advanced Encryption Standard.
+  unsigned int pmull : 1;  // Polynomial multiply long.
+  unsigned int sha1 : 1;   // Hardware-accelerated SHA1.
+  unsigned int sha2 : 1;   // Hardware-accelerated SHA2-256.
+  unsigned int crc32 : 1;  // Hardware-accelerated CRC-32.
 
   // Make sure to update Aarch64FeaturesEnum below if you add a field here.
 } Aarch64Features;

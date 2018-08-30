@@ -20,19 +20,19 @@
 CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
-  int vfp : 1;       // Vector Floating Point.
-  int iwmmxt : 1;    // Intel Wireless MMX Technology.
-  int neon : 1;      // Advanced SIMD.
-  int vfpv3 : 1;     // VFP version 3
-  int vfpv3d16 : 1;  // VFP version 3 with 16 D-registers
-  int vfpv4 : 1;     // VFP version 4 with fast context switching
-  int idiva : 1;     // SDIV and UDIV hardware division in ARM mode.
-  int idivt : 1;     // SDIV and UDIV hardware division in Thumb mode.
-  int aes : 1;       // Hardware-accelerated Advanced Encryption Standard.
-  int pmull : 1;     // Polynomial multiply long.
-  int sha1 : 1;      // Hardware-accelerated SHA1.
-  int sha2 : 1;      // Hardware-accelerated SHA2-256.
-  int crc32 : 1;     // Hardware-accelerated CRC-32.
+  unsigned int vfp : 1;       // Vector Floating Point.
+  unsigned int iwmmxt : 1;    // Intel Wireless MMX Technology.
+  unsigned int neon : 1;      // Advanced SIMD.
+  unsigned int vfpv3 : 1;     // VFP version 3
+  unsigned int vfpv3d16 : 1;  // VFP version 3 with 16 D-registers
+  unsigned int vfpv4 : 1;     // VFP version 4 with fast context switching
+  unsigned int idiva : 1;     // SDIV and UDIV hardware division in ARM mode.
+  unsigned int idivt : 1;     // SDIV and UDIV hardware division in Thumb mode.
+  unsigned int aes : 1;       // Hardware-accelerated Advanced Encryption Standard.
+  unsigned int pmull : 1;     // Polynomial multiply long.
+  unsigned int sha1 : 1;      // Hardware-accelerated SHA1.
+  unsigned int sha2 : 1;      // Hardware-accelerated SHA2-256.
+  unsigned int crc32 : 1;     // Hardware-accelerated CRC-32.
 
   // Make sure to update ArmFeaturesEnum below if you add a field here.
 } ArmFeatures;

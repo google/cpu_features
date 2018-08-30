@@ -20,9 +20,9 @@
 CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
-  int msa : 1;  // MIPS SIMD Architecture
+  unsigned int msa : 1;  // MIPS SIMD Architecture
                 // https://www.mips.com/products/architectures/ase/simd/
-  int eva : 1;  // Enhanced Virtual Addressing
+  unsigned int eva : 1;  // Enhanced Virtual Addressing
                 // https://www.mips.com/products/architectures/mips64/
 
   // Make sure to update MipsFeaturesEnum below if you add a field here.
