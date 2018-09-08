@@ -21,40 +21,40 @@ CPU_FEATURES_START_CPP_NAMESPACE
 
 // See https://en.wikipedia.org/wiki/CPUID for a list of x86 cpu features.
 typedef struct {
-  unsigned int aes : 1;
-  unsigned int erms : 1;
-  unsigned int f16c : 1;
-  unsigned int fma3 : 1;
-  unsigned int vpclmulqdq : 1;
-  unsigned int bmi1 : 1;
-  unsigned int bmi2 : 1;
+  int aes : 1;
+  int erms : 1;
+  int f16c : 1;
+  int fma3 : 1;
+  int vpclmulqdq : 1;
+  int bmi1 : 1;
+  int bmi2 : 1;
 
-  unsigned int ssse3 : 1;
-  unsigned int sse4_1 : 1;
-  unsigned int sse4_2 : 1;
+  int ssse3 : 1;
+  int sse4_1 : 1;
+  int sse4_2 : 1;
 
-  unsigned int avx : 1;
-  unsigned int avx2 : 1;
+  int avx : 1;
+  int avx2 : 1;
 
-  unsigned int avx512f : 1;
-  unsigned int avx512cd : 1;
-  unsigned int avx512er : 1;
-  unsigned int avx512pf : 1;
-  unsigned int avx512bw : 1;
-  unsigned int avx512dq : 1;
-  unsigned int avx512vl : 1;
-  unsigned int avx512ifma : 1;
-  unsigned int avx512vbmi : 1;
-  unsigned int avx512vbmi2 : 1;
-  unsigned int avx512vnni : 1;
-  unsigned int avx512bitalg : 1;
-  unsigned int avx512vpopcntdq : 1;
-  unsigned int avx512_4vnniw : 1;
-  unsigned int avx512_4vbmi2 : 1;
+  int avx512f : 1;
+  int avx512cd : 1;
+  int avx512er : 1;
+  int avx512pf : 1;
+  int avx512bw : 1;
+  int avx512dq : 1;
+  int avx512vl : 1;
+  int avx512ifma : 1;
+  int avx512vbmi : 1;
+  int avx512vbmi2 : 1;
+  int avx512vnni : 1;
+  int avx512bitalg : 1;
+  int avx512vpopcntdq : 1;
+  int avx512_4vnniw : 1;
+  int avx512_4vbmi2 : 1;
 
-  unsigned int smx : 1;
-  unsigned int sgx : 1;
-  unsigned int cx16 : 1;  // aka. CMPXCHG16B
+  int smx : 1;
+  int sgx : 1;
+  int cx16 : 1;  // aka. CMPXCHG16B
 
   // Make sure to update X86FeaturesEnum below if you add a field here.
 } X86Features;
