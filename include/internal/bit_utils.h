@@ -22,8 +22,11 @@
 
 CPU_FEATURES_START_CPP_NAMESPACE
 
-inline static bool IsBitSet(uint32_t reg, uint32_t bit) {
-  return (reg >> bit) & 0x1;
+#define TRUE -1
+// #define FALSE 0
+
+inline static int IsBitSet(uint32_t reg, uint32_t bit) {
+  return ((reg >> bit) & 0x1) ? TRUE : false;
 }
 
 inline static uint32_t ExtractBitRange(uint32_t reg, uint32_t msb,

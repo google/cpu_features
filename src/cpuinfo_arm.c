@@ -127,7 +127,7 @@ static void FixErrors(ArmInfo* const info,
       // slightly updated.
       if (info->architecture >= 7 &&
           proc_cpu_info_data->hardware_reports_goldfish) {
-        info->features.idiva = true;
+        info->features.idiva = TRUE;
       }
       break;
     case 0x511004D0:
@@ -138,15 +138,16 @@ static void FixErrors(ArmInfo* const info,
     case 0x510006F3:
       // The Nexus 4 (Qualcomm Krait) kernel configuration forgets to report
       // IDIV support.
-      info->features.idiva = true;
-      info->features.idivt = true;
+      info->features.idiva = TRUE;
+      info->features.idivt = TRUE;
       break;
   }
 
+
   // Propagate cpu features.
-  if (info->features.vfpv4) info->features.vfpv3 = true;
-  if (info->features.neon) info->features.vfpv3 = true;
-  if (info->features.vfpv3) info->features.vfp = true;
+  if (info->features.vfpv4) info->features.vfpv3 = TRUE;
+  if (info->features.neon) info->features.vfpv3 = TRUE;
+  if (info->features.vfpv3) info->features.vfp = TRUE;
 }
 
 static void FillProcCpuInfoData(ArmInfo* const info,
