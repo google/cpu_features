@@ -125,8 +125,8 @@ function expand_linaro_config() {
 function expand_codescape_config() {
   assert_defined TARGET
   local FLAVOUR=${QEMU_ARCH}-r2-hard
-  local DATE=2016.05-03
-  local CODESCAPE_URL=http://codescape-mips-sdk.imgtec.com/components/toolchain/${DATE}/Codescape.GNU.Tools.Package.${DATE}.for.MIPS.MTI.Linux.CentOS-5.x86_64.tar.gz
+  local DATE=2017.10-08
+  local CODESCAPE_URL=https://codescape.mips.com/components/toolchain/${DATE}/Codescape.GNU.Tools.Package.${DATE}.for.MIPS.MTI.Linux.CentOS-5.x86_64.tar.gz
   local GCC_URL=${CODESCAPE_URL}
   local GCC_RELATIVE_FOLDER=${TARGET}/${DATE}
   unpackifnotexists "${GCC_URL}" "${GCC_RELATIVE_FOLDER}"

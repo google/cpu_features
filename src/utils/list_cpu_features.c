@@ -187,10 +187,12 @@ static void PrintFeatures(const Printer printer) {
   PrintN(printer, "revision", info.revision);
   PrintFlags(printer, &info.features);
 #elif defined(CPU_FEATURES_ARCH_MIPS)
+  (void)&PrintN;  // Remove unused function warning.
   const MipsInfo info = GetMipsInfo();
   PrintS(printer, "arch", "mips");
   PrintFlags(printer, &info.features);
 #elif defined(CPU_FEATURES_ARCH_PPC)
+  (void)&PrintN;  // Remove unused function warning.
   const PPCInfo info = GetPPCInfo();
   const PPCPlatformStrings strings = GetPPCPlatformStrings();
   PrintS(printer, "arch", "ppc");
