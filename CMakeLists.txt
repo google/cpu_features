@@ -53,7 +53,9 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64")
     list(APPEND _HDRS include/cpuinfo_aarch64.h)
     list(APPEND _SRCS src/cpuinfo_aarch64.c)
-elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR
+       CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64" OR
+       CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$")
     list(APPEND _HDRS include/cpuinfo_x86.h)
     list(APPEND _HDRS include/internal/cpuid_x86.h)
     list(APPEND _SRCS src/cpuinfo_x86.c)
