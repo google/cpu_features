@@ -1,3 +1,5 @@
+#!/bin/bash
+
 source "$(dirname -- "$0")"/run_integration.sh
 
 # Toolchains for little-endian, 64-bit ARMv8 for GNU/Linux systems
@@ -7,7 +9,7 @@ function set_aarch64-linux-gnu() {
   QEMU_ARCH=aarch64
 }
 
-# Toolchains for little-endian, hard-float, 32-bit ARMv7 (and earlier) for GNU/Linux systems 
+# Toolchains for little-endian, hard-float, 32-bit ARMv7 (and earlier) for GNU/Linux systems
 function set_arm-linux-gnueabihf() {
   TOOLCHAIN=LINARO
   TARGET=arm-linux-gnueabihf
