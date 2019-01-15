@@ -13,8 +13,10 @@ add_definitions(-DCPU_FEATURES_TEST)
 add_library(string_view ../src/string_view.c)
 ##------------------------------------------------------------------------------
 add_library(filesystem_for_testing filesystem_for_testing.cc)
+target_compile_definitions(filesystem_for_testing PUBLIC CPU_FEATURES_MOCK_FILESYSTEM)
 ##------------------------------------------------------------------------------
 add_library(hwcaps_for_testing hwcaps_for_testing.cc)
+target_compile_definitions(hwcaps_for_testing PUBLIC CPU_FEATURES_MOCK_GET_ELF_HWCAP_FROM_GETAUXVAL)
 target_link_libraries(hwcaps_for_testing filesystem_for_testing)
 ##------------------------------------------------------------------------------
 add_library(stack_line_reader ../src/stack_line_reader.c)
@@ -54,9 +56,12 @@ target_link_libraries(linux_features_aggregator_test all_libraries)
 add_test(NAME linux_features_aggregator_test COMMAND linux_features_aggregator_test)
 ##------------------------------------------------------------------------------
 ## cpuinfo_x86_test
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
 add_executable(cpuinfo_x86_test cpuinfo_x86_test.cc ../src/cpuinfo_x86.c)
+target_compile_definitions(cpuinfo_x86_test PUBLIC CPU_FEATURES_MOCK_CPUID_X86)
 target_link_libraries(cpuinfo_x86_test all_libraries)
 add_test(NAME cpuinfo_x86_test COMMAND cpuinfo_x86_test)
+endif()
 ##------------------------------------------------------------------------------
 ## cpuinfo_arm_test
 add_executable(cpuinfo_arm_test cpuinfo_arm_test.cc ../src/cpuinfo_arm.c)

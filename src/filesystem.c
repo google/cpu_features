@@ -19,7 +19,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#if defined(_MSC_VER)
+#if defined(CPU_FEATURES_MOCK_FILESYSTEM)
+// Implementation will be provided by test/filesystem_for_testing.cc.
+#elif defined(_MSC_VER)
 #include <io.h>
 int CpuFeatures_OpenFile(const char* filename) {
   return _open(filename, _O_RDONLY);

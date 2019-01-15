@@ -19,6 +19,54 @@
 #include <stdbool.h>
 #include <string.h>
 
+#if !defined(CPU_FEATURES_ARCH_X86)
+#error "Cannot compile cpuinfo_x86 on a non x86 platform."
+#endif
+
+////////////////////////////////////////////////////////////////////////////////
+// Definitions for CpuId and GetXCR0Eax.
+////////////////////////////////////////////////////////////////////////////////
+
+#if defined(CPU_FEATURES_MOCK_CPUID_X86)
+// Implementation will be provided by test/cpuinfo_x86_test.cc.
+#elif defined(CPU_FEATURES_COMPILER_CLANG) || defined(CPU_FEATURES_COMPILER_GCC)
+
+#include <cpuid.h>
+
+Leaf CpuId(uint32_t leaf_id) {
+  Leaf leaf;
+  __cpuid_count(leaf_id, 0, leaf.eax, leaf.ebx, leaf.ecx, leaf.edx);
+  return leaf;
+}
+
+uint32_t GetXCR0Eax(void) {
+  uint32_t eax, edx;
+  __asm("XGETBV" : "=a"(eax), "=d"(edx) : "c"(0));
+  return eax;
+}
+
+#elif defined(CPU_FEATURES_COMPILER_MSC)
+
+#include <immintrin.h>
+#include <intrin.h>  // For __cpuidex()
+
+Leaf CpuId(uint32_t leaf_id) {
+  Leaf leaf;
+  int data[4];
+  __cpuid(data, leaf_id);
+  leaf.eax = data[0];
+  leaf.ebx = data[1];
+  leaf.ecx = data[2];
+  leaf.edx = data[3];
+  return leaf;
+}
+
+uint32_t GetXCR0Eax(void) { return _xgetbv(0); }
+
+#else
+#error "Unsupported compiler, x86 cpuid requires either GCC, Clang or MSVC."
+#endif
+
 static const Leaf kEmptyLeaf;
 
 static Leaf SafeCpuId(uint32_t max_cpuid_leaf, uint32_t leaf_id) {
