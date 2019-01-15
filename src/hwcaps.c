@@ -31,22 +31,18 @@
   } while (0)
 #endif
 
-#if defined(CPU_FEATURES_ARCH_MIPS) || defined(CPU_FEATURES_ARCH_ANY_ARM)
-#define HWCAPS_ANDROID_MIPS_OR_ARM
-#endif
-
-#if defined(CPU_FEATURES_OS_LINUX_OR_ANDROID) && \
-    !defined(HWCAPS_ANDROID_MIPS_OR_ARM)
-#define HWCAPS_REGULAR_LINUX
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////
 // Implementation of GetElfHwcapFromGetauxval
 ////////////////////////////////////////////////////////////////////////////////
 
 #if defined(CPU_FEATURES_MOCK_GET_ELF_HWCAP_FROM_GETAUXVAL)
 // Implementation will be provided by test/hwcaps_for_testing.cc.
-#elif defined(HWCAPS_ANDROID_MIPS_OR_ARM)
+#elif defined(HAVE_STRONG_GETAUXVAL)
+#include <sys/auxv.h>
+static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
+  return getauxval(hwcap_type);
+}
+#elif defined(HAVE_DLFCN_H)
 // On Android we probe the system's C library for a 'getauxval' function and
 // call it if it exits, or return 0 for failure. This function is available
 // since API level 20.
@@ -90,13 +86,6 @@ static uint32_t GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
   }
   dlclose(libc_handle);
   return ret;
-}
-#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
-// On Regular Linux we simply use getauxval.
-#include <dlfcn.h>
-#include <sys/auxv.h>
-static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
-  return getauxval(hwcap_type);
 }
 #else
 #error "This platform does not provide hardware capabilities."

@@ -58,7 +58,7 @@ add_test(NAME linux_features_aggregator_test COMMAND linux_features_aggregator_t
 ## cpuinfo_x86_test
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
 add_executable(cpuinfo_x86_test cpuinfo_x86_test.cc ../src/cpuinfo_x86.c)
-target_compile_definitions(stack_line_reader PUBLIC CPU_FEATURES_MOCK_CPUID_X86)
+target_compile_definitions(cpuinfo_x86_test PUBLIC CPU_FEATURES_MOCK_CPUID_X86)
 target_link_libraries(cpuinfo_x86_test all_libraries)
 add_test(NAME cpuinfo_x86_test COMMAND cpuinfo_x86_test)
 endif()

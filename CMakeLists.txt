@@ -20,6 +20,12 @@ option(BUILD_SHARED_LIBS "Build library as shared." OFF)
 # library : cpu_features
 #
 
+include (CheckIncludeFile)
+include (CheckSymbolExists)
+
+check_symbol_exists(getauxval sys/auxv.h HAVE_STRONG_GETAUXVAL)
+check_include_file(dlfcn.h HAVE_DLFCN_H)
+
 set(_HDRS
   include/cpu_features_macros.h
 )
@@ -55,7 +61,7 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
     list(APPEND _HDRS include/cpuinfo_ppc.h)
     list(APPEND _SRCS src/cpuinfo_ppc.c)
 else()
-  message(SEND_ERROR "Unsupported architectures ${CMAKE_SYSTEM_PROCESSOR}")
+  message(FATAL_ERROR "Unsupported architectures ${CMAKE_SYSTEM_PROCESSOR}")
 endif()
 
 add_library(cpu_features
@@ -71,8 +77,11 @@ target_include_directories(cpu_features
   include/internal
 )
 set_target_properties(cpu_features PROPERTIES PUBLIC_HEADER "${_HDRS}")
-target_compile_definitions(cpu_features
-  PUBLIC STACK_LINE_READER_BUFFER_SIZE=1024)
+target_compile_definitions(cpu_features PUBLIC
+  STACK_LINE_READER_BUFFER_SIZE=1024
+  HAVE_STRONG_GETAUXVAL=${HAVE_STRONG_GETAUXVAL}
+  HAVE_DLFCN_H=${HAVE_DLFCN_H}
+)
 target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
 
 # The use of shared libraries is discouraged.
