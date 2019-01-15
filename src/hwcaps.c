@@ -40,23 +40,13 @@
 #define HWCAPS_REGULAR_LINUX
 #endif
 
-#if defined(HWCAPS_ANDROID_MIPS_OR_ARM) || defined(HWCAPS_REGULAR_LINUX)
-#define HWCAPS_SUPPORTED
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////
 // Implementation of GetElfHwcapFromGetauxval
 ////////////////////////////////////////////////////////////////////////////////
 
-// On Linux we simply use getauxval.
-#if defined(HWCAPS_REGULAR_LINUX)
-#include <dlfcn.h>
-#include <sys/auxv.h>
-static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
-  return getauxval(hwcap_type);
-}
-#endif  // defined(HWCAPS_REGULAR_LINUX)
-
+#if defined(CPU_FEATURES_MOCK_GET_ELF_HWCAP_FROM_GETAUXVAL)
+// Implementation will be provided by test/hwcaps_for_testing.cc.
+#elif defined(HWCAPS_ANDROID_MIPS_OR_ARM)
 // On Android we probe the system's C library for a 'getauxval' function and
 // call it if it exits, or return 0 for failure. This function is available
 // since API level 20.
@@ -71,7 +61,7 @@ static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
 // implementation does not parse /proc/self/auxv. Instead it depends on values
 // that are passed by the kernel at process-init time to the C runtime
 // initialization layer.
-#if defined(HWCAPS_ANDROID_MIPS_OR_ARM)
+
 #include <dlfcn.h>
 #define AT_HWCAP 16
 #define AT_HWCAP2 26
@@ -101,12 +91,19 @@ static uint32_t GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
   dlclose(libc_handle);
   return ret;
 }
-#endif  // defined(HWCAPS_ANDROID_MIPS_OR_ARM)
+#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
+// On Regular Linux we simply use getauxval.
+#include <dlfcn.h>
+#include <sys/auxv.h>
+static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
+  return getauxval(hwcap_type);
+}
+#else
+#error "This platform does not provide hardware capabilities."
+#endif
 
-#if defined(HWCAPS_SUPPORTED)
-////////////////////////////////////////////////////////////////////////////////
-// Implementation of GetHardwareCapabilities for Android and Linux
-////////////////////////////////////////////////////////////////////////////////
+// Implementation of GetHardwareCapabilities for OS that provide
+// GetElfHwcapFromGetauxval().
 
 // Fallback when getauxval is not available, retrieves hwcaps from
 // "/proc/self/auxv".
@@ -174,14 +171,3 @@ PlatformType CpuFeatures_GetPlatformType(void) {
                                       sizeof(type.base_platform));
   return type;
 }
-#else  // (defined(HWCAPS_SUPPORTED)
-
-////////////////////////////////////////////////////////////////////////////////
-// Implementation of GetHardwareCapabilities for unsupported platforms.
-////////////////////////////////////////////////////////////////////////////////
-
-const HardwareCapabilities kEmptyHardwareCapabilities;
-HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void) {
-  return kEmptyHardwareCapabilities;
-}
-#endif

@@ -21,36 +21,46 @@ option(BUILD_SHARED_LIBS "Build library as shared." OFF)
 #
 
 set(_HDRS
-  include/cpuinfo_aarch64.h
-  include/cpuinfo_arm.h
-  include/cpuinfo_mips.h
-  include/cpuinfo_ppc.h
-  include/cpuinfo_x86.h
   include/cpu_features_macros.h
 )
 
-add_library(cpu_features
-  ${_HDRS}
+set(_SRCS
   include/internal/bit_utils.h
   include/internal/linux_features_aggregator.h
-  include/internal/cpuid_x86.h
   include/internal/filesystem.h
   include/internal/hwcaps.h
   include/internal/stack_line_reader.h
   include/internal/string_view.h
-  include/cpu_features_macros.h
   src/linux_features_aggregator.c
-  src/cpuid_x86_clang_gcc.c
-  src/cpuid_x86_msvc.c
-  src/cpuinfo_aarch64.c
-  src/cpuinfo_arm.c
-  src/cpuinfo_mips.c
-  src/cpuinfo_ppc.c
-  src/cpuinfo_x86.c
   src/filesystem.c
   src/hwcaps.c
   src/stack_line_reader.c
   src/string_view.c
+)
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^mips")
+    list(APPEND _HDRS include/cpuinfo_mips.h)
+    list(APPEND _SRCS src/cpuinfo_mips.c)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+    list(APPEND _HDRS include/cpuinfo_arm.h)
+    list(APPEND _SRCS src/cpuinfo_arm.c)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64")
+    list(APPEND _HDRS include/cpuinfo_aarch64.h)
+    list(APPEND _SRCS src/cpuinfo_aarch64.c)
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    list(APPEND _HDRS include/cpuinfo_x86.h)
+    list(APPEND _HDRS include/internal/cpuid_x86.h)
+    list(APPEND _SRCS src/cpuinfo_x86.c)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
+    list(APPEND _HDRS include/cpuinfo_ppc.h)
+    list(APPEND _SRCS src/cpuinfo_ppc.c)
+else()
+  message(SEND_ERROR "Unsupported architectures ${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
+add_library(cpu_features
+  ${_HDRS}
+  ${_SRCS}
 )
 
 target_include_directories(cpu_features
