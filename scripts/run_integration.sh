@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 readonly SCRIPT_FOLDER=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 readonly PROJECT_FOLDER="${SCRIPT_FOLDER}/.."
