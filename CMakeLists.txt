@@ -23,8 +23,8 @@ option(BUILD_SHARED_LIBS "Build library as shared." OFF)
 include (CheckIncludeFile)
 include (CheckSymbolExists)
 
-check_symbol_exists(getauxval sys/auxv.h HAVE_STRONG_GETAUXVAL)
 check_include_file(dlfcn.h HAVE_DLFCN_H)
+check_symbol_exists(getauxval "sys/auxv.h" HAVE_STRONG_GETAUXVAL)
 
 set(_HDRS
   include/cpu_features_macros.h
@@ -32,44 +32,55 @@ set(_HDRS
 
 set(_SRCS
   include/internal/bit_utils.h
-  include/internal/linux_features_aggregator.h
-  include/internal/filesystem.h
-  include/internal/hwcaps.h
-  include/internal/stack_line_reader.h
-  include/internal/string_view.h
-  src/linux_features_aggregator.c
-  src/filesystem.c
-  src/hwcaps.c
-  src/stack_line_reader.c
-  src/string_view.c
 )
+
+macro(add_linux_detection)
+  if(NOT (APPLE OR UNIX))
+    message(FATAL_ERROR "Use of add_linux_detection() on non Linux-like OS")
+  endif()
+  list(APPEND _SRCS
+    include/internal/linux_features_aggregator.h
+    src/linux_features_aggregator.c
+    include/internal/hwcaps.h
+    src/hwcaps.c
+    include/internal/filesystem.h
+    src/filesystem.c
+    include/internal/stack_line_reader.h
+    src/stack_line_reader.c
+    include/internal/string_view.h
+    src/string_view.c
+  )
+endmacro()
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "^mips")
     list(APPEND _HDRS include/cpuinfo_mips.h)
     list(APPEND _SRCS src/cpuinfo_mips.c)
+    add_linux_detection()
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
     list(APPEND _HDRS include/cpuinfo_arm.h)
     list(APPEND _SRCS src/cpuinfo_arm.c)
+    add_linux_detection()
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64")
     list(APPEND _HDRS include/cpuinfo_aarch64.h)
     list(APPEND _SRCS src/cpuinfo_aarch64.c)
+    add_linux_detection()
 elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR
        CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64" OR
        CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$")
     list(APPEND _HDRS include/cpuinfo_x86.h)
     list(APPEND _HDRS include/internal/cpuid_x86.h)
     list(APPEND _SRCS src/cpuinfo_x86.c)
+    # add_linux_detection() is not needed on x86, we fetch the features directly
+    # from the CPU.
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
     list(APPEND _HDRS include/cpuinfo_ppc.h)
     list(APPEND _SRCS src/cpuinfo_ppc.c)
+    add_linux_detection()
 else()
   message(FATAL_ERROR "Unsupported architectures ${CMAKE_SYSTEM_PROCESSOR}")
 endif()
 
-add_library(cpu_features
-  ${_HDRS}
-  ${_SRCS}
-)
+add_library(cpu_features ${_HDRS} ${_SRCS})
 
 target_include_directories(cpu_features
   PUBLIC
@@ -79,11 +90,13 @@ target_include_directories(cpu_features
   include/internal
 )
 set_target_properties(cpu_features PROPERTIES PUBLIC_HEADER "${_HDRS}")
-target_compile_definitions(cpu_features PUBLIC
-  STACK_LINE_READER_BUFFER_SIZE=1024
-  HAVE_STRONG_GETAUXVAL=${HAVE_STRONG_GETAUXVAL}
-  HAVE_DLFCN_H=${HAVE_DLFCN_H}
-)
+target_compile_definitions(cpu_features PUBLIC STACK_LINE_READER_BUFFER_SIZE=1024)
+if(HAVE_DLFCN_H)
+  target_compile_definitions(cpu_features PRIVATE HAVE_DLFCN_H)
+endif()
+if(HAVE_STRONG_GETAUXVAL)
+  target_compile_definitions(cpu_features PRIVATE HAVE_STRONG_GETAUXVAL)
+endif()
 target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
 
 # The use of shared libraries is discouraged.
