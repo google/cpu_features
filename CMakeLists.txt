@@ -35,7 +35,7 @@ set(_SRCS
 )
 
 macro(add_linux_detection)
-  if(NOT (APPLE OR UNIX))
+  if(NOT UNIX)
     message(FATAL_ERROR "Use of add_linux_detection() on non Linux-like OS")
   endif()
   list(APPEND _SRCS
