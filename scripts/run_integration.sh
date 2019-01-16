@@ -75,24 +75,39 @@ function assert_defined(){
 }
 
 function integrate() {
-  cd "${PROJECT_FOLDER}" || exit
-  cmake -H. -B"${BUILD_DIR}" ${DEFAULT_CMAKE_ARGS} ${CMAKE_ADDITIONAL_ARGS}
-  cmake --build "${BUILD_DIR}" --target all
+  cd "${PROJECT_FOLDER}"
+  case "${OS}" in
+   "Windows_NT") CMAKE_BUILD_ARGS="--config Debug --target ALL_BUILD"
+                 CMAKE_TEST_ARGS="--config Debug --target RUN_TESTS"
+                 DEMO=${BUILD_DIR}/Debug/list_cpu_features.exe
+                 ;;
+   *)            CMAKE_BUILD_ARGS="--target all"
+                 CMAKE_TEST_ARGS="--target test"
+                 DEMO=${BUILD_DIR}/list_cpu_features
+                 ;;
+  esac
 
-  if [[ -n "${QEMU_ARCH}" ]]; then
-    if [[ "${QEMU_ARCH}" == "DISABLED" ]]; then
-      QEMU="true || "
-    else
-      installqemuifneeded
-      QEMU="${QEMU_INSTALL}/bin/qemu-${QEMU_ARCH} ${QEMU_ARGS}"
-    fi
-  else
-    QEMU=""
+  # Generating CMake configuration
+  cmake -H. -B"${BUILD_DIR}" ${DEFAULT_CMAKE_ARGS} ${CMAKE_ADDITIONAL_ARGS}
+
+  # Building
+  cmake --build "${BUILD_DIR}" ${CMAKE_BUILD_ARGS}
+
+  # Running tests if needed
+  if [[ "${QEMU_ARCH}" == "DISABLED" ]]; then
+    return
   fi
-  # Run tests
-  for test_binary in ${BUILD_DIR}/test/*_test; do ${QEMU} ${test_binary}; done
-  # Run demo program
-  ${QEMU} "${BUILD_DIR}/list_cpu_features"
+  if [[ -n "${QEMU_ARCH}" ]]; then
+    installqemuifneeded
+    QEMU="${QEMU_INSTALL}/bin/qemu-${QEMU_ARCH} ${QEMU_ARGS}"
+    for test_binary in ${BUILD_DIR}/test/*_test; do
+      ${QEMU} ${test_binary}
+    done
+    ${QEMU} ${DEMO}
+  else
+    cmake --build "${BUILD_DIR}" ${CMAKE_TEST_ARGS}
+    ${DEMO}
+  fi
 }
 
 function expand_linaro_config() {

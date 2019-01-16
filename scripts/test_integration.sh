@@ -76,6 +76,9 @@ ENVIRONMENTS="
   set_mips
 "
 
+set -v
+set -e
+
 for SET_ENVIRONMENT in ${ENVIRONMENTS}; do
   ${SET_ENVIRONMENT}
   expand_environment_and_integrate
