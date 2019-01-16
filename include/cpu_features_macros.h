@@ -19,9 +19,19 @@
 // Architectures
 ////////////////////////////////////////////////////////////////////////////////
 
-#if ((defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || \
-      defined(__x86_64__)) &&                                     \
-     !defined(__pnacl__) && !defined(__CLR_VER))
+#if defined(__pnacl__) || defined(__CLR_VER)
+#define CPU_FEATURES_ARCH_VM
+#endif
+
+#if (defined(_M_IX86) || defined(__i386__)) && !defined(CPU_FEATURES_ARCH_VM)
+#define CPU_FEATURES_ARCH_X86_32
+#endif
+
+#if (defined(_M_X64) || defined(__x86_64__)) && !defined(CPU_FEATURES_ARCH_VM)
+#define CPU_FEATURES_ARCH_X86_64
+#endif
+
+#if defined(CPU_FEATURES_ARCH_X86_32) || defined(CPU_FEATURES_ARCH_X86_64)
 #define CPU_FEATURES_ARCH_X86
 #endif
 
@@ -37,7 +47,15 @@
 #define CPU_FEATURES_ARCH_ANY_ARM
 #endif
 
-#if defined(__mips__)
+#if defined(__mips64)
+#define CPU_FEATURES_ARCH_MIPS64
+#endif
+
+#if defined(__mips__) && !defined(__mips64)  // mips64 also declares __mips__
+#define CPU_FEATURES_ARCH_MIPS32
+#endif
+
+#if defined(CPU_FEATURES_ARCH_MIPS32) || defined(CPU_FEATURES_ARCH_MIPS64)
 #define CPU_FEATURES_ARCH_MIPS
 #endif
 
@@ -83,10 +101,10 @@
 
 #if defined(__cplusplus)
 #define CPU_FEATURES_START_CPP_NAMESPACE \
-  namespace cpu_features {  \
+  namespace cpu_features {               \
   extern "C" {
 #define CPU_FEATURES_END_CPP_NAMESPACE \
-  }                       \
+  }                                    \
   }
 #else
 #define CPU_FEATURES_START_CPP_NAMESPACE
@@ -97,8 +115,8 @@
 // Compiler flags
 ////////////////////////////////////////////////////////////////////////////////
 
-// Use the following to check if a feature is known to be available at compile
-// time. See README.md for an example.
+// Use the following to check if a feature is known to be available at
+// compile time. See README.md for an example.
 #if defined(CPU_FEATURES_ARCH_X86)
 #define CPU_FEATURES_COMPILED_X86_AES defined(__AES__)
 #define CPU_FEATURES_COMPILED_X86_F16C defined(__F16C__)
