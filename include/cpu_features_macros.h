@@ -52,6 +52,10 @@
 #endif
 
 #if defined(__mips__) && !defined(__mips64)  // mips64 also declares __mips__
+#define CPU_FEATURES_ARCH_MIPS32
+#endif
+
+#if defined(CPU_FEATURES_ARCH_MIPS32) || defined(CPU_FEATURES_ARCH_MIPS64)
 #define CPU_FEATURES_ARCH_MIPS
 #endif
 
