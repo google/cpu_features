@@ -29,12 +29,6 @@ matrix:
       TOOLCHAIN=NATIVE
       TARGET=x86_64-osx
   - os: windows
-    compiler: gcc
-    env:
-      TOOLCHAIN=NATIVE
-      TARGET=x86_64-windows
-  - os: windows
-    compiler: clang
     env:
       TOOLCHAIN=NATIVE
       TARGET=x86_64-windows
