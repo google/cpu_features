@@ -43,8 +43,11 @@ static void parse_cpu_mask(const StringView text, uint32_t* cpu_mask) {
         CpuFeatures_StringView_PopFront(text, separator_index + 1));
     int i;
     if (cpu_index_a < 0 || cpu_index_b < 0) return;
-    for (int i = cpu_index_a; i <= cpu_index_b; ++i)
-      set_cpu_mask_bit(i, cpu_mask);
+    for (i = cpu_index_a; i <= cpu_index_b; ++i) {
+      if (i < 32) {
+        set_cpu_mask_bit(i, cpu_mask);
+      }
+    }
   }
 }
 
