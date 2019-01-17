@@ -136,23 +136,27 @@ add_executable(CpuFeature::list_cpu_features ALIAS list_cpu_features)
 #
 # library : NDK compat
 #
-find_package(Threads)
-set (NDK_COMPAT_HDRS ndk_compat/cpu-features.h)
-set (NDK_COMPAT_SRCS
-  ndk_compat/cpu-features.c
-  $<TARGET_OBJECTS:utils>
-  $<TARGET_OBJECTS:linux_based_hardware_detection>
-)
-add_arch_sources(NDK_COMPAT_HDRS NDK_COMPAT_SRCS)
-add_library(ndk_compat ${NDK_COMPAT_HDRS} ${NDK_COMPAT_SRCS})
-setup_include_and_definitions(ndk_compat)
-target_link_libraries(ndk_compat PUBLIC ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+if(UNIX)
+  find_package(Threads)
+  set (NDK_COMPAT_HDRS ndk_compat/cpu-features.h)
+  set (NDK_COMPAT_SRCS
+    ndk_compat/cpu-features.c
+    $<TARGET_OBJECTS:utils>
+    $<TARGET_OBJECTS:linux_based_hardware_detection>
+  )
+  add_arch_sources(NDK_COMPAT_HDRS NDK_COMPAT_SRCS)
+  add_library(ndk_compat ${NDK_COMPAT_HDRS} ${NDK_COMPAT_SRCS})
+  setup_include_and_definitions(ndk_compat)
+  target_link_libraries(ndk_compat PUBLIC ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+endif()
 
 #
 # program : NDK compat test program
 #
-add_executable(ndk-compat-test ndk_compat/ndk-compat-test.c)
-target_link_libraries(ndk-compat-test PUBLIC ndk_compat)
+if(UNIX)
+  add_executable(ndk-compat-test ndk_compat/ndk-compat-test.c)
+  target_link_libraries(ndk-compat-test PUBLIC ndk_compat)
+endif()
 
 #
 # tests
