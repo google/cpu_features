@@ -105,7 +105,7 @@ function integrate() {
   for test_binary in ${BUILD_DIR}/test/*_test; do
     ${RUN_CMD} ${test_binary} &
   done
-  ${RUN} ${DEMO}
+  ${RUN_CMD} ${DEMO}
 }
 
 function expand_linaro_config() {
