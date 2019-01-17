@@ -16,96 +16,112 @@ option(BUILD_TESTING "Enable test (depends on googletest)." OFF)
 # it prominent in the GUI.
 option(BUILD_SHARED_LIBS "Build library as shared." OFF)
 
-#
-# library : cpu_features
-#
-
 include (CheckIncludeFile)
 include (CheckSymbolExists)
 
-check_include_file(dlfcn.h HAVE_DLFCN_H)
-check_symbol_exists(getauxval "sys/auxv.h" HAVE_STRONG_GETAUXVAL)
-
-set(_HDRS
-  include/cpu_features_macros.h
-)
-
-set(_SRCS
-  include/internal/bit_utils.h
-)
-
-macro(add_linux_detection)
-  if(NOT UNIX)
-    message(FATAL_ERROR "Use of add_linux_detection() on non Linux-like OS")
-  endif()
-  list(APPEND _SRCS
-    include/internal/linux_features_aggregator.h
-    src/linux_features_aggregator.c
-    include/internal/hwcaps.h
-    src/hwcaps.c
-    include/internal/filesystem.h
-    src/filesystem.c
-    include/internal/stack_line_reader.h
-    src/stack_line_reader.c
-    include/internal/string_view.h
-    src/string_view.c
+macro(setup_include_and_definitions TARGET_NAME)
+  target_include_directories(${TARGET_NAME}
+    PUBLIC  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/internal>
+  )
+  target_compile_definitions(${TARGET_NAME}
+    PUBLIC STACK_LINE_READER_BUFFER_SIZE=1024
   )
 endmacro()
 
+set(PROCESSOR_IS_MIPS FALSE)
+set(PROCESSOR_IS_ARM FALSE)
+set(PROCESSOR_IS_AARCH64 FALSE)
+set(PROCESSOR_IS_X86 FALSE)
+set(PROCESSOR_IS_POWER FALSE)
+
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "^mips")
-    list(APPEND _HDRS include/cpuinfo_mips.h)
-    list(APPEND _SRCS src/cpuinfo_mips.c)
-    add_linux_detection()
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
-    list(APPEND _HDRS include/cpuinfo_arm.h)
-    list(APPEND _SRCS src/cpuinfo_arm.c)
-    add_linux_detection()
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64")
-    list(APPEND _HDRS include/cpuinfo_aarch64.h)
-    list(APPEND _SRCS src/cpuinfo_aarch64.c)
-    add_linux_detection()
-elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR
-       CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64" OR
-       CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$")
-    list(APPEND _HDRS include/cpuinfo_x86.h)
-    list(APPEND _HDRS include/internal/cpuid_x86.h)
-    list(APPEND _SRCS src/cpuinfo_x86.c)
-    # add_linux_detection() is not needed on x86, we fetch the features directly
-    # from the CPU.
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
-    list(APPEND _HDRS include/cpuinfo_ppc.h)
-    list(APPEND _SRCS src/cpuinfo_ppc.c)
-    add_linux_detection()
-else()
-  message(FATAL_ERROR "Unsupported architectures ${CMAKE_SYSTEM_PROCESSOR}")
+  set(PROCESSOR_IS_MIPS TRUE)
+endif()
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+  set(PROCESSOR_IS_ARM TRUE)
+endif()
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64")
+  set(PROCESSOR_IS_AARCH64 TRUE)
+endif()
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64)|(^i.86$)")
+  set(PROCESSOR_IS_X86 TRUE)
+endif()
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
+  set(PROCESSOR_IS_POWER TRUE)
 endif()
 
-add_library(cpu_features ${_HDRS} ${_SRCS})
+macro(add_arch_sources HDRS_LIST_NAME SRCS_LIST_NAME)
+  list(APPEND ${HDRS_LIST_NAME} include/cpu_features_macros.h)
+  if(PROCESSOR_IS_MIPS)
+      list(APPEND ${HDRS_LIST_NAME} include/cpuinfo_mips.h)
+      list(APPEND ${SRCS_LIST_NAME} src/cpuinfo_mips.c)
+  elseif(PROCESSOR_IS_ARM)
+      list(APPEND ${HDRS_LIST_NAME} include/cpuinfo_arm.h)
+      list(APPEND ${SRCS_LIST_NAME} src/cpuinfo_arm.c)
+  elseif(PROCESSOR_IS_AARCH64)
+      list(APPEND ${HDRS_LIST_NAME} include/cpuinfo_aarch64.h)
+      list(APPEND ${SRCS_LIST_NAME} src/cpuinfo_aarch64.c)
+  elseif(PROCESSOR_IS_X86)
+      list(APPEND ${HDRS_LIST_NAME} include/cpuinfo_x86.h)
+      list(APPEND ${HDRS_LIST_NAME} include/internal/cpuid_x86.h)
+      list(APPEND ${SRCS_LIST_NAME} src/cpuinfo_x86.c)
+  elseif(PROCESSOR_IS_POWER)
+      list(APPEND ${HDRS_LIST_NAME} include/cpuinfo_ppc.h)
+      list(APPEND ${SRCS_LIST_NAME} src/cpuinfo_ppc.c)
+  else()
+    message(FATAL_ERROR "Unsupported architectures ${CMAKE_SYSTEM_PROCESSOR}")
+  endif()
+endmacro()
 
-target_include_directories(cpu_features
-  PUBLIC
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/cpu_features>
-  PRIVATE
-  include/internal
+#
+# library : utils
+#
+
+add_library(utils OBJECT
+  include/internal/bit_utils.h
+  include/internal/filesystem.h
+  include/internal/stack_line_reader.h
+  include/internal/string_view.h
+  src/filesystem.c
+  src/stack_line_reader.c
+  src/string_view.c
 )
-set_target_properties(cpu_features PROPERTIES PUBLIC_HEADER "${_HDRS}")
-target_compile_definitions(cpu_features PUBLIC STACK_LINE_READER_BUFFER_SIZE=1024)
-if(HAVE_DLFCN_H)
-  target_compile_definitions(cpu_features PRIVATE HAVE_DLFCN_H)
-endif()
-if(HAVE_STRONG_GETAUXVAL)
-  target_compile_definitions(cpu_features PRIVATE HAVE_STRONG_GETAUXVAL)
-endif()
-target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
+setup_include_and_definitions(utils)
 
-# The use of shared libraries is discouraged.
-# For API / ABI compatibility reasons, it is recommended to build and use
-# cpu_features in a subdirectory of your project or as an embedded dependency.
-if(BUILD_SHARED_LIBS)
-  set_property(TARGET cpu_features PROPERTY POSITION_INDEPENDENT_CODE ON)
+#
+# library : linux_based_hardware_detection
+#
+
+add_library(linux_based_hardware_detection OBJECT
+  include/internal/hwcaps.h
+  include/internal/linux_features_aggregator.h
+  src/hwcaps.c
+  src/linux_features_aggregator.c
+)
+setup_include_and_definitions(linux_based_hardware_detection)
+check_include_file(dlfcn.h HAVE_DLFCN_H)
+if(HAVE_DLFCN_H)
+  target_compile_definitions(linux_based_hardware_detection PRIVATE HAVE_DLFCN_H)
 endif()
-add_library(CpuFeature::cpu_features ALIAS cpu_features)
+check_symbol_exists(getauxval "sys/auxv.h" HAVE_STRONG_GETAUXVAL)
+if(HAVE_STRONG_GETAUXVAL)
+  target_compile_definitions(linux_based_hardware_detection PRIVATE HAVE_STRONG_GETAUXVAL)
+endif()
+
+#
+# library : cpu_features
+#
+set (CPU_FEATURES_HDRS)
+set (CPU_FEATURES_SRCS)
+add_arch_sources(CPU_FEATURES_HDRS CPU_FEATURES_SRCS)
+list(APPEND CPU_FEATURES_SRCS $<TARGET_OBJECTS:utils>)
+if(NOT PROCESSOR_IS_X86 AND UNIX)
+  list(APPEND CPU_FEATURES_SRCS $<TARGET_OBJECTS:linux_based_hardware_detection>)
+endif()
+add_library(cpu_features ${CPU_FEATURES_HDRS} ${CPU_FEATURES_SRCS})
+setup_include_and_definitions(cpu_features)
+target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
 
 #
 # program : list_cpu_features
@@ -114,6 +130,27 @@ add_library(CpuFeature::cpu_features ALIAS cpu_features)
 add_executable(list_cpu_features src/utils/list_cpu_features.c)
 target_link_libraries(list_cpu_features PRIVATE cpu_features)
 add_executable(CpuFeature::list_cpu_features ALIAS list_cpu_features)
+
+#
+# library : NDK compat
+#
+find_package(Threads)
+set (NDK_COMPAT_HDRS ndk_compat/cpu-features.h)
+set (NDK_COMPAT_SRCS
+  ndk_compat/cpu-features.c
+  $<TARGET_OBJECTS:utils>
+  $<TARGET_OBJECTS:linux_based_hardware_detection>
+)
+add_arch_sources(NDK_COMPAT_HDRS NDK_COMPAT_SRCS)
+add_library(ndk_compat ${NDK_COMPAT_HDRS} ${NDK_COMPAT_SRCS})
+setup_include_and_definitions(ndk_compat)
+target_link_libraries(ndk_compat PUBLIC ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+
+#
+# program : NDK compat test program
+#
+add_executable(ndk-compat-test ndk_compat/ndk-compat-test.c)
+target_link_libraries(ndk-compat-test PUBLIC ndk_compat)
 
 #
 # tests
