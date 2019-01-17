@@ -79,6 +79,8 @@ ENVIRONMENTS="
 set -v
 set -e
 
+CMAKE_GENERATOR="Ninja"
+
 for SET_ENVIRONMENT in ${ENVIRONMENTS}; do
   ${SET_ENVIRONMENT}
   expand_environment_and_integrate
