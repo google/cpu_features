@@ -11,10 +11,9 @@ addons:
     packages:
     - ninja-build
 
-env:
-  CMAKE_GENERATOR=Ninja
-
 matrix:
+  env:
+    CMAKE_GENERATOR=Ninja
   include:
   - os: linux
     compiler: gcc
