@@ -101,7 +101,7 @@ static bool HandleArmLine(const LineResult result, ArmInfo* const info,
   return !result.eof;
 }
 
-static uint32_t GetCpuId(const ArmInfo* const info) {
+uint32_t GetArmCpuId(const ArmInfo* const info) {
   return (ExtractBitRange(info->implementer, 7, 0) << 24) |
          (ExtractBitRange(info->variant, 3, 0) << 20) |
          (ExtractBitRange(info->part, 11, 0) << 4) |
@@ -118,7 +118,7 @@ static void FixErrors(ArmInfo* const info,
 
   // Handle kernel configuration bugs that prevent the correct reporting of CPU
   // features.
-  switch (GetCpuId(info)) {
+  switch (GetArmCpuId(info)) {
     case 0x4100C080:
       // Special case: The emulator-specific Android 4.2 kernel fails to report
       // support for the 32-bit ARM IDIV instruction. Technically, this is a
