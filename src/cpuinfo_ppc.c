@@ -18,9 +18,9 @@
 #include "cpuinfo_ppc.h"
 #include "internal/bit_utils.h"
 #include "internal/filesystem.h"
-#include "internal/linux_features_aggregator.h"
 #include "internal/stack_line_reader.h"
 #include "internal/string_view.h"
+#include "internal/unix_features_aggregator.h"
 
 DECLARE_SETTER(PPCFeatures, ppc32)
 DECLARE_SETTER(PPCFeatures, ppc64)
