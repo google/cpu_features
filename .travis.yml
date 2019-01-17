@@ -32,6 +32,12 @@ matrix:
     env:
       TOOLCHAIN=NATIVE
       TARGET=x86_64-windows
+      CMAKE_GENERATOR="Visual Studio 14 2015 Win64"
+  - os: windows
+    env:
+      TOOLCHAIN=NATIVE
+      TARGET=x86_64-windows
+      CMAKE_GENERATOR="Visual Studio 15 2017 Win64"
   - os: linux-ppc64le
     compiler: gcc
     env:

@@ -88,7 +88,7 @@ function integrate() {
   esac
 
   # Generating CMake configuration
-  cmake -H. -B"${BUILD_DIR}" ${DEFAULT_CMAKE_ARGS} ${CMAKE_ADDITIONAL_ARGS}
+  cmake -H. -B"${BUILD_DIR}" ${DEFAULT_CMAKE_ARGS} ${CMAKE_ADDITIONAL_ARGS} -G"${CMAKE_GENERATOR:-Unix Makefiles}"
 
   # Building
   cmake --build "${BUILD_DIR}" ${CMAKE_BUILD_ARGS}
