@@ -105,7 +105,8 @@ function integrate() {
     done
     ${QEMU} ${DEMO}
   else
-    CTEST_OUTPUT_ON_FAILURE=1 cmake --build "${BUILD_DIR}" ${CMAKE_TEST_ARGS}
+    export CTEST_OUTPUT_ON_FAILURE=1
+    cmake --build "${BUILD_DIR}" ${CMAKE_TEST_ARGS}
     ${DEMO}
   fi
 }
