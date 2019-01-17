@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "internal/linux_features_aggregator.h"
+#include "internal/unix_features_aggregator.h"
 #include "internal/string_view.h"
 
 void CpuFeatures_SetFromFlags(const size_t configs_size,

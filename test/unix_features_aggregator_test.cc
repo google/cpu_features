@@ -14,7 +14,7 @@
 
 #include <array>
 
-#include "internal/linux_features_aggregator.h"
+#include "internal/unix_features_aggregator.h"
 
 #include "gtest/gtest.h"
 

@@ -16,8 +16,9 @@ option(BUILD_TESTING "Enable test (depends on googletest)." OFF)
 # it prominent in the GUI.
 option(BUILD_SHARED_LIBS "Build library as shared." OFF)
 
-include (CheckIncludeFile)
-include (CheckSymbolExists)
+include(CheckIncludeFile)
+include(CheckSymbolExists)
+include(GNUInstallDirs)
 
 macro(setup_include_and_definitions TARGET_NAME)
   target_include_directories(${TARGET_NAME}
@@ -37,17 +38,13 @@ set(PROCESSOR_IS_POWER FALSE)
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "^mips")
   set(PROCESSOR_IS_MIPS TRUE)
-endif()
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
   set(PROCESSOR_IS_ARM TRUE)
-endif()
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64")
   set(PROCESSOR_IS_AARCH64 TRUE)
-endif()
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64)|(^i.86$)")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64)|(^i.86$)")
   set(PROCESSOR_IS_X86 TRUE)
-endif()
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
   set(PROCESSOR_IS_POWER TRUE)
 endif()
 
@@ -90,24 +87,24 @@ add_library(utils OBJECT
 setup_include_and_definitions(utils)
 
 #
-# library : linux_based_hardware_detection
+# library : unix_based_hardware_detection
 #
 
 if(UNIX)
-  add_library(linux_based_hardware_detection OBJECT
+  add_library(unix_based_hardware_detection OBJECT
     include/internal/hwcaps.h
-    include/internal/linux_features_aggregator.h
+    include/internal/unix_features_aggregator.h
     src/hwcaps.c
-    src/linux_features_aggregator.c
+    src/unix_features_aggregator.c
   )
-  setup_include_and_definitions(linux_based_hardware_detection)
+  setup_include_and_definitions(unix_based_hardware_detection)
   check_include_file(dlfcn.h HAVE_DLFCN_H)
   if(HAVE_DLFCN_H)
-    target_compile_definitions(linux_based_hardware_detection PRIVATE HAVE_DLFCN_H)
+    target_compile_definitions(unix_based_hardware_detection PRIVATE HAVE_DLFCN_H)
   endif()
   check_symbol_exists(getauxval "sys/auxv.h" HAVE_STRONG_GETAUXVAL)
   if(HAVE_STRONG_GETAUXVAL)
-    target_compile_definitions(linux_based_hardware_detection PRIVATE HAVE_STRONG_GETAUXVAL)
+    target_compile_definitions(unix_based_hardware_detection PRIVATE HAVE_STRONG_GETAUXVAL)
   endif()
 endif()
 
@@ -119,12 +116,14 @@ set (CPU_FEATURES_SRCS)
 add_arch_sources(CPU_FEATURES_HDRS CPU_FEATURES_SRCS)
 list(APPEND CPU_FEATURES_SRCS $<TARGET_OBJECTS:utils>)
 if(NOT PROCESSOR_IS_X86 AND UNIX)
-  list(APPEND CPU_FEATURES_SRCS $<TARGET_OBJECTS:linux_based_hardware_detection>)
+  list(APPEND CPU_FEATURES_SRCS $<TARGET_OBJECTS:unix_based_hardware_detection>)
 endif()
 add_library(cpu_features ${CPU_FEATURES_HDRS} ${CPU_FEATURES_SRCS})
 setup_include_and_definitions(cpu_features)
 target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
-
+target_include_directories(cpu_features
+  PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cpu_features>
+)
 #
 # program : list_cpu_features
 #
@@ -136,13 +135,13 @@ add_executable(CpuFeature::list_cpu_features ALIAS list_cpu_features)
 #
 # library : NDK compat
 #
-if(UNIX)
+if(ANDROID)
   find_package(Threads)
   set (NDK_COMPAT_HDRS ndk_compat/cpu-features.h)
   set (NDK_COMPAT_SRCS
     ndk_compat/cpu-features.c
     $<TARGET_OBJECTS:utils>
-    $<TARGET_OBJECTS:linux_based_hardware_detection>
+    $<TARGET_OBJECTS:unix_based_hardware_detection>
   )
   add_arch_sources(NDK_COMPAT_HDRS NDK_COMPAT_SRCS)
   add_library(ndk_compat ${NDK_COMPAT_HDRS} ${NDK_COMPAT_SRCS})
@@ -153,9 +152,9 @@ endif()
 #
 # program : NDK compat test program
 #
-if(UNIX)
+if(ANDROID AND ENABLE_TESTING)
   add_executable(ndk-compat-test ndk_compat/ndk-compat-test.c)
-  target_link_libraries(ndk-compat-test PUBLIC ndk_compat)
+  target_link_libraries(ndk-compat-test PRIVATE ndk_compat)
 endif()
 
 #

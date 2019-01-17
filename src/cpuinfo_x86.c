@@ -197,7 +197,7 @@ X86Info GetX86Info(void) {
   return info;
 }
 
-#define CPUID(FAMILY, MODEL) ((((FAMILY) & 0xFF) << 8) | ((MODEL) & 0xFF))
+#define CPUID(FAMILY, MODEL) ((((FAMILY)&0xFF) << 8) | ((MODEL)&0xFF))
 
 X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
   if (memcmp(info->vendor, "GenuineIntel", sizeof(info->vendor)) == 0) {

@@ -16,9 +16,9 @@
 
 #include "internal/filesystem.h"
 #include "internal/hwcaps.h"
-#include "internal/linux_features_aggregator.h"
 #include "internal/stack_line_reader.h"
 #include "internal/string_view.h"
+#include "internal/unix_features_aggregator.h"
 
 #include <ctype.h>
 

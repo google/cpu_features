@@ -27,7 +27,7 @@ add_library(stack_line_reader_for_test ../src/stack_line_reader.c)
 target_compile_definitions(stack_line_reader_for_test PUBLIC STACK_LINE_READER_BUFFER_SIZE=16)
 target_link_libraries(stack_line_reader_for_test string_view filesystem_for_testing)
 ##------------------------------------------------------------------------------
-add_library(all_libraries ../src/stack_line_reader.c ../src/linux_features_aggregator.c)
+add_library(all_libraries ../src/stack_line_reader.c ../src/unix_features_aggregator.c)
 target_link_libraries(all_libraries hwcaps_for_testing stack_line_reader string_view)
 
 #
@@ -50,10 +50,10 @@ add_executable(stack_line_reader_test stack_line_reader_test.cc)
 target_link_libraries(stack_line_reader_test stack_line_reader_for_test)
 add_test(NAME stack_line_reader_test COMMAND stack_line_reader_test)
 ##------------------------------------------------------------------------------
-## linux_features_aggregator_test
-add_executable(linux_features_aggregator_test linux_features_aggregator_test.cc)
-target_link_libraries(linux_features_aggregator_test all_libraries)
-add_test(NAME linux_features_aggregator_test COMMAND linux_features_aggregator_test)
+## unix_features_aggregator_test
+add_executable(unix_features_aggregator_test unix_features_aggregator_test.cc)
+target_link_libraries(unix_features_aggregator_test all_libraries)
+add_test(NAME unix_features_aggregator_test COMMAND unix_features_aggregator_test)
 ##------------------------------------------------------------------------------
 ## cpuinfo_x86_test
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
