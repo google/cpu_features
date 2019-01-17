@@ -11,6 +11,9 @@ addons:
     packages:
     - ninja-build
 
+env:
+  CMAKE_GENERATOR=Ninja
+
 matrix:
   include:
   - os: linux
@@ -18,7 +21,6 @@ matrix:
     env:
       TOOLCHAIN=NATIVE
       TARGET=x86_64-linux-gnu
-      CMAKE_GENERATOR=Ninja
   - os: linux
     compiler: clang
     env:
