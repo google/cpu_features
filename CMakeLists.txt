@@ -93,20 +93,22 @@ setup_include_and_definitions(utils)
 # library : linux_based_hardware_detection
 #
 
-add_library(linux_based_hardware_detection OBJECT
-  include/internal/hwcaps.h
-  include/internal/linux_features_aggregator.h
-  src/hwcaps.c
-  src/linux_features_aggregator.c
-)
-setup_include_and_definitions(linux_based_hardware_detection)
-check_include_file(dlfcn.h HAVE_DLFCN_H)
-if(HAVE_DLFCN_H)
-  target_compile_definitions(linux_based_hardware_detection PRIVATE HAVE_DLFCN_H)
-endif()
-check_symbol_exists(getauxval "sys/auxv.h" HAVE_STRONG_GETAUXVAL)
-if(HAVE_STRONG_GETAUXVAL)
-  target_compile_definitions(linux_based_hardware_detection PRIVATE HAVE_STRONG_GETAUXVAL)
+if(UNIX)
+  add_library(linux_based_hardware_detection OBJECT
+    include/internal/hwcaps.h
+    include/internal/linux_features_aggregator.h
+    src/hwcaps.c
+    src/linux_features_aggregator.c
+  )
+  setup_include_and_definitions(linux_based_hardware_detection)
+  check_include_file(dlfcn.h HAVE_DLFCN_H)
+  if(HAVE_DLFCN_H)
+    target_compile_definitions(linux_based_hardware_detection PRIVATE HAVE_DLFCN_H)
+  endif()
+  check_symbol_exists(getauxval "sys/auxv.h" HAVE_STRONG_GETAUXVAL)
+  if(HAVE_STRONG_GETAUXVAL)
+    target_compile_definitions(linux_based_hardware_detection PRIVATE HAVE_STRONG_GETAUXVAL)
+  endif()
 endif()
 
 #
