@@ -6,6 +6,11 @@ cache:
   directories:
     - $HOME/cpu_features_archives
 
+addons:
+  apt:
+    packages:
+    - ninja-build
+
 matrix:
   include:
   - os: linux
