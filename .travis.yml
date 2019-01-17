@@ -13,6 +13,7 @@ matrix:
     env:
       TOOLCHAIN=NATIVE
       TARGET=x86_64-linux-gnu
+      CMAKE_GENERATOR=Ninja
   - os: linux
     compiler: clang
     env:
@@ -28,11 +29,6 @@ matrix:
     env:
       TOOLCHAIN=NATIVE
       TARGET=x86_64-osx
-  - os: windows
-    env:
-      TOOLCHAIN=NATIVE
-      TARGET=x86_64-windows
-      CMAKE_GENERATOR="Visual Studio 14 2015 Win64"
   - os: windows
     env:
       TOOLCHAIN=NATIVE
