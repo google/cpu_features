@@ -105,7 +105,6 @@ function integrate() {
   for test_binary in ${BUILD_DIR}/test/*_test; do
     ${RUN_CMD} ${test_binary} &
   done
-  wait -n
   ${RUN} ${DEMO}
 }
 
