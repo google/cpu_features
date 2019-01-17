@@ -3,6 +3,7 @@ language: c
 sudo: false
 
 cache:
+  timeout: 1000
   directories:
     - $HOME/cpu_features_archives
 
