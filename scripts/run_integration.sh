@@ -88,7 +88,7 @@ function integrate() {
   esac
 
   # Generating CMake configuration
-  cmake -H. -B"${BUILD_DIR}" ${DEFAULT_CMAKE_ARGS} ${CMAKE_ADDITIONAL_ARGS}
+  cmake -H. -B"${BUILD_DIR}" ${DEFAULT_CMAKE_ARGS} ${CMAKE_ADDITIONAL_ARGS} -G"${CMAKE_GENERATOR:-Unix Makefiles}"
 
   # Building
   cmake --build "${BUILD_DIR}" ${CMAKE_BUILD_ARGS}
@@ -97,17 +97,15 @@ function integrate() {
   if [[ "${QEMU_ARCH}" == "DISABLED" ]]; then
     return
   fi
+  RUN_CMD=""
   if [[ -n "${QEMU_ARCH}" ]]; then
     installqemuifneeded
-    QEMU="${QEMU_INSTALL}/bin/qemu-${QEMU_ARCH} ${QEMU_ARGS}"
-    for test_binary in ${BUILD_DIR}/test/*_test; do
-      ${QEMU} ${test_binary}
-    done
-    ${QEMU} ${DEMO}
-  else
-    cmake --build "${BUILD_DIR}" ${CMAKE_TEST_ARGS}
-    ${DEMO}
+    RUN_CMD="${QEMU_INSTALL}/bin/qemu-${QEMU_ARCH} ${QEMU_ARGS}"
   fi
+  for test_binary in ${BUILD_DIR}/test/*_test; do
+    ${RUN_CMD} ${test_binary} &
+  done
+  ${RUN_CMD} ${DEMO}
 }
 
 function expand_linaro_config() {
