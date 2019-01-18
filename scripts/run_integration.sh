@@ -27,6 +27,7 @@ function unpackifnotexists() {
     local ARCHIVE_NAME=$(echo ${URL} | sed 's/.*\///')
     test -f "${ARCHIVE_NAME}" || wget -q "${URL}"
     extract "${ARCHIVE_NAME}"
+    rm -f "${ARCHIVE_NAME}"
   fi
 }
 
