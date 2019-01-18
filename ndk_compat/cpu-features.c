@@ -135,7 +135,7 @@ static void android_cpuInit(void) {
     // if (info.features.) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_SHA_NI;
 #elif defined(CPU_FEATURES_ARCH_MIPS)
   MipsInfo info = GetMipsInfo();
-  // if (info.features.) g_cpuFeatures |= ANDROID_CPU_MIPS_FEATURE_R6;
+  if (info.features.r6) g_cpuFeatures |= ANDROID_CPU_MIPS_FEATURE_R6;
   if (info.features.msa) g_cpuFeatures |= ANDROID_CPU_MIPS_FEATURE_MSA;
 #elif defined(CPU_FEATURES_ARCH_AARCH64)
   Aarch64Info info = GetAarch64Info();
