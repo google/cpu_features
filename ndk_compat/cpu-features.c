@@ -100,7 +100,10 @@ static void android_cpuInit(void) {
   ArmInfo info = GetArmInfo();
   if (info.architecture == 7) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_ARMv7;
   if (info.features.vfpv3) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFPv3;
-  if (info.features.neon) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_NEON;
+  if (info.features.neon) {
+    g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_NEON;
+    g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFP_D32;
+  }
   if (info.features.vfpv3d16) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFP_FP16;
   if (info.features.idiva) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_IDIV_ARM;
   if (info.features.idivt) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_IDIV_THUMB2;
@@ -110,11 +113,13 @@ static void android_cpuInit(void) {
   if (info.features.sha1) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_SHA1;
   if (info.features.sha2) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_SHA2;
   if (info.features.crc32) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_CRC32;
-  // if (info.features.) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_LDREX_STREX;
-  // if (info.features.) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFPv2;
-  // if (info.features.) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFP_D32;
-  // if (info.features.) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFP_FMA;
-  // if (info.features.) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_NEON_FMA;
+  if (info.architecture >= 6)
+    g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_LDREX_STREX;
+  if (info.features.vfpv) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFPv2;
+  if (info.features.vfpv4) {
+    g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFP_FMA;
+    g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_NEON_FMA;
+  }
   g_cpuIdArm = GetArmCpuId(&info);
 #elif defined(CPU_FEATURES_ARCH_X86)
   X86Info info = GetX86Info();
