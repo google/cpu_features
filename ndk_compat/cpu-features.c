@@ -128,11 +128,11 @@ static void android_cpuInit(void) {
   if (info.features.sse4_2) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_SSE4_2;
   if (info.features.avx) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_AVX;
   if (info.features.avx2) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_AVX2;
-    // if (info.features.) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_MOVBE;
-    // if (info.features.) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_AES_NI;
-    // if (info.features.) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_RDRAND;
-    // if (info.features.) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_POPCNT;
-    // if (info.features.) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_SHA_NI;
+  if (info.features.movbe) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_MOVBE;
+  if (info.features.aes) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_AES_NI;
+  if (info.features.rdrnd) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_RDRAND;
+  if (info.features.popcnt) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_POPCNT;
+  if (info.features.sha) g_cpuFeatures |= ANDROID_CPU_X86_FEATURE_SHA_NI;
 #elif defined(CPU_FEATURES_ARCH_MIPS)
   MipsInfo info = GetMipsInfo();
   if (info.features.r6) g_cpuFeatures |= ANDROID_CPU_MIPS_FEATURE_R6;

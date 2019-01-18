@@ -55,6 +55,10 @@ typedef struct {
   int smx : 1;
   int sgx : 1;
   int cx16 : 1;  // aka. CMPXCHG16B
+  int sha : 1;
+  int popcnt : 1;
+  int movbe : 1;
+  int rdrnd : 1;
 
   // Make sure to update X86FeaturesEnum below if you add a field here.
 } X86Features;
@@ -140,6 +144,10 @@ typedef enum {
   X86_SMX,
   X86_SGX,
   X86_CX16,
+  X86_SHA,
+  X86_POPCNT,
+  X86_MOVBE,
+  X86_RDRND,
   X86_LAST_,
 } X86FeaturesEnum;
 

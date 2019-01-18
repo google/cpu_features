@@ -90,6 +90,10 @@ TEST(CpuidX86Test, SandyBridge) {
   EXPECT_TRUE(features.sse4_1);
   EXPECT_TRUE(features.sse4_2);
   EXPECT_TRUE(features.avx);
+  EXPECT_FALSE(features.sha);
+  EXPECT_TRUE(features.popcnt);
+  EXPECT_FALSE(features.movbe);
+  EXPECT_FALSE(features.rdrnd);
 }
 
 TEST(CpuidX86Test, SandyBridgeTestOsSupport) {

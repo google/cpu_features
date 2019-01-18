@@ -145,12 +145,16 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
 
   features->smx = IsBitSet(leaf_1.ecx, 6);
   features->cx16 = IsBitSet(leaf_1.ecx, 13);
+  features->movbe = IsBitSet(leaf_1.ecx, 22);
+  features->popcnt = IsBitSet(leaf_1.ecx, 23);
+  features->rdrnd = IsBitSet(leaf_1.ecx, 30);
   features->aes = IsBitSet(leaf_1.ecx, 25);
   features->f16c = IsBitSet(leaf_1.ecx, 29);
   features->sgx = IsBitSet(leaf_7.ebx, 2);
   features->bmi1 = IsBitSet(leaf_7.ebx, 3);
   features->bmi2 = IsBitSet(leaf_7.ebx, 8);
   features->erms = IsBitSet(leaf_7.ebx, 9);
+  features->sha = IsBitSet(leaf_7.ebx, 29);
   features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
 
   if (have_sse_os_support) {
@@ -370,6 +374,14 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->sgx;
     case X86_CX16:
       return features->cx16;
+    case X86_SHA:
+      return features->sha;
+    case X86_POPCNT:
+      return features->popcnt;
+    case X86_MOVBE:
+      return features->movbe;
+    case X86_RDRND:
+      return features->rdrnd;
     case X86_LAST_:
       break;
   }
@@ -438,6 +450,14 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "sgx";
     case X86_CX16:
       return "cx16";
+    case X86_SHA:
+      return "sha";
+    case X86_POPCNT:
+      return "popcnt";
+    case X86_MOVBE:
+      return "movbe";
+    case X86_RDRND:
+      return "rdrnd";
     case X86_LAST_:
       break;
   }
