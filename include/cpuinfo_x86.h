@@ -151,4 +151,8 @@ const char* GetX86MicroarchitectureName(X86Microarchitecture);
 
 CPU_FEATURES_END_CPP_NAMESPACE
 
+#if !defined(CPU_FEATURES_ARCH_X86)
+#error "Including cpuinfo_x86.h from a non-x86 target."
+#endif
+
 #endif  // CPU_FEATURES_INCLUDE_CPUINFO_X86_H_
