@@ -140,16 +140,11 @@ function expand_linaro_config() {
 
 function expand_codescape_config() {
   assert_defined TARGET
-  local FLAVOUR=${QEMU_ARCH}-r2-hard
   local DATE=2017.10-08
   local CODESCAPE_URL=https://codescape.mips.com/components/toolchain/${DATE}/Codescape.GNU.Tools.Package.${DATE}.for.MIPS.MTI.Linux.CentOS-5.x86_64.tar.gz
   local GCC_URL=${CODESCAPE_URL}
   local GCC_RELATIVE_FOLDER=${TARGET}/${DATE}
   unpackifnotexists "${GCC_URL}" "${GCC_RELATIVE_FOLDER}"
-
-  local SYSROOT_URL=${CODESCAPE_URL}
-  local SYSROOT_FOLDER=${ARCHIVE_FOLDER}/${GCC_RELATIVE_FOLDER}/sysroot/${FLAVOUR}
-  unpackifnotexists "${SYSROOT_URL}" "${SYSROOT_RELATIVE_FOLDER}"
 
   CMAKE_ADDITIONAL_ARGS+=" -DENABLE_MSA=1"
   CMAKE_ADDITIONAL_ARGS+=" -DMIPS_CPU=p5600"
@@ -157,6 +152,8 @@ function expand_codescape_config() {
   CMAKE_ADDITIONAL_ARGS+=" -DCROSS=${TARGET}-"
   CMAKE_ADDITIONAL_ARGS+=" -DCMAKE_FIND_ROOT_PATH=${ARCHIVE_FOLDER}/${GCC_RELATIVE_FOLDER}"
 
+  local FLAVOUR=${QEMU_ARCH}-r2-hard
+  local SYSROOT_FOLDER=${ARCHIVE_FOLDER}/${GCC_RELATIVE_FOLDER}/sysroot/${FLAVOUR}
   QEMU_ARGS+=" -L ${SYSROOT_FOLDER}"
   QEMU_ARGS+=" -E LD_LIBRARY_PATH=/lib"
   QEMU_ARGS+=" -cpu P5600"

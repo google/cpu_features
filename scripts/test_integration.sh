@@ -34,28 +34,27 @@ function set_arm-linux-gnueabi() {
 function set_aarch64_be-linux-gnu() {
   TOOLCHAIN=LINARO
   TARGET=aarch64_be-linux-gnu
-  QEMU_ARCH="DISABLED"
+  QEMU_ARCH=DISABLED
 }
 
 # Toolchains for big-endian, hard-float, 32-bit ARMv7 (and earlier) for GNU/Linux systems
 function set_armeb-linux-gnueabihf() {
   TOOLCHAIN=LINARO
   TARGET=armeb-linux-gnueabihf
-  QEMU_ARCH="DISABLED"
+  QEMU_ARCH=DISABLED
 }
 
 # Toolchains for big-endian, soft-float, 32-bit ARMv7 (and earlier) for GNU/Linux systems
 function set_armeb-linux-gnueabi() {
   TOOLCHAIN=LINARO
   TARGET=armeb-linux-gnueabi
-  QEMU_ARCH="DISABLED"
+  QEMU_ARCH=DISABLED
 }
-
 
 function set_mips() {
   TOOLCHAIN=CODESCAPE
   TARGET=mips-mti-linux-gnu
-  QEMU_ARCH="DISABLED"
+  QEMU_ARCH=DISABLED
 }
 
 function set_native() {
@@ -76,7 +75,7 @@ ENVIRONMENTS="
   set_mips
 "
 
-set -v
+set -x
 set -e
 
 CMAKE_GENERATOR="Ninja"
