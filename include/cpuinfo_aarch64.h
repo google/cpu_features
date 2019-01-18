@@ -62,7 +62,7 @@ const char* GetAarch64FeaturesEnumName(Aarch64FeaturesEnum);
 
 CPU_FEATURES_END_CPP_NAMESPACE
 
-#if !defined(CPU_FEATURES_TEST) && !defined(CPU_FEATURES_ARCH_AARCH64)
+#if !defined(CPU_FEATURES_ARCH_AARCH64)
 #error "Including cpuinfo_aarch64.h from a non-aarch64 architecture."
 #endif
 

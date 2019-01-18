@@ -81,7 +81,7 @@ const char* GetArmFeaturesEnumName(ArmFeaturesEnum);
 
 CPU_FEATURES_END_CPP_NAMESPACE
 
-#if !defined(CPU_FEATURES_TEST) && !defined(CPU_FEATURES_ARCH_ARM)
+#if !defined(CPU_FEATURES_ARCH_ARM)
 #error "Including cpuinfo_arm.h from a non-arm architecture."
 #endif
 
