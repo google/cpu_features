@@ -139,7 +139,7 @@ const char* GetPPCFeaturesEnumName(PPCFeaturesEnum);
 CPU_FEATURES_END_CPP_NAMESPACE
 
 #if !defined(CPU_FEATURES_TEST) && !defined(CPU_FEATURES_ARCH_PPC)
-#error "Including cpuinfo_ppc.h from a non ppc architecture."
+#error "Including cpuinfo_ppc.h from a non-ppc architecture."
 #endif
 
 #endif  // CPU_FEATURES_INCLUDE_CPUINFO_PPC_H_

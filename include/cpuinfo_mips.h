@@ -51,7 +51,7 @@ const char* GetMipsFeaturesEnumName(MipsFeaturesEnum);
 CPU_FEATURES_END_CPP_NAMESPACE
 
 #if !defined(CPU_FEATURES_TEST) && !defined(CPU_FEATURES_ARCH_MIPS)
-#error "Including cpuinfo_mips.h from a non mips architecture."
+#error "Including cpuinfo_mips.h from a non-mips architecture."
 #endif
 
 #endif  // CPU_FEATURES_INCLUDE_CPUINFO_MIPS_H_
