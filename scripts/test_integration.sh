@@ -51,10 +51,28 @@ function set_armeb-linux-gnueabi() {
   QEMU_ARCH=DISABLED
 }
 
-function set_mips() {
+function set_mips32() {
   TOOLCHAIN=CODESCAPE
-  TARGET=mips-mti-linux-gnu
-  QEMU_ARCH=DISABLED
+  TARGET=mips32
+  QEMU_ARCH=mips
+}
+
+function set_mips32el() {
+  TOOLCHAIN=CODESCAPE
+  TARGET=mips32el
+  QEMU_ARCH=mipsel
+}
+
+function set_mips64() {
+  TOOLCHAIN=CODESCAPE
+  TARGET=mips64
+  QEMU_ARCH=mips64
+}
+
+function set_mips64el() {
+  TOOLCHAIN=CODESCAPE
+  TARGET=mips64el
+  QEMU_ARCH=mips64el
 }
 
 function set_native() {
@@ -71,8 +89,11 @@ ENVIRONMENTS="
   set_aarch64_be-linux-gnu
   set_armeb-linux-gnueabihf
   set_armeb-linux-gnueabi
+  set_mips32
+  set_mips32el
+  set_mips64
+  set_mips64el
   set_native
-  set_mips
 "
 
 set -e
