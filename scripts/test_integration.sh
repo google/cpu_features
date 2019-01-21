@@ -75,7 +75,6 @@ ENVIRONMENTS="
   set_mips
 "
 
-set -x
 set -e
 
 CMAKE_GENERATOR="Ninja"
