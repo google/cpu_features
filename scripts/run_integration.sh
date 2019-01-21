@@ -79,11 +79,11 @@ function integrate() {
   cd "${PROJECT_FOLDER}"
   case "${OS}" in
    "Windows_NT") CMAKE_BUILD_ARGS="--config Debug --target ALL_BUILD"
-                 CMAKE_TEST_ARGS="--config Debug --target RUN_TESTS"
+                 CMAKE_TEST_FILES="${BUILD_DIR}/test/Debug/*_test.exe"
                  DEMO=${BUILD_DIR}/Debug/list_cpu_features.exe
                  ;;
    *)            CMAKE_BUILD_ARGS="--target all"
-                 CMAKE_TEST_ARGS="--target test"
+                 CMAKE_TEST_FILES="${BUILD_DIR}/test/*_test"
                  DEMO=${BUILD_DIR}/list_cpu_features
                  ;;
   esac
@@ -103,7 +103,7 @@ function integrate() {
     installqemuifneeded
     RUN_CMD="${QEMU_INSTALL}/bin/qemu-${QEMU_ARCH} ${QEMU_ARGS[@]}"
   fi
-  for test_binary in ${BUILD_DIR}/test/*_test; do
+  for test_binary in ${CMAKE_TEST_FILES}; do
     ${RUN_CMD} ${test_binary}
   done
   ${RUN_CMD} ${DEMO}
