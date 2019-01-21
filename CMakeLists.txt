@@ -120,7 +120,7 @@ if(NOT PROCESSOR_IS_X86 AND UNIX)
 endif()
 add_library(cpu_features ${CPU_FEATURES_HDRS} ${CPU_FEATURES_SRCS})
 setup_include_and_definitions(cpu_features)
-# target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
+target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
 target_include_directories(cpu_features
   PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cpu_features>
 )
@@ -192,7 +192,7 @@ if(BUILD_TESTING)
 
     # Prevent overriding the parent project's compiler/linker settings on
     # Windows.
-    # set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
     # Add googletest directly to our build. This defines the gtest and
     # gtest_main targets.
