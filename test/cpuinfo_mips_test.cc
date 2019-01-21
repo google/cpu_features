@@ -26,14 +26,6 @@ namespace {
 
 void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
 
-TEST(CpuinfoMipsTest, FromHardwareCapBoth) {
-  SetHardwareCapabilities(MIPS_HWCAP_EVA | MIPS_HWCAP_MSA, 0);
-  GetEmptyFilesystem();  // disabling /proc/cpuinfo
-  const auto info = GetMipsInfo();
-  EXPECT_TRUE(info.features.msa);
-  EXPECT_TRUE(info.features.eva);
-}
-
 TEST(CpuinfoMipsTest, FromHardwareCapOnlyOne) {
   SetHardwareCapabilities(MIPS_HWCAP_MSA, 0);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo

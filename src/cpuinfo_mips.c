@@ -24,7 +24,7 @@ DECLARE_SETTER(MipsFeatures, eva)
 
 static const CapabilityConfig kConfigs[] = {
     {{MIPS_HWCAP_MSA, 0}, "msa", &set_msa},  //
-    {{MIPS_HWCAP_EVA, 0}, "eva", &set_eva},  //
+    {{0, 0}, "eva", &set_eva},               //
 };
 static const size_t kConfigsSize = sizeof(kConfigs) / sizeof(CapabilityConfig);
 
