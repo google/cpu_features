@@ -94,8 +94,23 @@ matrix:
   - os: linux
     env:
       TOOLCHAIN=CODESCAPE
-      TARGET=mips-mti-linux-gnu
-      QEMU_ARCH=DISABLED
+      TARGET=mips32
+      QEMU_ARCH=mips
+  - os: linux
+    env:
+      TOOLCHAIN=CODESCAPE
+      TARGET=mips32el
+      QEMU_ARCH=mipsel
+  - os: linux
+    env:
+      TOOLCHAIN=CODESCAPE
+      TARGET=mips64
+      QEMU_ARCH=mips64
+  - os: linux
+    env:
+      TOOLCHAIN=CODESCAPE
+      TARGET=mips64el
+      QEMU_ARCH=mips64el
 
 script:
   - cmake --version
