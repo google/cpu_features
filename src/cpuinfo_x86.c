@@ -147,9 +147,9 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   features->cx16 = IsBitSet(leaf_1.ecx, 13);
   features->movbe = IsBitSet(leaf_1.ecx, 22);
   features->popcnt = IsBitSet(leaf_1.ecx, 23);
-  features->rdrnd = IsBitSet(leaf_1.ecx, 30);
   features->aes = IsBitSet(leaf_1.ecx, 25);
   features->f16c = IsBitSet(leaf_1.ecx, 29);
+  features->rdrnd = IsBitSet(leaf_1.ecx, 30);
   features->sgx = IsBitSet(leaf_7.ebx, 2);
   features->bmi1 = IsBitSet(leaf_7.ebx, 3);
   features->bmi2 = IsBitSet(leaf_7.ebx, 8);
