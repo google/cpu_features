@@ -185,6 +185,7 @@ function expand_environment_and_integrate() {
 
   declare -a CONFIG_NAMES=()
   declare -a QEMU_ARGS=()
+  declare -a CMAKE_ADDITIONAL_ARGS=()
 
   case ${TOOLCHAIN} in
     LINARO)    expand_linaro_config     ;;
