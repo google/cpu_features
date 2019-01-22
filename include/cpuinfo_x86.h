@@ -20,6 +20,7 @@
 CPU_FEATURES_START_CPP_NAMESPACE
 
 // See https://en.wikipedia.org/wiki/CPUID for a list of x86 cpu features.
+// The field names are based on the short name provided in the wikipedia tables.
 typedef struct {
   int aes : 1;
   int erms : 1;
