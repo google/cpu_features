@@ -24,6 +24,7 @@ typedef struct {
                 // https://www.mips.com/products/architectures/ase/simd/
   int eva : 1;  // Enhanced Virtual Addressing
                 // https://www.mips.com/products/architectures/mips64/
+  int r6 : 1;   // True if is release 6 of the processor.
 
   // Make sure to update MipsFeaturesEnum below if you add a field here.
 } MipsFeatures;
@@ -40,6 +41,7 @@ MipsInfo GetMipsInfo(void);
 typedef enum {
   MIPS_MSA,
   MIPS_EVA,
+  MIPS_R6,
   MIPS_LAST_,
 } MipsFeaturesEnum;
 

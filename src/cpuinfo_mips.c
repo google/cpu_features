@@ -21,10 +21,12 @@
 
 DECLARE_SETTER(MipsFeatures, msa)
 DECLARE_SETTER(MipsFeatures, eva)
+DECLARE_SETTER(MipsFeatures, r6)
 
 static const CapabilityConfig kConfigs[] = {
     {{MIPS_HWCAP_MSA, 0}, "msa", &set_msa},  //
     {{0, 0}, "eva", &set_eva},               //
+    {{MIPS_HWCAP_R6, 0}, "r6", &set_r6},     //
 };
 static const size_t kConfigsSize = sizeof(kConfigs) / sizeof(CapabilityConfig);
 
@@ -79,6 +81,8 @@ int GetMipsFeaturesEnumValue(const MipsFeatures* features,
       return features->msa;
     case MIPS_EVA:
       return features->eva;
+    case MIPS_R6:
+      return features->r6;
     case MIPS_LAST_:
       break;
   }
@@ -91,6 +95,8 @@ const char* GetMipsFeaturesEnumName(MipsFeaturesEnum value) {
       return "msa";
     case MIPS_EVA:
       return "eva";
+    case MIPS_R6:
+      return "r6";
     case MIPS_LAST_:
       break;
   }
