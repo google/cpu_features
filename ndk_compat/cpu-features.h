@@ -283,7 +283,9 @@ enum {
   ANDROID_CPU_MIPS_FEATURE_MSA = (1 << 1),
 };
 
-/* Return the number of CPU cores detected on this device. */
+/* Return the number of CPU cores detected on this device.
+ * Please note the current implementation supports up to 32 cpus.
+ */
 extern int android_getCpuCount(void);
 
 /* The following is used to force the CPU count and features

@@ -48,24 +48,24 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
   set(PROCESSOR_IS_POWER TRUE)
 endif()
 
-macro(add_arch_sources HDRS_LIST_NAME SRCS_LIST_NAME)
-  list(APPEND ${HDRS_LIST_NAME} include/cpu_features_macros.h)
+macro(add_cpu_features_headers_and_sources HDRS_LIST_NAME SRCS_LIST_NAME)
+  list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpu_features_macros.h)
   if(PROCESSOR_IS_MIPS)
-      list(APPEND ${HDRS_LIST_NAME} include/cpuinfo_mips.h)
-      list(APPEND ${SRCS_LIST_NAME} src/cpuinfo_mips.c)
+      list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpuinfo_mips.h)
+      list(APPEND ${SRCS_LIST_NAME} ${PROJECT_SOURCE_DIR}/src/cpuinfo_mips.c)
   elseif(PROCESSOR_IS_ARM)
-      list(APPEND ${HDRS_LIST_NAME} include/cpuinfo_arm.h)
-      list(APPEND ${SRCS_LIST_NAME} src/cpuinfo_arm.c)
+      list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpuinfo_arm.h)
+      list(APPEND ${SRCS_LIST_NAME} ${PROJECT_SOURCE_DIR}/src/cpuinfo_arm.c)
   elseif(PROCESSOR_IS_AARCH64)
-      list(APPEND ${HDRS_LIST_NAME} include/cpuinfo_aarch64.h)
-      list(APPEND ${SRCS_LIST_NAME} src/cpuinfo_aarch64.c)
+      list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpuinfo_aarch64.h)
+      list(APPEND ${SRCS_LIST_NAME} ${PROJECT_SOURCE_DIR}/src/cpuinfo_aarch64.c)
   elseif(PROCESSOR_IS_X86)
-      list(APPEND ${HDRS_LIST_NAME} include/cpuinfo_x86.h)
-      list(APPEND ${HDRS_LIST_NAME} include/internal/cpuid_x86.h)
-      list(APPEND ${SRCS_LIST_NAME} src/cpuinfo_x86.c)
+      list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpuinfo_x86.h)
+      list(APPEND ${SRCS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/internal/cpuid_x86.h)
+      list(APPEND ${SRCS_LIST_NAME} ${PROJECT_SOURCE_DIR}/src/cpuinfo_x86.c)
   elseif(PROCESSOR_IS_POWER)
-      list(APPEND ${HDRS_LIST_NAME} include/cpuinfo_ppc.h)
-      list(APPEND ${SRCS_LIST_NAME} src/cpuinfo_ppc.c)
+      list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpuinfo_ppc.h)
+      list(APPEND ${SRCS_LIST_NAME} ${PROJECT_SOURCE_DIR}/src/cpuinfo_ppc.c)
   else()
     message(FATAL_ERROR "Unsupported architectures ${CMAKE_SYSTEM_PROCESSOR}")
   endif()
@@ -76,13 +76,13 @@ endmacro()
 #
 
 add_library(utils OBJECT
-  include/internal/bit_utils.h
-  include/internal/filesystem.h
-  include/internal/stack_line_reader.h
-  include/internal/string_view.h
-  src/filesystem.c
-  src/stack_line_reader.c
-  src/string_view.c
+  ${PROJECT_SOURCE_DIR}/include/internal/bit_utils.h
+  ${PROJECT_SOURCE_DIR}/include/internal/filesystem.h
+  ${PROJECT_SOURCE_DIR}/include/internal/stack_line_reader.h
+  ${PROJECT_SOURCE_DIR}/include/internal/string_view.h
+  ${PROJECT_SOURCE_DIR}/src/filesystem.c
+  ${PROJECT_SOURCE_DIR}/src/stack_line_reader.c
+  ${PROJECT_SOURCE_DIR}/src/string_view.c
 )
 setup_include_and_definitions(utils)
 
@@ -92,10 +92,10 @@ setup_include_and_definitions(utils)
 
 if(UNIX)
   add_library(unix_based_hardware_detection OBJECT
-    include/internal/hwcaps.h
-    include/internal/unix_features_aggregator.h
-    src/hwcaps.c
-    src/unix_features_aggregator.c
+    ${PROJECT_SOURCE_DIR}/include/internal/hwcaps.h
+    ${PROJECT_SOURCE_DIR}/include/internal/unix_features_aggregator.h
+    ${PROJECT_SOURCE_DIR}/src/hwcaps.c
+    ${PROJECT_SOURCE_DIR}/src/unix_features_aggregator.c
   )
   setup_include_and_definitions(unix_based_hardware_detection)
   check_include_file(dlfcn.h HAVE_DLFCN_H)
@@ -113,48 +113,33 @@ endif()
 #
 set (CPU_FEATURES_HDRS)
 set (CPU_FEATURES_SRCS)
-add_arch_sources(CPU_FEATURES_HDRS CPU_FEATURES_SRCS)
+add_cpu_features_headers_and_sources(CPU_FEATURES_HDRS CPU_FEATURES_SRCS)
 list(APPEND CPU_FEATURES_SRCS $<TARGET_OBJECTS:utils>)
 if(NOT PROCESSOR_IS_X86 AND UNIX)
   list(APPEND CPU_FEATURES_SRCS $<TARGET_OBJECTS:unix_based_hardware_detection>)
 endif()
 add_library(cpu_features ${CPU_FEATURES_HDRS} ${CPU_FEATURES_SRCS})
+set_target_properties(cpu_features PROPERTIES PUBLIC_HEADER "${CPU_FEATURES_HDRS}")
 setup_include_and_definitions(cpu_features)
 target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
 target_include_directories(cpu_features
   PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cpu_features>
 )
+
 #
 # program : list_cpu_features
 #
 
-add_executable(list_cpu_features src/utils/list_cpu_features.c)
+add_executable(list_cpu_features ${PROJECT_SOURCE_DIR}/src/utils/list_cpu_features.c)
 target_link_libraries(list_cpu_features PRIVATE cpu_features)
 add_executable(CpuFeature::list_cpu_features ALIAS list_cpu_features)
 
 #
-# library : NDK compat
+# ndk_compat
 #
-if(ANDROID)
-  find_package(Threads)
-  set (NDK_COMPAT_HDRS ndk_compat/cpu-features.h)
-  set (NDK_COMPAT_SRCS
-    ndk_compat/cpu-features.c
-    $<TARGET_OBJECTS:utils>
-    $<TARGET_OBJECTS:unix_based_hardware_detection>
-  )
-  add_arch_sources(NDK_COMPAT_HDRS NDK_COMPAT_SRCS)
-  add_library(ndk_compat ${NDK_COMPAT_HDRS} ${NDK_COMPAT_SRCS})
-  setup_include_and_definitions(ndk_compat)
-  target_link_libraries(ndk_compat PUBLIC ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT})
-endif()
 
-#
-# program : NDK compat test program
-#
-if(ANDROID AND ENABLE_TESTING)
-  add_executable(ndk-compat-test ndk_compat/ndk-compat-test.c)
-  target_link_libraries(ndk-compat-test PRIVATE ndk_compat)
+if(ANDROID)
+add_subdirectory(ndk_compat)
 endif()
 
 #
@@ -205,7 +190,7 @@ if(BUILD_TESTING)
 endif()
 
 #
-# Install
+# Install cpu_features and list_cpu_features
 #
 
 include(GNUInstallDirs)
@@ -234,8 +219,8 @@ write_basic_package_version_file(
 )
 install(
   FILES
-  "${PROJECT_BINARY_DIR}/CpuFeaturesConfig.cmake"
-  "${PROJECT_BINARY_DIR}/CpuFeaturesConfigVersion.cmake"
+    "${PROJECT_BINARY_DIR}/CpuFeaturesConfig.cmake"
+    "${PROJECT_BINARY_DIR}/CpuFeaturesConfigVersion.cmake"
   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/CpuFeatures"
   COMPONENT Devel
 )
