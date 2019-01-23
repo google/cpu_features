@@ -152,7 +152,7 @@ flags           : aes,avx,cx16,smx,sse4_1,sse4_2,ssse3
 3.  **Microarchitecture detection.** On x86 some features are not always
     implemented efficiently in hardware (e.g. AVX on Sandybridge). Exposing the
     microarchitecture allows the client to reject particular microarchitectures.
-4.  All flavors of Mips are supported, little and big endian as well as 32/
+4.  All flavors of Mips are supported, little and big endian as well as 32/64
     bits.
 
 <a name="ndk"></a>

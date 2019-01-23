@@ -1,10 +1,8 @@
 
-if(TRUE OR ANDROID)
-
 #
 # library : NDK compat
 #
-find_package(Threads)
+find_package(Threads REQUIRED)
 set (NDK_COMPAT_HDRS cpu-features.h)
 set (NDK_COMPAT_SRCS
   cpu-features.c
@@ -29,7 +27,7 @@ install(TARGETS ndk_compat
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 install(EXPORT CpuFeaturesNdkCompatTargets
-  NAMESPACE CpuFeaturesNdkCompat::
+  NAMESPACE CpuFeatures::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CpuFeaturesNdkCompat
   COMPONENT Devel
 )
@@ -58,6 +56,4 @@ install(
 if(ENABLE_TESTING)
   add_executable(ndk-compat-test ndk-compat-test.c)
   target_link_libraries(ndk-compat-test PRIVATE ndk_compat)
-endif()
-
 endif()

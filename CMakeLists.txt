@@ -138,7 +138,7 @@ add_executable(CpuFeature::list_cpu_features ALIAS list_cpu_features)
 # ndk_compat
 #
 
-if(TRUE OR ANDROID)
+if(ANDROID)
 add_subdirectory(ndk_compat)
 endif()
 
