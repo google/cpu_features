@@ -148,14 +148,6 @@ function expand_codescape_config() {
   unpackifnotexists "${GCC_URL}" "${GCC_RELATIVE_FOLDER}"
 
   local GCC_FOLDER=${ARCHIVE_FOLDER}/${GCC_RELATIVE_FOLDER}
-  CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_FIND_ROOT_PATH=${GCC_FOLDER})
-
-  CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_SYSTEM_NAME=Linux)
-  CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_SYSTEM_PROCESSOR=${TARGET})
-
-  CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_C_COMPILER=mips-mti-linux-gnu-gcc)
-  CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_CXX_COMPILER=mips-mti-linux-gnu-g++)
-
   local MIPS_FLAGS=""
   local LIBC_FOLDER_SUFFIX=""
   local FLAVOUR=""
@@ -167,10 +159,25 @@ function expand_codescape_config() {
     *)           echo 'unknown mips platform'; exit 1;;
   esac
 
+  CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_FIND_ROOT_PATH=${GCC_FOLDER})
+  CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_SYSTEM_NAME=Linux)
+  CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_SYSTEM_PROCESSOR=${TARGET})
+  CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_C_COMPILER=mips-mti-linux-gnu-gcc)
+  CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_CXX_COMPILER=mips-mti-linux-gnu-g++)
   CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_C_COMPILER_ARG1="${MIPS_FLAGS}")
   CMAKE_ADDITIONAL_ARGS+=(-DCMAKE_CXX_COMPILER_ARG1="${MIPS_FLAGS}")
 
   local SYSROOT_FOLDER=${GCC_FOLDER}/sysroot/${FLAVOUR}
+
+  # Keeping only the sysroot of interest to save on travis cache.
+  if [[ "${CONTINUOUS_INTEGRATION}" = "true" ]]; then
+    for folder in ${GCC_FOLDER}/sysroot/*; do
+      if [[ "${folder}" != "${SYSROOT_FOLDER}" ]]; then
+        rm -rf ${folder}
+      fi
+    done
+  fi
+
   local LIBC_FOLDER=${GCC_FOLDER}/mips-mti-linux-gnu/lib/${FLAVOUR}/${LIBC_FOLDER_SUFFIX}
   QEMU_ARGS+=(-L ${SYSROOT_FOLDER})
   QEMU_ARGS+=(-E LD_PRELOAD=${LIBC_FOLDER}/libstdc++.so.6:${LIBC_FOLDER}/libgcc_s.so.1)
