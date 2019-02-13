@@ -14,7 +14,12 @@ endif(NOT CMAKE_BUILD_TYPE)
 option(BUILD_TESTING "Enable test (depends on googletest)." OFF)
 # BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to make
 # it prominent in the GUI.
+# cpu_features uses bit-fields which are - to some extends - implementation-defined (see https://en.cppreference.com/w/c/language/bit_field). 
+# As a consequence it is discouraged to use cpu_features as a shared library because different compilers may interpret the code in different ways. 
+# Prefer static linking from source whenever possible.
 option(BUILD_SHARED_LIBS "Build library as shared." OFF)
+# PIC
+option(BUILD_PIC "Build with Position Independant Code." OFF) # Default is off at least for GCC
 
 include(CheckIncludeFile)
 include(CheckSymbolExists)
@@ -106,6 +111,7 @@ if(UNIX)
   if(HAVE_STRONG_GETAUXVAL)
     target_compile_definitions(unix_based_hardware_detection PRIVATE HAVE_STRONG_GETAUXVAL)
   endif()
+  set_property(TARGET unix_based_hardware_detection PROPERTY POSITION_INDEPENDENT_CODE ${BUILD_PIC})
 endif()
 
 #
@@ -122,6 +128,7 @@ add_library(cpu_features ${CPU_FEATURES_HDRS} ${CPU_FEATURES_SRCS})
 set_target_properties(cpu_features PROPERTIES PUBLIC_HEADER "${CPU_FEATURES_HDRS}")
 setup_include_and_definitions(cpu_features)
 target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
+set_property(TARGET cpu_features PROPERTY POSITION_INDEPENDENT_CODE ${BUILD_PIC})
 target_include_directories(cpu_features
   PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cpu_features>
 )
