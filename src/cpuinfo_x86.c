@@ -41,7 +41,10 @@ Leaf CpuId(uint32_t leaf_id) {
 
 uint32_t GetXCR0Eax(void) {
   uint32_t eax, edx;
-  __asm("XGETBV" : "=a"(eax), "=d"(edx) : "c"(0));
+  /* named form of xgetbv not supported on OSX, so must use byte form, see:
+     https://github.com/asmjit/asmjit/issues/78
+   */
+  __asm(".byte 0x0F, 0x01, 0xd0" : "=a"(eax), "=d"(edx) : "c"(0));
   return eax;
 }
 
