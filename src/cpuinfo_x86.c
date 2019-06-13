@@ -146,6 +146,12 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   info->model = (extended_model << 4) + model;
   info->stepping = ExtractBitRange(leaf_1.eax, 3, 0);
 
+  features->fpu = IsBitSet(leaf_1.edx, 0);
+  features->tsc = IsBitSet(leaf_1.edx, 4);
+  features->cx8 = IsBitSet(leaf_1.edx, 8);
+  features->clfsh = IsBitSet(leaf_1.edx, 19);
+  features->mmx = IsBitSet(leaf_1.edx, 23);
+  features->pclmulqdq = IsBitSet(leaf_1.ecx, 1);
   features->smx = IsBitSet(leaf_1.ecx, 6);
   features->cx16 = IsBitSet(leaf_1.ecx, 13);
   features->movbe = IsBitSet(leaf_1.ecx, 22);
@@ -155,12 +161,21 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   features->rdrnd = IsBitSet(leaf_1.ecx, 30);
   features->sgx = IsBitSet(leaf_7.ebx, 2);
   features->bmi1 = IsBitSet(leaf_7.ebx, 3);
+  features->hle = IsBitSet(leaf_7.ebx, 4);
   features->bmi2 = IsBitSet(leaf_7.ebx, 8);
   features->erms = IsBitSet(leaf_7.ebx, 9);
+  features->rtm = IsBitSet(leaf_7.ebx, 11);
+  features->rdseed = IsBitSet(leaf_7.ebx, 18);
+  features->clflushopt = IsBitSet(leaf_7.ebx, 23);
+  features->clwb = IsBitSet(leaf_7.ebx, 24);
   features->sha = IsBitSet(leaf_7.ebx, 29);
+  features->vaes = IsBitSet(leaf_7.ecx, 9);
   features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
 
   if (have_sse_os_support) {
+    features->sse = IsBitSet(leaf_1.edx, 25);
+    features->sse2 = IsBitSet(leaf_1.edx, 26);
+    features->sse3 = IsBitSet(leaf_1.ecx, 0);
     features->ssse3 = IsBitSet(leaf_1.ecx, 9);
     features->sse4_1 = IsBitSet(leaf_1.ecx, 19);
     features->sse4_2 = IsBitSet(leaf_1.ecx, 20);
@@ -317,6 +332,16 @@ void FillX86BrandString(char brand_string[49]) {
 int GetX86FeaturesEnumValue(const X86Features* features,
                             X86FeaturesEnum value) {
   switch (value) {
+    case X86_FPU:
+      return features->fpu;
+    case X86_TSC:
+      return features->tsc;
+    case X86_CX8:
+      return features->cx8;
+    case X86_CLFSH:
+      return features->clfsh;
+    case X86_MMX:
+      return features->mmx;
     case X86_AES:
       return features->aes;
     case X86_ERMS:
@@ -325,12 +350,30 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->f16c;
     case X86_FMA3:
       return features->fma3;
+    case X86_VAES:
+      return features->vaes;
     case X86_VPCLMULQDQ:
       return features->vpclmulqdq;
     case X86_BMI1:
       return features->bmi1;
+    case X86_HLE:
+      return features->hle;
     case X86_BMI2:
       return features->bmi2;
+    case X86_RTM:
+      return features->rtm;
+    case X86_RDSEED:
+      return features->rdseed;
+    case X86_CLFLUSHOPT:
+      return features->clflushopt;
+    case X86_CLWB:
+      return features->clwb;
+    case X86_SSE:
+      return features->sse;
+    case X86_SSE2:
+      return features->sse2;
+    case X86_SSE3:
+      return features->sse3;
     case X86_SSSE3:
       return features->ssse3;
     case X86_SSE4_1:
@@ -371,6 +414,8 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->avx512_4vnniw;
     case X86_AVX512_4VBMI2:
       return features->avx512_4vbmi2;
+    case X86_PCLMULQDQ:
+      return features->pclmulqdq;
     case X86_SMX:
       return features->smx;
     case X86_SGX:
@@ -393,6 +438,16 @@ int GetX86FeaturesEnumValue(const X86Features* features,
 
 const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
   switch (value) {
+    case X86_FPU:
+      return "fpu";
+    case X86_TSC:
+      return "tsc";
+    case X86_CX8:
+      return "cx8";
+    case X86_CLFSH:
+      return "clfsh";
+    case X86_MMX:
+      return "mmx";
     case X86_AES:
       return "aes";
     case X86_ERMS:
@@ -401,12 +456,30 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "f16c";
     case X86_FMA3:
       return "fma3";
+    case X86_VAES:
+      return "vaes";
     case X86_VPCLMULQDQ:
       return "vpclmulqdq";
     case X86_BMI1:
       return "bmi1";
+    case X86_HLE:
+      return "hle";
     case X86_BMI2:
       return "bmi2";
+    case X86_RTM:
+      return "rtm";
+    case X86_RDSEED:
+      return "rdseed";
+    case X86_CLFLUSHOPT:
+      return "clflushopt";
+    case X86_CLWB:
+      return "clwb";
+    case X86_SSE:
+      return "sse";
+    case X86_SSE2:
+      return "sse2";
+    case X86_SSE3:
+      return "sse3";
     case X86_SSSE3:
       return "ssse3";
     case X86_SSE4_1:
@@ -447,6 +520,8 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "avx512_4vnniw";
     case X86_AVX512_4VBMI2:
       return "avx512_4vbmi2";
+    case X86_PCLMULQDQ:
+      return "pclmulqdq";
     case X86_SMX:
       return "smx";
     case X86_SGX:
