@@ -23,11 +23,17 @@
 
 #include <ctype.h>
 
+DECLARE_SETTER(ArmFeatures, half)
+DECLARE_SETTER(ArmFeatures, thumb)
+DECLARE_SETTER(ArmFeatures, fastmult)
 DECLARE_SETTER(ArmFeatures, vfp)
+DECLARE_SETTER(ArmFeatures, edsp)
+DECLARE_SETTER(ArmFeatures, java)
 DECLARE_SETTER(ArmFeatures, iwmmxt)
 DECLARE_SETTER(ArmFeatures, neon)
 DECLARE_SETTER(ArmFeatures, vfpv3)
 DECLARE_SETTER(ArmFeatures, vfpv3d16)
+DECLARE_SETTER(ArmFeatures, tls)
 DECLARE_SETTER(ArmFeatures, vfpv4)
 DECLARE_SETTER(ArmFeatures, idiva)
 DECLARE_SETTER(ArmFeatures, idivt)
@@ -38,11 +44,17 @@ DECLARE_SETTER(ArmFeatures, sha2)
 DECLARE_SETTER(ArmFeatures, crc32)
 
 static const CapabilityConfig kConfigs[] = {
+    {{ARM_HWCAP_HALF, 0}, "half", &set_half},              //
+    {{ARM_HWCAP_THUMB, 0}, "thumb", &set_thumb},           //
+    {{ARM_HWCAP_FAST_MULT, 0}, "fastmult", &set_fastmult}, //
     {{ARM_HWCAP_VFP, 0}, "vfp", &set_vfp},                 //
+    {{ARM_HWCAP_EDSP, 0}, "edsp", &set_edsp},              //
+    {{ARM_HWCAP_JAVA, 0}, "java", &set_java},              //
     {{ARM_HWCAP_IWMMXT, 0}, "iwmmxt", &set_iwmmxt},        //
     {{ARM_HWCAP_NEON, 0}, "neon", &set_neon},              //
     {{ARM_HWCAP_VFPV3, 0}, "vfpv3", &set_vfpv3},           //
     {{ARM_HWCAP_VFPV3D16, 0}, "vfpv3d16", &set_vfpv3d16},  //
+    {{ARM_HWCAP_TLS, 0}, "tls", &set_tls},                 //
     {{ARM_HWCAP_VFPV4, 0}, "vfpv4", &set_vfpv4},           //
     {{ARM_HWCAP_IDIVA, 0}, "idiva", &set_idiva},           //
     {{ARM_HWCAP_IDIVT, 0}, "idivt", &set_idivt},           //
@@ -192,8 +204,18 @@ ArmInfo GetArmInfo(void) {
 int GetArmFeaturesEnumValue(const ArmFeatures* features,
                             ArmFeaturesEnum value) {
   switch (value) {
+    case ARM_HALF:
+      return features->half;
+    case ARM_THUMB:
+      return features->thumb;
+    case ARM_FASTMULT:
+      return features->fastmult;
     case ARM_VFP:
       return features->vfp;
+    case ARM_EDSP:
+      return features->edsp;
+    case ARM_JAVA:
+      return features->java;
     case ARM_IWMMXT:
       return features->iwmmxt;
     case ARM_NEON:
@@ -202,6 +224,8 @@ int GetArmFeaturesEnumValue(const ArmFeatures* features,
       return features->vfpv3;
     case ARM_VFPV3D16:
       return features->vfpv3d16;
+    case ARM_TLS:
+      return features->tls;
     case ARM_VFPV4:
       return features->vfpv4;
     case ARM_IDIVA:
@@ -226,8 +250,18 @@ int GetArmFeaturesEnumValue(const ArmFeatures* features,
 
 const char* GetArmFeaturesEnumName(ArmFeaturesEnum value) {
   switch (value) {
+    case ARM_HALF:
+      return "half";
+    case ARM_THUMB:
+      return "thumb";
+    case ARM_FASTMULT:
+      return "fastmult";
     case ARM_VFP:
       return "vfp";
+    case ARM_EDSP:
+      return "edsp";
+    case ARM_JAVA:
+      return "java";
     case ARM_IWMMXT:
       return "iwmmxt";
     case ARM_NEON:
@@ -236,6 +270,8 @@ const char* GetArmFeaturesEnumName(ArmFeaturesEnum value) {
       return "vfpv3";
     case ARM_VFPV3D16:
       return "vfpv3d16";
+    case ARM_TLS:
+      return "tls";
     case ARM_VFPV4:
       return "vfpv4";
     case ARM_IDIVA:
