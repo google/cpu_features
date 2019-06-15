@@ -47,10 +47,9 @@ int CpuFeatures_StringView_IndexOf(const StringView view,
 }
 
 bool CpuFeatures_StringView_IsEquals(const StringView a, const StringView b) {
-  if (a.size == b.size) {
-    return a.ptr == b.ptr || memcmp(a.ptr, b.ptr, b.size) == 0;
-  }
-  return false;
+  return (a.size == b.size
+          && (a.ptr == b.ptr
+              || memcmp(a.ptr, b.ptr, b.size) == 0));
 }
 
 bool CpuFeatures_StringView_StartsWith(const StringView a, const StringView b) {
