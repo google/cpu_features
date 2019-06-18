@@ -21,11 +21,17 @@
 CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
+  int half : 1;      // Half-word loads and stores
+  int thumb : 1;     // Thumb (16-bit instruction set)
+  int fastmult : 1;  // 32x32->64-bit multiplication
   int vfp : 1;       // Vector Floating Point.
+  int edsp : 1;      // DSP extensions (the 'e' variant of the ARM9 CPUs, and all others above)
+  int java : 1;      // Jazelle (Java bytecode accelerator)
   int iwmmxt : 1;    // Intel Wireless MMX Technology.
   int neon : 1;      // Advanced SIMD.
   int vfpv3 : 1;     // VFP version 3
   int vfpv3d16 : 1;  // VFP version 3 with 16 D-registers
+  int tls : 1;       // TLS register
   int vfpv4 : 1;     // VFP version 4 with fast context switching
   int idiva : 1;     // SDIV and UDIV hardware division in ARM mode.
   int idivt : 1;     // SDIV and UDIV hardware division in Thumb mode.
@@ -59,11 +65,17 @@ uint32_t GetArmCpuId(const ArmInfo* const info);
 // Introspection functions
 
 typedef enum {
+  ARM_HALF,
+  ARM_THUMB,
+  ARM_FASTMULT,
   ARM_VFP,
+  ARM_EDSP,
+  ARM_JAVA,
   ARM_IWMMXT,
   ARM_NEON,
   ARM_VFPV3,
   ARM_VFPV3D16,
+  ARM_TLS,
   ARM_VFPV4,
   ARM_IDIVA,
   ARM_IDIVT,

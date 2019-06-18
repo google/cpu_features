@@ -62,14 +62,64 @@ CPU revision    : 3)");
   EXPECT_EQ(info.revision, 3);
   EXPECT_EQ(info.architecture, 7);
 
+  EXPECT_TRUE(info.features.half);
+  EXPECT_TRUE(info.features.thumb);
+  EXPECT_TRUE(info.features.fastmult);
   EXPECT_TRUE(info.features.vfp);
+  EXPECT_TRUE(info.features.edsp);
+  EXPECT_FALSE(info.features.java);
   EXPECT_FALSE(info.features.iwmmxt);
   EXPECT_TRUE(info.features.neon);
   EXPECT_TRUE(info.features.vfpv3);
   EXPECT_FALSE(info.features.vfpv3d16);
+  EXPECT_TRUE(info.features.tls);
   EXPECT_TRUE(info.features.vfpv4);
   EXPECT_TRUE(info.features.idiva);
   EXPECT_TRUE(info.features.idivt);
+  EXPECT_FALSE(info.features.aes);
+  EXPECT_FALSE(info.features.pmull);
+  EXPECT_FALSE(info.features.sha1);
+  EXPECT_FALSE(info.features.sha2);
+  EXPECT_FALSE(info.features.crc32);
+}
+
+TEST(CpuinfoArmTest, RaspberryPiZero) {
+  DisableHardwareCapabilities();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo", R"(processor	: 0
+model name      : ARMv6-compatible processor rev 7 (v6l)
+BogoMIPS        : 697.95
+Features        : half thumb fastmult vfp edsp java tls
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x0
+CPU part        : 0xb76
+CPU revision    : 7
+
+Hardware        : BCM2835
+Revision        : 9000c1
+Serial          : 000000006cd946f3)");
+  const auto info = GetArmInfo();
+  EXPECT_EQ(info.implementer, 0x41);
+  EXPECT_EQ(info.variant, 0x0);
+  EXPECT_EQ(info.part, 0xb76);
+  EXPECT_EQ(info.revision, 7);
+  EXPECT_EQ(info.architecture, 7);
+
+  EXPECT_TRUE(info.features.half);
+  EXPECT_TRUE(info.features.thumb);
+  EXPECT_TRUE(info.features.fastmult);
+  EXPECT_TRUE(info.features.vfp);
+  EXPECT_TRUE(info.features.edsp);
+  EXPECT_TRUE(info.features.java);
+  EXPECT_FALSE(info.features.iwmmxt);
+  EXPECT_FALSE(info.features.neon);
+  EXPECT_FALSE(info.features.vfpv3);
+  EXPECT_FALSE(info.features.vfpv3d16);
+  EXPECT_TRUE(info.features.tls);
+  EXPECT_FALSE(info.features.vfpv4);
+  EXPECT_FALSE(info.features.idiva);
+  EXPECT_FALSE(info.features.idivt);
   EXPECT_FALSE(info.features.aes);
   EXPECT_FALSE(info.features.pmull);
   EXPECT_FALSE(info.features.sha1);
@@ -96,6 +146,26 @@ Revision        : 0020
 Serial          : 33323613546d00ec )");
   const auto info = GetArmInfo();
   EXPECT_EQ(info.architecture, 6);
+
+  EXPECT_TRUE(info.features.half);
+  EXPECT_TRUE(info.features.thumb);
+  EXPECT_TRUE(info.features.fastmult);
+  EXPECT_TRUE(info.features.vfp);
+  EXPECT_TRUE(info.features.edsp);
+  EXPECT_TRUE(info.features.java);
+  EXPECT_FALSE(info.features.iwmmxt);
+  EXPECT_FALSE(info.features.neon);
+  EXPECT_FALSE(info.features.vfpv3);
+  EXPECT_FALSE(info.features.vfpv3d16);
+  EXPECT_FALSE(info.features.tls);
+  EXPECT_FALSE(info.features.vfpv4);
+  EXPECT_FALSE(info.features.idiva);
+  EXPECT_FALSE(info.features.idivt);
+  EXPECT_FALSE(info.features.aes);
+  EXPECT_FALSE(info.features.pmull);
+  EXPECT_FALSE(info.features.sha1);
+  EXPECT_FALSE(info.features.sha2);
+  EXPECT_FALSE(info.features.crc32);
 }
 
 // https://crbug.com/341598.

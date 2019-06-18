@@ -35,11 +35,17 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #define AARCH64_HWCAP_CRC32 (1UL << 7)
 
 // http://elixir.free-electrons.com/linux/latest/source/arch/arm/include/uapi/asm/hwcap.h
+#define ARM_HWCAP_HALF (1UL << 1)
+#define ARM_HWCAP_THUMB (1UL << 2)
+#define ARM_HWCAP_FAST_MULT (1UL << 4)
 #define ARM_HWCAP_VFP (1UL << 6)
+#define ARM_HWCAP_EDSP (1UL << 7)
+#define ARM_HWCAP_JAVA (1UL << 8)
 #define ARM_HWCAP_IWMMXT (1UL << 9)
 #define ARM_HWCAP_NEON (1UL << 12)
 #define ARM_HWCAP_VFPV3 (1UL << 13)
 #define ARM_HWCAP_VFPV3D16 (1UL << 14)
+#define ARM_HWCAP_TLS (1UL << 15)
 #define ARM_HWCAP_VFPV4 (1UL << 16)
 #define ARM_HWCAP_IDIVA (1UL << 17)
 #define ARM_HWCAP_IDIVT (1UL << 18)
