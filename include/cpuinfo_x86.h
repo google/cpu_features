@@ -76,6 +76,8 @@ typedef struct {
   int movbe : 1;
   int rdrnd : 1;
 
+  int dca : 1;
+  int ss : 1;
   // Make sure to update X86FeaturesEnum below if you add a field here.
 } X86Features;
 
@@ -179,6 +181,8 @@ typedef enum {
   X86_POPCNT,
   X86_MOVBE,
   X86_RDRND,
+  X86_DCA,
+  X86_SS,
   X86_LAST_,
 } X86FeaturesEnum;
 
