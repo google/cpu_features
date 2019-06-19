@@ -151,9 +151,11 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   features->cx8 = IsBitSet(leaf_1.edx, 8);
   features->clfsh = IsBitSet(leaf_1.edx, 19);
   features->mmx = IsBitSet(leaf_1.edx, 23);
+  features->ss = IsBitSet(leaf_1.edx, 27);
   features->pclmulqdq = IsBitSet(leaf_1.ecx, 1);
   features->smx = IsBitSet(leaf_1.ecx, 6);
   features->cx16 = IsBitSet(leaf_1.ecx, 13);
+  features->dca = IsBitSet(leaf_1.ecx, 18);
   features->movbe = IsBitSet(leaf_1.ecx, 22);
   features->popcnt = IsBitSet(leaf_1.ecx, 23);
   features->aes = IsBitSet(leaf_1.ecx, 25);
@@ -430,6 +432,10 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->movbe;
     case X86_RDRND:
       return features->rdrnd;
+    case X86_DCA:
+      return features->dca;
+    case X86_SS:
+      return features->ss;
     case X86_LAST_:
       break;
   }
@@ -536,6 +542,10 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "movbe";
     case X86_RDRND:
       return "rdrnd";
+    case X86_DCA:
+      return "dca";
+    case X86_SS:
+      return "ss";
     case X86_LAST_:
       break;
   }
