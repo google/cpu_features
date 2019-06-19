@@ -348,7 +348,7 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->aes;
     case X86_ERMS:
       return features->erms;
-    case X86_F16C:  
+    case X86_F16C:
       return features->f16c;
     case X86_FMA3:
       return features->fma3;
