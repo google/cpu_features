@@ -25,7 +25,7 @@ namespace cpu_features {
 
 class FakeCpu {
  public:
-  Leaf CpuId(uint32_t leaf_id) const {
+  Leaf CpuIdEx(uint32_t leaf_id, int ecx) const {
     const auto itr = cpuid_leaves_.find(leaf_id);
     EXPECT_TRUE(itr != cpuid_leaves_.end()) << "Missing leaf " << leaf_id;
     return itr->second;
@@ -48,7 +48,8 @@ class FakeCpu {
 
 auto* g_fake_cpu = new FakeCpu();
 
-extern "C" Leaf CpuId(uint32_t leaf_id) { return g_fake_cpu->CpuId(leaf_id); }
+extern "C" Leaf CpuIdEx(uint32_t leaf_id, int ecx) { return g_fake_cpu->CpuIdEx(leaf_id, ecx); }
+
 extern "C" uint32_t GetXCR0Eax(void) { return g_fake_cpu->GetXCR0Eax(); }
 
 namespace {
