@@ -81,12 +81,41 @@ typedef struct {
   // Make sure to update X86FeaturesEnum below if you add a field here.
 } X86Features;
 
+// Increase this value if more cache levels are needed.
+#ifndef CPU_FEATURES_MAX_CACHE_LEVEL
+#define CPU_FEATURES_MAX_CACHE_LEVEL 10
+#endif
+
+typedef enum {
+  EMPTY = 0,
+  DATA_CACHE = 1,
+  INSTRUCTION_CACHE = 2,
+  UNIFIED_CACHE = 3,
+} X86CacheType;
+
+typedef struct {
+  int level;
+  X86CacheType cache_type;
+  // cache name
+  int cache_size;  // Cache size in kBytes
+  int ways;        // Associativity, 0 undefined, 0xFF fully associate
+  int line_size;   // Cache line size in bytes
+  int entries;     // number of entries for TLB
+  int partitioning;
+} X86CacheLevelInfo;
+
+typedef struct {
+  int size;
+  X86CacheLevelInfo levels[CPU_FEATURES_MAX_CACHE_LEVEL];
+} X86CacheInfo;
+
 typedef struct {
   X86Features features;
   int family;
   int model;
   int stepping;
   char vendor[13];  // 0 terminated string
+  X86CacheInfo cache;
 } X86Info;
 
 // Calls cpuid and returns an initialized X86info.

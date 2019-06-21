@@ -70,9 +70,7 @@ uint32_t GetXCR0Eax(void) { return _xgetbv(0); }
 #error "Unsupported compiler, x86 cpuid requires either GCC, Clang or MSVC."
 #endif
 
-static Leaf CpuId(uint32_t leaf_id) {
-  return CpuIdEx(leaf_id, 0);
-}
+static Leaf CpuId(uint32_t leaf_id) { return CpuIdEx(leaf_id, 0); }
 
 static const Leaf kEmptyLeaf;
 
@@ -129,6 +127,49 @@ static int IsVendor(const Leaf leaf, const char* const name) {
   const uint32_t edx = *(const uint32_t*)(name + 4);
   const uint32_t ecx = *(const uint32_t*)(name + 8);
   return leaf.ebx == ebx && leaf.ecx == ecx && leaf.edx == edx;
+}
+
+static const X86CacheLevelInfo kEmptyCacheLineInfo;
+
+static X86CacheLevelInfo MakeX86CacheLevelInfo(int level,
+                                               X86CacheType cache_type,
+                                               int cache_size, int ways,
+                                               int line_size, int entries,
+                                               int partitioning) {
+  X86CacheLevelInfo info;
+  info.level = level;
+  info.cache_type = cache_type;
+  info.cache_size = cache_size;
+  info.ways = ways;
+  info.line_size = line_size;
+  info.entries = entries;
+  info.partitioning = partitioning;
+  return info;
+}
+
+static void ParseLeaf4(const int max_cpuid_leaf, X86Info* info) {
+  if (memcmp(info->vendor, "GenuineIntel", sizeof(info->vendor)) != 0 ||
+      4 > max_cpuid_leaf) {
+    return;
+  }
+  info->cache.size = 0;
+  for (int cache_id = 0; cache_id < CPU_FEATURES_MAX_CACHE_LEVEL; cache_id++) {
+    const Leaf leaf = SafeCpuIdEx(max_cpuid_leaf, 4, cache_id);
+    X86CacheType cache_type = ExtractBitRange(leaf.eax, 4, 0);
+    if (cache_type == EMPTY) {
+      info->cache.levels[cache_id] = kEmptyCacheLineInfo;
+      continue;
+    }
+    int level = ExtractBitRange(leaf.eax, 7, 5);
+    int line_size = ExtractBitRange(leaf.ebx, 11, 0) + 1;
+    int partitioning = ExtractBitRange(leaf.ebx, 21, 12) + 1;
+    int ways = ExtractBitRange(leaf.ebx, 31, 22) + 1;
+    int entries = leaf.ecx + 1;
+    int cache_size = (ways * partitioning * line_size * (entries)) >> 10;
+    info->cache.levels[cache_id] = MakeX86CacheLevelInfo(
+        level, cache_type, cache_size, ways, line_size, entries, partitioning);
+    info->cache.size++;
+  }
 }
 
 // Reference https://en.wikipedia.org/wiki/CPUID.
@@ -214,12 +255,15 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
     features->avx512_4vnniw = IsBitSet(leaf_7.edx, 2);
     features->avx512_4vbmi2 = IsBitSet(leaf_7.edx, 3);
   }
+  ParseLeaf4(max_cpuid_leaf, info);
 }
 
 static const X86Info kEmptyX86Info;
+static const X86CacheInfo kEmptyCacheInfo;
 
 X86Info GetX86Info(void) {
   X86Info info = kEmptyX86Info;
+  info.cache = kEmptyCacheInfo;
   const Leaf leaf_0 = CpuId(0);
   const uint32_t max_cpuid_leaf = leaf_0.eax;
   SetVendor(leaf_0, info.vendor);
