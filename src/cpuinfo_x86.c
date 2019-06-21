@@ -33,9 +33,9 @@
 
 #include <cpuid.h>
 
-Leaf CpuId(uint32_t leaf_id) {
+Leaf CpuIdEx(uint32_t leaf_id, int ecx) {
   Leaf leaf;
-  __cpuid_count(leaf_id, 0, leaf.eax, leaf.ebx, leaf.ecx, leaf.edx);
+  __cpuid_count(leaf_id, ecx, leaf.eax, leaf.ebx, leaf.ecx, leaf.edx);
   return leaf;
 }
 
@@ -53,10 +53,10 @@ uint32_t GetXCR0Eax(void) {
 #include <immintrin.h>
 #include <intrin.h>  // For __cpuidex()
 
-Leaf CpuId(uint32_t leaf_id) {
+Leaf CpuIdEx(uint32_t leaf_id, int ecx) {
   Leaf leaf;
   int data[4];
-  __cpuid(data, leaf_id);
+  __cpuidex(data, leaf_id, ecx);
   leaf.eax = data[0];
   leaf.ebx = data[1];
   leaf.ecx = data[2];
@@ -70,14 +70,22 @@ uint32_t GetXCR0Eax(void) { return _xgetbv(0); }
 #error "Unsupported compiler, x86 cpuid requires either GCC, Clang or MSVC."
 #endif
 
+static Leaf CpuId(uint32_t leaf_id) {
+  return CpuIdEx(leaf_id, 0);
+}
+
 static const Leaf kEmptyLeaf;
 
-static Leaf SafeCpuId(uint32_t max_cpuid_leaf, uint32_t leaf_id) {
+static Leaf SafeCpuIdEx(uint32_t max_cpuid_leaf, uint32_t leaf_id, int ecx) {
   if (leaf_id <= max_cpuid_leaf) {
-    return CpuId(leaf_id);
+    return CpuIdEx(leaf_id, ecx);
   } else {
     return kEmptyLeaf;
   }
+}
+
+static Leaf SafeCpuId(uint32_t max_cpuid_leaf, uint32_t leaf_id) {
+  return SafeCpuIdEx(max_cpuid_leaf, leaf_id, 0);
 }
 
 #define MASK_XMM 0x2
