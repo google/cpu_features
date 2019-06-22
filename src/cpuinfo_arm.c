@@ -37,6 +37,7 @@ DECLARE_SETTER(ArmFeatures, tls)
 DECLARE_SETTER(ArmFeatures, vfpv4)
 DECLARE_SETTER(ArmFeatures, idiva)
 DECLARE_SETTER(ArmFeatures, idivt)
+DECLARE_SETTER(ArmFeatures, vfpd32)
 DECLARE_SETTER(ArmFeatures, aes)
 DECLARE_SETTER(ArmFeatures, pmull)
 DECLARE_SETTER(ArmFeatures, sha1)
@@ -58,6 +59,7 @@ static const CapabilityConfig kConfigs[] = {
     {{ARM_HWCAP_VFPV4, 0}, "vfpv4", &set_vfpv4},           //
     {{ARM_HWCAP_IDIVA, 0}, "idiva", &set_idiva},           //
     {{ARM_HWCAP_IDIVT, 0}, "idivt", &set_idivt},           //
+    {{ARM_HWCAP_VFPD32, 0}, "vfpd32", &set_vfpd32},        //
     {{0, ARM_HWCAP2_AES}, "aes", &set_aes},                //
     {{0, ARM_HWCAP2_PMULL}, "pmull", &set_pmull},          //
     {{0, ARM_HWCAP2_SHA1}, "sha1", &set_sha1},             //
@@ -236,6 +238,8 @@ int GetArmFeaturesEnumValue(const ArmFeatures* features,
       return features->idiva;
     case ARM_IDIVT:
       return features->idivt;
+    case ARM_VFPD32:
+      return features->vfpd32;
     case ARM_AES:
       return features->aes;
     case ARM_PMULL:
@@ -282,6 +286,8 @@ const char* GetArmFeaturesEnumName(ArmFeaturesEnum value) {
       return "idiva";
     case ARM_IDIVT:
       return "idivt";
+    case ARM_VFPD32:
+      return "vfpd32";
     case ARM_AES:
       return "aes";
     case ARM_PMULL:

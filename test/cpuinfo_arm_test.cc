@@ -76,6 +76,7 @@ CPU revision    : 3)");
   EXPECT_TRUE(info.features.vfpv4);
   EXPECT_TRUE(info.features.idiva);
   EXPECT_TRUE(info.features.idivt);
+  EXPECT_TRUE(info.features.vfpd32);
   EXPECT_FALSE(info.features.aes);
   EXPECT_FALSE(info.features.pmull);
   EXPECT_FALSE(info.features.sha1);
@@ -84,10 +85,10 @@ CPU revision    : 3)");
 }
 
 // Linux test-case
-TEST(CpuinfoArmTest, RaspberryPiZero) {
+TEST(CpuinfoArmTest, RaspberryPiZeroFromCpuInfo) {
   DisableHardwareCapabilities();
   auto& fs = GetEmptyFilesystem();
-  fs.CreateFile("/proc/cpuinfo", R"(processor	: 0
+  fs.CreateFile("/proc/cpuinfo", R"(processor       : 0
 model name      : ARMv6-compatible processor rev 7 (v6l)
 BogoMIPS        : 697.95
 Features        : half thumb fastmult vfp edsp java tls
@@ -121,6 +122,62 @@ Serial          : 000000006cd946f3)");
   EXPECT_FALSE(info.features.vfpv4);
   EXPECT_FALSE(info.features.idiva);
   EXPECT_FALSE(info.features.idivt);
+  EXPECT_FALSE(info.features.vfpd32);
+  EXPECT_FALSE(info.features.aes);
+  EXPECT_FALSE(info.features.pmull);
+  EXPECT_FALSE(info.features.sha1);
+  EXPECT_FALSE(info.features.sha2);
+  EXPECT_FALSE(info.features.crc32);
+}
+
+TEST(CpuinfoArmTest, MarvellArmadaFromCpuInfo) {
+  DisableHardwareCapabilities();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo", R"(processor       : 0
+model name      : ARMv7 Processor rev 1 (v7l)
+BogoMIPS        : 50.00
+Features        : half thumb fastmult vfp edsp neon vfpv3 tls vfpd32
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x4
+CPU part        : 0xc09
+CPU revision    : 1
+
+processor       : 1
+model name      : ARMv7 Processor rev 1 (v7l)
+BogoMIPS        : 50.00
+Features        : half thumb fastmult vfp edsp neon vfpv3 tls vfpd32
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x4
+CPU part        : 0xc09
+CPU revision    : 1
+
+Hardware        : Marvell Armada 380/385 (Device Tree)
+Revision        : 0000
+Serial          : 0000000000000000)");
+  const auto info = GetArmInfo();
+  EXPECT_EQ(info.implementer, 0x41);
+  EXPECT_EQ(info.variant, 0x4);
+  EXPECT_EQ(info.part, 0xc09);
+  EXPECT_EQ(info.revision, 1);
+  EXPECT_EQ(info.architecture, 7);
+
+  EXPECT_TRUE(info.features.half);
+  EXPECT_TRUE(info.features.thumb);
+  EXPECT_TRUE(info.features.fastmult);
+  EXPECT_TRUE(info.features.vfp);
+  EXPECT_TRUE(info.features.edsp);
+  EXPECT_FALSE(info.features.java);
+  EXPECT_FALSE(info.features.iwmmxt);
+  EXPECT_TRUE(info.features.neon);
+  EXPECT_TRUE(info.features.vfpv3);
+  EXPECT_FALSE(info.features.vfpv3d16);
+  EXPECT_TRUE(info.features.tls);
+  EXPECT_FALSE(info.features.vfpv4);
+  EXPECT_FALSE(info.features.idiva);
+  EXPECT_FALSE(info.features.idivt);
+  EXPECT_TRUE(info.features.vfpd32);
   EXPECT_FALSE(info.features.aes);
   EXPECT_FALSE(info.features.pmull);
   EXPECT_FALSE(info.features.sha1);
@@ -163,6 +220,7 @@ Serial          : 33323613546d00ec )");
   EXPECT_FALSE(info.features.vfpv4);
   EXPECT_FALSE(info.features.idiva);
   EXPECT_FALSE(info.features.idivt);
+  EXPECT_FALSE(info.features.vfpd32);
   EXPECT_FALSE(info.features.aes);
   EXPECT_FALSE(info.features.pmull);
   EXPECT_FALSE(info.features.sha1);

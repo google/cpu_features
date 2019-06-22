@@ -35,6 +35,7 @@ typedef struct {
   int vfpv4 : 1;     // VFP version 4 with fast context switching
   int idiva : 1;     // SDIV and UDIV hardware division in ARM mode.
   int idivt : 1;     // SDIV and UDIV hardware division in Thumb mode.
+  int vfpd32 : 1;    // VFP with 32 D-registers
   int aes : 1;       // Hardware-accelerated Advanced Encryption Standard.
   int pmull : 1;     // Polynomial multiply long.
   int sha1 : 1;      // Hardware-accelerated SHA1.
@@ -79,6 +80,7 @@ typedef enum {
   ARM_VFPV4,
   ARM_IDIVA,
   ARM_IDIVT,
+  ARM_VFPD32,
   ARM_AES,
   ARM_PMULL,
   ARM_SHA1,
