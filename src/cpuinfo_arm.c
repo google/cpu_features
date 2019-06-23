@@ -102,7 +102,11 @@ static bool HandleArmLine(const LineResult result, ArmInfo* const info,
       const StringView digits =
           CpuFeatures_StringView_KeepFront(value, IndexOfNonDigit(value));
       info->architecture = CpuFeatures_StringView_ParsePositiveNumber(digits);
-    } else if (CpuFeatures_StringView_IsEquals(key, str("Processor"))) {
+    } else if (CpuFeatures_StringView_IsEquals(key, str("Processor"))
+               || CpuFeatures_StringView_IsEquals(key, str("model name")) ) {
+      // Android reports this in a non-Linux standard "Processor" but sometimes
+      // also in "model name", Linux reports it only in "model name"
+      // see RaspberryPiZero (Linux) vs InvalidArmv7 (Android) test-cases
       proc_info->processor_reports_armv6 =
           CpuFeatures_StringView_IndexOf(value, str("(v6l)")) >= 0;
     } else if (CpuFeatures_StringView_IsEquals(key, str("Hardware"))) {
