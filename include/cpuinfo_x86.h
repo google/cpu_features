@@ -96,9 +96,8 @@ typedef enum {
 typedef struct {
   int level;
   X86CacheType cache_type;
-  // cache name
   int cache_size;  // Cache size in kBytes
-  int ways;        // Associativity, 0 undefined, 0xFF fully associate
+  int ways;        // Associativity, 0 undefined, 0xFF fully associative
   int line_size;   // Cache line size in bytes
   int entries;     // number of entries for TLB
   int partitioning;
