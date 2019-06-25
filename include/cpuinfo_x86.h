@@ -91,6 +91,10 @@ typedef enum {
   DATA_CACHE = 1,
   INSTRUCTION_CACHE = 2,
   UNIFIED_CACHE = 3,
+  TLB = 4,
+  DTLB = 5,
+  STLB = 6,
+  PREFETCH = 7
 } X86CacheType;
 
 typedef struct {
