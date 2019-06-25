@@ -83,6 +83,7 @@ CPU revision    : 3)");
   EXPECT_FALSE(info.features.crc32);
 }
 
+// Linux test-case
 TEST(CpuinfoArmTest, RaspberryPiZero) {
   DisableHardwareCapabilities();
   auto& fs = GetEmptyFilesystem();
@@ -104,7 +105,7 @@ Serial          : 000000006cd946f3)");
   EXPECT_EQ(info.variant, 0x0);
   EXPECT_EQ(info.part, 0xb76);
   EXPECT_EQ(info.revision, 7);
-  EXPECT_EQ(info.architecture, 7);
+  EXPECT_EQ(info.architecture, 6);
 
   EXPECT_TRUE(info.features.half);
   EXPECT_TRUE(info.features.thumb);
@@ -127,6 +128,7 @@ Serial          : 000000006cd946f3)");
   EXPECT_FALSE(info.features.crc32);
 }
 
+// Android test-case
 // http://code.google.com/p/android/issues/detail?id=10812
 TEST(CpuinfoArmTest, InvalidArmv7) {
   DisableHardwareCapabilities();
@@ -168,6 +170,7 @@ Serial          : 33323613546d00ec )");
   EXPECT_FALSE(info.features.crc32);
 }
 
+// Android test-case
 // https://crbug.com/341598.
 TEST(CpuinfoArmTest, InvalidNeon) {
   auto& fs = GetEmptyFilesystem();
