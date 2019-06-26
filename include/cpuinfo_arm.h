@@ -21,13 +21,18 @@
 CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
+  int swp : 1;       // SWP instruction (atomic read-modify-write)
   int half : 1;      // Half-word loads and stores
   int thumb : 1;     // Thumb (16-bit instruction set)
+  int _26bit : 1;    // "26 Bit" Model (Processor status register folded into program counter)
   int fastmult : 1;  // 32x32->64-bit multiplication
+  int fpa : 1;       // Floating point accelerator
   int vfp : 1;       // Vector Floating Point.
   int edsp : 1;      // DSP extensions (the 'e' variant of the ARM9 CPUs, and all others above)
   int java : 1;      // Jazelle (Java bytecode accelerator)
   int iwmmxt : 1;    // Intel Wireless MMX Technology.
+  int crunch : 1;    // MaverickCrunch coprocessor
+  int thumbee : 1;   // ThumbEE
   int neon : 1;      // Advanced SIMD.
   int vfpv3 : 1;     // VFP version 3
   int vfpv3d16 : 1;  // VFP version 3 with 16 D-registers
@@ -35,6 +40,9 @@ typedef struct {
   int vfpv4 : 1;     // VFP version 4 with fast context switching
   int idiva : 1;     // SDIV and UDIV hardware division in ARM mode.
   int idivt : 1;     // SDIV and UDIV hardware division in Thumb mode.
+  int vfpd32 : 1;    // VFP with 32 D-registers
+  int lpae : 1;      // Large Physical Address Extension (>4GB physical memory on 32-bit architecture)
+  int evtstrm : 1;   // kernel event stream using generic architected timer
   int aes : 1;       // Hardware-accelerated Advanced Encryption Standard.
   int pmull : 1;     // Polynomial multiply long.
   int sha1 : 1;      // Hardware-accelerated SHA1.
@@ -65,13 +73,18 @@ uint32_t GetArmCpuId(const ArmInfo* const info);
 // Introspection functions
 
 typedef enum {
+  ARM_SWP,
   ARM_HALF,
   ARM_THUMB,
+  ARM_26BIT,
   ARM_FASTMULT,
+  ARM_FPA,
   ARM_VFP,
   ARM_EDSP,
   ARM_JAVA,
   ARM_IWMMXT,
+  ARM_CRUNCH,
+  ARM_THUMBEE,
   ARM_NEON,
   ARM_VFPV3,
   ARM_VFPV3D16,
@@ -79,6 +92,9 @@ typedef enum {
   ARM_VFPV4,
   ARM_IDIVA,
   ARM_IDIVT,
+  ARM_VFPD32,
+  ARM_LPAE,
+  ARM_EVTSTRM,
   ARM_AES,
   ARM_PMULL,
   ARM_SHA1,
