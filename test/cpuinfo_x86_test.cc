@@ -101,6 +101,9 @@ TEST(CpuidX86Test, SandyBridge) {
   EXPECT_FALSE(features.rdrnd);
 }
 
+const int KiB = 1024;
+const int MiB = 1024 * KiB;
+
 TEST(CpuidX86Test, SandyBridgeTestOsSupport) {
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x0000000D, 0x756E6547, 0x6C65746E, 0x49656E69}},
@@ -160,39 +163,39 @@ TEST(CpuidX86Test, KabyLakeCache) {
       {{0x80000002, 0}, Leaf{0x65746E49, 0x2952286C, 0x726F4320, 0x4D542865}},
       {{0x80000003, 0}, Leaf{0x37692029, 0x3035362D, 0x43205530, 0x40205550}},
   });
-  const auto info = GetX86Info();
-  EXPECT_EQ(info.cache.size, 4);
-  EXPECT_EQ(info.cache.levels[0].level, 1);
-  EXPECT_EQ(info.cache.levels[0].cache_type, 1);
-  EXPECT_EQ(info.cache.levels[0].cache_size, 32);
-  EXPECT_EQ(info.cache.levels[0].ways, 8);
-  EXPECT_EQ(info.cache.levels[0].line_size, 64);
-  EXPECT_EQ(info.cache.levels[0].entries, 64);
-  EXPECT_EQ(info.cache.levels[0].partitioning, 1);
+  const auto info = GetX86CacheInfo();
+  EXPECT_EQ(info.size, 4);
+  EXPECT_EQ(info.levels[0].level, 1);
+  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_size, 32 * KiB);
+  EXPECT_EQ(info.levels[0].ways, 8);
+  EXPECT_EQ(info.levels[0].line_size, 64);
+  EXPECT_EQ(info.levels[0].tlb_entries, 64);
+  EXPECT_EQ(info.levels[0].partitioning, 1);
 
-  EXPECT_EQ(info.cache.levels[1].level, 1);
-  EXPECT_EQ(info.cache.levels[1].cache_type, 2);
-  EXPECT_EQ(info.cache.levels[1].cache_size, 32);
-  EXPECT_EQ(info.cache.levels[1].ways, 8);
-  EXPECT_EQ(info.cache.levels[1].line_size, 64);
-  EXPECT_EQ(info.cache.levels[1].entries, 64);
-  EXPECT_EQ(info.cache.levels[1].partitioning, 1);
+  EXPECT_EQ(info.levels[1].level, 1);
+  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_size, 32 * KiB);
+  EXPECT_EQ(info.levels[1].ways, 8);
+  EXPECT_EQ(info.levels[1].line_size, 64);
+  EXPECT_EQ(info.levels[1].tlb_entries, 64);
+  EXPECT_EQ(info.levels[1].partitioning, 1);
 
-  EXPECT_EQ(info.cache.levels[2].level, 2);
-  EXPECT_EQ(info.cache.levels[2].cache_type, 3);
-  EXPECT_EQ(info.cache.levels[2].cache_size, 256);
-  EXPECT_EQ(info.cache.levels[2].ways, 4);
-  EXPECT_EQ(info.cache.levels[2].line_size, 64);
-  EXPECT_EQ(info.cache.levels[2].entries, 1024);
-  EXPECT_EQ(info.cache.levels[2].partitioning, 1);
+  EXPECT_EQ(info.levels[2].level, 2);
+  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_size, 256 * KiB);
+  EXPECT_EQ(info.levels[2].ways, 4);
+  EXPECT_EQ(info.levels[2].line_size, 64);
+  EXPECT_EQ(info.levels[2].tlb_entries, 1024);
+  EXPECT_EQ(info.levels[2].partitioning, 1);
 
-  EXPECT_EQ(info.cache.levels[3].level, 3);
-  EXPECT_EQ(info.cache.levels[3].cache_type, 3);
-  EXPECT_EQ(info.cache.levels[3].cache_size, 6144);
-  EXPECT_EQ(info.cache.levels[3].ways, 12);
-  EXPECT_EQ(info.cache.levels[3].line_size, 64);
-  EXPECT_EQ(info.cache.levels[3].entries, 8192);
-  EXPECT_EQ(info.cache.levels[3].partitioning, 1);
+  EXPECT_EQ(info.levels[3].level, 3);
+  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_size, 6 * MiB);
+  EXPECT_EQ(info.levels[3].ways, 12);
+  EXPECT_EQ(info.levels[3].line_size, 64);
+  EXPECT_EQ(info.levels[3].tlb_entries, 8192);
+  EXPECT_EQ(info.levels[3].partitioning, 1);
 }
 
 TEST(CpuidX86Test, HSWCache) {
@@ -209,39 +212,39 @@ TEST(CpuidX86Test, HSWCache) {
       {{0x80000002, 0}, Leaf{0x65746E49, 0x2952286C, 0x726F4320, 0x4D542865}},
       {{0x80000003, 0}, Leaf{0x37692029, 0x3035362D, 0x43205530, 0x40205550}},
   });
-  const auto info = GetX86Info();
-  EXPECT_EQ(info.cache.size, 4);
-  EXPECT_EQ(info.cache.levels[0].level, 1);
-  EXPECT_EQ(info.cache.levels[0].cache_type, 1);
-  EXPECT_EQ(info.cache.levels[0].cache_size, 32);
-  EXPECT_EQ(info.cache.levels[0].ways, 8);
-  EXPECT_EQ(info.cache.levels[0].line_size, 64);
-  EXPECT_EQ(info.cache.levels[0].entries, 64);
-  EXPECT_EQ(info.cache.levels[0].partitioning, 1);
+  const auto info = GetX86CacheInfo();
+  EXPECT_EQ(info.size, 4);
+  EXPECT_EQ(info.levels[0].level, 1);
+  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_size, 32 * KiB);
+  EXPECT_EQ(info.levels[0].ways, 8);
+  EXPECT_EQ(info.levels[0].line_size, 64);
+  EXPECT_EQ(info.levels[0].tlb_entries, 64);
+  EXPECT_EQ(info.levels[0].partitioning, 1);
 
-  EXPECT_EQ(info.cache.levels[1].level, 1);
-  EXPECT_EQ(info.cache.levels[1].cache_type, 2);
-  EXPECT_EQ(info.cache.levels[1].cache_size, 32);
-  EXPECT_EQ(info.cache.levels[1].ways, 8);
-  EXPECT_EQ(info.cache.levels[1].line_size, 64);
-  EXPECT_EQ(info.cache.levels[1].entries, 64);
-  EXPECT_EQ(info.cache.levels[1].partitioning, 1);
+  EXPECT_EQ(info.levels[1].level, 1);
+  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_size, 32 * KiB);
+  EXPECT_EQ(info.levels[1].ways, 8);
+  EXPECT_EQ(info.levels[1].line_size, 64);
+  EXPECT_EQ(info.levels[1].tlb_entries, 64);
+  EXPECT_EQ(info.levels[1].partitioning, 1);
 
-  EXPECT_EQ(info.cache.levels[2].level, 2);
-  EXPECT_EQ(info.cache.levels[2].cache_type, 3);
-  EXPECT_EQ(info.cache.levels[2].cache_size, 256);
-  EXPECT_EQ(info.cache.levels[2].ways, 8);
-  EXPECT_EQ(info.cache.levels[2].line_size, 64);
-  EXPECT_EQ(info.cache.levels[2].entries, 512);
-  EXPECT_EQ(info.cache.levels[2].partitioning, 1);
+  EXPECT_EQ(info.levels[2].level, 2);
+  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_size, 256 * KiB);
+  EXPECT_EQ(info.levels[2].ways, 8);
+  EXPECT_EQ(info.levels[2].line_size, 64);
+  EXPECT_EQ(info.levels[2].tlb_entries, 512);
+  EXPECT_EQ(info.levels[2].partitioning, 1);
 
-  EXPECT_EQ(info.cache.levels[3].level, 3);
-  EXPECT_EQ(info.cache.levels[3].cache_type, 3);
-  EXPECT_EQ(info.cache.levels[3].cache_size, 6144);
-  EXPECT_EQ(info.cache.levels[3].ways, 12);
-  EXPECT_EQ(info.cache.levels[3].line_size, 64);
-  EXPECT_EQ(info.cache.levels[3].entries, 8192);
-  EXPECT_EQ(info.cache.levels[3].partitioning, 1);
+  EXPECT_EQ(info.levels[3].level, 3);
+  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_size, 6 * MiB);
+  EXPECT_EQ(info.levels[3].ways, 12);
+  EXPECT_EQ(info.levels[3].line_size, 64);
+  EXPECT_EQ(info.levels[3].tlb_entries, 8192);
+  EXPECT_EQ(info.levels[3].partitioning, 1);
 }
 // http://users.atw.hu/instlatx64/AuthenticAMD0630F81_K15_Godavari_CPUID.txt
 TEST(CpuidX86Test, AMD_K15) {

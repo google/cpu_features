@@ -16,6 +16,7 @@
 #define CPU_FEATURES_INCLUDE_CPUINFO_AARCH64_H_
 
 #include "cpu_features_macros.h"
+#include "cpu_features_common.h"
 
 CPU_FEATURES_START_CPP_NAMESPACE
 

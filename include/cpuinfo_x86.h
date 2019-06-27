@@ -15,6 +15,7 @@
 #ifndef CPU_FEATURES_INCLUDE_CPUINFO_X86_H_
 #define CPU_FEATURES_INCLUDE_CPUINFO_X86_H_
 
+#include "cpu_features_common.h"
 #include "cpu_features_macros.h"
 
 CPU_FEATURES_START_CPP_NAMESPACE
@@ -81,49 +82,23 @@ typedef struct {
   // Make sure to update X86FeaturesEnum below if you add a field here.
 } X86Features;
 
-// Increase this value if more cache levels are needed.
-#ifndef CPU_FEATURES_MAX_CACHE_LEVEL
-#define CPU_FEATURES_MAX_CACHE_LEVEL 10
-#endif
-
-typedef enum {
-  EMPTY = 0,
-  DATA_CACHE = 1,
-  INSTRUCTION_CACHE = 2,
-  UNIFIED_CACHE = 3,
-  TLB = 4,
-  DTLB = 5,
-  STLB = 6,
-  PREFETCH = 7
-} X86CacheType;
-
-typedef struct {
-  int level;
-  X86CacheType cache_type;
-  int cache_size;  // Cache size in kBytes
-  int ways;        // Associativity, 0 undefined, 0xFF fully associative
-  int line_size;   // Cache line size in bytes
-  int entries;     // number of entries for TLB
-  int partitioning;
-} X86CacheLevelInfo;
-
-typedef struct {
-  int size;
-  X86CacheLevelInfo levels[CPU_FEATURES_MAX_CACHE_LEVEL];
-} X86CacheInfo;
-
 typedef struct {
   X86Features features;
   int family;
   int model;
   int stepping;
   char vendor[13];  // 0 terminated string
-  X86CacheInfo cache;
 } X86Info;
 
 // Calls cpuid and returns an initialized X86info.
 // This function is guaranteed to be malloc, memset and memcpy free.
 X86Info GetX86Info(void);
+
+// Calls cpuid and returns an initialized CacheInfo for x86 architecture.
+// Can call cpuid multiple times.
+// Only works on Intel CPU at the moment.
+// This function is guaranteed to be malloc, memset and memcpy free.
+CacheInfo GetX86CacheInfo(void);
 
 typedef enum {
   X86_UNKNOWN,
