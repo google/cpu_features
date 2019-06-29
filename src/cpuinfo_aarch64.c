@@ -20,6 +20,7 @@
 #include "internal/string_view.h"
 #include "internal/unix_features_aggregator.h"
 
+#include <assert.h>
 #include <ctype.h>
 
 DECLARE_SETTER(Aarch64Features, fp)
@@ -31,13 +32,13 @@ DECLARE_SETTER(Aarch64Features, sha2)
 DECLARE_SETTER(Aarch64Features, crc32)
 
 static const CapabilityConfig kConfigs[] = {
-    {{AARCH64_HWCAP_FP, 0}, "fp", &set_fp},           //
-    {{AARCH64_HWCAP_ASIMD, 0}, "asimd", &set_asimd},  //
-    {{AARCH64_HWCAP_AES, 0}, "aes", &set_aes},        //
-    {{AARCH64_HWCAP_PMULL, 0}, "pmull", &set_pmull},  //
-    {{AARCH64_HWCAP_SHA1, 0}, "sha1", &set_sha1},     //
-    {{AARCH64_HWCAP_SHA2, 0}, "sha2", &set_sha2},     //
-    {{AARCH64_HWCAP_CRC32, 0}, "crc32", &set_crc32},  //
+  [AARCH64_FP] = {{AARCH64_HWCAP_FP, 0}, "fp", &set_fp},              //
+  [AARCH64_ASIMD] = {{AARCH64_HWCAP_ASIMD, 0}, "asimd", &set_asimd},  //
+  [AARCH64_AES] = {{AARCH64_HWCAP_AES, 0}, "aes", &set_aes},          //
+  [AARCH64_PMULL] = {{AARCH64_HWCAP_PMULL, 0}, "pmull", &set_pmull},  //
+  [AARCH64_SHA1] = {{AARCH64_HWCAP_SHA1, 0}, "sha1", &set_sha1},      //
+  [AARCH64_SHA2] = {{AARCH64_HWCAP_SHA2, 0}, "sha2", &set_sha2},      //
+  [AARCH64_CRC32] {{AARCH64_HWCAP_CRC32, 0}, "crc32", &set_crc32},    //
 };
 
 static const size_t kConfigsSize = sizeof(kConfigs) / sizeof(CapabilityConfig);
@@ -79,6 +80,8 @@ static void FillProcCpuInfoData(Aarch64Info* const info) {
 static const Aarch64Info kEmptyAarch64Info;
 
 Aarch64Info GetAarch64Info(void) {
+  assert(kConfigsSize == AARCH64_LAST_);
+
   // capabilities are fetched from both getauxval and /proc/cpuinfo so we can
   // have some information if the executable is sandboxed (aka no access to
   // /proc/cpuinfo).
@@ -119,23 +122,7 @@ int GetAarch64FeaturesEnumValue(const Aarch64Features* features,
 }
 
 const char* GetAarch64FeaturesEnumName(Aarch64FeaturesEnum value) {
-  switch (value) {
-    case AARCH64_FP:
-      return "fp";
-    case AARCH64_ASIMD:
-      return "asimd";
-    case AARCH64_AES:
-      return "aes";
-    case AARCH64_PMULL:
-      return "pmull";
-    case AARCH64_SHA1:
-      return "sha1";
-    case AARCH64_SHA2:
-      return "sha2";
-    case AARCH64_CRC32:
-      return "crc32";
-    case AARCH64_LAST_:
-      break;
-  }
-  return "unknown feature";
+  if(value >= kConfigsSize)
+    return "unknown feature";
+  return kConfigs[value].proc_cpuinfo_flag;
 }

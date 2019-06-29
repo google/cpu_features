@@ -21,6 +21,7 @@
 #include "internal/string_view.h"
 #include "internal/unix_features_aggregator.h"
 
+#include <assert.h>
 #include <ctype.h>
 
 DECLARE_SETTER(ArmFeatures, swp)
@@ -52,33 +53,33 @@ DECLARE_SETTER(ArmFeatures, sha2)
 DECLARE_SETTER(ArmFeatures, crc32)
 
 static const CapabilityConfig kConfigs[] = {
-    {{ARM_HWCAP_SWP, 0}, "swp", &set_swp},                 //
-    {{ARM_HWCAP_HALF, 0}, "half", &set_half},              //
-    {{ARM_HWCAP_THUMB, 0}, "thumb", &set_thumb},           //
-    {{ARM_HWCAP_26BIT, 0}, "26bit", &set__26bit},          //
-    {{ARM_HWCAP_FAST_MULT, 0}, "fastmult", &set_fastmult}, //
-    {{ARM_HWCAP_FPA, 0}, "fpa", &set_fpa},                 //
-    {{ARM_HWCAP_VFP, 0}, "vfp", &set_vfp},                 //
-    {{ARM_HWCAP_EDSP, 0}, "edsp", &set_edsp},              //
-    {{ARM_HWCAP_JAVA, 0}, "java", &set_java},              //
-    {{ARM_HWCAP_IWMMXT, 0}, "iwmmxt", &set_iwmmxt},        //
-    {{ARM_HWCAP_CRUNCH, 0}, "crunch", &set_crunch},        //
-    {{ARM_HWCAP_THUMBEE, 0}, "thumbee", &set_thumbee},     //
-    {{ARM_HWCAP_NEON, 0}, "neon", &set_neon},              //
-    {{ARM_HWCAP_VFPV3, 0}, "vfpv3", &set_vfpv3},           //
-    {{ARM_HWCAP_VFPV3D16, 0}, "vfpv3d16", &set_vfpv3d16},  //
-    {{ARM_HWCAP_TLS, 0}, "tls", &set_tls},                 //
-    {{ARM_HWCAP_VFPV4, 0}, "vfpv4", &set_vfpv4},           //
-    {{ARM_HWCAP_IDIVA, 0}, "idiva", &set_idiva},           //
-    {{ARM_HWCAP_IDIVT, 0}, "idivt", &set_idivt},           //
-    {{ARM_HWCAP_VFPD32, 0}, "vfpd32", &set_vfpd32},        //
-    {{ARM_HWCAP_LPAE, 0}, "lpae", &set_lpae},              //
-    {{ARM_HWCAP_EVTSTRM, 0}, "evtstrm", &set_evtstrm},     //
-    {{0, ARM_HWCAP2_AES}, "aes", &set_aes},                //
-    {{0, ARM_HWCAP2_PMULL}, "pmull", &set_pmull},          //
-    {{0, ARM_HWCAP2_SHA1}, "sha1", &set_sha1},             //
-    {{0, ARM_HWCAP2_SHA2}, "sha2", &set_sha2},             //
-    {{0, ARM_HWCAP2_CRC32}, "crc32", &set_crc32},          //
+  [ARM_SWP] = {{ARM_HWCAP_SWP, 0}, "swp", &set_swp},                      //
+  [ARM_HALF] = {{ARM_HWCAP_HALF, 0}, "half", &set_half},                  //
+  [ARM_THUMB] = {{ARM_HWCAP_THUMB, 0}, "thumb", &set_thumb},              //
+  [ARM_26BIT] = {{ARM_HWCAP_26BIT, 0}, "26bit", &set__26bit},             //
+  [ARM_FASTMULT] = {{ARM_HWCAP_FAST_MULT, 0}, "fastmult", &set_fastmult}, //
+  [ARM_FPA] = {{ARM_HWCAP_FPA, 0}, "fpa", &set_fpa},                      //
+  [ARM_VFP] = {{ARM_HWCAP_VFP, 0}, "vfp", &set_vfp},                      //
+  [ARM_EDSP] = {{ARM_HWCAP_EDSP, 0}, "edsp", &set_edsp},                  //
+  [ARM_JAVA] = {{ARM_HWCAP_JAVA, 0}, "java", &set_java},                  //
+  [ARM_IWMMXT] = {{ARM_HWCAP_IWMMXT, 0}, "iwmmxt", &set_iwmmxt},          //
+  [ARM_CRUNCH] = {{ARM_HWCAP_CRUNCH, 0}, "crunch", &set_crunch},          //
+  [ARM_THUMBEE] = {{ARM_HWCAP_THUMBEE, 0}, "thumbee", &set_thumbee},      //
+  [ARM_NEON] = {{ARM_HWCAP_NEON, 0}, "neon", &set_neon},                  //
+  [ARM_VFPV3] = {{ARM_HWCAP_VFPV3, 0}, "vfpv3", &set_vfpv3},              //
+  [ARM_VFPV3D16] = {{ARM_HWCAP_VFPV3D16, 0}, "vfpv3d16", &set_vfpv3d16},  //
+  [ARM_TLS] = {{ARM_HWCAP_TLS, 0}, "tls", &set_tls},                      //
+  [ARM_VFPV4] = {{ARM_HWCAP_VFPV4, 0}, "vfpv4", &set_vfpv4},              //
+  [ARM_IDIVA] = {{ARM_HWCAP_IDIVA, 0}, "idiva", &set_idiva},              //
+  [ARM_IDIVT] = {{ARM_HWCAP_IDIVT, 0}, "idivt", &set_idivt},              //
+  [ARM_VFPD32] = {{ARM_HWCAP_VFPD32, 0}, "vfpd32", &set_vfpd32},          //
+  [ARM_LPAE] = {{ARM_HWCAP_LPAE, 0}, "lpae", &set_lpae},                  //
+  [ARM_EVTSTRM] = {{ARM_HWCAP_EVTSTRM, 0}, "evtstrm", &set_evtstrm},      //
+  [ARM_AES] = {{0, ARM_HWCAP2_AES}, "aes", &set_aes},                     //
+  [ARM_PMULL] = {{0, ARM_HWCAP2_PMULL}, "pmull", &set_pmull},             //
+  [ARM_SHA1] = {{0, ARM_HWCAP2_SHA1}, "sha1", &set_sha1},                 //
+  [ARM_SHA2] = {{0, ARM_HWCAP2_SHA2}, "sha2", &set_sha2},                 //
+  [ARM_CRC32] = {{0, ARM_HWCAP2_CRC32}, "crc32", &set_crc32},             //
 };
 
 static const size_t kConfigsSize = sizeof(kConfigs) / sizeof(CapabilityConfig);
@@ -285,61 +286,7 @@ int GetArmFeaturesEnumValue(const ArmFeatures* features,
 }
 
 const char* GetArmFeaturesEnumName(ArmFeaturesEnum value) {
-  switch (value) {
-    case ARM_SWP:
-      return "swp";
-    case ARM_HALF:
-      return "half";
-    case ARM_THUMB:
-      return "thumb";
-    case ARM_FASTMULT:
-      return "fastmult";
-    case ARM_FPA:
-      return "fpa";
-    case ARM_VFP:
-      return "vfp";
-    case ARM_EDSP:
-      return "edsp";
-    case ARM_JAVA:
-      return "java";
-    case ARM_IWMMXT:
-      return "iwmmxt";
-    case ARM_CRUNCH:
-      return "crunch";
-    case ARM_THUMBEE:
-      return "thumbee";
-    case ARM_NEON:
-      return "neon";
-    case ARM_VFPV3:
-      return "vfpv3";
-    case ARM_VFPV3D16:
-      return "vfpv3d16";
-    case ARM_TLS:
-      return "tls";
-    case ARM_VFPV4:
-      return "vfpv4";
-    case ARM_IDIVA:
-      return "idiva";
-    case ARM_IDIVT:
-      return "idivt";
-    case ARM_VFPD32:
-      return "vfpd32";
-    case ARM_LPAE:
-      return "lpae";
-    case ARM_EVTSTRM:
-      return "evtstrm";
-    case ARM_AES:
-      return "aes";
-    case ARM_PMULL:
-      return "pmull";
-    case ARM_SHA1:
-      return "sha1";
-    case ARM_SHA2:
-      return "sha2";
-    case ARM_CRC32:
-      return "crc32";
-    case ARM_LAST_:
-      break;
-  }
-  return "unknown feature";
+  if(value >= kConfigsSize)
+    return "unknown feature";
+  return kConfigs[value].proc_cpuinfo_flag;
 }

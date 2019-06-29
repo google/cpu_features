@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <assert.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -65,49 +66,49 @@ DECLARE_SETTER(PPCFeatures, scv)
 DECLARE_SETTER(PPCFeatures, htm_no_suspend)
 
 static const CapabilityConfig kConfigs[] = {
-    {{PPC_FEATURE_32, 0}, "ppc32", &set_ppc32},
-    {{PPC_FEATURE_64, 0}, "ppc64", &set_ppc64},
-    {{PPC_FEATURE_601_INSTR, 0}, "ppc601", &set_ppc601},
-    {{PPC_FEATURE_HAS_ALTIVEC, 0}, "altivec", &set_altivec},
-    {{PPC_FEATURE_HAS_FPU, 0}, "fpu", &set_fpu},
-    {{PPC_FEATURE_HAS_MMU, 0}, "mmu", &set_mmu},
-    {{PPC_FEATURE_HAS_4xxMAC, 0}, "4xxmac", &set_mac_4xx},
-    {{PPC_FEATURE_UNIFIED_CACHE, 0}, "ucache", &set_unifiedcache},
-    {{PPC_FEATURE_HAS_SPE, 0}, "spe", &set_spe},
-    {{PPC_FEATURE_HAS_EFP_SINGLE, 0}, "efpsingle", &set_efpsingle},
-    {{PPC_FEATURE_HAS_EFP_DOUBLE, 0}, "efpdouble", &set_efpdouble},
-    {{PPC_FEATURE_NO_TB, 0}, "notb", &set_no_tb},
-    {{PPC_FEATURE_POWER4, 0}, "power4", &set_power4},
-    {{PPC_FEATURE_POWER5, 0}, "power5", &set_power5},
-    {{PPC_FEATURE_POWER5_PLUS, 0}, "power5+", &set_power5plus},
-    {{PPC_FEATURE_CELL, 0}, "cellbe", &set_cell},
-    {{PPC_FEATURE_BOOKE, 0}, "booke", &set_booke},
-    {{PPC_FEATURE_SMT, 0}, "smt", &set_smt},
-    {{PPC_FEATURE_ICACHE_SNOOP, 0}, "ic_snoop", &set_icachesnoop},
-    {{PPC_FEATURE_ARCH_2_05, 0}, "arch_2_05", &set_arch205},
-    {{PPC_FEATURE_PA6T, 0}, "pa6t", &set_pa6t},
-    {{PPC_FEATURE_HAS_DFP, 0}, "dfp", &set_dfp},
-    {{PPC_FEATURE_POWER6_EXT, 0}, "power6x", &set_power6ext},
-    {{PPC_FEATURE_ARCH_2_06, 0}, "arch_2_06", &set_arch206},
-    {{PPC_FEATURE_HAS_VSX, 0}, "vsx", &set_vsx},
-    {{PPC_FEATURE_PSERIES_PERFMON_COMPAT, 0},
+  [PPC_32] = {{PPC_FEATURE_32, 0}, "ppc32", &set_ppc32},
+  [PPC_64] = {{PPC_FEATURE_64, 0}, "ppc64", &set_ppc64},
+  [PPC_601_INSTR] = {{PPC_FEATURE_601_INSTR, 0}, "ppc601", &set_ppc601},
+  [PPC_HAS_ALTIVEC] = {{PPC_FEATURE_HAS_ALTIVEC, 0}, "altivec", &set_altivec},
+  [PPC_HAS_FPU] = {{PPC_FEATURE_HAS_FPU, 0}, "fpu", &set_fpu},
+  [PPC_HAS_MMU] = {{PPC_FEATURE_HAS_MMU, 0}, "mmu", &set_mmu},
+  [PPC_HAS_4xxMAC] = {{PPC_FEATURE_HAS_4xxMAC, 0}, "4xxmac", &set_mac_4xx},
+  [PPC_UNIFIED_CACHE] = {{PPC_FEATURE_UNIFIED_CACHE, 0}, "ucache", &set_unifiedcache},
+  [PPC_HAS_SPE] = {{PPC_FEATURE_HAS_SPE, 0}, "spe", &set_spe},
+  [PPC_HAS_EFP_SINGLE] = {{PPC_FEATURE_HAS_EFP_SINGLE, 0}, "efpsingle", &set_efpsingle},
+  [PPC_HAS_EFP_DOUBLE] = {{PPC_FEATURE_HAS_EFP_DOUBLE, 0}, "efpdouble", &set_efpdouble},
+  [PPC_NO_TB] = {{PPC_FEATURE_NO_TB, 0}, "notb", &set_no_tb},
+  [PPC_POWER4] = {{PPC_FEATURE_POWER4, 0}, "power4", &set_power4},
+  [PPC_POWER5] = {{PPC_FEATURE_POWER5, 0}, "power5", &set_power5},
+  [PPC_POWER5_PLUS] = {{PPC_FEATURE_POWER5_PLUS, 0}, "power5+", &set_power5plus},
+  [PPC_CELL] = {{PPC_FEATURE_CELL, 0}, "cellbe", &set_cell},
+  [PPC_BOOKE] = {{PPC_FEATURE_BOOKE, 0}, "booke", &set_booke},
+  [PPC_SMT] = {{PPC_FEATURE_SMT, 0}, "smt", &set_smt},
+  [PPC_ICACHE_SNOOP] = {{PPC_FEATURE_ICACHE_SNOOP, 0}, "ic_snoop", &set_icachesnoop},
+  [PPC_ARCH_2_05] = {{PPC_FEATURE_ARCH_2_05, 0}, "arch_2_05", &set_arch205},
+  [PPC_PA6T] = {{PPC_FEATURE_PA6T, 0}, "pa6t", &set_pa6t},
+  [PPC_HAS_DFP] = {{PPC_FEATURE_HAS_DFP, 0}, "dfp", &set_dfp},
+  [PPC_POWER6_EXT] = {{PPC_FEATURE_POWER6_EXT, 0}, "power6x", &set_power6ext},
+  [PPC_ARCH_2_06] = {{PPC_FEATURE_ARCH_2_06, 0}, "arch_2_06", &set_arch206},
+  [PPC_HAS_VSX] = {{PPC_FEATURE_HAS_VSX, 0}, "vsx", &set_vsx},
+  [PPC_PSERIES_PERFMON_COMPAT] = {{PPC_FEATURE_PSERIES_PERFMON_COMPAT, 0},
      "archpmu",
      &set_pseries_perfmon_compat},
-    {{PPC_FEATURE_TRUE_LE, 0}, "true_le", &set_truele},
-    {{PPC_FEATURE_PPC_LE, 0}, "ppcle", &set_ppcle},
-    {{0, PPC_FEATURE2_ARCH_2_07}, "arch_2_07", &set_arch207},
-    {{0, PPC_FEATURE2_HTM}, "htm", &set_htm},
-    {{0, PPC_FEATURE2_DSCR}, "dscr", &set_dscr},
-    {{0, PPC_FEATURE2_EBB}, "ebb", &set_ebb},
-    {{0, PPC_FEATURE2_ISEL}, "isel", &set_isel},
-    {{0, PPC_FEATURE2_TAR}, "tar", &set_tar},
-    {{0, PPC_FEATURE2_VEC_CRYPTO}, "vcrypto", &set_vcrypto},
-    {{0, PPC_FEATURE2_HTM_NOSC}, "htm-nosc", &set_htm_nosc},
-    {{0, PPC_FEATURE2_ARCH_3_00}, "arch_3_00", &set_arch300},
-    {{0, PPC_FEATURE2_HAS_IEEE128}, "ieee128", &set_ieee128},
-    {{0, PPC_FEATURE2_DARN}, "darn", &set_darn},
-    {{0, PPC_FEATURE2_SCV}, "scv", &set_scv},
-    {{0, PPC_FEATURE2_HTM_NO_SUSPEND}, "htm-no-suspend", &set_htm_no_suspend},
+  [PPC_TRUE_LE] = {{PPC_FEATURE_TRUE_LE, 0}, "true_le", &set_truele},
+  [PPC_PPC_LE] = {{PPC_FEATURE_PPC_LE, 0}, "ppcle", &set_ppcle},
+  [PPC_ARCH_2_07] = {{0, PPC_FEATURE2_ARCH_2_07}, "arch_2_07", &set_arch207},
+  [PPC_HTM] = {{0, PPC_FEATURE2_HTM}, "htm", &set_htm},
+  [PPC_DSCR] = {{0, PPC_FEATURE2_DSCR}, "dscr", &set_dscr},
+  [PPC_EBB] = {{0, PPC_FEATURE2_EBB}, "ebb", &set_ebb},
+  [PPC_ISEL] = {{0, PPC_FEATURE2_ISEL}, "isel", &set_isel},
+  [PPC_TAR] = {{0, PPC_FEATURE2_TAR}, "tar", &set_tar},
+  [PPC_VEC_CRYPTO] = {{0, PPC_FEATURE2_VEC_CRYPTO}, "vcrypto", &set_vcrypto},
+  [PPC_HTM_NOSC] = {{0, PPC_FEATURE2_HTM_NOSC}, "htm-nosc", &set_htm_nosc},
+  [PPC_ARCH_3_00] = {{0, PPC_FEATURE2_ARCH_3_00}, "arch_3_00", &set_arch300},
+  [PPC_HAS_IEEE128] = {{0, PPC_FEATURE2_HAS_IEEE128}, "ieee128", &set_ieee128},
+  [PPC_DARN] = {{0, PPC_FEATURE2_DARN}, "darn", &set_darn},
+  [PPC_SCV] = {{0, PPC_FEATURE2_SCV}, "scv", &set_scv},
+  [PPC_HTM_NO_SUSPEND] = {{0, PPC_FEATURE2_HTM_NO_SUSPEND}, "htm-no-suspend", &set_htm_no_suspend},
 };
 static const size_t kConfigsSize = sizeof(kConfigs) / sizeof(CapabilityConfig);
 
@@ -268,91 +269,7 @@ int GetPPCFeaturesEnumValue(const PPCFeatures* features,
 
 /* Have used the same names as glibc  */
 const char* GetPPCFeaturesEnumName(PPCFeaturesEnum value) {
-  switch (value) {
-    case PPC_32:
-      return "ppc32";
-    case PPC_64:
-      return "ppc64";
-    case PPC_601_INSTR:
-      return "ppc601";
-    case PPC_HAS_ALTIVEC:
-      return "altivec";
-    case PPC_HAS_FPU:
-      return "fpu";
-    case PPC_HAS_MMU:
-      return "mmu";
-    case PPC_HAS_4xxMAC:
-      return "4xxmac";
-    case PPC_UNIFIED_CACHE:
-      return "ucache";
-    case PPC_HAS_SPE:
-      return "spe";
-    case PPC_HAS_EFP_SINGLE:
-      return "efpsingle";
-    case PPC_HAS_EFP_DOUBLE:
-      return "efpdouble";
-    case PPC_NO_TB:
-      return "notb";
-    case PPC_POWER4:
-      return "power4";
-    case PPC_POWER5:
-      return "power5";
-    case PPC_POWER5_PLUS:
-      return "power5+";
-    case PPC_CELL:
-      return "cellbe";
-    case PPC_BOOKE:
-      return "booke";
-    case PPC_SMT:
-      return "smt";
-    case PPC_ICACHE_SNOOP:
-      return "ic_snoop";
-    case PPC_ARCH_2_05:
-      return "arch_2_05";
-    case PPC_PA6T:
-      return "pa6t";
-    case PPC_HAS_DFP:
-      return "dfp";
-    case PPC_POWER6_EXT:
-      return "power6x";
-    case PPC_ARCH_2_06:
-      return "arch_2_06";
-    case PPC_HAS_VSX:
-      return "vsx";
-    case PPC_PSERIES_PERFMON_COMPAT:
-      return "archpmu";
-    case PPC_TRUE_LE:
-      return "true_le";
-    case PPC_PPC_LE:
-      return "ppcle";
-    case PPC_ARCH_2_07:
-      return "arch_2_07";
-    case PPC_HTM:
-      return "htm";
-    case PPC_DSCR:
-      return "dscr";
-    case PPC_EBB:
-      return "ebb";
-    case PPC_ISEL:
-      return "isel";
-    case PPC_TAR:
-      return "tar";
-    case PPC_VEC_CRYPTO:
-      return "vcrypto";
-    case PPC_HTM_NOSC:
-      return "htm-nosc";
-    case PPC_ARCH_3_00:
-      return "arch_3_00";
-    case PPC_HAS_IEEE128:
-      return "ieee128";
-    case PPC_DARN:
-      return "darn";
-    case PPC_SCV:
-      return "scv";
-    case PPC_HTM_NO_SUSPEND:
-      return "htm-no-suspend";
-    case PPC_LAST_:
-      break;
-  }
-  return "unknown_feature";
+  if(value >= kConfigsSize)
+    return "unknown feature";
+  return kConfigs[value].proc_cpuinfo_flag;
 }

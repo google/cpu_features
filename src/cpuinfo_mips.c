@@ -19,14 +19,16 @@
 #include "internal/string_view.h"
 #include "internal/unix_features_aggregator.h"
 
+#include <assert.h>
+
 DECLARE_SETTER(MipsFeatures, msa)
 DECLARE_SETTER(MipsFeatures, eva)
 DECLARE_SETTER(MipsFeatures, r6)
 
 static const CapabilityConfig kConfigs[] = {
-    {{MIPS_HWCAP_MSA, 0}, "msa", &set_msa},  //
-    {{0, 0}, "eva", &set_eva},               //
-    {{MIPS_HWCAP_R6, 0}, "r6", &set_r6},     //
+  [MIPS_MSA] = {{MIPS_HWCAP_MSA, 0}, "msa", &set_msa},  //
+  [MIPS_EVA] = {{0, 0}, "eva", &set_eva},               //
+  [MIPS_R6] = {{MIPS_HWCAP_R6, 0}, "r6", &set_r6},      //
 };
 static const size_t kConfigsSize = sizeof(kConfigs) / sizeof(CapabilityConfig);
 
@@ -59,6 +61,8 @@ static void FillProcCpuInfoData(MipsFeatures* const features) {
 static const MipsInfo kEmptyMipsInfo;
 
 MipsInfo GetMipsInfo(void) {
+  assert(kConfigsSize == MIPS_LAST_);
+
   // capabilities are fetched from both getauxval and /proc/cpuinfo so we can
   // have some information if the executable is sandboxed (aka no access to
   // /proc/cpuinfo).
@@ -90,15 +94,7 @@ int GetMipsFeaturesEnumValue(const MipsFeatures* features,
 }
 
 const char* GetMipsFeaturesEnumName(MipsFeaturesEnum value) {
-  switch (value) {
-    case MIPS_MSA:
-      return "msa";
-    case MIPS_EVA:
-      return "eva";
-    case MIPS_R6:
-      return "r6";
-    case MIPS_LAST_:
-      break;
-  }
-  return "unknown feature";
+  if(value >= kConfigsSize)
+    return "unknown feature";
+  return kConfigs[value].proc_cpuinfo_flag;
 }
