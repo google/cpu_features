@@ -64,7 +64,7 @@ Leaf CpuIdEx(uint32_t leaf_id, int ecx) {
   return leaf;
 }
 
-uint32_t GetXCR0Eax(void) { return _xgetbv(0); }
+uint32_t GetXCR0Eax(void) { return (uint32_t)_xgetbv(0); }
 
 #else
 #error "Unsupported compiler, x86 cpuid requires either GCC, Clang or MSVC."
