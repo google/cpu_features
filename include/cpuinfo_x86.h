@@ -15,6 +15,7 @@
 #ifndef CPU_FEATURES_INCLUDE_CPUINFO_X86_H_
 #define CPU_FEATURES_INCLUDE_CPUINFO_X86_H_
 
+#include "cpu_features_cache_info.h"
 #include "cpu_features_macros.h"
 
 CPU_FEATURES_START_CPP_NAMESPACE
@@ -92,6 +93,12 @@ typedef struct {
 // Calls cpuid and returns an initialized X86info.
 // This function is guaranteed to be malloc, memset and memcpy free.
 X86Info GetX86Info(void);
+
+// Returns cache hierarchy informations.
+// Can call cpuid multiple times.
+// Only works on Intel CPU at the moment.
+// This function is guaranteed to be malloc, memset and memcpy free.
+CacheInfo GetX86CacheInfo(void);
 
 typedef enum {
   X86_UNKNOWN,

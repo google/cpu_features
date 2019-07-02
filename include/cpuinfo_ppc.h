@@ -16,6 +16,7 @@
 #define CPU_FEATURES_INCLUDE_CPUINFO_PPC_H_
 
 #include "cpu_features_macros.h"
+#include "cpu_features_cache_info.h"
 #include "internal/hwcaps.h"
 
 CPU_FEATURES_START_CPP_NAMESPACE
