@@ -136,7 +136,7 @@ static int cmp(const void* p1, const void* p2) {
         ++count;                                                           \
       }                                                                    \
     }                                                                      \
-    qsort(ptrs, count, sizeof(char*), cmp);                                \
+    qsort((void*)ptrs, count, sizeof(char*), cmp);                         \
     p.StartField("flags");                                                 \
     p.ArrayStart();                                                        \
     for (i = 0; i < count; ++i) {                                          \
