@@ -57,6 +57,7 @@ endif()
 
 macro(add_cpu_features_headers_and_sources HDRS_LIST_NAME SRCS_LIST_NAME)
   list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpu_features_macros.h)
+  list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpu_features_cache_info.h)
   if(PROCESSOR_IS_MIPS)
       list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpuinfo_mips.h)
       list(APPEND ${SRCS_LIST_NAME} ${PROJECT_SOURCE_DIR}/src/cpuinfo_mips.c)
