@@ -96,12 +96,6 @@ static bool HasMask(uint32_t value, uint32_t mask) {
   return (value & mask) == mask;
 }
 
-// Checks that operating system saves and restores xmm registers during context
-// switches.
-static bool HasXmmOsXSave(uint32_t xcr0_eax) {
-  return HasMask(xcr0_eax, MASK_XMM);
-}
-
 // Checks that operating system saves and restores ymm registers during context
 // switches.
 static bool HasYmmOsXSave(uint32_t xcr0_eax) {
@@ -528,7 +522,6 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
   const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
   const uint32_t xcr0_eax = (have_xsave && have_osxsave) ? GetXCR0Eax() : 0;
-  const bool have_sse_os_support = HasXmmOsXSave(xcr0_eax);
   const bool have_avx_os_support = HasYmmOsXSave(xcr0_eax);
   const bool have_avx512_os_support = HasZmmOsXSave(xcr0_eax);
 
@@ -571,14 +564,12 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   features->vaes = IsBitSet(leaf_7.ecx, 9);
   features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
 
-  if (have_sse_os_support) {
-    features->sse = IsBitSet(leaf_1.edx, 25);
-    features->sse2 = IsBitSet(leaf_1.edx, 26);
-    features->sse3 = IsBitSet(leaf_1.ecx, 0);
-    features->ssse3 = IsBitSet(leaf_1.ecx, 9);
-    features->sse4_1 = IsBitSet(leaf_1.ecx, 19);
-    features->sse4_2 = IsBitSet(leaf_1.ecx, 20);
-  }
+  features->sse = IsBitSet(leaf_1.edx, 25);
+  features->sse2 = IsBitSet(leaf_1.edx, 26);
+  features->sse3 = IsBitSet(leaf_1.ecx, 0);
+  features->ssse3 = IsBitSet(leaf_1.ecx, 9);
+  features->sse4_1 = IsBitSet(leaf_1.ecx, 19);
+  features->sse4_2 = IsBitSet(leaf_1.ecx, 20);
 
   if (have_avx_os_support) {
     features->fma3 = IsBitSet(leaf_1.ecx, 12);

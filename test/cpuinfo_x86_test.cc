@@ -277,5 +277,109 @@ TEST(CpuidX86Test, AMD_K15) {
 // TODO(user): test what happens when xmm/ymm/zmm os support are not
 // present.
 
+// example where xmm OS support is not present
+TEST(CpuidX86Test, CherryTrail_x5_Z8350) {
+  g_fake_cpu->SetOsBackupsExtendedRegisters(false);
+  g_fake_cpu->SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000b, 0x756e6547, 0x6c65746e, 0x49656e69}}, // | ....GenuntelineI
+      {{0x00000001, 0}, Leaf{0x000406c4, 0x00100800, 0x43d8e3bf, 0xbfebfbff}}, // | ...........C....
+      {{0x00000002, 0}, Leaf{0x61b4a001, 0x0000ffc2, 0x00000000, 0x00000000}}, // | ...a............
+      {{0x00000003, 0}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000000}}, // | ................
+      {{0x00000004, 0}, Leaf{0x1c000121, 0x0140003f, 0x0000003f, 0x00000001}}, // | !...?.@.?.......
+      {{0x00000004, 1}, Leaf{0x1c000122, 0x01c0003f, 0x0000003f, 0x00000001}}, // | "...?...?.......
+      {{0x00000004, 2}, Leaf{0x1c00c143, 0x03c0003f, 0x000003ff, 0x00000001}}, // | C...?...........
+      {{0x00000004, 3}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000000}}, // | ................
+      {{0x00000005, 0}, Leaf{0x00000040, 0x00000040, 0x00000003, 0x33000020}}, // | @...@....... ..3
+      {{0x00000006, 0}, Leaf{0x00000007, 0x00000002, 0x00000009, 0x00000000}}, // | ................
+      {{0x00000007, 0}, Leaf{0x00000000, 0x00002282, 0x00000000, 0x0c000400}}, // | ....."..........
+      {{0x00000008, 0}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000000}}, // | ................
+      {{0x00000009, 0}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000000}}, // | ................
+      {{0x0000000a, 0}, Leaf{0x07280203, 0x00000000, 0x00000000, 0x00000503}}, // | ..(.............
+      {{0x0000000b, 0}, Leaf{0x00000001, 0x00000001, 0x00000100, 0x00000000}}, // | ................
+      {{0x0000000b, 1}, Leaf{0x00000004, 0x00000004, 0x00000201, 0x00000000}}, // | ................
+      {{0x0000000b, 2}, Leaf{0x00000000, 0x00000000, 0x00000002, 0x00000000}}, // | ................
+      {{0x40000000, 0}, Leaf{0x00000001, 0x00000001, 0x00000100, 0x00000000}}, // | ................
+      {{0x80000000, 0}, Leaf{0x80000008, 0x00000000, 0x00000000, 0x00000000}}, // | ................
+      {{0x80000001, 0}, Leaf{0x00000000, 0x00000000, 0x00000101, 0x28100800}}, // | ...............(
+      {{0x80000002, 0}, Leaf{0x20202020, 0x6e492020, 0x286c6574, 0x41202952}}, // |       Intel(R) A
+      {{0x80000003, 0}, Leaf{0x286d6f74, 0x20294d54, 0x5a2d3578, 0x30353338}}, // | tom(TM) x5-Z8350
+      {{0x80000004, 0}, Leaf{0x50432020, 0x20402055, 0x34342e31, 0x007a4847}}, // |   CPU @ 1.44GHz.
+      {{0x80000005, 0}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000000}}, // | ................
+      {{0x80000006, 0}, Leaf{0x00000000, 0x00000000, 0x04008040, 0x00000000}}, // | ........@.......
+      {{0x80000007, 0}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000100}}, // | ................
+      {{0x80000008, 0}, Leaf{0x00003024, 0x00000000, 0x00000000, 0x00000000}}, // | $0..............
+      
+  });
+  const auto info = GetX86Info();
+  EXPECT_STREQ(info.vendor, "GenuineIntel");
+
+  char brand_string[49];
+  FillX86BrandString(brand_string);
+  EXPECT_STREQ(brand_string, "      Intel(R) Atom(TM) x5-Z8350  CPU @ 1.44GHz");
+
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x4C);
+  EXPECT_EQ(info.stepping, 0x04);
+
+  const auto features = info.features;
+  EXPECT_TRUE(features.fpu);
+  EXPECT_TRUE(features.tsc);
+  EXPECT_TRUE(features.cx8);
+  EXPECT_TRUE(features.clfsh);
+  EXPECT_TRUE(features.mmx);
+  EXPECT_TRUE(features.aes);
+  EXPECT_TRUE(features.erms);
+  EXPECT_FALSE(features.f16c);
+  EXPECT_FALSE(features.fma3);
+  EXPECT_FALSE(features.vaes);
+  EXPECT_FALSE(features.vpclmulqdq);
+  EXPECT_FALSE(features.bmi1);
+  EXPECT_FALSE(features.hle);
+  EXPECT_FALSE(features.bmi2);
+  EXPECT_FALSE(features.rtm);
+  EXPECT_FALSE(features.rdseed);
+  EXPECT_FALSE(features.clflushopt);
+  EXPECT_FALSE(features.clwb);
+
+  EXPECT_TRUE(features.sse);
+  EXPECT_TRUE(features.sse2);
+  EXPECT_TRUE(features.sse3);
+  EXPECT_TRUE(features.ssse3);
+  EXPECT_TRUE(features.sse4_1);
+  EXPECT_TRUE(features.sse4_2);
+
+  EXPECT_FALSE(features.avx);
+  EXPECT_FALSE(features.avx2);
+
+  EXPECT_FALSE(features.avx512f);
+  EXPECT_FALSE(features.avx512cd);
+  EXPECT_FALSE(features.avx512er);
+  EXPECT_FALSE(features.avx512pf);
+  EXPECT_FALSE(features.avx512bw);
+  EXPECT_FALSE(features.avx512dq);
+  EXPECT_FALSE(features.avx512vl);
+  EXPECT_FALSE(features.avx512ifma);
+  EXPECT_FALSE(features.avx512vbmi);
+  EXPECT_FALSE(features.avx512vbmi2);
+  EXPECT_FALSE(features.avx512vnni);
+  EXPECT_FALSE(features.avx512bitalg);
+  EXPECT_FALSE(features.avx512vpopcntdq);
+  EXPECT_FALSE(features.avx512_4vnniw);
+  EXPECT_FALSE(features.avx512_4vbmi2);
+
+  EXPECT_TRUE(features.pclmulqdq);
+  EXPECT_FALSE(features.smx);
+  EXPECT_FALSE(features.sgx);
+  EXPECT_TRUE(features.cx16);
+  EXPECT_FALSE(features.sha);
+  EXPECT_TRUE(features.popcnt);
+  EXPECT_TRUE(features.movbe);
+  EXPECT_TRUE(features.rdrnd);
+
+  EXPECT_FALSE(features.dca);
+  EXPECT_TRUE(features.ss);
+}
+
+
 }  // namespace
 }  // namespace cpu_features
