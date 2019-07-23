@@ -321,6 +321,8 @@ TEST(CpuidX86Test, CherryTrail_x5_Z8350) {
   EXPECT_EQ(info.model, 0x4C);
   EXPECT_EQ(info.stepping, 0x04);
 
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_SMT);
+
   const auto features = info.features;
   EXPECT_TRUE(features.fpu);
   EXPECT_TRUE(features.tsc);
