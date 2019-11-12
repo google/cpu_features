@@ -50,7 +50,7 @@ typedef struct {
   size_t size;
 } BumpAllocator;
 
-char gGlobalBuffer[64 * 1024];
+__attribute__((aligned(8))) char gGlobalBuffer[64 * 1024];
 BumpAllocator gBumpAllocator = {.ptr = gGlobalBuffer,
                                 .size = sizeof(gGlobalBuffer)};
 
