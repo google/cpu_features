@@ -50,7 +50,7 @@ typedef struct {
   size_t size;
 } BumpAllocator;
 
-__attribute__((aligned(8))) char gGlobalBuffer[64 * 1024];
+char gGlobalBuffer[64 * 1024];
 BumpAllocator gBumpAllocator = {.ptr = gGlobalBuffer,
                                 .size = sizeof(gGlobalBuffer)};
 
@@ -59,14 +59,29 @@ static void internal_error() {
   exit(EXIT_FAILURE);
 }
 
+#define ALIGN 8
+
+static void assertAligned() {
+  if ((uintptr_t)(gBumpAllocator.ptr) % ALIGN) internal_error();
+}
+
+static void BA_Align() {
+  while (gBumpAllocator.size && (uintptr_t)(gBumpAllocator.ptr) % ALIGN) {
+    --gBumpAllocator.size;
+    ++gBumpAllocator.ptr;
+  }
+  assertAligned();
+}
+
 // Update the available memory left in the BumpAllocator.
 static void* BA_Bump(size_t size) {
-  size = (size + 8 - 1) / 8 * 8;  // Align size to next 8B boundary.
+  assertAligned();
+  // Align size to next 8B boundary.
+  size = (size + ALIGN - 1) / ALIGN * ALIGN;
   if (gBumpAllocator.size < size) internal_error();
   void* ptr = gBumpAllocator.ptr;
   gBumpAllocator.size -= size;
   gBumpAllocator.ptr += size;
-  assert((uintptr_t)(ptr) % 8 == 0 && "memory must be aligned");
   return ptr;
 }
 
@@ -351,6 +366,7 @@ static Node* CreateTree() {
 }
 
 int main(int argc, char** argv) {
+  BA_Align();
   const Node* const root = CreateTree(&gBumpAllocator);
   bool outputJson = false;
   int i = 1;
