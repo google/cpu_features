@@ -18,6 +18,7 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,119 +50,122 @@ typedef struct {
   size_t size;
 } BumpAllocator;
 
-// Allocate a buffer of size `size`.
-static BumpAllocator BA_Create(size_t size) {
-  char* const ptr = (char*)malloc(size);
-  BumpAllocator BA;
-  if (ptr) BA = (BumpAllocator){.ptr = ptr, .size = size};
-  return BA;
+char gGlobalBuffer[64 * 1024];
+BumpAllocator gBumpAllocator = {.ptr = gGlobalBuffer,
+                                .size = sizeof(gGlobalBuffer)};
+
+static void internal_error() {
+  fputs("internal error\n", stderr);
+  exit(EXIT_FAILURE);
+}
+
+#define ALIGN 8
+
+static void assertAligned() {
+  if ((uintptr_t)(gBumpAllocator.ptr) % ALIGN) internal_error();
+}
+
+static void BA_Align() {
+  while (gBumpAllocator.size && (uintptr_t)(gBumpAllocator.ptr) % ALIGN) {
+    --gBumpAllocator.size;
+    ++gBumpAllocator.ptr;
+  }
+  assertAligned();
 }
 
 // Update the available memory left in the BumpAllocator.
-static void* BA_Bump(BumpAllocator* BA, size_t size) {
-  assert(BA->size >= size);
-  void* ptr = BA->ptr;
-  BA->size -= size;
-  BA->ptr += size;
+static void* BA_Bump(size_t size) {
+  assertAligned();
+  // Align size to next 8B boundary.
+  size = (size + ALIGN - 1) / ALIGN * ALIGN;
+  if (gBumpAllocator.size < size) internal_error();
+  void* ptr = gBumpAllocator.ptr;
+  gBumpAllocator.size -= size;
+  gBumpAllocator.ptr += size;
   return ptr;
 }
 
 // The type of the nodes in the tree.
 typedef enum {
-  TNT_INVALID,
-  TNT_INT,
-  TNT_MAP,
-  TNT_MAP_ENTRY,
-  TNT_ARRAY,
-  TNT_ARRAY_ELEMENT,
-  TNT_STRING,
-} TreeValueType;
+  NT_INVALID,
+  NT_INT,
+  NT_MAP,
+  NT_MAP_ENTRY,
+  NT_ARRAY,
+  NT_ARRAY_ELEMENT,
+  NT_STRING,
+} NodeType;
 
 // The node in the tree.
-typedef struct TreeValue {
-  TreeValueType type;
+typedef struct Node {
+  NodeType type;
   unsigned integer;
   const char* string;
-  struct TreeValue* value;
-  struct TreeValue* next;
-} TreeValue;
+  struct Node* value;
+  struct Node* next;
+} Node;
 
-// Allocates a node inside a BumpAllocator.
-static TreeValue* BA_TreeValue(BumpAllocator* BA, TreeValueType type) {
-  TreeValue* TV = (TreeValue*)BA_Bump(BA, sizeof(TreeValue));
-  assert(TV);
-  TV->type = type;
-  return TV;
+// Creates an initialized Node.
+static Node* BA_CreateNode(NodeType type) {
+  Node* tv = (Node*)BA_Bump(sizeof(Node));
+  assert(tv);
+  *tv = (Node){.type = type};
+  return tv;
 }
 
-// Allocates an integer node inside a BumpAllocator.
-static TreeValue* CreateInt(BumpAllocator* BA, int value) {
-  TreeValue* TV = BA_TreeValue(BA, TNT_INT);
-  TV->integer = value;
-  return TV;
+// Adds an integer node.
+static Node* CreateInt(int value) {
+  Node* tv = BA_CreateNode(NT_INT);
+  tv->integer = value;
+  return tv;
 }
 
-// Allocates a string node inside a BumpAllocator.
+// Adds a string node.
 // `value` must outlive the tree.
-static TreeValue* CreateConstantString(BumpAllocator* BA, const char* value) {
-  TreeValue* TV = BA_TreeValue(BA, TNT_STRING);
-  TV->string = value;
-  return TV;
+static Node* CreateConstantString(const char* value) {
+  Node* tv = BA_CreateNode(NT_STRING);
+  tv->string = value;
+  return tv;
 }
 
-// Allocates a map node inside a BumpAllocator.
-static TreeValue* CreateMap(BumpAllocator* BA) {
-  TreeValue* TV = BA_TreeValue(BA, TNT_MAP);
-  TV->next = NULL;
-  return TV;
-}
+// Adds a map node.
+static Node* CreateMap() { return BA_CreateNode(NT_MAP); }
 
-// Allocates an array node inside a BumpAllocator.
-static TreeValue* CreateArray(BumpAllocator* BA) {
-  TreeValue* TV = BA_TreeValue(BA, TNT_ARRAY);
-  TV->next = NULL;
-  return TV;
-}
+// Adds an array node.
+static Node* CreateArray() { return BA_CreateNode(NT_ARRAY); }
 
-// Allocates a formatted string inside a BumpAllocator.
-static TreeValue* CreatePrintfString(BumpAllocator* BA, const char* format,
-                                     ...) {
+// Adds a formatted string node.
+static Node* CreatePrintfString(const char* format, ...) {
   va_list arglist;
   va_start(arglist, format);
-  char* const ptr = BA->ptr;
-  const int written = vsnprintf(ptr, BA->size, format, arglist);
+  char* const ptr = gBumpAllocator.ptr;
+  const int written = vsnprintf(ptr, gBumpAllocator.size, format, arglist);
   va_end(arglist);
-  if (written < 0 || written >= BA->size) return NULL;
-  return CreateConstantString(BA, (char*)BA_Bump(BA, written));
+  if (written < 0 || written >= gBumpAllocator.size) internal_error();
+  return CreateConstantString((char*)BA_Bump(written));
 }
 
-static TreeValue* CreateString(BumpAllocator* BA, const char* value) {
-  return CreatePrintfString(BA, "%s", value);
+// Adds a string node.
+static Node* CreateString(const char* value) {
+  return CreatePrintfString("%s", value);
 }
 
-// Allocates a map entry node inside a BumpAllocator.
-static void AddMapEntry(BumpAllocator* BA, TreeValue* map, const char* key,
-                        TreeValue* value) {
-  assert(map && map->type == TNT_MAP);
-  TreeValue* current = map;
+// Adds a map entry node.
+static void AddMapEntry(Node* map, const char* key, Node* value) {
+  assert(map && map->type == NT_MAP);
+  Node* current = map;
   while (current->next) current = current->next;
-  current->next = (TreeValue*)BA_Bump(BA, sizeof(TreeValue));
-  current->next->type = TNT_MAP_ENTRY;
-  current->next->string = key;
-  current->next->value = value;
-  current->next->next = NULL;
+  current->next = (Node*)BA_Bump(sizeof(Node));
+  *current->next = (Node){.type = NT_MAP_ENTRY, .string = key, .value = value};
 }
 
-// Allocates aan array element node inside a BumpAllocator.
-static void AddArrayElement(BumpAllocator* BA, TreeValue* array,
-                            TreeValue* value) {
-  assert(array && array->type == TNT_ARRAY);
-  TreeValue* current = array;
+// Adds an array element node.
+static void AddArrayElement(Node* array, Node* value) {
+  assert(array && array->type == NT_ARRAY);
+  Node* current = array;
   while (current->next) current = current->next;
-  current->next = (TreeValue*)BA_Bump(BA, sizeof(TreeValue));
-  current->next->type = TNT_ARRAY_ELEMENT;
-  current->next->value = value;
-  current->next->next = NULL;
+  current->next = (Node*)BA_Bump(sizeof(Node));
+  *current->next = (Node){.type = NT_ARRAY_ELEMENT, .value = value};
 }
 
 static int cmp(const void* p1, const void* p2) {
@@ -169,8 +173,7 @@ static int cmp(const void* p1, const void* p2) {
 }
 
 #define DEFINE_ADD_FLAGS(HasFeature, FeatureName, FeatureType, LastEnum) \
-  static void AddFlags(BumpAllocator* BA, TreeValue* map,                \
-                       const FeatureType* features) {                    \
+  static void AddFlags(Node* map, const FeatureType* features) {         \
     size_t i;                                                            \
     const char* ptrs[LastEnum] = {0};                                    \
     size_t count = 0;                                                    \
@@ -181,10 +184,10 @@ static int cmp(const void* p1, const void* p2) {
       }                                                                  \
     }                                                                    \
     qsort((void*)ptrs, count, sizeof(char*), cmp);                       \
-    TreeValue* const array = CreateArray(BA);                            \
+    Node* const array = CreateArray();                                   \
     for (i = 0; i < count; ++i)                                          \
-      AddArrayElement(BA, array, CreateConstantString(BA, ptrs[i]));     \
-    AddMapEntry(BA, map, "flags", array);                                \
+      AddArrayElement(array, CreateConstantString(ptrs[i]));             \
+    AddMapEntry(map, "flags", array);                                    \
   }
 
 #if defined(CPU_FEATURES_ARCH_X86)
@@ -224,27 +227,27 @@ static void printJsonString(const char* str) {
   putchar('"');
 }
 
-// Walks a TreeValue and print it as json.
-static void printJson(const TreeValue* current) {
+// Walks a Node and print it as json.
+static void printJson(const Node* current) {
   assert(current);
   switch (current->type) {
-    case TNT_INT:
+    case NT_INT:
       printf("%d", current->integer);
       break;
-    case TNT_STRING:
+    case NT_STRING:
       printJsonString(current->string);
       break;
-    case TNT_ARRAY:
+    case NT_ARRAY:
       putchar('[');
       if (current->next) printJson(current->next);
       putchar(']');
       break;
-    case TNT_MAP:
+    case NT_MAP:
       putchar('{');
       if (current->next) printJson(current->next);
       putchar('}');
       break;
-    case TNT_MAP_ENTRY:
+    case NT_MAP_ENTRY:
       printf("\"%s\":", current->string);
       printJson(current->value);
       if (current->next) {
@@ -252,7 +255,7 @@ static void printJson(const TreeValue* current) {
         printJson(current->next);
       }
       break;
-    case TNT_ARRAY_ELEMENT:
+    case NT_ARRAY_ELEMENT:
       printJson(current->value);
       if (current->next) {
         putchar(',');
@@ -262,22 +265,22 @@ static void printJson(const TreeValue* current) {
   }
 }
 
-// Walks a TreeValue and print it as text.
-static void printTextField(const TreeValue* current) {
+// Walks a Node and print it as text.
+static void printTextField(const Node* current) {
   switch (current->type) {
-    case TNT_INT:
+    case NT_INT:
       printf("%3d (0x%02X)", current->integer, current->integer);
       break;
-    case TNT_STRING:
+    case NT_STRING:
       fputs(current->string, stdout);
       break;
-    case TNT_ARRAY:
+    case NT_ARRAY:
       if (current->next) printTextField(current->next);
       break;
-    case TNT_MAP:
+    case NT_MAP:
       if (current->next) printJson(current->next);
       break;
-    case TNT_MAP_ENTRY:
+    case NT_MAP_ENTRY:
       printf("%-15s : ", current->string);
       printTextField(current->value);
       if (current->next) {
@@ -285,7 +288,7 @@ static void printTextField(const TreeValue* current) {
         printTextField(current->next);
       }
       break;
-    case TNT_ARRAY_ELEMENT:
+    case NT_ARRAY_ELEMENT:
       printTextField(current->value);
       if (current->next) {
         putchar(',');
@@ -295,9 +298,10 @@ static void printTextField(const TreeValue* current) {
   }
 }
 
-static void printTextRoot(const TreeValue* current) {
-  if (current->type == TNT_MAP && current->next) printTextField(current->next);
+static void printTextRoot(const Node* current) {
+  if (current->type == NT_MAP && current->next) printTextField(current->next);
 }
+
 static void showUsage(const char* name) {
   printf(
       "\n"
@@ -309,61 +313,61 @@ static void showUsage(const char* name) {
       name);
 }
 
-static TreeValue* CreateTree(BumpAllocator* BA) {
-  TreeValue* root = CreateMap(BA);
+static Node* CreateTree() {
+  Node* root = CreateMap(gBumpAllocator);
 #if defined(CPU_FEATURES_ARCH_X86)
   char brand_string[49];
   const X86Info info = GetX86Info();
   FillX86BrandString(brand_string);
-  AddMapEntry(BA, root, "arch", CreateString(BA, "x86"));
-  AddMapEntry(BA, root, "brand", CreateString(BA, brand_string));
-  AddMapEntry(BA, root, "family", CreateInt(BA, info.family));
-  AddMapEntry(BA, root, "model", CreateInt(BA, info.model));
-  AddMapEntry(BA, root, "stepping", CreateInt(BA, info.stepping));
-  AddMapEntry(BA, root, "uarch",
-              CreateString(BA, GetX86MicroarchitectureName(
-                                   GetX86Microarchitecture(&info))));
-  AddFlags(BA, root, &info.features);
+  AddMapEntry(root, "arch", CreateString("x86"));
+  AddMapEntry(root, "brand", CreateString(brand_string));
+  AddMapEntry(root, "family", CreateInt(info.family));
+  AddMapEntry(root, "model", CreateInt(info.model));
+  AddMapEntry(root, "stepping", CreateInt(info.stepping));
+  AddMapEntry(root, "uarch",
+              CreateString(
+                  GetX86MicroarchitectureName(GetX86Microarchitecture(&info))));
+  AddFlags(root, &info.features);
 #elif defined(CPU_FEATURES_ARCH_ARM)
   const ArmInfo info = GetArmInfo();
-  AddMapEntry(BA, root, "arch", CreateString(BA, "ARM"));
-  AddMapEntry(BA, root, "implementer", CreateInt(BA, info.implementer));
-  AddMapEntry(BA, root, "architecture", CreateInt(BA, info.architecture));
-  AddMapEntry(BA, root, "variant", CreateInt(BA, info.variant));
-  AddMapEntry(BA, root, "part", CreateInt(BA, info.part));
-  AddMapEntry(BA, root, "revision", CreateInt(BA, info.revision));
-  AddFlags(BA, root, &info.features);
+  AddMapEntry(root, "arch", CreateString("ARM"));
+  AddMapEntry(root, "implementer", CreateInt(info.implementer));
+  AddMapEntry(root, "architecture", CreateInt(info.architecture));
+  AddMapEntry(root, "variant", CreateInt(info.variant));
+  AddMapEntry(root, "part", CreateInt(info.part));
+  AddMapEntry(root, "revision", CreateInt(info.revision));
+  AddFlags(root, &info.features);
 #elif defined(CPU_FEATURES_ARCH_AARCH64)
   const Aarch64Info info = GetAarch64Info();
-  AddMapEntry(BA, root, "arch", CreateString(BA, "aarch64"));
-  AddMapEntry(BA, root, "implementer", CreateInt(BA, info.implementer));
-  AddMapEntry(BA, root, "variant", CreateInt(BA, info.variant));
-  AddMapEntry(BA, root, "part", CreateInt(BA, info.part));
-  AddMapEntry(BA, root, "revision", CreateInt(BA, info.revision));
-  AddFlags(BA, root, &info.features);
+  AddMapEntry(root, "arch", CreateString("aarch64"));
+  AddMapEntry(root, "implementer", CreateInt(info.implementer));
+  AddMapEntry(root, "variant", CreateInt(info.variant));
+  AddMapEntry(root, "part", CreateInt(info.part));
+  AddMapEntry(root, "revision", CreateInt(info.revision));
+  AddFlags(root, &info.features);
 #elif defined(CPU_FEATURES_ARCH_MIPS)
   const MipsInfo info = GetMipsInfo();
-  AddMapEntry(BA, root, "arch", CreateString(BA, "mips"));
-  AddFlags(BA, root, &info.features);
+  AddMapEntry(root, "arch", CreateString("mips"));
+  AddFlags(root, &info.features);
 #elif defined(CPU_FEATURES_ARCH_PPC)
   const PPCInfo info = GetPPCInfo();
   const PPCPlatformStrings strings = GetPPCPlatformStrings();
-  AddMapEntry(BA, root, "arch", CreateString(BA, "ppc"));
-  AddMapEntry(BA, root, "platform", CreateString(BA, strings.platform));
-  AddMapEntry(BA, root, "model", CreateString(BA, strings.model));
-  AddMapEntry(BA, root, "machine", CreateString(BA, strings.machine));
-  AddMapEntry(BA, root, "cpu", CreateString(BA, strings.cpu));
-  AddMapEntry(BA, root, "instruction", CreateString(BA, strings.type.platform));
-  AddMapEntry(BA, root, "microarchitecture",
-              CreateString(BA, strings.type.base_platform));
-  AddFlags(BA, root, &info.features);
+  AddMapEntry(root, "arch", CreateString("ppc"));
+  AddMapEntry(root, "platform", CreateString(strings.platform));
+  AddMapEntry(root, "model", CreateString(strings.model));
+  AddMapEntry(root, "machine", CreateString(strings.machine));
+  AddMapEntry(root, "cpu", CreateString(strings.cpu));
+  AddMapEntry(root, "instruction", CreateString(strings.type.platform));
+  AddMapEntry(root, "microarchitecture",
+              CreateString(strings.type.base_platform));
+  AddFlags(root, &info.features);
 #endif
   return root;
 }
 
 int main(int argc, char** argv) {
-  BumpAllocator BA = BA_Create(64 * 1024);
-  const TreeValue* const root = CreateTree(&BA);
+  BA_Align();
+  const Node* const root = CreateTree(&gBumpAllocator);
   bool outputJson = false;
   int i = 1;
   for (; i < argc; ++i) {
