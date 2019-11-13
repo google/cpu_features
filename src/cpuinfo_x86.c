@@ -484,7 +484,7 @@ static void ParseLeaf2(const int max_cpuid_leaf, CacheInfo* info) {
   Leaf leaf = SafeCpuId(max_cpuid_leaf, 2);
   uint32_t registers[] = {leaf.eax, leaf.ebx, leaf.ecx, leaf.edx};
   for (int i = 0; i < 4; ++i) {
-    if (registers[i] & (1 << 31)) {
+    if (registers[i] & (1U << 31)) {
       continue;  // register does not contains valid information
     }
     uint32_t bytes[4];
