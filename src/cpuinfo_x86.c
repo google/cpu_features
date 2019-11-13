@@ -150,7 +150,6 @@ static CacheLevelInfo GetCacheLevelInfo(const uint32_t reg) {
   const int UNDEF = -1;
   const int KiB = 1024;
   const int MiB = 1024 * KiB;
-  const int GiB = 1024 * MiB;
   switch (reg) {
     case 0x01:
       return MakeX86CacheLevelInfo(UNDEF, CPU_FEATURE_CACHE_TLB, 4 * KiB, 4,
@@ -490,10 +489,10 @@ static void ParseLeaf2(const int max_cpuid_leaf, CacheInfo* info) {
     }
     uint32_t bytes[4];
     GetByteArrayFromRegister(bytes, registers[i]);
-    for (int i = 0; i < 4; ++i) {
-      if (bytes[i] == 0xFF)
+    for (int j = 0; j < 4; ++j) {
+      if (bytes[j] == 0xFF)
         break;  // leaf 4 should be used to fetch cache information
-      info->levels[info->size] = GetCacheLevelInfo(bytes[i]);
+      info->levels[info->size] = GetCacheLevelInfo(bytes[j]);
     }
     info->size++;
   }
