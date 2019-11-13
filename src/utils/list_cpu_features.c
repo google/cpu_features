@@ -141,7 +141,7 @@ static Node* CreatePrintfString(const char* format, ...) {
   char* const ptr = gBumpAllocator.ptr;
   const int written = vsnprintf(ptr, gBumpAllocator.size, format, arglist);
   va_end(arglist);
-  if (written < 0 || written >= gBumpAllocator.size) internal_error();
+  if (written < 0 || written >= (int)gBumpAllocator.size) internal_error();
   return CreateConstantString((char*)BA_Bump(written));
 }
 
@@ -231,6 +231,8 @@ static void printJsonString(const char* str) {
 static void printJson(const Node* current) {
   assert(current);
   switch (current->type) {
+    case NT_INVALID:
+      break;
     case NT_INT:
       printf("%d", current->integer);
       break;
@@ -268,6 +270,8 @@ static void printJson(const Node* current) {
 // Walks a Node and print it as text.
 static void printTextField(const Node* current) {
   switch (current->type) {
+    case NT_INVALID:
+      break;
     case NT_INT:
       printf("%3d (0x%02X)", current->integer, current->integer);
       break;
@@ -314,7 +318,7 @@ static void showUsage(const char* name) {
 }
 
 static Node* CreateTree() {
-  Node* root = CreateMap(gBumpAllocator);
+  Node* root = CreateMap();
 #if defined(CPU_FEATURES_ARCH_X86)
   char brand_string[49];
   const X86Info info = GetX86Info();
@@ -367,7 +371,7 @@ static Node* CreateTree() {
 
 int main(int argc, char** argv) {
   BA_Align();
-  const Node* const root = CreateTree(&gBumpAllocator);
+  const Node* const root = CreateTree();
   bool outputJson = false;
   int i = 1;
   for (; i < argc; ++i) {
