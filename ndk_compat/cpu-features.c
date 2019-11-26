@@ -115,7 +115,7 @@ static void android_cpuInit(void) {
   if (info.features.crc32) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_CRC32;
   if (info.architecture >= 6)
     g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_LDREX_STREX;
-  if (info.features.vfpv) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFPv2;
+  if (info.features.vfp) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFPv2;
   if (info.features.vfpv4) {
     g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFP_FMA;
     g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_NEON_FMA;
