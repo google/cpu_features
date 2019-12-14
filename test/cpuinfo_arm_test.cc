@@ -43,6 +43,12 @@ TEST(CpuinfoArmTest, FromHardwareCap) {
   EXPECT_FALSE(info.features.pmull);
   EXPECT_FALSE(info.features.sha1);
   EXPECT_FALSE(info.features.sha2);
+
+  // check some random features with EnumValue():
+  EXPECT_TRUE(GetArmFeaturesEnumValue(&info.features, ARM_VFP));
+  EXPECT_FALSE(GetArmFeaturesEnumValue(&info.features, ARM_VFPV4));
+  // out of bound EnumValue() check
+  EXPECT_FALSE(GetArmFeaturesEnumValue(&info.features, (ArmFeaturesEnum)~0x0));
 }
 
 TEST(CpuinfoArmTest, ODroidFromCpuInfo) {
