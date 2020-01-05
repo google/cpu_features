@@ -116,7 +116,9 @@ typedef enum {
   INTEL_ATOM_GMT,  // GOLDMONT
   INTEL_KBL,       // KABY LAKE
   INTEL_CFL,       // COFFEE LAKE
+  INTEL_WHL,       // WHISKEY LAKE
   INTEL_CNL,       // CANNON LAKE
+  INTEL_ICL,       // ICE LAKE
   AMD_HAMMER,      // K8
   AMD_K10,         // K10
   AMD_BOBCAT,      // K14
