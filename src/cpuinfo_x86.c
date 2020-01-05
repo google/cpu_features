@@ -689,10 +689,27 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x06, 0x5E):
         // https://en.wikipedia.org/wiki/Skylake_(microarchitecture)
         return INTEL_SKL;
+      case CPUID(0x06, 0x66):
+        // https://en.wikipedia.org/wiki/Cannon_Lake_(microarchitecture)
+        return INTEL_CNL;
+      case CPUID(0x06, 0x7E):
+        // https://en.wikipedia.org/wiki/Ice_Lake_(microprocessor)
+        return INTEL_ICL;
       case CPUID(0x06, 0x8E):
+        switch (info->stepping) {
+          case 9:  return INTEL_KBL;  // https://en.wikipedia.org/wiki/Kaby_Lake
+          case 10: return INTEL_CFL;  // https://en.wikipedia.org/wiki/Coffee_Lake
+          case 11: return INTEL_WHL;  // https://en.wikipedia.org/wiki/Whiskey_Lake_(microarchitecture)
+          default: return X86_UNKNOWN;
+        }
       case CPUID(0x06, 0x9E):
-        // https://en.wikipedia.org/wiki/Kaby_Lake
-        return INTEL_KBL;
+        if (info->stepping > 9) {
+          // https://en.wikipedia.org/wiki/Coffee_Lake
+          return INTEL_CFL;
+        } else {
+          // https://en.wikipedia.org/wiki/Kaby_Lake
+          return INTEL_KBL;
+        }
       default:
         return X86_UNKNOWN;
     }
