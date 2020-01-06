@@ -1009,8 +1009,12 @@ const char* GetX86MicroarchitectureName(X86Microarchitecture uarch) {
       return "INTEL_KBL";
     case INTEL_CFL:
       return "INTEL_CFL";
+    case INTEL_WHL:
+      return "INTEL_WHL";
     case INTEL_CNL:
       return "INTEL_CNL";
+    case INTEL_ICL:
+      return "INTEL_ICL";
     case AMD_HAMMER:
       return "AMD_HAMMER";
     case AMD_K10:
