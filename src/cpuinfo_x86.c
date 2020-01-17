@@ -23,6 +23,12 @@
 #error "Cannot compile cpuinfo_x86 on a non x86 platform."
 #endif
 
+thread_local void (*X86InfoInterceptor)(X86Info*) = NULL;
+
+void RegisterX86InfoInterceptor(void (*ptr)(X86Info*)) {
+  X86InfoInterceptor = ptr;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions for CpuId and GetXCR0Eax.
 ////////////////////////////////////////////////////////////////////////////////
@@ -615,6 +621,7 @@ X86Info GetX86Info(void) {
   if (IsVendor(leaf_0, "GenuineIntel") || IsVendor(leaf_0, "AuthenticAMD")) {
     ParseCpuId(max_cpuid_leaf, &info);
   }
+  if (X86InfoInterceptor) X86InfoInterceptor(&info);
   return info;
 }
 

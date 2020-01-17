@@ -101,6 +101,26 @@ TEST(CpuidX86Test, SandyBridge) {
   EXPECT_FALSE(features.rdrnd);
 }
 
+TEST(CpuidX86Test, ForgingCpuWithInterceptor) {
+  RegisterX86InfoInterceptor([](X86Info* info) {
+    memcpy(info->vendor, "TEST", sizeof("TEST"));
+    info->features = X86Features{};
+    info->features.erms = true;
+  });
+  const auto info = GetX86Info();
+  EXPECT_STREQ(info.vendor, "GenuineIntel");
+
+  const auto& features = info.features;
+  for (size_t i = 0; i < X86_LAST_; ++i)
+    if (i == X86_ERMS)
+      EXPECT_TRUE(GetX86FeaturesEnumValue(&features, (X86FeaturesEnum)i));
+    else
+      EXPECT_FALSE(GetX86FeaturesEnumValue(&features, (X86FeaturesEnum)i));
+
+  RegisterX86InfoInterceptor(NULL);
+  EXPECT_STREQ(GetX86Info().vendor, "GenuineIntel");
+}
+
 const int KiB = 1024;
 const int MiB = 1024 * KiB;
 

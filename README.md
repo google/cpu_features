@@ -8,6 +8,7 @@ instructions) at runtime.
 - [Design Rationale](#rationale)
 - [Code samples](#codesample)
 - [Running sample code](#usagesample)
+- [Mocking the library](#mock)
 - [What's supported](#support)
 - [Android NDK's drop in replacement](#ndk)
 - [License](#license)
@@ -128,6 +129,28 @@ flags           : aes,avx,cx16,smx,sse4_1,sse4_2,ssse3
 ```shell
 % ./build/list_cpu_features --json
 {"arch":"x86","brand":"       Intel(R) Xeon(R) CPU E5-1650 0 @ 3.20GHz","family":6,"model":45,"stepping":7,"uarch":"INTEL_SNB","flags":["aes","avx","cx16","smx","sse4_1","sse4_2","ssse3"]}
+```
+
+<a name="mock"></a>
+### Mocking the library
+
+When testing code depending on `cpu_features` it may be interesting to disable
+support for a particular extension (e.g. test `sse4` support on a `Skylake`
+machine).
+
+It is easily done by setting up an interceptor callback.
+
+```C++
+TEST(X86Test, TestOnlySSE4) {
+  RegisterX86InfoInterceptor([](X86Info* info) {
+    info->features = X86Features{};
+    info->features.sse4 = true;
+  });
+  // 1. Call code that uses GetX86Info(),
+  // 2. Check the expected values,
+  // 3. Don't forget to cancel.
+  RegisterX86InfoInterceptor(NULL);
+}
 ```
 
 <a name="support"></a>

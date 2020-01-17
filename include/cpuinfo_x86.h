@@ -201,6 +201,8 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum);
 
 const char* GetX86MicroarchitectureName(X86Microarchitecture);
 
+void RegisterX86InfoInterceptor(void (*)(X86Info*));
+
 CPU_FEATURES_END_CPP_NAMESPACE
 
 #if !defined(CPU_FEATURES_ARCH_X86)
