@@ -118,26 +118,95 @@
 // Use the following to check if a feature is known to be available at
 // compile time. See README.md for an example.
 #if defined(CPU_FEATURES_ARCH_X86)
-#define CPU_FEATURES_COMPILED_X86_AES defined(__AES__)
-#define CPU_FEATURES_COMPILED_X86_F16C defined(__F16C__)
-#define CPU_FEATURES_COMPILED_X86_BMI defined(__BMI__)
-#define CPU_FEATURES_COMPILED_X86_BMI2 defined(__BMI2__)
-#define CPU_FEATURES_COMPILED_X86_SSE (defined(__SSE__) || (_M_IX86_FP >= 1))
-#define CPU_FEATURES_COMPILED_X86_SSE2 (defined(__SSE2__) || (_M_IX86_FP >= 2))
-#define CPU_FEATURES_COMPILED_X86_SSE3 defined(__SSE3__)
-#define CPU_FEATURES_COMPILED_X86_SSSE3 defined(__SSSE3__)
-#define CPU_FEATURES_COMPILED_X86_SSE4_1 defined(__SSE4_1__)
-#define CPU_FEATURES_COMPILED_X86_SSE4_2 defined(__SSE4_2__)
-#define CPU_FEATURES_COMPILED_X86_AVX defined(__AVX__)
-#define CPU_FEATURES_COMPILED_x86_AVX2 defined(__AVX2__)
+
+#if defined(__AES__)
+#define CPU_FEATURES_COMPILED_X86_AES 1
+#else
+#define CPU_FEATURES_COMPILED_X86_AES 0
+#endif  //  defined(__AES__)
+
+#if defined(__F16C__)
+#define CPU_FEATURES_COMPILED_X86_F16C 1
+#else
+#define CPU_FEATURES_COMPILED_X86_F16C 0
+#endif  //  defined(__F16C__)
+
+#if defined(__BMI__)
+#define CPU_FEATURES_COMPILED_X86_BMI 1
+#else
+#define CPU_FEATURES_COMPILED_X86_BMI 0
+#endif  //  defined(__BMI__)
+
+#if defined(__BMI2__)
+#define CPU_FEATURES_COMPILED_X86_BMI2 1
+#else
+#define CPU_FEATURES_COMPILED_X86_BMI2 0
+#endif  //  defined(__BMI2__)
+
+#if (defined(__SSE__) || (_M_IX86_FP >= 1))
+#define CPU_FEATURES_COMPILED_X86_SSE 1
+#else
+#define CPU_FEATURES_COMPILED_X86_SSE 0
 #endif
+
+#if (defined(__SSE2__) || (_M_IX86_FP >= 2))
+#define CPU_FEATURES_COMPILED_X86_SSE2 1
+#else
+#define CPU_FEATURES_COMPILED_X86_SSE2 0
+#endif
+
+#if defined(__SSE3__)
+#define CPU_FEATURES_COMPILED_X86_SSE3 1
+#else
+#define CPU_FEATURES_COMPILED_X86_SSE3 0
+#endif  //  defined(__SSE3__)
+
+#if defined(__SSSE3__)
+#define CPU_FEATURES_COMPILED_X86_SSSE3 1
+#else
+#define CPU_FEATURES_COMPILED_X86_SSSE3 0
+#endif  //  defined(__SSSE3__)
+
+#if defined(__SSE4_1__)
+#define CPU_FEATURES_COMPILED_X86_SSE4_1 1
+#else
+#define CPU_FEATURES_COMPILED_X86_SSE4_1 0
+#endif  //  defined(__SSE4_1__)
+
+#if defined(__SSE4_2__)
+#define CPU_FEATURES_COMPILED_X86_SSE4_2 1
+#else
+#define CPU_FEATURES_COMPILED_X86_SSE4_2 0
+#endif  //  defined(__SSE4_2__)
+
+#if defined(__AVX__)
+#define CPU_FEATURES_COMPILED_X86_AVX 1
+#else
+#define CPU_FEATURES_COMPILED_X86_AVX 0
+#endif  //  defined(__AVX__)
+
+#if defined(__AVX2__)
+#define CPU_FEATURES_COMPILED_x86_AVX2 1
+#else
+#define CPU_FEATURES_COMPILED_x86_AVX2 0
+#endif  //  defined(__AVX2__)
+
+#endif  // defined(CPU_FEATURES_ARCH_X86)
 
 #if defined(CPU_FEATURES_ARCH_ANY_ARM)
-#define CPU_FEATURES_COMPILED_ANY_ARM_NEON defined(__ARM_NEON__)
-#endif
+#if defined(__ARM_NEON__)
+#define CPU_FEATURES_COMPILED_ANY_ARM_NEON 1
+#else
+#define CPU_FEATURES_COMPILED_ANY_ARM_NEON 0
+#endif  //  defined(__ARM_NEON__)
+#endif  //  defined(CPU_FEATURES_ARCH_ANY_ARM)
 
 #if defined(CPU_FEATURES_ARCH_MIPS)
-#define CPU_FEATURES_COMPILED_MIPS_MSA defined(__mips_msa)
-#endif
+#if defined(__mips_msa)
+#define CPU_FEATURES_COMPILED_MIPS_MSA 1
+#else
+#define CPU_FEATURES_COMPILED_MIPS_MSA 0
+#endif  //  defined(__mips_msa)
+#endif  //  defined(CPU_FEATURES_ARCH_MIPS)
 
 #endif  // CPU_FEATURES_INCLUDE_CPU_FEATURES_MACROS_H_
