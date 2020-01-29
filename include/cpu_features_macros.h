@@ -186,9 +186,9 @@
 #endif  //  defined(__AVX__)
 
 #if defined(__AVX2__)
-#define CPU_FEATURES_COMPILED_x86_AVX2 1
+#define CPU_FEATURES_COMPILED_X86_AVX2 1
 #else
-#define CPU_FEATURES_COMPILED_x86_AVX2 0
+#define CPU_FEATURES_COMPILED_X86_AVX2 0
 #endif  //  defined(__AVX2__)
 
 #endif  // defined(CPU_FEATURES_ARCH_X86)
