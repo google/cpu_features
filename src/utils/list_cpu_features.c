@@ -342,7 +342,7 @@ static Node* GetCacheTypeString(CacheType cache_type) {
   }
 }
 
-static void AddCacheLevelInfo(Node* root, const CacheInfo* cache_info) {
+static void AddCacheInfo(Node* root, const CacheInfo* cache_info) {
   Node* array = CreateArray();
   for (int i = 0; i < cache_info->size; ++i) {
     CacheLevelInfo info = cache_info->levels[i];
@@ -375,7 +375,7 @@ static Node* CreateTree() {
               CreateString(
                   GetX86MicroarchitectureName(GetX86Microarchitecture(&info))));
   AddFlags(root, &info.features);
-  AddCacheLevelInfo(root, &cache_info);
+  AddCacheInfo(root, &cache_info);
 #elif defined(CPU_FEATURES_ARCH_ARM)
   const ArmInfo info = GetArmInfo();
   AddMapEntry(root, "arch", CreateString("ARM"));
