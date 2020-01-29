@@ -282,7 +282,11 @@ static void printTextField(const Node* current) {
       if (current->next) printTextField(current->next);
       break;
     case NT_MAP:
-      if (current->next) printJson(current->next);
+      if (current->next) {
+        printf("{");
+        printJson(current->next);
+        printf("}");
+      }
       break;
     case NT_MAP_ENTRY:
       printf("%-15s : ", current->string);
@@ -317,11 +321,50 @@ static void showUsage(const char* name) {
       name);
 }
 
+static Node* GetCacheTypeString(CacheType cache_type) {
+  switch (cache_type) {
+    case CPU_FEATURE_CACHE_NULL:
+      return CreateConstantString("null");
+    case CPU_FEATURE_CACHE_DATA:
+      return CreateConstantString("data");
+    case CPU_FEATURE_CACHE_INSTRUCTION:
+      return CreateConstantString("instruction");
+    case CPU_FEATURE_CACHE_UNIFIED:
+      return CreateConstantString("unified");
+    case CPU_FEATURE_CACHE_TLB:
+      return CreateConstantString("tlb");
+    case CPU_FEATURE_CACHE_DTLB:
+      return CreateConstantString("dtlb");
+    case CPU_FEATURE_CACHE_STLB:
+      return CreateConstantString("stlb");
+    case CPU_FEATURE_CACHE_PREFETCH:
+      return CreateConstantString("prefetch");
+  }
+}
+
+static void AddCacheLevelInfo(Node* root, const CacheInfo* cache_info) {
+  Node* array = CreateArray();
+  for (int i = 0; i < cache_info->size; ++i) {
+    CacheLevelInfo info = cache_info->levels[i];
+    Node* map = CreateMap();
+    AddMapEntry(map, "level", CreateInt(info.level));
+    AddMapEntry(map, "cache_type", GetCacheTypeString(info.cache_type));
+    AddMapEntry(map, "cache_size", CreateInt(info.cache_size));
+    AddMapEntry(map, "ways", CreateInt(info.ways));
+    AddMapEntry(map, "line_size", CreateInt(info.line_size));
+    AddMapEntry(map, "tlb_entries", CreateInt(info.tlb_entries));
+    AddMapEntry(map, "partitioning", CreateInt(info.partitioning));
+    AddArrayElement(array, map);
+  }
+  AddMapEntry(root, "cache_info", array);
+}
+
 static Node* CreateTree() {
   Node* root = CreateMap();
 #if defined(CPU_FEATURES_ARCH_X86)
   char brand_string[49];
   const X86Info info = GetX86Info();
+  const CacheInfo cache_info = GetX86CacheInfo();
   FillX86BrandString(brand_string);
   AddMapEntry(root, "arch", CreateString("x86"));
   AddMapEntry(root, "brand", CreateString(brand_string));
@@ -332,6 +375,7 @@ static Node* CreateTree() {
               CreateString(
                   GetX86MicroarchitectureName(GetX86Microarchitecture(&info))));
   AddFlags(root, &info.features);
+  AddCacheLevelInfo(root, &cache_info);
 #elif defined(CPU_FEATURES_ARCH_ARM)
   const ArmInfo info = GetArmInfo();
   AddMapEntry(root, "arch", CreateString("ARM"));
