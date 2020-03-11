@@ -161,6 +161,7 @@ include(CTest)
 if(BUILD_TESTING)
   # Automatically incorporate googletest into the CMake Project if target not
   # found.
+  enable_language(CXX)
   if(NOT TARGET gtest OR NOT TARGET gmock_main)
     # Download and unpack googletest at configure time.
     configure_file(
@@ -197,7 +198,6 @@ if(BUILD_TESTING)
                      EXCLUDE_FROM_ALL)
   endif()
 
-  enable_language(CXX)
   add_subdirectory(test)
 endif()
 
