@@ -8,8 +8,7 @@ cache:
     - $HOME/cpu_features_archives
 
 addons:
-  apt:
-    packages:
+  apt_packages:
     - ninja-build
 
 env:
@@ -41,14 +40,19 @@ matrix:
     env:
       TARGET=x86_64-windows
       CMAKE_GENERATOR="Visual Studio 15 2017 Win64"
-  - os: linux-ppc64le
+
+  # see: https://docs.travis-ci.com/user/multi-cpu-architectures/
+  - os: linux
+    arch: ppc64le
     compiler: gcc
     env:
       TARGET=ppc64le-linux-gnu
-  - os: linux-ppc64le
+  - os: linux
+    arch: ppc64le
     compiler: clang
     env:
       TARGET=ppc64le-linux-gnu
+
   # Toolchains for little-endian, 64-bit ARMv8 for GNU/Linux systems
   - os: linux
     env:
