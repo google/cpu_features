@@ -1043,6 +1043,8 @@ static void ParseLeaf4(const int max_cpuid_leaf, CacheInfo* info) {
 static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
   const Leaf leaf_7 = SafeCpuId(max_cpuid_leaf, 7);
+  const Leaf leaf_80000000 = CpuId(0x80000000);
+  const Leaf leaf_80000001 = SafeCpuId(leaf_80000000.eax, 0x80000001);
 
   const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
   const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
@@ -1097,9 +1099,11 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
     features->ssse3 = IsBitSet(leaf_1.ecx, 9);
     features->sse4_1 = IsBitSet(leaf_1.ecx, 19);
     features->sse4_2 = IsBitSet(leaf_1.ecx, 20);
+    features->sse4a = IsBitSet(leaf_80000001.ecx, 6);
   }
 
   if (have_avx_os_support) {
+    features->fma4 = IsBitSet(leaf_80000001.ecx, 16);
     features->fma3 = IsBitSet(leaf_1.ecx, 12);
     features->avx = IsBitSet(leaf_1.ecx, 28);
     features->avx2 = IsBitSet(leaf_7.ebx, 5);
@@ -1295,6 +1299,8 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->erms;
     case X86_F16C:
       return features->f16c;
+    case X86_FMA4:
+      return features->fma4;
     case X86_FMA3:
       return features->fma3;
     case X86_VAES:
@@ -1327,6 +1333,8 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->sse4_1;
     case X86_SSE4_2:
       return features->sse4_2;
+    case X86_SSE4A:
+      return features->sse4a;
     case X86_AVX:
       return features->avx;
     case X86_AVX2:
@@ -1405,6 +1413,8 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "erms";
     case X86_F16C:
       return "f16c";
+    case X86_FMA4:
+      return "fma4";
     case X86_FMA3:
       return "fma3";
     case X86_VAES:
@@ -1437,6 +1447,8 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "sse4_1";
     case X86_SSE4_2:
       return "sse4_2";
+    case X86_SSE4A:
+      return "sse4a";
     case X86_AVX:
       return "avx";
     case X86_AVX2:

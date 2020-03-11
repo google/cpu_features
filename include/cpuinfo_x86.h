@@ -31,6 +31,7 @@ typedef struct {
   int aes : 1;
   int erms : 1;
   int f16c : 1;
+  int fma4 : 1;
   int fma3 : 1;
   int vaes : 1;
   int vpclmulqdq : 1;
@@ -48,6 +49,7 @@ typedef struct {
   int ssse3 : 1;
   int sse4_1 : 1;
   int sse4_2 : 1;
+  int sse4a : 1;
 
   int avx : 1;
   int avx2 : 1;
@@ -149,6 +151,7 @@ typedef enum {
   X86_AES,
   X86_ERMS,
   X86_F16C,
+  X86_FMA4,
   X86_FMA3,
   X86_VAES,
   X86_VPCLMULQDQ,
@@ -165,6 +168,7 @@ typedef enum {
   X86_SSSE3,
   X86_SSE4_1,
   X86_SSE4_2,
+  X86_SSE4A,
   X86_AVX,
   X86_AVX2,
   X86_AVX512F,
