@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.0)
 
+# option() honors normal variables.
+# see: https://cmake.org/cmake/help/git-stage/policy/CMP0077.html
+if(POLICY CMP0077)
+  cmake_policy(SET CMP0077 NEW)
+endif()
+
 project(CpuFeatures VERSION 0.1.0)
 
 set(CMAKE_C_STANDARD 99)
@@ -23,6 +29,8 @@ option(BUILD_SHARED_LIBS "Build library as shared." OFF)
 # PIC
 option(BUILD_PIC "Build with Position Independant Code." OFF) # Default is off at least for GCC
 
+# Force PIC on unix when building shared libs
+# see: https://en.wikipedia.org/wiki/Position-independent_code
 if(BUILD_SHARED_LIBS AND UNIX)
   set(BUILD_PIC ON)
 endif()
