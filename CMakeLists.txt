@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.0)
 
+# option() honors normal variables.
+# see: https://cmake.org/cmake/help/git-stage/policy/CMP0077.html
+if(POLICY CMP0077)
+  cmake_policy(SET CMP0077 NEW)
+endif()
+
 project(CpuFeatures VERSION 0.1.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)
@@ -22,6 +28,12 @@ option(BUILD_TESTING "Enable test (depends on googletest)." OFF)
 option(BUILD_SHARED_LIBS "Build library as shared." OFF)
 # PIC
 option(BUILD_PIC "Build with Position Independant Code." OFF) # Default is off at least for GCC
+
+# Force PIC on unix when building shared libs
+# see: https://en.wikipedia.org/wiki/Position-independent_code
+if(BUILD_SHARED_LIBS AND UNIX)
+  set(BUILD_PIC ON)
+endif()
 
 include(CheckIncludeFile)
 include(CheckSymbolExists)
@@ -92,6 +104,7 @@ add_library(utils OBJECT
   ${PROJECT_SOURCE_DIR}/src/stack_line_reader.c
   ${PROJECT_SOURCE_DIR}/src/string_view.c
 )
+set_property(TARGET utils PROPERTY POSITION_INDEPENDENT_CODE ${BUILD_PIC})
 setup_include_and_definitions(utils)
 
 #
