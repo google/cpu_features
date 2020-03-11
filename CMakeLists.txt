@@ -197,6 +197,7 @@ if(BUILD_TESTING)
                      EXCLUDE_FROM_ALL)
   endif()
 
+  enable_language(CXX)
   add_subdirectory(test)
 endif()
 
