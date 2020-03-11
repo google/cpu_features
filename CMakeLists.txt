@@ -23,6 +23,10 @@ option(BUILD_SHARED_LIBS "Build library as shared." OFF)
 # PIC
 option(BUILD_PIC "Build with Position Independant Code." OFF) # Default is off at least for GCC
 
+if(BUILD_SHARED_LIBS AND UNIX)
+  set(BUILD_PIC ON)
+endif()
+
 include(CheckIncludeFile)
 include(CheckSymbolExists)
 include(GNUInstallDirs)
@@ -92,6 +96,7 @@ add_library(utils OBJECT
   ${PROJECT_SOURCE_DIR}/src/stack_line_reader.c
   ${PROJECT_SOURCE_DIR}/src/string_view.c
 )
+set_property(TARGET utils PROPERTY POSITION_INDEPENDENT_CODE ${BUILD_PIC})
 setup_include_and_definitions(utils)
 
 #
