@@ -1039,17 +1039,25 @@ static void ParseLeaf4(const int max_cpuid_leaf, CacheInfo* info) {
   }
 }
 
+// Internal structure to hold the OS support for vector operations.
+// Avoid to recompute them since each call to cpuid is ~100 cycles.
+typedef struct {
+  bool have_sse;
+  bool have_avx;
+  bool have_avx512;
+} OsSupport;
+
 // Reference https://en.wikipedia.org/wiki/CPUID.
-static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
+static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* os_support) {
   const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
   const Leaf leaf_7 = SafeCpuId(max_cpuid_leaf, 7);
 
   const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
   const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
   const uint32_t xcr0_eax = (have_xsave && have_osxsave) ? GetXCR0Eax() : 0;
-  const bool have_sse_os_support = HasXmmOsXSave(xcr0_eax);
-  const bool have_avx_os_support = HasYmmOsXSave(xcr0_eax);
-  const bool have_avx512_os_support = HasZmmOsXSave(xcr0_eax);
+  os_support->have_sse = HasXmmOsXSave(xcr0_eax);
+  os_support->have_avx = HasYmmOsXSave(xcr0_eax);
+  os_support->have_avx512 = HasZmmOsXSave(xcr0_eax);
 
   const uint32_t family = ExtractBitRange(leaf_1.eax, 11, 8);
   const uint32_t extended_family = ExtractBitRange(leaf_1.eax, 27, 20);
@@ -1090,7 +1098,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   features->vaes = IsBitSet(leaf_7.ecx, 9);
   features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
 
-  if (have_sse_os_support) {
+  if (os_support->have_sse) {
     features->sse = IsBitSet(leaf_1.edx, 25);
     features->sse2 = IsBitSet(leaf_1.edx, 26);
     features->sse3 = IsBitSet(leaf_1.ecx, 0);
@@ -1099,13 +1107,13 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
     features->sse4_2 = IsBitSet(leaf_1.ecx, 20);
   }
 
-  if (have_avx_os_support) {
+  if (os_support->have_avx) {
     features->fma3 = IsBitSet(leaf_1.ecx, 12);
     features->avx = IsBitSet(leaf_1.ecx, 28);
     features->avx2 = IsBitSet(leaf_7.ebx, 5);
   }
 
-  if (have_avx512_os_support) {
+  if (os_support->have_avx512) {
     features->avx512f = IsBitSet(leaf_7.ebx, 16);
     features->avx512cd = IsBitSet(leaf_7.ebx, 28);
     features->avx512er = IsBitSet(leaf_7.ebx, 27);
@@ -1125,41 +1133,36 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
 }
 
 // Reference https://en.wikipedia.org/wiki/CPUID#EAX=80000000h:_Get_Highest_Extended_Function_Implemented.
-static void ParseExtraAMDCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
-  const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
+static void ParseExtraAMDCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport os_support) {
   const Leaf leaf_80000000 = CpuId(0x80000000);
   const Leaf leaf_80000001 = SafeCpuId(leaf_80000000.eax, 0x80000001);
 
-  const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
-  const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
-  const uint32_t xcr0_eax = (have_xsave && have_osxsave) ? GetXCR0Eax() : 0;
-  const bool have_sse_os_support = HasXmmOsXSave(xcr0_eax);
-  const bool have_avx_os_support = HasYmmOsXSave(xcr0_eax);
-
   X86Features* const features = &info->features;
 
-  if (have_sse_os_support) {
+  if (os_support.have_sse) {
     features->sse4a = IsBitSet(leaf_80000001.ecx, 6);
   }
 
-  if (have_avx_os_support) {
+  if (os_support.have_avx) {
     features->fma4 = IsBitSet(leaf_80000001.ecx, 16);
   }
 }
 
 static const X86Info kEmptyX86Info;
+static const OsSupport kEmptyOsSupport;
 static const CacheInfo kEmptyCacheInfo;
 
 X86Info GetX86Info(void) {
   X86Info info = kEmptyX86Info;
+  OsSupport os_support = kEmptyOsSupport;
   const Leaf leaf_0 = CpuId(0);
   const uint32_t max_cpuid_leaf = leaf_0.eax;
   SetVendor(leaf_0, info.vendor);
   if (IsVendor(leaf_0, "GenuineIntel") || IsVendor(leaf_0, "AuthenticAMD")) {
-    ParseCpuId(max_cpuid_leaf, &info);
+    ParseCpuId(max_cpuid_leaf, &info, &os_support);
   }
   if (IsVendor(leaf_0, "AuthenticAMD")) {
-    ParseExtraAMDCpuId(max_cpuid_leaf, &info);
+    ParseExtraAMDCpuId(max_cpuid_leaf, &info, os_support);
   }
   return info;
 }
