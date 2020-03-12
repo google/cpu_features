@@ -1043,8 +1043,6 @@ static void ParseLeaf4(const int max_cpuid_leaf, CacheInfo* info) {
 static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
   const Leaf leaf_7 = SafeCpuId(max_cpuid_leaf, 7);
-  const Leaf leaf_80000000 = CpuId(0x80000000);
-  const Leaf leaf_80000001 = SafeCpuId(leaf_80000000.eax, 0x80000001);
 
   const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
   const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
@@ -1099,11 +1097,9 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
     features->ssse3 = IsBitSet(leaf_1.ecx, 9);
     features->sse4_1 = IsBitSet(leaf_1.ecx, 19);
     features->sse4_2 = IsBitSet(leaf_1.ecx, 20);
-    features->sse4a = IsBitSet(leaf_80000001.ecx, 6);
   }
 
   if (have_avx_os_support) {
-    features->fma4 = IsBitSet(leaf_80000001.ecx, 16);
     features->fma3 = IsBitSet(leaf_1.ecx, 12);
     features->avx = IsBitSet(leaf_1.ecx, 28);
     features->avx2 = IsBitSet(leaf_7.ebx, 5);
@@ -1128,6 +1124,29 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
   }
 }
 
+// Reference https://en.wikipedia.org/wiki/CPUID#EAX=80000000h:_Get_Highest_Extended_Function_Implemented.
+static void ParseExtraAMDCpuId(const uint32_t max_cpuid_leaf, X86Info* info) {
+  const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
+  const Leaf leaf_80000000 = CpuId(0x80000000);
+  const Leaf leaf_80000001 = SafeCpuId(leaf_80000000.eax, 0x80000001);
+
+  const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
+  const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
+  const uint32_t xcr0_eax = (have_xsave && have_osxsave) ? GetXCR0Eax() : 0;
+  const bool have_sse_os_support = HasXmmOsXSave(xcr0_eax);
+  const bool have_avx_os_support = HasYmmOsXSave(xcr0_eax);
+
+  X86Features* const features = &info->features;
+
+  if (have_sse_os_support) {
+    features->sse4a = IsBitSet(leaf_80000001.ecx, 6);
+  }
+
+  if (have_avx_os_support) {
+    features->fma4 = IsBitSet(leaf_80000001.ecx, 16);
+  }
+}
+
 static const X86Info kEmptyX86Info;
 static const CacheInfo kEmptyCacheInfo;
 
@@ -1138,6 +1157,9 @@ X86Info GetX86Info(void) {
   SetVendor(leaf_0, info.vendor);
   if (IsVendor(leaf_0, "GenuineIntel") || IsVendor(leaf_0, "AuthenticAMD")) {
     ParseCpuId(max_cpuid_leaf, &info);
+  }
+  if (IsVendor(leaf_0, "AuthenticAMD")) {
+    ParseExtraAMDCpuId(max_cpuid_leaf, &info);
   }
   return info;
 }
