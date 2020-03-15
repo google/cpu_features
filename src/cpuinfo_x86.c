@@ -1047,6 +1047,24 @@ typedef struct {
   bool have_avx512;
 } OsSupport;
 
+#if defined(CPU_FEATURES_COMPILER_CLANG) || defined(CPU_FEATURES_COMPILER_GCC)
+#if defined(HAVE_CPU_INIT)
+#include <stdlib.h>
+#else
+#include "internal/filesystem.h"
+#include "internal/stack_line_reader.h"
+#include "internal/string_view.h"
+#if defined(HAVE_UTSNAME_H)
+#include <sys/utsname.h>
+#if defined(HAVE_SYSCTLBYNAME)
+#include <sys/sysctl.h>
+#endif
+#endif
+#endif
+#elif defined(CPU_FEATURES_COMPILER_MSC)
+#include <windows.h>
+#endif
+
 // Reference https://en.wikipedia.org/wiki/CPUID.
 static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* os_support) {
   const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
@@ -1055,9 +1073,56 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* 
   const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
   const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
   const uint32_t xcr0_eax = (have_xsave && have_osxsave) ? GetXCR0Eax() : 0;
-  os_support->have_sse = HasXmmOsXSave(xcr0_eax);
-  os_support->have_avx = HasYmmOsXSave(xcr0_eax);
-  os_support->have_avx512 = HasZmmOsXSave(xcr0_eax);
+  if (xcr0_eax) {
+    os_support->have_sse = HasXmmOsXSave(xcr0_eax);
+    os_support->have_avx = HasYmmOsXSave(xcr0_eax);
+    os_support->have_avx512 = HasZmmOsXSave(xcr0_eax);
+  } else {
+#if defined(CPU_FEATURES_COMPILER_CLANG) || defined(CPU_FEATURES_COMPILER_GCC)
+#if defined(HAVE_CPU_INIT)
+    __builtin_cpu_init();
+    os_support->have_sse = __builtin_cpu_supports("sse");
+#else
+#if defined(HAVE_UTSNAME_H)
+    struct utsname buf;
+    uname(&buf);
+    if (strncmp(buf.sysname, "Darwin", sizeof(buf.sysname)) == 0) {
+#if defined(HAVE_SYSCTLBYNAME)
+      int enabled, result;
+      size_t len = sizeof(enabled);
+      result = sysctlbyname("hw.optional.sse", &enabled, &len, NULL, 0);
+      if (result == 0) {
+        os_support->have_sse = enabled;
+      }
+#endif
+    } else if (strncmp(buf.sysname, "Linux", sizeof(buf.sysname)) == 0) {
+      const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");
+      if (fd >= 0) {
+        StackLineReader reader;
+        StackLineReader_Initialize(&reader, fd);
+        for (;;) {
+          const LineResult result = StackLineReader_NextLine(&reader);
+          StringView line = result.line;
+          StringView key, value;
+          if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
+            if (CpuFeatures_StringView_IsEquals(key, str("flags"))) {
+              os_support->have_sse = CpuFeatures_StringView_HasWord(value, "sse");
+              break;
+            }
+          }
+          if (result.eof) {
+            break;
+          }
+        }
+        CpuFeatures_CloseFile(fd);
+      }
+    }
+#endif
+#endif
+#elif defined(CPU_FEATURES_COMPILER_MSC)
+    os_support->have_sse = IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
+#endif
+  }
 
   const uint32_t family = ExtractBitRange(leaf_1.eax, 11, 8);
   const uint32_t extended_family = ExtractBitRange(leaf_1.eax, 27, 20);

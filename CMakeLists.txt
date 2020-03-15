@@ -91,6 +91,20 @@ macro(add_cpu_features_headers_and_sources HDRS_LIST_NAME SRCS_LIST_NAME)
   endif()
 endmacro()
 
+if(UNIX)
+  include(CheckCSourceCompiles)
+  check_c_source_compiles("
+    #include <stdlib.h>
+    int main(void)
+    {
+      __builtin_cpu_init();
+    }" HAVE_CPU_INIT)
+  if(NOT HAVE_CPU_INIT)
+    check_include_file(sys/utsname.h HAVE_UTSNAME_H)
+    check_symbol_exists(sysctlbyname sys/sysctl.h HAVE_SYSCTLBYNAME)
+  endif()
+endif()
+
 #
 # library : utils
 #
@@ -148,6 +162,15 @@ set_property(TARGET cpu_features PROPERTY POSITION_INDEPENDENT_CODE ${BUILD_PIC}
 target_include_directories(cpu_features
   PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cpu_features>
 )
+if(HAVE_CPU_INIT)
+  target_compile_definitions(cpu_features PRIVATE HAVE_CPU_INIT)
+endif()
+if(HAVE_UTSNAME_H)
+  target_compile_definitions(cpu_features PRIVATE HAVE_UTSNAME_H)
+endif()
+if(HAVE_SYSCTLBYNAME)
+  target_compile_definitions(cpu_features PRIVATE HAVE_SYSCTLBYNAME)
+endif()
 add_library(CpuFeature::cpu_features ALIAS cpu_features)
 
 #
