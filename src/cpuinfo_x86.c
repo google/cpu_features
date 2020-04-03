@@ -1051,10 +1051,10 @@ typedef struct {
 #if defined(HAVE_CPU_INIT)
 #include <stdlib.h>
 #else
+#if defined(HAVE_UTSNAME_H)
 #include "internal/filesystem.h"
 #include "internal/stack_line_reader.h"
 #include "internal/string_view.h"
-#if defined(HAVE_UTSNAME_H)
 #include <sys/utsname.h>
 #if defined(HAVE_SYSCTLBYNAME)
 #include <sys/sysctl.h>
@@ -1117,9 +1117,10 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* 
         CpuFeatures_CloseFile(fd);
       }
     }
-#endif
-#endif
+#endif // defined(HAVE_UTSNAME_H)
+#endif // defined(CPU_FEATURES_COMPILER_CLANG) || defined(CPU_FEATURES_COMPILER_GCC)
 #elif defined(CPU_FEATURES_COMPILER_MSC)
+    // see: https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-isprocessorfeaturepresent
     os_support->have_sse = IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
 #endif
   }
