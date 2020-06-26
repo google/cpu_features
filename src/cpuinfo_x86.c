@@ -1129,7 +1129,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* 
     features->avx512bitalg = IsBitSet(leaf_7.ecx, 12);
     features->avx512vpopcntdq = IsBitSet(leaf_7.ecx, 14);
     features->avx512_4vnniw = IsBitSet(leaf_7.edx, 2);
-    features->avx512_4vbmi2 = IsBitSet(leaf_7.edx, 3);
+    features->avx512_4fmaps = IsBitSet(leaf_7.edx, 3);
     features->avx512_bf16 = IsBitSet(leaf_7_1.eax, 5);
     features->avx512_vp2intersect = IsBitSet(leaf_7.edx, 8);
   }
@@ -1406,8 +1406,8 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->avx512vpopcntdq;
     case X86_AVX512_4VNNIW:
       return features->avx512_4vnniw;
-    case X86_AVX512_4VBMI2:
-      return features->avx512_4vbmi2;
+    case X86_AVX512_4FMAPS:
+      return features->avx512_4fmaps;
     case X86_AVX512_BF16:
       return features->avx512_bf16;
     case X86_AVX512_VP2INTERSECT:
@@ -1524,8 +1524,8 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "avx512vpopcntdq";
     case X86_AVX512_4VNNIW:
       return "avx512_4vnniw";
-    case X86_AVX512_4VBMI2:
-      return "avx512_4vbmi2";
+    case X86_AVX512_4FMAPS:
+      return "avx512_4fmaps";
     case X86_AVX512_BF16:
       return "avx512_bf16";
     case X86_AVX512_VP2INTERSECT:
