@@ -1241,9 +1241,14 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x06, 0x66):
         // https://en.wikipedia.org/wiki/Cannon_Lake_(microarchitecture)
         return INTEL_CNL;
-      case CPUID(0x06, 0x7E):
+      case CPUID(0x06, 0x7E): // client
+      case CPUID(0x06, 0x6A): // server
+      case CPUID(0x06, 0x6C): // server
         // https://en.wikipedia.org/wiki/Ice_Lake_(microprocessor)
         return INTEL_ICL;
+      case CPUID(0x06, 0x8F):
+        // https://en.wikipedia.org/wiki/Sapphire_Rapids
+        return INTEL_SPR;
       case CPUID(0x06, 0x8E):
         switch (info->stepping) {
           case 9:  return INTEL_KBL;  // https://en.wikipedia.org/wiki/Kaby_Lake
