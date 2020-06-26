@@ -128,7 +128,32 @@ static bool HasSecondFMA(uint32_t model) {
     // Cannon Lake client
     if (model==0x66) return false;
     // Skylake server - placeholder
-    if (model==0x55) return true;
+    if (model==0x55) {
+        char proc_name[49] = {0};
+        FillX86BrandString(proc_name);
+        printf("HasSecondFMA: processor name = %s\n", proc_name);
+        // detect Xeon
+        if (proc_name[9]=='X') {
+            // detect Silver or Bronze
+            if (proc_name[17]=='S' || proc_name[17]=='B') {
+                return false;
+            }
+            // detect Gold 5120 and below
+            else if (proc_name[17]=='G' && proc_name[22]=='5') {
+                return (proc_name[24]=='2' && proc_name[25]=='2');
+            }
+            // detect Xeon W 210x
+            else if (proc_name[17]=='W' && proc_name[21]=='0') {
+                return false;
+            }
+            // detect Xeon D 2xxx
+            else if (proc_name[17]=='D' && proc_name[19]=='2' && proc_name[20]=='1') {
+                return false;
+            }
+        }
+        return true;
+    }
+    // This is the right default...
     return true;
 }
 
