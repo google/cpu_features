@@ -122,13 +122,13 @@ static bool HasZmmOsXSave(uint32_t xcr0_eax) {
 static bool HasSecondFMA(uint32_t model) {
     printf("HasSecondFMA: model = %x\n", model);
     // Ice Lake server - placeholder
-    if (model==0x6a || model==0x6c) return 2;
+    if (model==0x6a || model==0x6c) return true;
     // Ice Lake client
-    if (model==0x7d || model==0x7e) return 1;
+    if (model==0x7d || model==0x7e) return false;
     // Cannon Lake client
-    if (model==0x66) return 1;
+    if (model==0x66) return false;
     // Skylake server - placeholder
-    if (model==0x55) return 2;
+    if (model==0x55) return true;
     return true;
 }
 
