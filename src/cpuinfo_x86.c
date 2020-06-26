@@ -19,6 +19,9 @@
 #include <stdbool.h>
 #include <string.h>
 
+// JEFF
+#include <stdio.h>
+
 #if !defined(CPU_FEATURES_ARCH_X86)
 #error "Cannot compile cpuinfo_x86 on a non x86 platform."
 #endif
@@ -113,6 +116,20 @@ static bool HasYmmOsXSave(uint32_t xcr0_eax) {
 static bool HasZmmOsXSave(uint32_t xcr0_eax) {
   return HasMask(xcr0_eax, MASK_XMM | MASK_YMM | MASK_MASKREG | MASK_ZMM0_15 |
                                MASK_ZMM16_31);
+}
+
+// JEFF
+static bool HasSecondFMA(uint32_t model) {
+    printf("HasSecondFMA: model = %x\n", model);
+    // Ice Lake server - placeholder
+    if (model==0x6a || model==0x6c) return 2;
+    // Ice Lake client
+    if (model==0x7d || model==0x7e) return 1;
+    // Cannon Lake client
+    if (model==0x66) return 1;
+    // Skylake server - placeholder
+    if (model==0x55) return 2;
+    return true;
 }
 
 static void SetVendor(const Leaf leaf, char* const vendor) {
@@ -1129,6 +1146,8 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* 
     features->avx512vpopcntdq = IsBitSet(leaf_7.ecx, 14);
     features->avx512_4vnniw = IsBitSet(leaf_7.edx, 2);
     features->avx512_4vbmi2 = IsBitSet(leaf_7.edx, 3);
+    // JEFF
+    features->avx512_second_fma = HasSecondFMA(info->model);
   }
 }
 
@@ -1405,6 +1424,8 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->avx512_4vnniw;
     case X86_AVX512_4VBMI2:
       return features->avx512_4vbmi2;
+    case X86_AVX512_SECOND_FMA:
+      return features->avx512_second_fma;
     case X86_PCLMULQDQ:
       return features->pclmulqdq;
     case X86_SMX:
@@ -1519,6 +1540,8 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "avx512_4vnniw";
     case X86_AVX512_4VBMI2:
       return "avx512_4vbmi2";
+    case X86_AVX512_SECOND_FMA:
+      return "avx512_second_fma";
     case X86_PCLMULQDQ:
       return "pclmulqdq";
     case X86_SMX:

@@ -69,6 +69,7 @@ typedef struct {
   int avx512vpopcntdq : 1;
   int avx512_4vnniw : 1;
   int avx512_4vbmi2 : 1;
+  int avx512_second_fma : 1;
 
   int pclmulqdq : 1;
   int smx : 1;
@@ -188,6 +189,7 @@ typedef enum {
   X86_AVX512VPOPCNTDQ,
   X86_AVX512_4VNNIW,
   X86_AVX512_4VBMI2,
+  X86_AVX512_SECOND_FMA,
   X86_PCLMULQDQ,
   X86_SMX,
   X86_SGX,
