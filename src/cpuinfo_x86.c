@@ -20,9 +20,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-// JEFF
-#include <stdio.h>
-
 #if !defined(CPU_FEATURES_ARCH_X86)
 #error "Cannot compile cpuinfo_x86 on a non x86 platform."
 #endif
@@ -119,20 +116,11 @@ static bool HasZmmOsXSave(uint32_t xcr0_eax) {
                                MASK_ZMM16_31);
 }
 
-// JEFF
 static bool HasSecondFMA(uint32_t model) {
-    printf("HasSecondFMA: model = %x\n", model);
-    // Ice Lake server - placeholder
-    if (model==0x6a || model==0x6c) return true;
-    // Ice Lake client
-    if (model==0x7d || model==0x7e) return false;
-    // Cannon Lake client
-    if (model==0x66) return false;
-    // Skylake server - placeholder
+    // Skylake server
     if (model==0x55) {
         char proc_name[49] = {0};
         FillX86BrandString(proc_name);
-        printf("HasSecondFMA: processor name = %s\n", proc_name);
         // detect Xeon
         if (proc_name[9]=='X') {
             // detect Silver or Bronze
@@ -154,6 +142,10 @@ static bool HasSecondFMA(uint32_t model) {
         }
         return true;
     }
+    // Cannon Lake client
+    if (model==0x66) return false;
+    // Ice Lake client
+    if (model==0x7d || model==0x7e) return false;
     // This is the right default...
     return true;
 }
@@ -1172,7 +1164,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* 
     features->avx512vpopcntdq = IsBitSet(leaf_7.ecx, 14);
     features->avx512_4vnniw = IsBitSet(leaf_7.edx, 2);
     features->avx512_4vbmi2 = IsBitSet(leaf_7.edx, 3);
-    // JEFF
+
     features->avx512_second_fma = HasSecondFMA(info->model);
   }
 }
