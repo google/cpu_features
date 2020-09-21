@@ -55,6 +55,24 @@ DECLARE_SETTER_AND_GETTER(Aarch64Features, ssbs)
 DECLARE_SETTER_AND_GETTER(Aarch64Features, sb)
 DECLARE_SETTER_AND_GETTER(Aarch64Features, paca)
 DECLARE_SETTER_AND_GETTER(Aarch64Features, pacg)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, dcpodp)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, sve2)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, sveaes)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, svepmull)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, svebitperm)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, svesha3)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, svesm4)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, flagm2)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, frint)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, svei8mm)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, svef32mm)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, svef64mm)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, svebf16)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, i8mm)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, bf16)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, dgh)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, rng)
+DECLARE_SETTER_AND_GETTER(Aarch64Features, bti)
 
 static const CapabilityConfig kConfigs[] = {
   [AARCH64_FP] = {{AARCH64_HWCAP_FP, 0}, "fp", &set_fp, &get_fp},
@@ -89,6 +107,24 @@ static const CapabilityConfig kConfigs[] = {
   [AARCH64_SB] = {{AARCH64_HWCAP_SB, 0}, "sb", &set_sb, &get_sb},
   [AARCH64_PACA] = {{AARCH64_HWCAP_PACA, 0}, "paca", &set_paca, &get_paca},
   [AARCH64_PACG] = {{AARCH64_HWCAP_PACG, 0}, "pacg", &set_pacg, &get_pacg},
+  [AARCH64_DCPODP] = {{0, AARCH64_HWCAP2_DCPODP}, "dcpodp", &set_dcpodp, &get_dcpodp},
+  [AARCH64_SVE2] = {{0, AARCH64_HWCAP2_SVE2}, "sve2", &set_sve2, &get_sve2},
+  [AARCH64_SVEAES] = {{0, AARCH64_HWCAP2_SVEAES}, "sveaes", &set_sveaes, &get_sveaes},
+  [AARCH64_SVEPMULL] = {{0, AARCH64_HWCAP2_SVEPMULL}, "svepmull", &set_svepmull, &get_svepmull},
+  [AARCH64_SVEBITPERM] = {{0, AARCH64_HWCAP2_SVEBITPERM}, "svebitperm", &set_svebitperm, &get_svebitperm},
+  [AARCH64_SVESHA3] = {{0, AARCH64_HWCAP2_SVESHA3}, "svesha3", &set_svesha3, &get_svesha3},
+  [AARCH64_SVESM4] = {{0, AARCH64_HWCAP2_SVESM4}, "svesm4", &set_svesm4, &get_svesm4},
+  [AARCH64_FLAGM2] = {{0, AARCH64_HWCAP2_FLAGM2}, "flagm2", &set_flagm2, &get_flagm2},
+  [AARCH64_FRINT] = {{0, AARCH64_HWCAP2_FRINT}, "frint", &set_frint, &get_frint},
+  [AARCH64_SVEI8MM] = {{0, AARCH64_HWCAP2_SVEI8MM}, "svei8mm", &set_svei8mm, &get_svei8mm},
+  [AARCH64_SVEF32MM] = {{0, AARCH64_HWCAP2_SVEF32MM}, "svef32mm", &set_svef32mm, &get_svef32mm},
+  [AARCH64_SVEF64MM] = {{0, AARCH64_HWCAP2_SVEF64MM}, "svef64mm", &set_svef64mm, &get_svef64mm},
+  [AARCH64_SVEBF16] = {{0, AARCH64_HWCAP2_SVEBF16}, "svebf16", &set_svebf16, &get_svebf16},
+  [AARCH64_I8MM] = {{0, AARCH64_HWCAP2_I8MM}, "i8mm", &set_i8mm, &get_i8mm},
+  [AARCH64_BF16] = {{0, AARCH64_HWCAP2_BF16}, "bf16", &set_bf16, &get_bf16},
+  [AARCH64_DGH] = {{0, AARCH64_HWCAP2_DGH}, "dgh", &set_dgh, &get_dgh},
+  [AARCH64_RNG] = {{0, AARCH64_HWCAP2_RNG}, "rng", &set_rng, &get_rng},
+  [AARCH64_BTI] = {{0, AARCH64_HWCAP2_BTI}, "bti", &set_bti, &get_bti},
 };
 
 static const size_t kConfigsSize = sizeof(kConfigs) / sizeof(CapabilityConfig);

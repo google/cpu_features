@@ -92,6 +92,8 @@ static Leaf SafeCpuId(uint32_t max_cpuid_leaf, uint32_t leaf_id) {
 #define MASK_MASKREG 0x20
 #define MASK_ZMM0_15 0x40
 #define MASK_ZMM16_31 0x80
+#define MASK_XTILECFG 0x20000
+#define MASK_XTILEDATA 0x40000
 
 static bool HasMask(uint32_t value, uint32_t mask) {
   return (value & mask) == mask;
@@ -114,6 +116,13 @@ static bool HasYmmOsXSave(uint32_t xcr0_eax) {
 static bool HasZmmOsXSave(uint32_t xcr0_eax) {
   return HasMask(xcr0_eax, MASK_XMM | MASK_YMM | MASK_MASKREG | MASK_ZMM0_15 |
                                MASK_ZMM16_31);
+}
+
+// Checks that operating system saves and restores AMX/TMUL state during context
+// switches.
+static bool HasTmmOsXSave(uint32_t xcr0_eax) {
+  return HasMask(xcr0_eax, MASK_XMM | MASK_YMM | MASK_MASKREG | MASK_ZMM0_15 |
+                               MASK_ZMM16_31 | MASK_XTILECFG | MASK_XTILEDATA);
 }
 
 static bool HasSecondFMA(uint32_t model) {
@@ -1081,12 +1090,14 @@ typedef struct {
   bool have_sse;
   bool have_avx;
   bool have_avx512;
+  bool have_amx;
 } OsSupport;
 
 // Reference https://en.wikipedia.org/wiki/CPUID.
 static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* os_support) {
   const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
   const Leaf leaf_7 = SafeCpuId(max_cpuid_leaf, 7);
+  const Leaf leaf_7_1 = SafeCpuIdEx(max_cpuid_leaf, 7, 1);
 
   const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
   const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
@@ -1094,6 +1105,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* 
   os_support->have_sse = HasXmmOsXSave(xcr0_eax);
   os_support->have_avx = HasYmmOsXSave(xcr0_eax);
   os_support->have_avx512 = HasZmmOsXSave(xcr0_eax);
+  os_support->have_amx = HasTmmOsXSave(xcr0_eax);
 
   const uint32_t family = ExtractBitRange(leaf_1.eax, 11, 8);
   const uint32_t extended_family = ExtractBitRange(leaf_1.eax, 27, 20);
@@ -1165,15 +1177,24 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* 
     features->avx512vpopcntdq = IsBitSet(leaf_7.ecx, 14);
     features->avx512_4vnniw = IsBitSet(leaf_7.edx, 2);
     features->avx512_4vbmi2 = IsBitSet(leaf_7.edx, 3);
-
     features->avx512_second_fma = HasSecondFMA(info->model);
+    features->avx512_4fmaps = IsBitSet(leaf_7.edx, 3);
+    features->avx512_bf16 = IsBitSet(leaf_7_1.eax, 5);
+    features->avx512_vp2intersect = IsBitSet(leaf_7.edx, 8);
+  }
+
+  if (os_support->have_amx) {
+    features->amx_bf16 = IsBitSet(leaf_7.edx, 22);
+    features->amx_tile = IsBitSet(leaf_7.edx, 24);
+    features->amx_int8 = IsBitSet(leaf_7.edx, 25);
   }
 }
 
 // Reference https://en.wikipedia.org/wiki/CPUID#EAX=80000000h:_Get_Highest_Extended_Function_Implemented.
-static void ParseExtraAMDCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport os_support) {
+static void ParseExtraAMDCpuId(X86Info* info, OsSupport os_support) {
   const Leaf leaf_80000000 = CpuId(0x80000000);
-  const Leaf leaf_80000001 = SafeCpuId(leaf_80000000.eax, 0x80000001);
+  const uint32_t max_extended_cpuid_leaf = leaf_80000000.eax;
+  const Leaf leaf_80000001 = SafeCpuId(max_extended_cpuid_leaf, 0x80000001);
 
   X86Features* const features = &info->features;
 
@@ -1194,13 +1215,15 @@ X86Info GetX86Info(void) {
   X86Info info = kEmptyX86Info;
   OsSupport os_support = kEmptyOsSupport;
   const Leaf leaf_0 = CpuId(0);
-  const uint32_t max_cpuid_leaf = leaf_0.eax;
+  const bool is_intel = IsVendor(leaf_0, "GenuineIntel");
+  const bool is_amd = IsVendor(leaf_0, "AuthenticAMD");
   SetVendor(leaf_0, info.vendor);
-  if (IsVendor(leaf_0, "GenuineIntel") || IsVendor(leaf_0, "AuthenticAMD")) {
+  if (is_intel || is_amd) {
+    const uint32_t max_cpuid_leaf = leaf_0.eax;
     ParseCpuId(max_cpuid_leaf, &info, &os_support);
   }
-  if (IsVendor(leaf_0, "AuthenticAMD")) {
-    ParseExtraAMDCpuId(max_cpuid_leaf, &info, os_support);
+  if (is_amd) {
+    ParseExtraAMDCpuId(&info, os_support);
   }
   return info;
 }
@@ -1445,6 +1468,18 @@ int GetX86FeaturesEnumValue(const X86Features* features,
       return features->avx512_4vbmi2;
     case X86_AVX512_SECOND_FMA:
       return features->avx512_second_fma;
+    case X86_AVX512_4FMAPS:
+      return features->avx512_4fmaps;
+    case X86_AVX512_BF16:
+      return features->avx512_bf16;
+    case X86_AVX512_VP2INTERSECT:
+      return features->avx512_vp2intersect;
+    case X86_AMX_BF16:
+      return features->amx_bf16;
+    case X86_AMX_TILE:
+      return features->amx_tile;
+    case X86_AMX_INT8:
+      return features->amx_int8;
     case X86_PCLMULQDQ:
       return features->pclmulqdq;
     case X86_SMX:
@@ -1561,6 +1596,18 @@ const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
       return "avx512_4vbmi2";
     case X86_AVX512_SECOND_FMA:
       return "avx512_second_fma";
+    case X86_AVX512_4FMAPS:
+      return "avx512_4fmaps";
+    case X86_AVX512_BF16:
+      return "avx512_bf16";
+    case X86_AVX512_VP2INTERSECT:
+      return "avx512_vp2intersect";
+    case X86_AMX_BF16:
+      return "amx_bf16";
+    case X86_AMX_TILE:
+      return "amx_tile";
+    case X86_AMX_INT8:
+      return "amx_int8";
     case X86_PCLMULQDQ:
       return "pclmulqdq";
     case X86_SMX:

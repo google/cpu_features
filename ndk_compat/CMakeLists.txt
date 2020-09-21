@@ -15,6 +15,7 @@ set (NDK_COMPAT_SRCS
 add_cpu_features_headers_and_sources(NDK_COMPAT_SRCS NDK_COMPAT_SRCS)
 add_library(ndk_compat ${NDK_COMPAT_HDRS} ${NDK_COMPAT_SRCS})
 setup_include_and_definitions(ndk_compat)
+target_include_directories(ndk_compat PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_link_libraries(ndk_compat PUBLIC ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 set_target_properties(ndk_compat PROPERTIES PUBLIC_HEADER "${NDK_COMPAT_HDRS}")
 
