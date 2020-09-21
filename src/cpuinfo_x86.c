@@ -137,16 +137,16 @@ static bool HasSecondFMA(uint32_t model) {
                 return false;
             }
             // detect Gold 5_20 and below, except for Gold 53__
-            else if (proc_name[17]=='G' && proc_name[22]=='5') {
+            if (proc_name[17]=='G' && proc_name[22]=='5') {
                 return ((proc_name[23]=='3') ||
                         (proc_name[24]=='2' && proc_name[25]=='2'));
             }
             // detect Xeon W 210x
-            else if (proc_name[17]=='W' && proc_name[21]=='0') {
+            if (proc_name[17]=='W' && proc_name[21]=='0') {
                 return false;
             }
             // detect Xeon D 2xxx
-            else if (proc_name[17]=='D' && proc_name[19]=='2' && proc_name[20]=='1') {
+            if (proc_name[17]=='D' && proc_name[19]=='2' && proc_name[20]=='1') {
                 return false;
             }
         }
