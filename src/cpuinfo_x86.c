@@ -1154,9 +1154,10 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* 
 }
 
 // Reference https://en.wikipedia.org/wiki/CPUID#EAX=80000000h:_Get_Highest_Extended_Function_Implemented.
-static void ParseExtraAMDCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport os_support) {
+static void ParseExtraAMDCpuId(X86Info* info, OsSupport os_support) {
   const Leaf leaf_80000000 = CpuId(0x80000000);
-  const Leaf leaf_80000001 = SafeCpuId(leaf_80000000.eax, 0x80000001);
+  const uint32_t max_extended_cpuid_leaf = leaf_80000000.eax;
+  const Leaf leaf_80000001 = SafeCpuId(max_extended_cpuid_leaf, 0x80000001);
 
   X86Features* const features = &info->features;
 
@@ -1177,13 +1178,15 @@ X86Info GetX86Info(void) {
   X86Info info = kEmptyX86Info;
   OsSupport os_support = kEmptyOsSupport;
   const Leaf leaf_0 = CpuId(0);
-  const uint32_t max_cpuid_leaf = leaf_0.eax;
+  const bool is_intel = IsVendor(leaf_0, "GenuineIntel");
+  const bool is_amd = IsVendor(leaf_0, "AuthenticAMD");
   SetVendor(leaf_0, info.vendor);
-  if (IsVendor(leaf_0, "GenuineIntel") || IsVendor(leaf_0, "AuthenticAMD")) {
+  if (is_intel || is_amd) {
+    const uint32_t max_cpuid_leaf = leaf_0.eax;
     ParseCpuId(max_cpuid_leaf, &info, &os_support);
   }
-  if (IsVendor(leaf_0, "AuthenticAMD")) {
-    ParseExtraAMDCpuId(max_cpuid_leaf, &info, os_support);
+  if (is_amd) {
+    ParseExtraAMDCpuId(&info, os_support);
   }
   return info;
 }
