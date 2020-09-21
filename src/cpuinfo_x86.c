@@ -1,4 +1,5 @@
 // Copyright 2017 Google Inc.
+// Copyright 2020 Intel Corporation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1241,9 +1242,20 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x06, 0x66):
         // https://en.wikipedia.org/wiki/Cannon_Lake_(microarchitecture)
         return INTEL_CNL;
-      case CPUID(0x06, 0x7E):
+      case CPUID(0x06, 0x7D): // client
+      case CPUID(0x06, 0x7E): // client
+      case CPUID(0x06, 0x9D): // NNP-I
+      case CPUID(0x06, 0x6A): // server
+      case CPUID(0x06, 0x6C): // server
         // https://en.wikipedia.org/wiki/Ice_Lake_(microprocessor)
         return INTEL_ICL;
+      case CPUID(0x06, 0x8C):
+      case CPUID(0x06, 0x8D):
+        // https://en.wikipedia.org/wiki/Tiger_Lake_(microarchitecture)
+        return INTEL_TGL;
+      case CPUID(0x06, 0x8F):
+        // https://en.wikipedia.org/wiki/Sapphire_Rapids
+        return INTEL_SPR;
       case CPUID(0x06, 0x8E):
         switch (info->stepping) {
           case 9:  return INTEL_KBL;  // https://en.wikipedia.org/wiki/Kaby_Lake
@@ -1572,6 +1584,10 @@ const char* GetX86MicroarchitectureName(X86Microarchitecture uarch) {
       return "INTEL_CNL";
     case INTEL_ICL:
       return "INTEL_ICL";
+    case INTEL_TGL:
+      return "INTEL_TGL";
+    case INTEL_SPR:
+      return "INTEL_SPR";
     case AMD_HAMMER:
       return "AMD_HAMMER";
     case AMD_K10:

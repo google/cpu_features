@@ -1,4 +1,5 @@
 // Copyright 2017 Google Inc.
+// Copyright 2020 Intel Corporation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -121,6 +122,8 @@ typedef enum {
   INTEL_WHL,       // WHISKEY LAKE
   INTEL_CNL,       // CANNON LAKE
   INTEL_ICL,       // ICE LAKE
+  INTEL_TGL,       // TIGER LAKE
+  INTEL_SPR,       // SAPPHIRE RAPIDS
   AMD_HAMMER,      // K8
   AMD_K10,         // K10
   AMD_BOBCAT,      // K14
