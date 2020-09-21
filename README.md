@@ -120,7 +120,8 @@ This feature is currently available only for x86 microarchitectures.
 <a name="usagesample"></a>
 ### Running sample code
 
-Building `cpu_features` brings a small executable to test the library.
+Building `cpu_features` (check [quickstart](#quickstart) below) brings a small executable to test the library.
+.
 
 ```shell
  % ./build/list_cpu_features
@@ -181,6 +182,7 @@ See [LICENSE](LICENSE) for more information.
 
 Please check the [CMake build instructions](cmake/README.md).
 
+<a name="quickstart"></a>
 ### Quickstart with `Ninja`
 
  - build `list_cpu_features` 
