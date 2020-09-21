@@ -88,7 +88,7 @@ TEST(CpuidX86Test, SandyBridge) {
   EXPECT_FALSE(features.avx512bitalg);
   EXPECT_FALSE(features.avx512vpopcntdq);
   EXPECT_FALSE(features.avx512_4vnniw);
-  EXPECT_FALSE(features.avx512_4vbmi2);
+  EXPECT_FALSE(features.avx512_4fmaps);
   // All old cpu features should be set.
   EXPECT_TRUE(features.aes);
   EXPECT_TRUE(features.ssse3);
