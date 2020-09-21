@@ -14,11 +14,12 @@
 // limitations under the License.
 
 #include "cpuinfo_x86.h"
-#include "internal/bit_utils.h"
-#include "internal/cpuid_x86.h"
 
 #include <stdbool.h>
 #include <string.h>
+
+#include "internal/bit_utils.h"
+#include "internal/cpuid_x86.h"
 
 #if !defined(CPU_FEATURES_ARCH_X86)
 #error "Cannot compile cpuinfo_x86 on a non x86 platform."
@@ -126,33 +127,32 @@ static bool HasTmmOsXSave(uint32_t xcr0_eax) {
 }
 
 static bool HasSecondFMA(uint32_t model) {
-    // Skylake server
-    if (model==0x55) {
-        char proc_name[49] = {0};
-        FillX86BrandString(proc_name);
-        // detect Xeon
-        if (proc_name[9]=='X') {
-            // detect Silver or Bronze
-            if (proc_name[17]=='S' || proc_name[17]=='B')
-                return false;
-            // detect Gold 5_20 and below, except for Gold 53__
-            if (proc_name[17]=='G' && proc_name[22]=='5')
-                return ((proc_name[23]=='3') || (proc_name[24]=='2' && proc_name[25]=='2'));
-            // detect Xeon W 210x
-            if (proc_name[17]=='W' && proc_name[21]=='0')
-                return false;
-            // detect Xeon D 2xxx
-            if (proc_name[17]=='D' && proc_name[19]=='2' && proc_name[20]=='1')
-                return false;
-        }
-        return true;
+  // Skylake server
+  if (model == 0x55) {
+    char proc_name[49] = {0};
+    FillX86BrandString(proc_name);
+    // detect Xeon
+    if (proc_name[9] == 'X') {
+      // detect Silver or Bronze
+      if (proc_name[17] == 'S' || proc_name[17] == 'B') return false;
+      // detect Gold 5_20 and below, except for Gold 53__
+      if (proc_name[17] == 'G' && proc_name[22] == '5')
+        return ((proc_name[23] == '3') ||
+                (proc_name[24] == '2' && proc_name[25] == '2'));
+      // detect Xeon W 210x
+      if (proc_name[17] == 'W' && proc_name[21] == '0') return false;
+      // detect Xeon D 2xxx
+      if (proc_name[17] == 'D' && proc_name[19] == '2' && proc_name[20] == '1')
+        return false;
     }
-    // Cannon Lake client
-    if (model==0x66) return false;
-    // Ice Lake client
-    if (model==0x7d || model==0x7e) return false;
-    // This is the right default...
     return true;
+  }
+  // Cannon Lake client
+  if (model == 0x66) return false;
+  // Ice Lake client
+  if (model == 0x7d || model == 0x7e) return false;
+  // This is the right default...
+  return true;
 }
 
 static void SetVendor(const Leaf leaf, char* const vendor) {
@@ -1089,7 +1089,8 @@ typedef struct {
 } OsSupport;
 
 // Reference https://en.wikipedia.org/wiki/CPUID.
-static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* os_support) {
+static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
+                       OsSupport* os_support) {
   const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
   const Leaf leaf_7 = SafeCpuId(max_cpuid_leaf, 7);
   const Leaf leaf_7_1 = SafeCpuIdEx(max_cpuid_leaf, 7, 1);
@@ -1185,7 +1186,8 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* 
   }
 }
 
-// Reference https://en.wikipedia.org/wiki/CPUID#EAX=80000000h:_Get_Highest_Extended_Function_Implemented.
+// Reference
+// https://en.wikipedia.org/wiki/CPUID#EAX=80000000h:_Get_Highest_Extended_Function_Implemented.
 static void ParseExtraAMDCpuId(X86Info* info, OsSupport os_support) {
   const Leaf leaf_80000000 = CpuId(0x80000000);
   const uint32_t max_extended_cpuid_leaf = leaf_80000000.eax;
@@ -1297,11 +1299,11 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x06, 0x66):
         // https://en.wikipedia.org/wiki/Cannon_Lake_(microarchitecture)
         return INTEL_CNL;
-      case CPUID(0x06, 0x7D): // client
-      case CPUID(0x06, 0x7E): // client
-      case CPUID(0x06, 0x9D): // NNP-I
-      case CPUID(0x06, 0x6A): // server
-      case CPUID(0x06, 0x6C): // server
+      case CPUID(0x06, 0x7D):  // client
+      case CPUID(0x06, 0x7E):  // client
+      case CPUID(0x06, 0x9D):  // NNP-I
+      case CPUID(0x06, 0x6A):  // server
+      case CPUID(0x06, 0x6C):  // server
         // https://en.wikipedia.org/wiki/Ice_Lake_(microprocessor)
         return INTEL_ICL;
       case CPUID(0x06, 0x8C):
@@ -1313,10 +1315,14 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         return INTEL_SPR;
       case CPUID(0x06, 0x8E):
         switch (info->stepping) {
-          case 9:  return INTEL_KBL;  // https://en.wikipedia.org/wiki/Kaby_Lake
-          case 10: return INTEL_CFL;  // https://en.wikipedia.org/wiki/Coffee_Lake
-          case 11: return INTEL_WHL;  // https://en.wikipedia.org/wiki/Whiskey_Lake_(microarchitecture)
-          default: return X86_UNKNOWN;
+          case 9:
+            return INTEL_KBL;  // https://en.wikipedia.org/wiki/Kaby_Lake
+          case 10:
+            return INTEL_CFL;  // https://en.wikipedia.org/wiki/Coffee_Lake
+          case 11:
+            return INTEL_WHL;  // https://en.wikipedia.org/wiki/Whiskey_Lake_(microarchitecture)
+          default:
+            return X86_UNKNOWN;
         }
       case CPUID(0x06, 0x9E):
         if (info->stepping > 9) {
