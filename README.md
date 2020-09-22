@@ -185,7 +185,7 @@ Please check the [CMake build instructions](cmake/README.md).
 <a name="quickstart"></a>
 ### Quickstart with `Ninja`
 
- - build `list_cpu_features` 
+ - build `list_cpu_features`
 ```
     cmake -B/tmp/cpu_features -H. -GNinja -DCMAKE_BUILD_TYPE=Release
     ninja -C/tmp/cpu_features
@@ -197,5 +197,4 @@ Please check the [CMake build instructions](cmake/README.md).
     cmake -B/tmp/cpu_features -H. -GNinja -DBUILD_TESTING=ON
     ninja -C/tmp/cpu_features
     ninja -C/tmp/cpu_features test
-    
 ```
