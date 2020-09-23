@@ -2,4 +2,4 @@
 # ref: https://hub.docker.com/_/alpine
 FROM alpine:edge
 # Install system build dependencies
-RUN apk add --no-cache clang
+RUN apk add --no-cache git clang
