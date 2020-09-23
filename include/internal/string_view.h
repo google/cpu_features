@@ -19,6 +19,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
+
 #include "cpu_features_macros.h"
 
 CPU_FEATURES_START_CPP_NAMESPACE
@@ -50,8 +51,7 @@ int CpuFeatures_StringView_IndexOfChar(const StringView view, char c);
 
 // Returns the index of the first occurrence of sub_view in view or -1 if not
 // found.
-int CpuFeatures_StringView_IndexOf(const StringView view,
-                                   const StringView sub_view);
+int CpuFeatures_StringView_IndexOf(const StringView view, const StringView sub_view);
 
 // Returns whether a is equal to b (same content).
 bool CpuFeatures_StringView_IsEquals(const StringView a, const StringView b);
@@ -61,18 +61,15 @@ bool CpuFeatures_StringView_StartsWith(const StringView a, const StringView b);
 
 // Removes count characters from the beginning of view or kEmptyStringView if
 // count if greater than view.size.
-StringView CpuFeatures_StringView_PopFront(const StringView str_view,
-                                           size_t count);
+StringView CpuFeatures_StringView_PopFront(const StringView str_view, size_t count);
 
 // Removes count characters from the end of view or kEmptyStringView if count if
 // greater than view.size.
-StringView CpuFeatures_StringView_PopBack(const StringView str_view,
-                                          size_t count);
+StringView CpuFeatures_StringView_PopBack(const StringView str_view, size_t count);
 
 // Keeps the count first characters of view or view if count if greater than
 // view.size.
-StringView CpuFeatures_StringView_KeepFront(const StringView str_view,
-                                            size_t count);
+StringView CpuFeatures_StringView_KeepFront(const StringView str_view, size_t count);
 
 // Retrieves the first character of view. If view is empty the behavior is
 // undefined.
@@ -90,18 +87,14 @@ StringView CpuFeatures_StringView_TrimWhitespace(StringView view);
 int CpuFeatures_StringView_ParsePositiveNumber(const StringView view);
 
 // Copies src StringView to dst buffer.
-void CpuFeatures_StringView_CopyString(const StringView src, char* dst,
-                                       size_t dst_size);
+void CpuFeatures_StringView_CopyString(const StringView src, char* dst, size_t dst_size);
 
 // Checks if line contains the specified whitespace separated word.
-bool CpuFeatures_StringView_HasWord(const StringView line,
-                                    const char* const word);
+bool CpuFeatures_StringView_HasWord(const StringView line, const char* const word);
 
 // Get key/value from line. key and value are separated by ": ".
 // key and value are cleaned up from leading and trailing whitespaces.
-bool CpuFeatures_StringView_GetAttributeKeyValue(const StringView line,
-                                                 StringView* key,
-                                                 StringView* value);
+bool CpuFeatures_StringView_GetAttributeKeyValue(const StringView line, StringView* key, StringView* value);
 
 CPU_FEATURES_END_CPP_NAMESPACE
 

@@ -18,9 +18,7 @@
 
 namespace cpu_features {
 
-bool operator==(const StringView& a, const StringView& b) {
-  return CpuFeatures_StringView_IsEquals(a, b);
-}
+bool operator==(const StringView& a, const StringView& b) { return CpuFeatures_StringView_IsEquals(a, b); }
 
 namespace {
 
@@ -64,15 +62,12 @@ TEST(StringViewTest, CpuFeatures_StringView_StartsWith) {
   EXPECT_FALSE(CpuFeatures_StringView_StartsWith(str("test"), str("st")));
   EXPECT_FALSE(CpuFeatures_StringView_StartsWith(str("test"), str("est")));
   EXPECT_FALSE(CpuFeatures_StringView_StartsWith(str("test"), str("")));
-  EXPECT_FALSE(
-      CpuFeatures_StringView_StartsWith(str("test"), kEmptyStringView));
-  EXPECT_FALSE(
-      CpuFeatures_StringView_StartsWith(kEmptyStringView, str("test")));
+  EXPECT_FALSE(CpuFeatures_StringView_StartsWith(str("test"), kEmptyStringView));
+  EXPECT_FALSE(CpuFeatures_StringView_StartsWith(kEmptyStringView, str("test")));
 }
 
 TEST(StringViewTest, CpuFeatures_StringView_IsEquals) {
-  EXPECT_TRUE(
-      CpuFeatures_StringView_IsEquals(kEmptyStringView, kEmptyStringView));
+  EXPECT_TRUE(CpuFeatures_StringView_IsEquals(kEmptyStringView, kEmptyStringView));
   EXPECT_TRUE(CpuFeatures_StringView_IsEquals(kEmptyStringView, str("")));
   EXPECT_TRUE(CpuFeatures_StringView_IsEquals(str(""), kEmptyStringView));
   EXPECT_TRUE(CpuFeatures_StringView_IsEquals(str("test"), str("test")));
@@ -116,14 +111,10 @@ TEST(StringViewTest, CpuFeatures_StringView_Back) {
 }
 
 TEST(StringViewTest, CpuFeatures_StringView_TrimWhitespace) {
-  EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("  first middle last  ")),
-                                                  str("first middle last"));
-  EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("first middle last  ")),
-                                                  str("first middle last"));
-  EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("  first middle last")),
-                                                  str("first middle last"));
-  EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("first middle last")),
-                                                  str("first middle last"));
+  EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("  first middle last  ")), str("first middle last"));
+  EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("first middle last  ")), str("first middle last"));
+  EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("  first middle last")), str("first middle last"));
+  EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("first middle last")), str("first middle last"));
 }
 
 TEST(StringViewTest, CpuFeatures_StringView_ParsePositiveNumber) {
@@ -162,14 +153,11 @@ TEST(StringViewTest, CpuFeatures_StringView_CopyString) {
 
 TEST(StringViewTest, CpuFeatures_StringView_HasWord) {
   // Find flags at beginning, middle and end.
-  EXPECT_TRUE(
-      CpuFeatures_StringView_HasWord(str("first middle last"), "first"));
-  EXPECT_TRUE(
-      CpuFeatures_StringView_HasWord(str("first middle last"), "middle"));
+  EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("first middle last"), "first"));
+  EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("first middle last"), "middle"));
   EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("first middle last"), "last"));
   // Do not match partial flags
-  EXPECT_FALSE(
-      CpuFeatures_StringView_HasWord(str("first middle last"), "irst"));
+  EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("first middle last"), "irst"));
   EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("first middle last"), "mid"));
   EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("first middle last"), "las"));
 }

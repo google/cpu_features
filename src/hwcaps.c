@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "internal/hwcaps.h"
+
 #include <stdlib.h>
 #include <string.h>
 
 #include "cpu_features_macros.h"
 #include "internal/filesystem.h"
-#include "internal/hwcaps.h"
 #include "internal/string_view.h"
 
 #if defined(NDEBUG)
@@ -39,9 +40,7 @@
 // Implementation will be provided by test/hwcaps_for_testing.cc.
 #elif defined(HAVE_STRONG_GETAUXVAL)
 #include <sys/auxv.h>
-static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
-  return getauxval(hwcap_type);
-}
+static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) { return getauxval(hwcap_type); }
 #elif defined(HAVE_DLFCN_H)
 // On Android we probe the system's C library for a 'getauxval' function and
 // call it if it exits, or return 0 for failure. This function is available
@@ -68,8 +67,8 @@ typedef unsigned long getauxval_func_t(unsigned long);
 
 static uint32_t GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
   uint32_t ret = 0;
-  void* libc_handle = NULL;
-  getauxval_func_t* func = NULL;
+  void *libc_handle = NULL;
+  getauxval_func_t *func = NULL;
 
   dlerror();  // Cleaning error state before calling dlopen.
   libc_handle = dlopen("libc.so", RTLD_NOW);
@@ -77,7 +76,7 @@ static uint32_t GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
     D("Could not dlopen() C library: %s\n", dlerror());
     return 0;
   }
-  func = (getauxval_func_t*)dlsym(libc_handle, "getauxval");
+  func = (getauxval_func_t *)dlsym(libc_handle, "getauxval");
   if (!func) {
     D("Could not find getauxval() in C library\n");
   } else {
@@ -109,7 +108,7 @@ static uint32_t GetElfHwcapFromProcSelfAuxv(uint32_t hwcap_type) {
     return 0;
   }
   for (;;) {
-    const int ret = CpuFeatures_ReadFile(fd, (char*)&entry, sizeof entry);
+    const int ret = CpuFeatures_ReadFile(fd, (char *)&entry, sizeof entry);
     if (ret < 0) {
       D("Error while reading %s\n", filepath);
       break;
@@ -152,11 +151,8 @@ PlatformType CpuFeatures_GetPlatformType(void) {
   char *platform = (char *)GetHardwareCapabilitiesFor(AT_PLATFORM);
   char *base_platform = (char *)GetHardwareCapabilitiesFor(AT_BASE_PLATFORM);
 
-  if (platform != NULL)
-    CpuFeatures_StringView_CopyString(str(platform), type.platform,
-                                      sizeof(type.platform));
+  if (platform != NULL) CpuFeatures_StringView_CopyString(str(platform), type.platform, sizeof(type.platform));
   if (base_platform != NULL)
-    CpuFeatures_StringView_CopyString(str(base_platform), type.base_platform,
-                                      sizeof(type.base_platform));
+    CpuFeatures_StringView_CopyString(str(base_platform), type.base_platform, sizeof(type.base_platform));
   return type;
 }

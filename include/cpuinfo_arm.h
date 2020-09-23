@@ -16,8 +16,9 @@
 #define CPU_FEATURES_INCLUDE_CPUINFO_ARM_H_
 
 #include <stdint.h>  // uint32_t
-#include "cpu_features_macros.h"
+
 #include "cpu_features_cache_info.h"
+#include "cpu_features_macros.h"
 
 CPU_FEATURES_START_CPP_NAMESPACE
 

@@ -18,16 +18,14 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
+
 #include "cpu_features_macros.h"
 
 CPU_FEATURES_START_CPP_NAMESPACE
 
-inline static bool IsBitSet(uint32_t reg, uint32_t bit) {
-  return (reg >> bit) & 0x1;
-}
+inline static bool IsBitSet(uint32_t reg, uint32_t bit) { return (reg >> bit) & 0x1; }
 
-inline static uint32_t ExtractBitRange(uint32_t reg, uint32_t msb,
-                                       uint32_t lsb) {
+inline static uint32_t ExtractBitRange(uint32_t reg, uint32_t msb, uint32_t lsb) {
   const uint64_t bits = msb - lsb + 1ULL;
   const uint64_t mask = (1ULL << bits) - 1ULL;
   assert(msb >= lsb);

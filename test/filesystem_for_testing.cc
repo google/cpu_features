@@ -22,8 +22,7 @@
 
 namespace cpu_features {
 
-FakeFile::FakeFile(int file_descriptor, const char* content)
-    : file_descriptor_(file_descriptor), content_(content) {}
+FakeFile::FakeFile(int file_descriptor, const char* content) : file_descriptor_(file_descriptor), content_(content) {}
 
 FakeFile::~FakeFile() { assert(!opened_); }
 
@@ -50,11 +49,9 @@ int FakeFile::Read(int fd, void* buf, size_t count) {
 
 void FakeFilesystem::Reset() { files_.clear(); }
 
-FakeFile* FakeFilesystem::CreateFile(const std::string& filename,
-                                     const char* content) {
+FakeFile* FakeFilesystem::CreateFile(const std::string& filename, const char* content) {
   auto& file = files_[filename];
-  file =
-      std::unique_ptr<FakeFile>(new FakeFile(next_file_descriptor_++, content));
+  file = std::unique_ptr<FakeFile>(new FakeFile(next_file_descriptor_++, content));
   return file.get();
 }
 
@@ -90,14 +87,10 @@ extern "C" int CpuFeatures_OpenFile(const char* filename) {
   return -1;
 }
 
-extern "C" void CpuFeatures_CloseFile(int file_descriptor) {
-  kFilesystem->FindFileOrDie(file_descriptor)->Close();
-}
+extern "C" void CpuFeatures_CloseFile(int file_descriptor) { kFilesystem->FindFileOrDie(file_descriptor)->Close(); }
 
-extern "C" int CpuFeatures_ReadFile(int file_descriptor, void* buffer,
-                                    size_t buffer_size) {
-  return kFilesystem->FindFileOrDie(file_descriptor)
-      ->Read(file_descriptor, buffer, buffer_size);
+extern "C" int CpuFeatures_ReadFile(int file_descriptor, void* buffer, size_t buffer_size) {
+  return kFilesystem->FindFileOrDie(file_descriptor)->Read(file_descriptor, buffer, buffer_size);
 }
 
 }  // namespace cpu_features

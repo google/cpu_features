@@ -14,26 +14,25 @@
 
 #include "cpuinfo_mips.h"
 
+#include <assert.h>
+
 #include "internal/filesystem.h"
 #include "internal/stack_line_reader.h"
 #include "internal/string_view.h"
 #include "internal/unix_features_aggregator.h"
-
-#include <assert.h>
 
 DECLARE_SETTER_AND_GETTER(MipsFeatures, msa)
 DECLARE_SETTER_AND_GETTER(MipsFeatures, eva)
 DECLARE_SETTER_AND_GETTER(MipsFeatures, r6)
 
 static const CapabilityConfig kConfigs[] = {
-  [MIPS_MSA] = {{MIPS_HWCAP_MSA, 0}, "msa", &set_msa, &get_msa},  //
-  [MIPS_EVA] = {{0, 0}, "eva", &set_eva, &get_eva},               //
-  [MIPS_R6] = {{MIPS_HWCAP_R6, 0}, "r6", &set_r6, &get_r6},       //
+    [MIPS_MSA] = {{MIPS_HWCAP_MSA, 0}, "msa", &set_msa, &get_msa},
+    [MIPS_EVA] = {{0, 0}, "eva", &set_eva, &get_eva},
+    [MIPS_R6] = {{MIPS_HWCAP_R6, 0}, "r6", &set_r6, &get_r6},
 };
 static const size_t kConfigsSize = sizeof(kConfigs) / sizeof(CapabilityConfig);
 
-static bool HandleMipsLine(const LineResult result,
-                           MipsFeatures* const features) {
+static bool HandleMipsLine(const LineResult result, MipsFeatures* const features) {
   StringView key, value;
   // See tests for an example.
   if (CpuFeatures_StringView_GetAttributeKeyValue(result.line, &key, &value)) {
@@ -69,24 +68,19 @@ MipsInfo GetMipsInfo(void) {
   MipsInfo info = kEmptyMipsInfo;
 
   FillProcCpuInfoData(&info.features);
-  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs,
-                                 CpuFeatures_GetHardwareCapabilities(),
-                                 &info.features);
+  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs, CpuFeatures_GetHardwareCapabilities(), &info.features);
   return info;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Introspection functions
 
-int GetMipsFeaturesEnumValue(const MipsFeatures* features,
-                             MipsFeaturesEnum value) {
-  if(value >= kConfigsSize)
-    return false;
+int GetMipsFeaturesEnumValue(const MipsFeatures* features, MipsFeaturesEnum value) {
+  if (value >= kConfigsSize) return false;
   return kConfigs[value].get_bit((MipsFeatures*)features);
 }
 
 const char* GetMipsFeaturesEnumName(MipsFeaturesEnum value) {
-  if(value >= kConfigsSize)
-    return "unknown feature";
+  if (value >= kConfigsSize) return "unknown feature";
   return kConfigs[value].proc_cpuinfo_flag;
 }
