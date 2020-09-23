@@ -22,8 +22,8 @@ endif(NOT CMAKE_BUILD_TYPE)
 option(BUILD_TESTING "Enable test (depends on googletest)." OFF)
 # BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to make
 # it prominent in the GUI.
-# cpu_features uses bit-fields which are - to some extends - implementation-defined (see https://en.cppreference.com/w/c/language/bit_field). 
-# As a consequence it is discouraged to use cpu_features as a shared library because different compilers may interpret the code in different ways. 
+# cpu_features uses bit-fields which are - to some extends - implementation-defined (see https://en.cppreference.com/w/c/language/bit_field).
+# As a consequence it is discouraged to use cpu_features as a shared library because different compilers may interpret the code in different ways.
 # Prefer static linking from source whenever possible.
 option(BUILD_SHARED_LIBS "Build library as shared." OFF)
 # PIC
@@ -175,11 +175,11 @@ if(BUILD_TESTING)
   # Automatically incorporate googletest into the CMake Project if target not
   # found.
   enable_language(CXX)
-  
+
   set(CMAKE_CXX_STANDARD 11)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(CMAKE_CXX_EXTENSIONS OFF) # prefer use of -std11 instead of -gnustd11
-  
+
   if(NOT TARGET gtest OR NOT TARGET gmock_main)
     # Download and unpack googletest at configure time.
     configure_file(
