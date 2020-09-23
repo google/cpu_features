@@ -32,7 +32,8 @@ int CpuFeatures_OpenFile(const char* filename) {
 
 void CpuFeatures_CloseFile(int file_descriptor) { _close(file_descriptor); }
 
-int CpuFeatures_ReadFile(int file_descriptor, void* buffer, size_t buffer_size) {
+int CpuFeatures_ReadFile(int file_descriptor, void* buffer,
+                         size_t buffer_size) {
   return _read(file_descriptor, buffer, (unsigned int)buffer_size);
 }
 
@@ -49,7 +50,8 @@ int CpuFeatures_OpenFile(const char* filename) {
 
 void CpuFeatures_CloseFile(int file_descriptor) { close(file_descriptor); }
 
-int CpuFeatures_ReadFile(int file_descriptor, void* buffer, size_t buffer_size) {
+int CpuFeatures_ReadFile(int file_descriptor, void* buffer,
+                         size_t buffer_size) {
   int result;
   do {
     result = read(file_descriptor, buffer, buffer_size);

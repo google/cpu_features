@@ -29,7 +29,8 @@ void StackLineReader_Initialize(StackLineReader* reader, int fd) {
 
 // Replaces the content of buffer with bytes from the file.
 static int LoadFullBuffer(StackLineReader* reader) {
-  const int read = CpuFeatures_ReadFile(reader->fd, reader->buffer, STACK_LINE_READER_BUFFER_SIZE);
+  const int read = CpuFeatures_ReadFile(reader->fd, reader->buffer,
+                                        STACK_LINE_READER_BUFFER_SIZE);
   assert(read >= 0);
   reader->view.ptr = reader->buffer;
   reader->view.size = read;
@@ -47,7 +48,9 @@ static int LoadMore(StackLineReader* reader) {
   return read;
 }
 
-static int IndexOfEol(StackLineReader* reader) { return CpuFeatures_StringView_IndexOfChar(reader->view, '\n'); }
+static int IndexOfEol(StackLineReader* reader) {
+  return CpuFeatures_StringView_IndexOfChar(reader->view, '\n');
+}
 
 // Relocate buffer's pending bytes at the beginning of the array and fills the
 // remaining space with bytes from the file.
@@ -69,7 +72,8 @@ static void SkipToNextLine(StackLineReader* reader) {
     } else {
       const int eol_index = IndexOfEol(reader);
       if (eol_index >= 0) {
-        reader->view = CpuFeatures_StringView_PopFront(reader->view, eol_index + 1);
+        reader->view =
+            CpuFeatures_StringView_PopFront(reader->view, eol_index + 1);
         break;
       }
     }
@@ -85,11 +89,17 @@ static LineResult CreateLineResult(bool eof, bool full_line, StringView view) {
 }
 
 // Helper methods to provide clearer semantic in StackLineReader_NextLine.
-static LineResult CreateEOFLineResult(StringView view) { return CreateLineResult(true, true, view); }
+static LineResult CreateEOFLineResult(StringView view) {
+  return CreateLineResult(true, true, view);
+}
 
-static LineResult CreateTruncatedLineResult(StringView view) { return CreateLineResult(false, false, view); }
+static LineResult CreateTruncatedLineResult(StringView view) {
+  return CreateLineResult(false, false, view);
+}
 
-static LineResult CreateValidLineResult(StringView view) { return CreateLineResult(false, true, view); }
+static LineResult CreateValidLineResult(StringView view) {
+  return CreateLineResult(false, true, view);
+}
 
 LineResult StackLineReader_NextLine(StackLineReader* reader) {
   if (reader->skip_mode) {
@@ -97,7 +107,8 @@ LineResult StackLineReader_NextLine(StackLineReader* reader) {
     reader->skip_mode = false;
   }
   {
-    const bool can_load_more = reader->view.size < STACK_LINE_READER_BUFFER_SIZE;
+    const bool can_load_more =
+        reader->view.size < STACK_LINE_READER_BUFFER_SIZE;
     int eol_index = IndexOfEol(reader);
     if (eol_index < 0 && can_load_more) {
       const int read = BringToFrontAndLoadMore(reader);
@@ -111,8 +122,10 @@ LineResult StackLineReader_NextLine(StackLineReader* reader) {
       return CreateTruncatedLineResult(reader->view);
     }
     {
-      StringView line = CpuFeatures_StringView_KeepFront(reader->view, eol_index);
-      reader->view = CpuFeatures_StringView_PopFront(reader->view, eol_index + 1);
+      StringView line =
+          CpuFeatures_StringView_KeepFront(reader->view, eol_index);
+      reader->view =
+          CpuFeatures_StringView_PopFront(reader->view, eol_index + 1);
       return CreateValidLineResult(line);
     }
   }

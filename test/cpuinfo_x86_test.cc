@@ -35,7 +35,9 @@ class FakeCpu {
 
   uint32_t GetXCR0Eax() const { return xcr0_eax_; }
 
-  void SetLeaves(std::map<std::pair<uint32_t, int>, Leaf> configuration) { cpuid_leaves_ = std::move(configuration); }
+  void SetLeaves(std::map<std::pair<uint32_t, int>, Leaf> configuration) {
+    cpuid_leaves_ = std::move(configuration);
+  }
 
   void SetOsBackupsExtendedRegisters(bool os_backups_extended_registers) {
     xcr0_eax_ = os_backups_extended_registers ? -1 : 0;
@@ -48,7 +50,9 @@ class FakeCpu {
 
 auto* g_fake_cpu = new FakeCpu();
 
-extern "C" Leaf CpuIdEx(uint32_t leaf_id, int ecx) { return g_fake_cpu->CpuIdEx(leaf_id, ecx); }
+extern "C" Leaf CpuIdEx(uint32_t leaf_id, int ecx) {
+  return g_fake_cpu->CpuIdEx(leaf_id, ecx);
+}
 
 extern "C" uint32_t GetXCR0Eax(void) { return g_fake_cpu->GetXCR0Eax(); }
 
@@ -261,7 +265,8 @@ TEST(CpuidX86Test, AMD_K15) {
   EXPECT_EQ(info.family, 0x15);
   EXPECT_EQ(info.model, 0x38);
   EXPECT_EQ(info.stepping, 0x01);
-  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_BULLDOZER);
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::AMD_BULLDOZER);
 
   char brand_string[49];
   FillX86BrandString(brand_string);

@@ -311,7 +311,8 @@ extern uint32_t android_getCpuIdArm(void);
 /* An ARM-specific variant of android_setCpu() that also allows you
  * to set the ARM CPUID field.
  */
-extern int android_setCpuArm(int cpu_count, uint64_t cpu_features, uint32_t cpu_id);
+extern int android_setCpuArm(int cpu_count, uint64_t cpu_features,
+                             uint32_t cpu_id);
 
 #endif
 

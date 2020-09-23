@@ -25,7 +25,8 @@ namespace {
 void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
 
 TEST(CpustringsPPCTest, FromHardwareCap) {
-  SetHardwareCapabilities(PPC_FEATURE_HAS_FPU | PPC_FEATURE_HAS_VSX, PPC_FEATURE2_ARCH_3_00);
+  SetHardwareCapabilities(PPC_FEATURE_HAS_FPU | PPC_FEATURE_HAS_VSX,
+                          PPC_FEATURE2_ARCH_3_00);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo
   const auto info = GetPPCInfo();
   EXPECT_TRUE(info.features.fpu);

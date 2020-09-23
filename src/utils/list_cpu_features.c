@@ -51,7 +51,8 @@ typedef struct {
 } BumpAllocator;
 
 char gGlobalBuffer[64 * 1024];
-BumpAllocator gBumpAllocator = {.ptr = gGlobalBuffer, .size = sizeof(gGlobalBuffer)};
+BumpAllocator gBumpAllocator = {.ptr = gGlobalBuffer,
+                                .size = sizeof(gGlobalBuffer)};
 
 static void internal_error() {
   fputs("internal error\n", stderr);
@@ -145,7 +146,9 @@ static Node* CreatePrintfString(const char* format, ...) {
 }
 
 // Adds a string node.
-static Node* CreateString(const char* value) { return CreatePrintfString("%s", value); }
+static Node* CreateString(const char* value) {
+  return CreatePrintfString("%s", value);
+}
 
 // Adds a map entry node.
 static void AddMapEntry(Node* map, const char* key, Node* value) {
@@ -165,35 +168,43 @@ static void AddArrayElement(Node* array, Node* value) {
   *current->next = (Node){.type = NT_ARRAY_ELEMENT, .value = value};
 }
 
-static int cmp(const void* p1, const void* p2) { return strcmp(*(const char* const*)p1, *(const char* const*)p2); }
+static int cmp(const void* p1, const void* p2) {
+  return strcmp(*(const char* const*)p1, *(const char* const*)p2);
+}
 
-#define DEFINE_ADD_FLAGS(HasFeature, FeatureName, FeatureType, LastEnum)               \
-  static void AddFlags(Node* map, const FeatureType* features) {                       \
-    size_t i;                                                                          \
-    const char* ptrs[LastEnum] = {0};                                                  \
-    size_t count = 0;                                                                  \
-    for (i = 0; i < LastEnum; ++i) {                                                   \
-      if (HasFeature(features, i)) {                                                   \
-        ptrs[count] = FeatureName(i);                                                  \
-        ++count;                                                                       \
-      }                                                                                \
-    }                                                                                  \
-    qsort((void*)ptrs, count, sizeof(char*), cmp);                                     \
-    Node* const array = CreateArray();                                                 \
-    for (i = 0; i < count; ++i) AddArrayElement(array, CreateConstantString(ptrs[i])); \
-    AddMapEntry(map, "flags", array);                                                  \
+#define DEFINE_ADD_FLAGS(HasFeature, FeatureName, FeatureType, LastEnum) \
+  static void AddFlags(Node* map, const FeatureType* features) {         \
+    size_t i;                                                            \
+    const char* ptrs[LastEnum] = {0};                                    \
+    size_t count = 0;                                                    \
+    for (i = 0; i < LastEnum; ++i) {                                     \
+      if (HasFeature(features, i)) {                                     \
+        ptrs[count] = FeatureName(i);                                    \
+        ++count;                                                         \
+      }                                                                  \
+    }                                                                    \
+    qsort((void*)ptrs, count, sizeof(char*), cmp);                       \
+    Node* const array = CreateArray();                                   \
+    for (i = 0; i < count; ++i)                                          \
+      AddArrayElement(array, CreateConstantString(ptrs[i]));             \
+    AddMapEntry(map, "flags", array);                                    \
   }
 
 #if defined(CPU_FEATURES_ARCH_X86)
-DEFINE_ADD_FLAGS(GetX86FeaturesEnumValue, GetX86FeaturesEnumName, X86Features, X86_LAST_)
+DEFINE_ADD_FLAGS(GetX86FeaturesEnumValue, GetX86FeaturesEnumName, X86Features,
+                 X86_LAST_)
 #elif defined(CPU_FEATURES_ARCH_ARM)
-DEFINE_ADD_FLAGS(GetArmFeaturesEnumValue, GetArmFeaturesEnumName, ArmFeatures, ARM_LAST_)
+DEFINE_ADD_FLAGS(GetArmFeaturesEnumValue, GetArmFeaturesEnumName, ArmFeatures,
+                 ARM_LAST_)
 #elif defined(CPU_FEATURES_ARCH_AARCH64)
-DEFINE_ADD_FLAGS(GetAarch64FeaturesEnumValue, GetAarch64FeaturesEnumName, Aarch64Features, AARCH64_LAST_)
+DEFINE_ADD_FLAGS(GetAarch64FeaturesEnumValue, GetAarch64FeaturesEnumName,
+                 Aarch64Features, AARCH64_LAST_)
 #elif defined(CPU_FEATURES_ARCH_MIPS)
-DEFINE_ADD_FLAGS(GetMipsFeaturesEnumValue, GetMipsFeaturesEnumName, MipsFeatures, MIPS_LAST_)
+DEFINE_ADD_FLAGS(GetMipsFeaturesEnumValue, GetMipsFeaturesEnumName,
+                 MipsFeatures, MIPS_LAST_)
 #elif defined(CPU_FEATURES_ARCH_PPC)
-DEFINE_ADD_FLAGS(GetPPCFeaturesEnumValue, GetPPCFeaturesEnumName, PPCFeatures, PPC_LAST_)
+DEFINE_ADD_FLAGS(GetPPCFeaturesEnumValue, GetPPCFeaturesEnumName, PPCFeatures,
+                 PPC_LAST_)
 #endif
 
 // Prints a json string with characters escaping.
@@ -360,7 +371,9 @@ static Node* CreateTree() {
   AddMapEntry(root, "family", CreateInt(info.family));
   AddMapEntry(root, "model", CreateInt(info.model));
   AddMapEntry(root, "stepping", CreateInt(info.stepping));
-  AddMapEntry(root, "uarch", CreateString(GetX86MicroarchitectureName(GetX86Microarchitecture(&info))));
+  AddMapEntry(root, "uarch",
+              CreateString(
+                  GetX86MicroarchitectureName(GetX86Microarchitecture(&info))));
   AddFlags(root, &info.features);
   AddCacheInfo(root, &cache_info);
 #elif defined(CPU_FEATURES_ARCH_ARM)
@@ -393,7 +406,8 @@ static Node* CreateTree() {
   AddMapEntry(root, "machine", CreateString(strings.machine));
   AddMapEntry(root, "cpu", CreateString(strings.cpu));
   AddMapEntry(root, "instruction", CreateString(strings.type.platform));
-  AddMapEntry(root, "microarchitecture", CreateString(strings.type.base_platform));
+  AddMapEntry(root, "microarchitecture",
+              CreateString(strings.type.base_platform));
   AddFlags(root, &info.features);
 #endif
   return root;
@@ -410,7 +424,8 @@ int main(int argc, char** argv) {
       outputJson = true;
     } else {
       showUsage(argv[0]);
-      if (strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0) return EXIT_SUCCESS;
+      if (strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0)
+        return EXIT_SUCCESS;
       return EXIT_FAILURE;
     }
   }

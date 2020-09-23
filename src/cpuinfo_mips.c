@@ -32,7 +32,8 @@ static const CapabilityConfig kConfigs[] = {
 };
 static const size_t kConfigsSize = sizeof(kConfigs) / sizeof(CapabilityConfig);
 
-static bool HandleMipsLine(const LineResult result, MipsFeatures* const features) {
+static bool HandleMipsLine(const LineResult result,
+                           MipsFeatures* const features) {
   StringView key, value;
   // See tests for an example.
   if (CpuFeatures_StringView_GetAttributeKeyValue(result.line, &key, &value)) {
@@ -68,14 +69,17 @@ MipsInfo GetMipsInfo(void) {
   MipsInfo info = kEmptyMipsInfo;
 
   FillProcCpuInfoData(&info.features);
-  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs, CpuFeatures_GetHardwareCapabilities(), &info.features);
+  CpuFeatures_OverrideFromHwCaps(kConfigsSize, kConfigs,
+                                 CpuFeatures_GetHardwareCapabilities(),
+                                 &info.features);
   return info;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Introspection functions
 
-int GetMipsFeaturesEnumValue(const MipsFeatures* features, MipsFeaturesEnum value) {
+int GetMipsFeaturesEnumValue(const MipsFeatures* features,
+                             MipsFeaturesEnum value) {
   if (value >= kConfigsSize) return false;
   return kConfigs[value].get_bit((MipsFeatures*)features);
 }

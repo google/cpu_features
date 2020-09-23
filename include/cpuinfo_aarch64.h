@@ -142,7 +142,8 @@ typedef enum {
   AARCH64_LAST_,
 } Aarch64FeaturesEnum;
 
-int GetAarch64FeaturesEnumValue(const Aarch64Features* features, Aarch64FeaturesEnum value);
+int GetAarch64FeaturesEnumValue(const Aarch64Features* features,
+                                Aarch64FeaturesEnum value);
 
 const char* GetAarch64FeaturesEnumName(Aarch64FeaturesEnum);
 

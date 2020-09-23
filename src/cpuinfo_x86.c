@@ -84,7 +84,9 @@ static Leaf SafeCpuIdEx(uint32_t max_cpuid_leaf, uint32_t leaf_id, int ecx) {
   }
 }
 
-static Leaf SafeCpuId(uint32_t max_cpuid_leaf, uint32_t leaf_id) { return SafeCpuIdEx(max_cpuid_leaf, leaf_id, 0); }
+static Leaf SafeCpuId(uint32_t max_cpuid_leaf, uint32_t leaf_id) {
+  return SafeCpuIdEx(max_cpuid_leaf, leaf_id, 0);
+}
 
 #define MASK_XMM 0x2
 #define MASK_YMM 0x4
@@ -94,27 +96,34 @@ static Leaf SafeCpuId(uint32_t max_cpuid_leaf, uint32_t leaf_id) { return SafeCp
 #define MASK_XTILECFG 0x20000
 #define MASK_XTILEDATA 0x40000
 
-static bool HasMask(uint32_t value, uint32_t mask) { return (value & mask) == mask; }
+static bool HasMask(uint32_t value, uint32_t mask) {
+  return (value & mask) == mask;
+}
 
 // Checks that operating system saves and restores xmm registers during context
 // switches.
-static bool HasXmmOsXSave(uint32_t xcr0_eax) { return HasMask(xcr0_eax, MASK_XMM); }
+static bool HasXmmOsXSave(uint32_t xcr0_eax) {
+  return HasMask(xcr0_eax, MASK_XMM);
+}
 
 // Checks that operating system saves and restores ymm registers during context
 // switches.
-static bool HasYmmOsXSave(uint32_t xcr0_eax) { return HasMask(xcr0_eax, MASK_XMM | MASK_YMM); }
+static bool HasYmmOsXSave(uint32_t xcr0_eax) {
+  return HasMask(xcr0_eax, MASK_XMM | MASK_YMM);
+}
 
 // Checks that operating system saves and restores zmm registers during context
 // switches.
 static bool HasZmmOsXSave(uint32_t xcr0_eax) {
-  return HasMask(xcr0_eax, MASK_XMM | MASK_YMM | MASK_MASKREG | MASK_ZMM0_15 | MASK_ZMM16_31);
+  return HasMask(xcr0_eax, MASK_XMM | MASK_YMM | MASK_MASKREG | MASK_ZMM0_15 |
+                               MASK_ZMM16_31);
 }
 
 // Checks that operating system saves and restores AMX/TMUL state during context
 // switches.
 static bool HasTmmOsXSave(uint32_t xcr0_eax) {
-  return HasMask(xcr0_eax,
-                 MASK_XMM | MASK_YMM | MASK_MASKREG | MASK_ZMM0_15 | MASK_ZMM16_31 | MASK_XTILECFG | MASK_XTILEDATA);
+  return HasMask(xcr0_eax, MASK_XMM | MASK_YMM | MASK_MASKREG | MASK_ZMM0_15 |
+                               MASK_ZMM16_31 | MASK_XTILECFG | MASK_XTILEDATA);
 }
 
 static bool HasSecondFMA(uint32_t model) {
@@ -128,11 +137,13 @@ static bool HasSecondFMA(uint32_t model) {
       if (proc_name[17] == 'S' || proc_name[17] == 'B') return false;
       // detect Gold 5_20 and below, except for Gold 53__
       if (proc_name[17] == 'G' && proc_name[22] == '5')
-        return ((proc_name[23] == '3') || (proc_name[24] == '2' && proc_name[25] == '2'));
+        return ((proc_name[23] == '3') ||
+                (proc_name[24] == '2' && proc_name[25] == '2'));
       // detect Xeon W 210x
       if (proc_name[17] == 'W' && proc_name[21] == '0') return false;
       // detect Xeon D 2xxx
-      if (proc_name[17] == 'D' && proc_name[19] == '2' && proc_name[20] == '1') return false;
+      if (proc_name[17] == 'D' && proc_name[19] == '2' && proc_name[20] == '1')
+        return false;
     }
     return true;
   }
@@ -1034,7 +1045,8 @@ static void ParseLeaf2(const int max_cpuid_leaf, CacheInfo* info) {
     uint32_t bytes[4];
     GetByteArrayFromRegister(bytes, registers[i]);
     for (int j = 0; j < 4; ++j) {
-      if (bytes[j] == 0xFF) break;  // leaf 4 should be used to fetch cache information
+      if (bytes[j] == 0xFF)
+        break;  // leaf 4 should be used to fetch cache information
       info->levels[info->size] = GetCacheLevelInfo(bytes[j]);
     }
     info->size++;
@@ -1077,7 +1089,8 @@ typedef struct {
 } OsSupport;
 
 // Reference https://en.wikipedia.org/wiki/CPUID.
-static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info, OsSupport* os_support) {
+static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
+                       OsSupport* os_support) {
   const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
   const Leaf leaf_7 = SafeCpuId(max_cpuid_leaf, 7);
   const Leaf leaf_7_1 = SafeCpuIdEx(max_cpuid_leaf, 7, 1);
@@ -1345,7 +1358,8 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
   return X86_UNKNOWN;
 }
 
-static void SetString(const uint32_t max_cpuid_ext_leaf, const uint32_t leaf_id, char* buffer) {
+static void SetString(const uint32_t max_cpuid_ext_leaf, const uint32_t leaf_id,
+                      char* buffer) {
   const Leaf leaf = SafeCpuId(max_cpuid_ext_leaf, leaf_id);
   // We allow calling memcpy from SetString which is only called when requesting
   // X86BrandString.
@@ -1364,7 +1378,8 @@ void FillX86BrandString(char brand_string[49]) {
 ////////////////////////////////////////////////////////////////////////////////
 // Introspection functions
 
-int GetX86FeaturesEnumValue(const X86Features* features, X86FeaturesEnum value) {
+int GetX86FeaturesEnumValue(const X86Features* features,
+                            X86FeaturesEnum value) {
   switch (value) {
     case X86_FPU:
       return features->fpu;

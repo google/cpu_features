@@ -40,7 +40,9 @@
 // Implementation will be provided by test/hwcaps_for_testing.cc.
 #elif defined(HAVE_STRONG_GETAUXVAL)
 #include <sys/auxv.h>
-static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) { return getauxval(hwcap_type); }
+static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
+  return getauxval(hwcap_type);
+}
 #elif defined(HAVE_DLFCN_H)
 // On Android we probe the system's C library for a 'getauxval' function and
 // call it if it exits, or return 0 for failure. This function is available
@@ -151,8 +153,11 @@ PlatformType CpuFeatures_GetPlatformType(void) {
   char *platform = (char *)GetHardwareCapabilitiesFor(AT_PLATFORM);
   char *base_platform = (char *)GetHardwareCapabilitiesFor(AT_BASE_PLATFORM);
 
-  if (platform != NULL) CpuFeatures_StringView_CopyString(str(platform), type.platform, sizeof(type.platform));
+  if (platform != NULL)
+    CpuFeatures_StringView_CopyString(str(platform), type.platform,
+                                      sizeof(type.platform));
   if (base_platform != NULL)
-    CpuFeatures_StringView_CopyString(str(base_platform), type.base_platform, sizeof(type.base_platform));
+    CpuFeatures_StringView_CopyString(str(base_platform), type.base_platform,
+                                      sizeof(type.base_platform));
   return type;
 }

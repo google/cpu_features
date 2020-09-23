@@ -26,7 +26,9 @@ static int g_cpuCount;
 static uint32_t g_cpuIdArm;
 #endif
 
-static void set_cpu_mask_bit(uint32_t index, uint32_t* cpu_mask) { *cpu_mask |= 1UL << index; }
+static void set_cpu_mask_bit(uint32_t index, uint32_t* cpu_mask) {
+  *cpu_mask |= 1UL << index;
+}
 
 // Examples of valid inputs: "31", "4-31"
 static void parse_cpu_mask(const StringView text, uint32_t* cpu_mask) {
@@ -36,10 +38,10 @@ static void parse_cpu_mask(const StringView text, uint32_t* cpu_mask) {
     if (cpu_index < 0) return;
     set_cpu_mask_bit(cpu_index, cpu_mask);
   } else {
-    int cpu_index_a =
-        CpuFeatures_StringView_ParsePositiveNumber(CpuFeatures_StringView_KeepFront(text, separator_index));
-    int cpu_index_b =
-        CpuFeatures_StringView_ParsePositiveNumber(CpuFeatures_StringView_PopFront(text, separator_index + 1));
+    int cpu_index_a = CpuFeatures_StringView_ParsePositiveNumber(
+        CpuFeatures_StringView_KeepFront(text, separator_index));
+    int cpu_index_b = CpuFeatures_StringView_ParsePositiveNumber(
+        CpuFeatures_StringView_PopFront(text, separator_index + 1));
     int i;
     if (cpu_index_a < 0 || cpu_index_b < 0) return;
     for (i = cpu_index_a; i <= cpu_index_b; ++i) {
@@ -68,7 +70,8 @@ static void parse_cpu_mask_line(const LineResult result, uint32_t* cpu_mask) {
   }
 }
 
-static void update_cpu_mask_from_file(const char* filename, uint32_t* cpu_mask) {
+static void update_cpu_mask_from_file(const char* filename,
+                                      uint32_t* cpu_mask) {
   const int fd = CpuFeatures_OpenFile(filename);
   if (fd >= 0) {
     StackLineReader reader;
@@ -111,7 +114,8 @@ static void android_cpuInit(void) {
   if (info.features.sha1) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_SHA1;
   if (info.features.sha2) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_SHA2;
   if (info.features.crc32) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_CRC32;
-  if (info.architecture >= 6) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_LDREX_STREX;
+  if (info.architecture >= 6)
+    g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_LDREX_STREX;
   if (info.features.vfp) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFPv2;
   if (info.features.vfpv4) {
     g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFP_FMA;

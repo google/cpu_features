@@ -46,7 +46,8 @@ typedef enum {
   MIPS_LAST_,
 } MipsFeaturesEnum;
 
-int GetMipsFeaturesEnumValue(const MipsFeatures* features, MipsFeaturesEnum value);
+int GetMipsFeaturesEnumValue(const MipsFeatures* features,
+                             MipsFeaturesEnum value);
 
 const char* GetMipsFeaturesEnumName(MipsFeaturesEnum);
 
