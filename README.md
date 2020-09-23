@@ -121,7 +121,6 @@ This feature is currently available only for x86 microarchitectures.
 ### Running sample code
 
 Building `cpu_features` (check [quickstart](#quickstart) below) brings a small executable to test the library.
-.
 
 ```shell
  % ./build/list_cpu_features
