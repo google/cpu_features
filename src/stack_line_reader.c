@@ -13,11 +13,12 @@
 // limitations under the License.
 
 #include "internal/stack_line_reader.h"
-#include "internal/filesystem.h"
 
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
+
+#include "internal/filesystem.h"
 
 void StackLineReader_Initialize(StackLineReader* reader, int fd) {
   reader->view.ptr = reader->buffer;

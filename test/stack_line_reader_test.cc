@@ -13,8 +13,8 @@
 // limitations under the License.
 
 #include "internal/stack_line_reader.h"
-#include "filesystem_for_testing.h"
 
+#include "filesystem_for_testing.h"
 #include "gtest/gtest.h"
 
 namespace cpu_features {

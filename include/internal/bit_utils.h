@@ -18,6 +18,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
+
 #include "cpu_features_macros.h"
 
 CPU_FEATURES_START_CPP_NAMESPACE

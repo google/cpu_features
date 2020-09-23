@@ -1,10 +1,11 @@
 #include "cpu-features.h"
+
+#include <pthread.h>
+
 #include "cpu_features_macros.h"
 #include "internal/filesystem.h"
 #include "internal/stack_line_reader.h"
 #include "internal/string_view.h"
-
-#include <pthread.h>
 
 #if defined(CPU_FEATURES_ARCH_ARM)
 #include "cpuinfo_arm.h"

@@ -20,6 +20,7 @@
 
 #include <ctype.h>
 #include <stdint.h>
+
 #include "cpu_features_macros.h"
 #include "internal/hwcaps.h"
 #include "internal/string_view.h"
@@ -35,13 +36,13 @@ CPU_FEATURES_START_CPP_NAMESPACE
 
 // Use the following macro to declare getter functions to be used in
 // CapabilityConfig.
-#define DECLARE_GETTER(FeatureType, FeatureName)                    \
-  static int get_##FeatureName(void* const features) {              \
-    return ((FeatureType*)features)->FeatureName;                   \
+#define DECLARE_GETTER(FeatureType, FeatureName)       \
+  static int get_##FeatureName(void* const features) { \
+    return ((FeatureType*)features)->FeatureName;      \
   }
 
-#define DECLARE_SETTER_AND_GETTER(FeatureType, FeatureName)         \
-  DECLARE_SETTER(FeatureType, FeatureName)                          \
+#define DECLARE_SETTER_AND_GETTER(FeatureType, FeatureName) \
+  DECLARE_SETTER(FeatureType, FeatureName)                  \
   DECLARE_GETTER(FeatureType, FeatureName)
 
 // Describes the relationship between hardware caps and /proc/cpuinfo flags.
@@ -49,7 +50,7 @@ typedef struct {
   const HardwareCapabilities hwcaps_mask;
   const char* const proc_cpuinfo_flag;
   void (*set_bit)(void* const, bool);  // setter for the corresponding bit.
-  int (*get_bit)(void* const); // getter for the corresponding bit.
+  int (*get_bit)(void* const);         // getter for the corresponding bit.
 } CapabilityConfig;
 
 // For every config, looks into flags_line for the presence of the

@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "internal/hwcaps.h"
+
 #include <stdlib.h>
 #include <string.h>
 
 #include "cpu_features_macros.h"
 #include "internal/filesystem.h"
-#include "internal/hwcaps.h"
 #include "internal/string_view.h"
 
 #if defined(NDEBUG)
@@ -68,8 +69,8 @@ typedef unsigned long getauxval_func_t(unsigned long);
 
 static uint32_t GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
   uint32_t ret = 0;
-  void* libc_handle = NULL;
-  getauxval_func_t* func = NULL;
+  void *libc_handle = NULL;
+  getauxval_func_t *func = NULL;
 
   dlerror();  // Cleaning error state before calling dlopen.
   libc_handle = dlopen("libc.so", RTLD_NOW);
@@ -77,7 +78,7 @@ static uint32_t GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
     D("Could not dlopen() C library: %s\n", dlerror());
     return 0;
   }
-  func = (getauxval_func_t*)dlsym(libc_handle, "getauxval");
+  func = (getauxval_func_t *)dlsym(libc_handle, "getauxval");
   if (!func) {
     D("Could not find getauxval() in C library\n");
   } else {
@@ -109,7 +110,7 @@ static uint32_t GetElfHwcapFromProcSelfAuxv(uint32_t hwcap_type) {
     return 0;
   }
   for (;;) {
-    const int ret = CpuFeatures_ReadFile(fd, (char*)&entry, sizeof entry);
+    const int ret = CpuFeatures_ReadFile(fd, (char *)&entry, sizeof entry);
     if (ret < 0) {
       D("Error while reading %s\n", filepath);
       break;

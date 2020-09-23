@@ -13,11 +13,11 @@
 // limitations under the License.
 
 #include "cpuinfo_ppc.h"
+
 #include "filesystem_for_testing.h"
+#include "gtest/gtest.h"
 #include "hwcaps_for_testing.h"
 #include "internal/string_view.h"
-
-#include "gtest/gtest.h"
 
 namespace cpu_features {
 namespace {

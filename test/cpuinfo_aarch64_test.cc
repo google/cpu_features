@@ -13,10 +13,10 @@
 // limitations under the License.
 
 #include "cpuinfo_aarch64.h"
-#include "filesystem_for_testing.h"
-#include "hwcaps_for_testing.h"
 
+#include "filesystem_for_testing.h"
 #include "gtest/gtest.h"
+#include "hwcaps_for_testing.h"
 
 namespace cpu_features {
 namespace {
@@ -62,7 +62,8 @@ TEST(CpuinfoAarch64Test, FromHardwareCap) {
 }
 
 TEST(CpuinfoAarch64Test, FromHardwareCap2) {
-  SetHardwareCapabilities(AARCH64_HWCAP_FP, AARCH64_HWCAP2_SVE2 | AARCH64_HWCAP2_BTI);
+  SetHardwareCapabilities(AARCH64_HWCAP_FP,
+                          AARCH64_HWCAP2_SVE2 | AARCH64_HWCAP2_BTI);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo
   const auto info = GetAarch64Info();
   EXPECT_TRUE(info.features.fp);

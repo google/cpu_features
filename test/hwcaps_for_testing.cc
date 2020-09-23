@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "hwcaps_for_testing.h"
+
 #include <string.h>
 
-#include "hwcaps_for_testing.h"
 #include "internal/string_view.h"
 
 namespace cpu_features {

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "internal/unix_features_aggregator.h"
+
 #include "internal/string_view.h"
 
 void CpuFeatures_SetFromFlags(const size_t configs_size,

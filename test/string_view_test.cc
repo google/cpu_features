@@ -117,13 +117,13 @@ TEST(StringViewTest, CpuFeatures_StringView_Back) {
 
 TEST(StringViewTest, CpuFeatures_StringView_TrimWhitespace) {
   EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("  first middle last  ")),
-                                                  str("first middle last"));
+            str("first middle last"));
   EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("first middle last  ")),
-                                                  str("first middle last"));
+            str("first middle last"));
   EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("  first middle last")),
-                                                  str("first middle last"));
+            str("first middle last"));
   EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("first middle last")),
-                                                  str("first middle last"));
+            str("first middle last"));
 }
 
 TEST(StringViewTest, CpuFeatures_StringView_ParsePositiveNumber) {

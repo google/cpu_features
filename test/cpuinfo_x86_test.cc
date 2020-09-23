@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "cpuinfo_x86.h"
+
 #include <cassert>
 #include <cstdio>
 #include <map>
 
 #include "gtest/gtest.h"
-
-#include "cpuinfo_x86.h"
 #include "internal/cpuid_x86.h"
 
 namespace cpu_features {
