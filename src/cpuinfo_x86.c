@@ -1133,7 +1133,7 @@ static OsSupport CheckOsSupport(const uint32_t max_cpuid_leaf) {
 static bool SysCtlByName(const char* name) {
   int enabled;
   size_t enabled_len = sizeof(enabled);
-  const int failure = sysctlbyname(name, &enabled, &enabled_len, NULL, 0));
+  const int failure = sysctlbyname(name, &enabled, &enabled_len, NULL, 0);
   return failure ? false : enabled;
 }
 #endif
