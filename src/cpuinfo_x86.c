@@ -25,6 +25,21 @@
 #error "Cannot compile cpuinfo_x86 on a non x86 platform."
 #endif
 
+// The following includes are necessary to provide SSE detections on pre-AVX
+// microarchitectures.
+#if defined(CPU_FEATURES_COMPILER_MSC)
+#include <windows.h>  // IsProcessorFeaturePresent
+#elif defined(HAVE_UTSNAME_H)
+#include <sys/utsname.h>
+
+#include "internal/filesystem.h"         // Needed to parse /proc/cpuinfo
+#include "internal/stack_line_reader.h"  // Needed to parse /proc/cpuinfo
+#include "internal/string_view.h"        // Needed to parse /proc/cpuinfo
+#if defined(HAVE_SYSCTLBYNAME)
+#include <sys/sysctl.h>
+#endif  // HAVE_SYSCTLBYNAME
+#endif  // HAVE_UTSNAME_H
+
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions for CpuId and GetXCR0Eax.
 ////////////////////////////////////////////////////////////////////////////////
@@ -1082,26 +1097,105 @@ static void ParseLeaf4(const int max_cpuid_leaf, CacheInfo* info) {
 // Internal structure to hold the OS support for vector operations.
 // Avoid to recompute them since each call to cpuid is ~100 cycles.
 typedef struct {
-  bool have_sse;
+  bool have_sse_via_os;
+  bool have_sse_via_cpuid;
   bool have_avx;
   bool have_avx512;
   bool have_amx;
 } OsSupport;
 
+static const OsSupport kEmptyOsSupport;
+
+static OsSupport CheckOsSupport(const uint32_t max_cpuid_leaf) {
+  const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
+  const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
+  const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
+  const bool have_xcr0 = have_xsave && have_osxsave;
+
+  OsSupport os_support = kEmptyOsSupport;
+
+  if (have_xcr0) {
+    // AVX capable cpu will expose XCR0.
+    const uint32_t xcr0_eax = GetXCR0Eax();
+    os_support.have_sse_via_cpuid = HasXmmOsXSave(xcr0_eax);
+    os_support.have_avx = HasYmmOsXSave(xcr0_eax);
+    os_support.have_avx512 = HasZmmOsXSave(xcr0_eax);
+    os_support.have_amx = HasTmmOsXSave(xcr0_eax);
+  } else {
+    // Atom based or older cpus need to ask the OS for sse support.
+    os_support.have_sse_via_os = true;
+  }
+
+  return os_support;
+}
+
+#if defined(HAVE_SYSCTLBYNAME)
+static bool SysCtlByName(const char* name) {
+  int enabled;
+  size_t enabled_len = sizeof(enabled);
+  const int failure = sysctlbyname(name, &enabled, &enabled_len, NULL, 0));
+  return failure ? false : enabled;
+}
+#endif
+
+static void DetectSseViaOs(X86Features* features) {
+#if defined(CPU_FEATURES_COMPILER_MSC)
+  // https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-isprocessorfeaturepresent
+  features->sse = IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
+  features->sse2 = IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
+  features->sse3 = IsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
+#elif defined(HAVE_UTSNAME_H)
+  struct utsname buf;
+  uname(&buf);
+  if (CpuFeatures_StringView_IsEquals(str(buf.sysname), str("Darwin"))) {
+#if defined(HAVE_SYSCTLBYNAME)
+    // Handling Darwin platform through sysctlbyname when available.
+    features->sse = SysCtlByName("hw.optional.sse");
+    features->sse2 = SysCtlByName("hw.optional.sse2");
+    features->sse3 = SysCtlByName("hw.optional.sse3");
+    features->ssse3 = SysCtlByName("hw.optional.supplementalsse3");
+    features->sse4_1 = SysCtlByName("hw.optional.sse4_1");
+    features->sse4_2 = SysCtlByName("hw.optional.sse4_2");
+#endif  // HAVE_SYSCTLBYNAME
+  } else if (CpuFeatures_StringView_IsEquals(str(buf.sysname), str("Linux"))) {
+    // Handling Linux platform through /proc/cpuinfo when available.
+    const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");
+    if (fd >= 0) {
+      StackLineReader reader;
+      StackLineReader_Initialize(&reader, fd);
+      for (;;) {
+        const LineResult result = StackLineReader_NextLine(&reader);
+        const StringView line = result.line;
+        StringView key, value;
+        if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
+          if (CpuFeatures_StringView_IsEquals(key, str("flags"))) {
+            features->sse = CpuFeatures_StringView_HasWord(value, "sse");
+            features->sse2 = CpuFeatures_StringView_HasWord(value, "sse2");
+            features->sse3 = CpuFeatures_StringView_HasWord(value, "sse3");
+            features->ssse3 = CpuFeatures_StringView_HasWord(value, "ssse3");
+            features->sse4_1 = CpuFeatures_StringView_HasWord(value, "sse4_1");
+            features->sse4_2 = CpuFeatures_StringView_HasWord(value, "sse4_2");
+            break;
+          }
+        }
+        if (result.eof) break;
+      }
+      CpuFeatures_CloseFile(fd);
+    }
+  } else {
+    // Failed to probe the system.
+  }
+#else   // HAVE_UTSNAME_H
+#error "Unsupported fallback detection of SSE OS support."
+#endif
+}
+
 // Reference https://en.wikipedia.org/wiki/CPUID.
-static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
-                       OsSupport* os_support) {
+static void ParseCpuId(const uint32_t max_cpuid_leaf,
+                       const OsSupport os_support, X86Info* info) {
   const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
   const Leaf leaf_7 = SafeCpuId(max_cpuid_leaf, 7);
   const Leaf leaf_7_1 = SafeCpuIdEx(max_cpuid_leaf, 7, 1);
-
-  const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
-  const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
-  const uint32_t xcr0_eax = (have_xsave && have_osxsave) ? GetXCR0Eax() : 0;
-  os_support->have_sse = HasXmmOsXSave(xcr0_eax);
-  os_support->have_avx = HasYmmOsXSave(xcr0_eax);
-  os_support->have_avx512 = HasZmmOsXSave(xcr0_eax);
-  os_support->have_amx = HasTmmOsXSave(xcr0_eax);
 
   const uint32_t family = ExtractBitRange(leaf_1.eax, 11, 8);
   const uint32_t extended_family = ExtractBitRange(leaf_1.eax, 27, 20);
@@ -1142,7 +1236,9 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
   features->vaes = IsBitSet(leaf_7.ecx, 9);
   features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
 
-  if (os_support->have_sse) {
+  if (os_support.have_sse_via_os) {
+    DetectSseViaOs(features);
+  } else if (os_support.have_sse_via_cpuid) {
     features->sse = IsBitSet(leaf_1.edx, 25);
     features->sse2 = IsBitSet(leaf_1.edx, 26);
     features->sse3 = IsBitSet(leaf_1.ecx, 0);
@@ -1151,13 +1247,13 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
     features->sse4_2 = IsBitSet(leaf_1.ecx, 20);
   }
 
-  if (os_support->have_avx) {
+  if (os_support.have_avx) {
     features->fma3 = IsBitSet(leaf_1.ecx, 12);
     features->avx = IsBitSet(leaf_1.ecx, 28);
     features->avx2 = IsBitSet(leaf_7.ebx, 5);
   }
 
-  if (os_support->have_avx512) {
+  if (os_support.have_avx512) {
     features->avx512f = IsBitSet(leaf_7.ebx, 16);
     features->avx512cd = IsBitSet(leaf_7.ebx, 28);
     features->avx512er = IsBitSet(leaf_7.ebx, 27);
@@ -1179,7 +1275,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
     features->avx512_vp2intersect = IsBitSet(leaf_7.edx, 8);
   }
 
-  if (os_support->have_amx) {
+  if (os_support.have_amx) {
     features->amx_bf16 = IsBitSet(leaf_7.edx, 22);
     features->amx_tile = IsBitSet(leaf_7.edx, 24);
     features->amx_int8 = IsBitSet(leaf_7.edx, 25);
@@ -1195,7 +1291,7 @@ static void ParseExtraAMDCpuId(X86Info* info, OsSupport os_support) {
 
   X86Features* const features = &info->features;
 
-  if (os_support.have_sse) {
+  if (os_support.have_sse_via_cpuid) {
     features->sse4a = IsBitSet(leaf_80000001.ecx, 6);
   }
 
@@ -1205,22 +1301,21 @@ static void ParseExtraAMDCpuId(X86Info* info, OsSupport os_support) {
 }
 
 static const X86Info kEmptyX86Info;
-static const OsSupport kEmptyOsSupport;
 static const CacheInfo kEmptyCacheInfo;
 
 X86Info GetX86Info(void) {
   X86Info info = kEmptyX86Info;
-  OsSupport os_support = kEmptyOsSupport;
   const Leaf leaf_0 = CpuId(0);
   const bool is_intel = IsVendor(leaf_0, "GenuineIntel");
   const bool is_amd = IsVendor(leaf_0, "AuthenticAMD");
   SetVendor(leaf_0, info.vendor);
   if (is_intel || is_amd) {
     const uint32_t max_cpuid_leaf = leaf_0.eax;
-    ParseCpuId(max_cpuid_leaf, &info, &os_support);
-  }
-  if (is_amd) {
-    ParseExtraAMDCpuId(&info, os_support);
+    const OsSupport os_support = CheckOsSupport(max_cpuid_leaf);
+    ParseCpuId(max_cpuid_leaf, os_support, &info);
+    if (is_amd) {
+      ParseExtraAMDCpuId(&info, os_support);
+    }
   }
   return info;
 }

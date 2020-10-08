@@ -91,6 +91,11 @@ macro(add_cpu_features_headers_and_sources HDRS_LIST_NAME SRCS_LIST_NAME)
   endif()
 endmacro()
 
+if(UNIX AND PROCESSOR_IS_X86)
+  check_include_file(sys/utsname.h HAVE_UTSNAME_H)
+endif()
+
+
 #
 # library : utils
 #
@@ -148,6 +153,14 @@ set_property(TARGET cpu_features PROPERTY POSITION_INDEPENDENT_CODE ${BUILD_PIC}
 target_include_directories(cpu_features
   PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cpu_features>
 )
+if(PROCESSOR_IS_X86)
+  if(HAVE_UTSNAME_H)
+    target_compile_definitions(cpu_features PRIVATE HAVE_UTSNAME_H)
+  endif()
+  if(APPLE)
+    target_compile_definitions(cpu_features PRIVATE HAVE_SYSCTLBYNAME)
+  endif()
+endif()
 add_library(CpuFeature::cpu_features ALIAS cpu_features)
 
 #
