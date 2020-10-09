@@ -63,7 +63,7 @@ class FakeCpu {
 #endif  // CPU_FEATURES_OS_DARWIN
 
 #if defined(CPU_FEATURES_OS_WINDOWS)
-  bool SetWindowsIsProcessorFeaturePresent(unsigned long ProcessorFeature) {
+  void SetWindowsIsProcessorFeaturePresent(unsigned long ProcessorFeature) {
     windows_isprocessorfeaturepresent_.insert(ProcessorFeature);
   }
 #endif  // CPU_FEATURES_OS_WINDOWS
