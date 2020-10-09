@@ -74,7 +74,7 @@ class FakeCpu {
   std::set<std::string> darwin_sysctlbyname_;
 #endif  // CPU_FEATURES_OS_DARWIN
 #if defined(CPU_FEATURES_OS_WINDOWS)
-  std::set<unsigned long> windows_isprocessorfeaturepresent_;
+  std::set<DWORD> windows_isprocessorfeaturepresent_;
 #endif  // CPU_FEATURES_OS_WINDOWS
   uint32_t xcr0_eax_;
 };
