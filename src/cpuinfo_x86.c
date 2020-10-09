@@ -27,7 +27,7 @@
 
 // The following includes are necessary to provide SSE detections on pre-AVX
 // microarchitectures.
-#if defined(CPU_FEATURES_COMPILER_MSC)
+#if defined(CPU_FEATURES_OS_WINDOWS)
 #include <windows.h>  // IsProcessorFeaturePresent
 #elif defined(HAVE_UTSNAME_H)
 #include <sys/utsname.h>

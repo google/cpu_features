@@ -18,6 +18,9 @@
 #include <cstdio>
 #include <map>
 #include <set>
+#if defined(CPU_FEATURES_OS_WINDOWS)
+#include <windows.h>  // IsProcessorFeaturePresent
+#endif                // CPU_FEATURES_OS_WINDOWS
 
 #include "filesystem_for_testing.h"
 #include "gtest/gtest.h"
