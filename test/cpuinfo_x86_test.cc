@@ -40,14 +40,6 @@ class FakeCpu {
 
   uint32_t GetXCR0Eax() const { return xcr0_eax_; }
 
-  bool GetDarwinSysCtlByName(std::string name) const {
-    return darwin_sysctlbyname_.count(name);
-  }
-
-  bool GetWindowsIsProcessorFeaturePresent(unsigned long ProcessorFeature) {
-    return windows_isprocessorfeaturepresent_.count(ProcessorFeature);
-  }
-
   void SetLeaves(std::map<std::pair<uint32_t, int>, Leaf> configuration) {
     cpuid_leaves_ = std::move(configuration);
   }
@@ -57,21 +49,33 @@ class FakeCpu {
   }
 
 #if defined(CPU_FEATURES_OS_DARWIN)
+  bool GetDarwinSysCtlByName(std::string name) const {
+    return darwin_sysctlbyname_.count(name);
+  }
+
   void SetDarwinSysCtlByName(std::string name) {
     darwin_sysctlbyname_.insert(name);
   }
 #endif  // CPU_FEATURES_OS_DARWIN
 
 #if defined(CPU_FEATURES_OS_WINDOWS)
-  void SetWindowsIsProcessorFeaturePresent(unsigned long ProcessorFeature) {
+  bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
+    return windows_isprocessorfeaturepresent_.count(ProcessorFeature);
+  }
+
+  void SetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
     windows_isprocessorfeaturepresent_.insert(ProcessorFeature);
   }
 #endif  // CPU_FEATURES_OS_WINDOWS
 
  private:
   std::map<std::pair<uint32_t, int>, Leaf> cpuid_leaves_;
+#if defined(CPU_FEATURES_OS_DARWIN)
   std::set<std::string> darwin_sysctlbyname_;
-  std::set<unsigned> windows_isprocessorfeaturepresent_;
+#endif  // CPU_FEATURES_OS_DARWIN
+#if defined(CPU_FEATURES_OS_WINDOWS)
+  std::set<unsigned long> windows_isprocessorfeaturepresent_;
+#endif  // CPU_FEATURES_OS_WINDOWS
   uint32_t xcr0_eax_;
 };
 
