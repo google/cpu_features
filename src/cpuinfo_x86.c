@@ -50,7 +50,7 @@
 
 #include <cpuid.h>
 
-Leaf CpuIdEx(uint32_t leaf_id, int ecx) {
+Leaf GetCpuidLeaf(uint32_t leaf_id, int ecx) {
   Leaf leaf;
   __cpuid_count(leaf_id, ecx, leaf.eax, leaf.ebx, leaf.ecx, leaf.edx);
   return leaf;
@@ -70,7 +70,7 @@ uint32_t GetXCR0Eax(void) {
 #include <immintrin.h>
 #include <intrin.h>  // For __cpuidex()
 
-Leaf CpuIdEx(uint32_t leaf_id, int ecx) {
+Leaf GetCpuidLeaf(uint32_t leaf_id, int ecx) {
   Leaf leaf;
   int data[4];
   __cpuidex(data, leaf_id, ecx);
@@ -87,13 +87,13 @@ uint32_t GetXCR0Eax(void) { return (uint32_t)_xgetbv(0); }
 #error "Unsupported compiler, x86 cpuid requires either GCC, Clang or MSVC."
 #endif
 
-static Leaf CpuId(uint32_t leaf_id) { return CpuIdEx(leaf_id, 0); }
+static Leaf CpuId(uint32_t leaf_id) { return GetCpuidLeaf(leaf_id, 0); }
 
 static const Leaf kEmptyLeaf;
 
 static Leaf SafeCpuIdEx(uint32_t max_cpuid_leaf, uint32_t leaf_id, int ecx) {
   if (leaf_id <= max_cpuid_leaf) {
-    return CpuIdEx(leaf_id, ecx);
+    return GetCpuidLeaf(leaf_id, ecx);
   } else {
     return kEmptyLeaf;
   }

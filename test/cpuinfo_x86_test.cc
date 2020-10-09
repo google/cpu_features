@@ -26,7 +26,7 @@ namespace cpu_features {
 
 class FakeCpu {
  public:
-  Leaf CpuIdEx(uint32_t leaf_id, int ecx) const {
+  Leaf GetCpuidLeaf(uint32_t leaf_id, int ecx) const {
     const auto itr = cpuid_leaves_.find(std::make_pair(leaf_id, ecx));
     if (itr != cpuid_leaves_.end()) {
       return itr->second;
@@ -62,8 +62,8 @@ class FakeCpu {
 
 FakeCpu* g_fake_cpu = nullptr;
 
-extern "C" Leaf CpuIdEx(uint32_t leaf_id, int ecx) {
-  return g_fake_cpu->CpuIdEx(leaf_id, ecx);
+extern "C" Leaf GetCpuidLeaf(uint32_t leaf_id, int ecx) {
+  return g_fake_cpu->GetCpuidLeaf(leaf_id, ecx);
 }
 
 extern "C" uint32_t GetXCR0Eax(void) { return g_fake_cpu->GetXCR0Eax(); }
