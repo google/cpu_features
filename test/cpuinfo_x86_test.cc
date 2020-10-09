@@ -60,7 +60,7 @@ class FakeCpu {
   uint32_t xcr0_eax_;
 };
 
-auto* g_fake_cpu = new FakeCpu();
+FakeCpu* g_fake_cpu = nullptr;
 
 extern "C" Leaf CpuIdEx(uint32_t leaf_id, int ecx) {
   return g_fake_cpu->CpuIdEx(leaf_id, ecx);
@@ -74,7 +74,13 @@ extern "C" bool SysCtlByName(const char* name) {
 
 namespace {
 
-TEST(CpuidX86Test, SandyBridge) {
+class CpuidX86Test : public ::testing::Test {
+ protected:
+  void SetUp() override { g_fake_cpu = new FakeCpu(); }
+  void TearDown() override { delete g_fake_cpu; }
+};
+
+TEST_F(CpuidX86Test, SandyBridge) {
   g_fake_cpu->SetOsBackupsExtendedRegisters(true);
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x0000000D, 0x756E6547, 0x6C65746E, 0x49656E69}},
@@ -120,7 +126,7 @@ TEST(CpuidX86Test, SandyBridge) {
 const int KiB = 1024;
 const int MiB = 1024 * KiB;
 
-TEST(CpuidX86Test, SandyBridgeTestOsSupport) {
+TEST_F(CpuidX86Test, SandyBridgeTestOsSupport) {
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x0000000D, 0x756E6547, 0x6C65746E, 0x49656E69}},
       {{0x00000001, 0}, Leaf{0x000206A6, 0x00100800, 0x1F9AE3BF, 0xBFEBFBFF}},
@@ -134,7 +140,7 @@ TEST(CpuidX86Test, SandyBridgeTestOsSupport) {
   EXPECT_TRUE(GetX86Info().features.avx);
 }
 
-TEST(CpuidX86Test, SkyLake) {
+TEST_F(CpuidX86Test, SkyLake) {
   g_fake_cpu->SetOsBackupsExtendedRegisters(true);
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
@@ -149,7 +155,7 @@ TEST(CpuidX86Test, SkyLake) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_SKL);
 }
 
-TEST(CpuidX86Test, Branding) {
+TEST_F(CpuidX86Test, Branding) {
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
       {{0x00000001, 0}, Leaf{0x000406E3, 0x00100800, 0x7FFAFBBF, 0xBFEBFBFF}},
@@ -165,7 +171,7 @@ TEST(CpuidX86Test, Branding) {
   EXPECT_STREQ(brand_string, "Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz");
 }
 
-TEST(CpuidX86Test, KabyLakeCache) {
+TEST_F(CpuidX86Test, KabyLakeCache) {
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
       {{0x00000001, 0}, Leaf{0x000406E3, 0x00100800, 0x7FFAFBBF, 0xBFEBFBFF}},
@@ -214,7 +220,7 @@ TEST(CpuidX86Test, KabyLakeCache) {
   EXPECT_EQ(info.levels[3].partitioning, 1);
 }
 
-TEST(CpuidX86Test, HSWCache) {
+TEST_F(CpuidX86Test, HSWCache) {
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
       {{0x00000001, 0}, Leaf{0x000406E3, 0x00100800, 0x7FFAFBBF, 0xBFEBFBFF}},
@@ -264,7 +270,7 @@ TEST(CpuidX86Test, HSWCache) {
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD0630F81_K15_Godavari_CPUID.txt
-TEST(CpuidX86Test, AMD_K15) {
+TEST_F(CpuidX86Test, AMD_K15) {
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x0000000D, 0x68747541, 0x444D4163, 0x69746E65}},
       {{0x00000001, 0}, Leaf{0x00630F81, 0x00040800, 0x3E98320B, 0x178BFBFF}},
@@ -291,7 +297,7 @@ TEST(CpuidX86Test, AMD_K15) {
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00106A1_Nehalem_CPUID.txt
-TEST(CpuidX86Test, Nehalem) {
+TEST_F(CpuidX86Test, Nehalem) {
   // Pre AVX cpus don't have xsave
   g_fake_cpu->SetOsBackupsExtendedRegisters(false);
   // On Darwin we fake sysctlbyname
@@ -354,7 +360,7 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0030673_Silvermont3_CPUID.txt
-TEST(CpuidX86Test, Atom) {
+TEST_F(CpuidX86Test, Atom) {
   // Pre AVX cpus don't have xsave
   g_fake_cpu->SetOsBackupsExtendedRegisters(false);
   // On Darwin we fake sysctlbyname
@@ -417,7 +423,7 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0000673_P3_KatmaiDP_CPUID.txt
-TEST(CpuidX86Test, P3) {
+TEST_F(CpuidX86Test, P3) {
   // Pre AVX cpus don't have xsave
   g_fake_cpu->SetOsBackupsExtendedRegisters(false);
   // On Darwin we fake sysctlbyname
