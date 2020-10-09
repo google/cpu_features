@@ -292,6 +292,16 @@ TEST(CpuidX86Test, AMD_K15) {
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00106A1_Nehalem_CPUID.txt
 TEST(CpuidX86Test, Nehalem) {
+  // Pre AVX cpus don't have xsave
+  g_fake_cpu->SetOsBackupsExtendedRegisters(false);
+  // On Darwin we fake sysctlbyname
+  g_fake_cpu->SetSysCtlByName("hw.optional.sse");
+  g_fake_cpu->SetSysCtlByName("hw.optional.sse2");
+  g_fake_cpu->SetSysCtlByName("hw.optional.sse3");
+  g_fake_cpu->SetSysCtlByName("hw.optional.supplementalsse3");
+  g_fake_cpu->SetSysCtlByName("hw.optional.sse4_1");
+  g_fake_cpu->SetSysCtlByName("hw.optional.sse4_2");
+  // On Linux we fake /proc/cpuinfo
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(processor       :
 flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
@@ -345,6 +355,16 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0030673_Silvermont3_CPUID.txt
 TEST(CpuidX86Test, Atom) {
+  // Pre AVX cpus don't have xsave
+  g_fake_cpu->SetOsBackupsExtendedRegisters(false);
+  // On Darwin we fake sysctlbyname
+  g_fake_cpu->SetSysCtlByName("hw.optional.sse");
+  g_fake_cpu->SetSysCtlByName("hw.optional.sse2");
+  g_fake_cpu->SetSysCtlByName("hw.optional.sse3");
+  g_fake_cpu->SetSysCtlByName("hw.optional.supplementalsse3");
+  g_fake_cpu->SetSysCtlByName("hw.optional.sse4_1");
+  g_fake_cpu->SetSysCtlByName("hw.optional.sse4_2");
+  // On Linux we fake /proc/cpuinfo
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
 flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
@@ -398,8 +418,11 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0000673_P3_KatmaiDP_CPUID.txt
 TEST(CpuidX86Test, P3) {
+  // Pre AVX cpus don't have xsave
   g_fake_cpu->SetOsBackupsExtendedRegisters(false);
+  // On Darwin we fake sysctlbyname
   g_fake_cpu->SetSysCtlByName("hw.optional.sse");
+  // On Linux we fake /proc/cpuinfo
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
 flags           : fpu mmx sse
