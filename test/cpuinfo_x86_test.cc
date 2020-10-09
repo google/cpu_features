@@ -351,12 +351,16 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
   FillX86BrandString(brand_string);
   EXPECT_STREQ(brand_string, "Genuine Intel(R) CPU           @ 0000 @ 1.87GHz");
 
+#ifndef CPU_FEATURES_OS_WINDOWS
+  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
+  // feature detection > sse3.
   EXPECT_TRUE(info.features.sse);
   EXPECT_TRUE(info.features.sse2);
   EXPECT_TRUE(info.features.sse3);
   EXPECT_TRUE(info.features.ssse3);
   EXPECT_TRUE(info.features.sse4_1);
   EXPECT_TRUE(info.features.sse4_2);
+#endif  // CPU_FEATURES_OS_WINDOWS
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0030673_Silvermont3_CPUID.txt
@@ -414,12 +418,16 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
   FillX86BrandString(brand_string);
   EXPECT_STREQ(brand_string, "      Intel(R) Celeron(R) CPU  J1900  @ 1.99GHz");
 
+#ifndef CPU_FEATURES_OS_WINDOWS
+  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
+  // feature detection > sse3.
   EXPECT_TRUE(info.features.sse);
   EXPECT_TRUE(info.features.sse2);
   EXPECT_TRUE(info.features.sse3);
   EXPECT_TRUE(info.features.ssse3);
   EXPECT_TRUE(info.features.sse4_1);
   EXPECT_TRUE(info.features.sse4_2);
+#endif  // CPU_FEATURES_OS_WINDOWS
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0000673_P3_KatmaiDP_CPUID.txt
@@ -452,12 +460,16 @@ flags           : fpu mmx sse
   EXPECT_STREQ(brand_string, "");
 
   EXPECT_TRUE(info.features.mmx);
+#ifndef CPU_FEATURES_OS_WINDOWS
+  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
+  // feature detection > sse3.
   EXPECT_TRUE(info.features.sse);
   EXPECT_FALSE(info.features.sse2);
   EXPECT_FALSE(info.features.sse3);
   EXPECT_FALSE(info.features.ssse3);
   EXPECT_FALSE(info.features.sse4_1);
   EXPECT_FALSE(info.features.sse4_2);
+#endif  // CPU_FEATURES_OS_WINDOWS
 }
 
 // TODO(user): test what happens when xsave/osxsave are not present.
