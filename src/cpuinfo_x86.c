@@ -29,16 +29,18 @@
 // microarchitectures.
 #if defined(CPU_FEATURES_OS_WINDOWS)
 #include <windows.h>  // IsProcessorFeaturePresent
-#elif defined(HAVE_UTSNAME_H)
-#include <sys/utsname.h>
-
+#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
 #include "internal/filesystem.h"         // Needed to parse /proc/cpuinfo
 #include "internal/stack_line_reader.h"  // Needed to parse /proc/cpuinfo
 #include "internal/string_view.h"        // Needed to parse /proc/cpuinfo
-#if defined(HAVE_SYSCTLBYNAME)
+#elif defined(CPU_FEATURES_OS_DARWIN)
+#if !defined(HAVE_SYSCTLBYNAME)
+#error "Darwin needs support for sysctlbyname"
+#endif
 #include <sys/sysctl.h>
-#endif  // HAVE_SYSCTLBYNAME
-#endif  // HAVE_UTSNAME_H
+#else
+#error "Unsupported OS"
+#endif  // CPU_FEATURES_OS
 
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions for CpuId and GetXCR0Eax.
@@ -1139,7 +1141,7 @@ static bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
 #endif
 #endif  // CPU_FEATURES_OS_WINDOWS
 
-#if defined(CPU_FEATURES_OS_DARWIN) && defined(HAVE_SYSCTLBYNAME)
+#if defined(CPU_FEATURES_OS_DARWIN)
 #if defined(CPU_FEATURES_MOCK_CPUID_X86)
 extern bool GetDarwinSysCtlByName(const char*);
 #else  // CPU_FEATURES_MOCK_CPUID_X86
@@ -1150,7 +1152,7 @@ static bool GetDarwinSysCtlByName(const char* name) {
   return failure ? false : enabled;
 }
 #endif
-#endif  // CPU_FEATURES_OS_DARWIN && HAVE_SYSCTLBYNAME
+#endif  // CPU_FEATURES_OS_DARWIN
 
 static void DetectSseViaOs(X86Features* features) {
 #if defined(CPU_FEATURES_OS_WINDOWS)
@@ -1161,50 +1163,40 @@ static void DetectSseViaOs(X86Features* features) {
       GetWindowsIsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
   features->sse3 =
       GetWindowsIsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
-#elif defined(HAVE_UTSNAME_H)
-  struct utsname buf;
-  uname(&buf);
-#if defined(CPU_FEATURES_OS_DARWIN) && defined(HAVE_SYSCTLBYNAME)
-  if (CpuFeatures_StringView_IsEquals(str(buf.sysname), str("Darwin"))) {
-    // Handling Darwin platform through sysctlbyname when available.
-    features->sse = GetDarwinSysCtlByName("hw.optional.sse");
-    features->sse2 = GetDarwinSysCtlByName("hw.optional.sse2");
-    features->sse3 = GetDarwinSysCtlByName("hw.optional.sse3");
-    features->ssse3 = GetDarwinSysCtlByName("hw.optional.supplementalsse3");
-    features->sse4_1 = GetDarwinSysCtlByName("hw.optional.sse4_1");
-    features->sse4_2 = GetDarwinSysCtlByName("hw.optional.sse4_2");
-  }
+#elif defined(CPU_FEATURES_OS_DARWIN)
+  // Handling Darwin platform through sysctlbyname.
+  features->sse = GetDarwinSysCtlByName("hw.optional.sse");
+  features->sse2 = GetDarwinSysCtlByName("hw.optional.sse2");
+  features->sse3 = GetDarwinSysCtlByName("hw.optional.sse3");
+  features->ssse3 = GetDarwinSysCtlByName("hw.optional.supplementalsse3");
+  features->sse4_1 = GetDarwinSysCtlByName("hw.optional.sse4_1");
+  features->sse4_2 = GetDarwinSysCtlByName("hw.optional.sse4_2");
 #elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
-  if (CpuFeatures_StringView_IsEquals(str(buf.sysname), str("Linux"))) {
-    // Handling Linux platform through /proc/cpuinfo when available.
-    const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");
-    if (fd >= 0) {
-      StackLineReader reader;
-      StackLineReader_Initialize(&reader, fd);
-      for (;;) {
-        const LineResult result = StackLineReader_NextLine(&reader);
-        const StringView line = result.line;
-        StringView key, value;
-        if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
-          if (CpuFeatures_StringView_IsEquals(key, str("flags"))) {
-            features->sse = CpuFeatures_StringView_HasWord(value, "sse");
-            features->sse2 = CpuFeatures_StringView_HasWord(value, "sse2");
-            features->sse3 = CpuFeatures_StringView_HasWord(value, "sse3");
-            features->ssse3 = CpuFeatures_StringView_HasWord(value, "ssse3");
-            features->sse4_1 = CpuFeatures_StringView_HasWord(value, "sse4_1");
-            features->sse4_2 = CpuFeatures_StringView_HasWord(value, "sse4_2");
-            break;
-          }
+  // Handling Linux platform through /proc/cpuinfo.
+  const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");
+  if (fd >= 0) {
+    StackLineReader reader;
+    StackLineReader_Initialize(&reader, fd);
+    for (;;) {
+      const LineResult result = StackLineReader_NextLine(&reader);
+      const StringView line = result.line;
+      StringView key, value;
+      if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
+        if (CpuFeatures_StringView_IsEquals(key, str("flags"))) {
+          features->sse = CpuFeatures_StringView_HasWord(value, "sse");
+          features->sse2 = CpuFeatures_StringView_HasWord(value, "sse2");
+          features->sse3 = CpuFeatures_StringView_HasWord(value, "sse3");
+          features->ssse3 = CpuFeatures_StringView_HasWord(value, "ssse3");
+          features->sse4_1 = CpuFeatures_StringView_HasWord(value, "sse4_1");
+          features->sse4_2 = CpuFeatures_StringView_HasWord(value, "sse4_2");
+          break;
         }
-        if (result.eof) break;
       }
-      CpuFeatures_CloseFile(fd);
+      if (result.eof) break;
     }
+    CpuFeatures_CloseFile(fd);
   }
-#else  // CPU_FEATURES_OS_DARWIN || CPU_FEATURES_OS_LINUX_OR_ANDROID
-#error "Unsupported fallback detection of SSE OS support."
-#endif
-#else  // HAVE_UTSNAME_H
+#else
 #error "Unsupported fallback detection of SSE OS support."
 #endif
 }
