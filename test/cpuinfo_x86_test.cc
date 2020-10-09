@@ -480,10 +480,6 @@ TEST_F(CpuidX86Test, P3) {
 #if defined(CPU_FEATURES_OS_WINDOWS)
   g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
       PF_XMMI_INSTRUCTIONS_AVAILABLE);
-  g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
-      PF_XMMI64_INSTRUCTIONS_AVAILABLE);
-  g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
-      PF_SSE3_INSTRUCTIONS_AVAILABLE);
 #endif  // CPU_FEATURES_OS_WINDOWS
 #if defined(CPU_FEATURES_OS_DARWIN)
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse");
