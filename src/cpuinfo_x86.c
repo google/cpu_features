@@ -1130,13 +1130,17 @@ static OsSupport CheckOsSupport(const uint32_t max_cpuid_leaf) {
 }
 
 #if defined(HAVE_SYSCTLBYNAME)
+#if defined(CPU_FEATURES_MOCK_CPUID_X86)
+extern bool SysCtlByName(const char* name);
+#else
 static bool SysCtlByName(const char* name) {
   int enabled;
   size_t enabled_len = sizeof(enabled);
   const int failure = sysctlbyname(name, &enabled, &enabled_len, NULL, 0);
   return failure ? false : enabled;
 }
-#endif
+#endif  // CPU_FEATURES_MOCK_CPUID_X86
+#endif  // HAVE_SYSCTLBYNAME
 
 static void DetectSseViaOs(X86Features* features) {
 #if defined(CPU_FEATURES_COMPILER_MSC)

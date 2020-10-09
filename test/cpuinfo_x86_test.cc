@@ -36,6 +36,14 @@ class FakeCpu {
 
   uint32_t GetXCR0Eax() const { return xcr0_eax_; }
 
+  bool SysCtlByName(std::string name) const {
+    const auto itr = sysctlbyname_.find(name);
+    if (itr != sysctlbyname_.end()) {
+      return itr->second;
+    }
+    return 0;
+  }
+
   void SetLeaves(std::map<std::pair<uint32_t, int>, Leaf> configuration) {
     cpuid_leaves_ = std::move(configuration);
   }
@@ -44,8 +52,11 @@ class FakeCpu {
     xcr0_eax_ = os_backups_extended_registers ? -1 : 0;
   }
 
+  void SetSysCtlByName(std::string name) { sysctlbyname_[name] = 1; }
+
  private:
   std::map<std::pair<uint32_t, int>, Leaf> cpuid_leaves_;
+  std::map<std::string, int> sysctlbyname_;
   uint32_t xcr0_eax_;
 };
 
@@ -56,6 +67,10 @@ extern "C" Leaf CpuIdEx(uint32_t leaf_id, int ecx) {
 }
 
 extern "C" uint32_t GetXCR0Eax(void) { return g_fake_cpu->GetXCR0Eax(); }
+
+extern "C" bool SysCtlByName(const char* name) {
+  return g_fake_cpu->SysCtlByName(name);
+}
 
 namespace {
 
@@ -384,6 +399,7 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0000673_P3_KatmaiDP_CPUID.txt
 TEST(CpuidX86Test, P3) {
   g_fake_cpu->SetOsBackupsExtendedRegisters(false);
+  g_fake_cpu->SetSysCtlByName("hw.optional.sse");
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
 flags           : fpu mmx sse
