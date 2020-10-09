@@ -17,6 +17,7 @@
 #include <cassert>
 #include <cstdio>
 #include <map>
+#include <set>
 
 #include "filesystem_for_testing.h"
 #include "gtest/gtest.h"
@@ -36,12 +37,12 @@ class FakeCpu {
 
   uint32_t GetXCR0Eax() const { return xcr0_eax_; }
 
-  bool SysCtlByName(std::string name) const {
-    const auto itr = sysctlbyname_.find(name);
-    if (itr != sysctlbyname_.end()) {
-      return itr->second;
-    }
-    return 0;
+  bool GetDarwinSysCtlByName(std::string name) const {
+    return darwin_sysctlbyname_.count(name);
+  }
+
+  bool GetWindowsIsProcessorFeaturePresent(unsigned long ProcessorFeature) {
+    return windows_isprocessorfeaturepresent_.count(ProcessorFeature);
   }
 
   void SetLeaves(std::map<std::pair<uint32_t, int>, Leaf> configuration) {
@@ -52,11 +53,22 @@ class FakeCpu {
     xcr0_eax_ = os_backups_extended_registers ? -1 : 0;
   }
 
-  void SetSysCtlByName(std::string name) { sysctlbyname_[name] = 1; }
+#if defined(CPU_FEATURES_OS_DARWIN)
+  void SetDarwinSysCtlByName(std::string name) {
+    darwin_sysctlbyname_.insert(name);
+  }
+#endif  // CPU_FEATURES_OS_DARWIN
+
+#if defined(CPU_FEATURES_OS_WINDOWS)
+  bool SetWindowsIsProcessorFeaturePresent(unsigned long ProcessorFeature) {
+    windows_isprocessorfeaturepresent_.insert(ProcessorFeature);
+  }
+#endif  // CPU_FEATURES_OS_WINDOWS
 
  private:
   std::map<std::pair<uint32_t, int>, Leaf> cpuid_leaves_;
-  std::map<std::string, int> sysctlbyname_;
+  std::set<std::string> darwin_sysctlbyname_;
+  std::set<unsigned> windows_isprocessorfeaturepresent_;
   uint32_t xcr0_eax_;
 };
 
@@ -68,9 +80,17 @@ extern "C" Leaf GetCpuidLeaf(uint32_t leaf_id, int ecx) {
 
 extern "C" uint32_t GetXCR0Eax(void) { return g_fake_cpu->GetXCR0Eax(); }
 
-extern "C" bool SysCtlByName(const char* name) {
-  return g_fake_cpu->SysCtlByName(name);
+#if defined(CPU_FEATURES_OS_DARWIN)
+extern "C" bool GetDarwinSysCtlByName(const char* name) {
+  return g_fake_cpu->GetDarwinSysCtlByName(name);
 }
+#endif  // CPU_FEATURES_OS_DARWIN
+
+#if defined(CPU_FEATURES_OS_WINDOWS)
+extern "C" bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
+  return g_fake_cpu->GetWindowsIsProcessorFeaturePresent(ProcessorFeature);
+}
+#endif  // CPU_FEATURES_OS_WINDOWS
 
 namespace {
 
@@ -300,18 +320,28 @@ TEST_F(CpuidX86Test, AMD_K15) {
 TEST_F(CpuidX86Test, Nehalem) {
   // Pre AVX cpus don't have xsave
   g_fake_cpu->SetOsBackupsExtendedRegisters(false);
-  // On Darwin we fake sysctlbyname
-  g_fake_cpu->SetSysCtlByName("hw.optional.sse");
-  g_fake_cpu->SetSysCtlByName("hw.optional.sse2");
-  g_fake_cpu->SetSysCtlByName("hw.optional.sse3");
-  g_fake_cpu->SetSysCtlByName("hw.optional.supplementalsse3");
-  g_fake_cpu->SetSysCtlByName("hw.optional.sse4_1");
-  g_fake_cpu->SetSysCtlByName("hw.optional.sse4_2");
-  // On Linux we fake /proc/cpuinfo
+#if defined(CPU_FEATURES_OS_WINDOWS)
+  g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
+      PF_XMMI_INSTRUCTIONS_AVAILABLE);
+  g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
+      PF_XMMI64_INSTRUCTIONS_AVAILABLE);
+  g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
+      PF_SSE3_INSTRUCTIONS_AVAILABLE);
+#endif  // CPU_FEATURES_OS_WINDOWS
+#if defined(CPU_FEATURES_OS_DARWIN)
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse");
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse2");
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse3");
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.supplementalsse3");
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_1");
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_2");
+#endif  // CPU_FEATURES_OS_DARWIN
+#if defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(processor       :
 flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
 )");
+#endif  // CPU_FEATURES_OS_LINUX_OR_ANDROID
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x0000000B, 0x756E6547, 0x6C65746E, 0x49656E69}},
       {{0x00000001, 0}, Leaf{0x000106A2, 0x00100800, 0x00BCE3BD, 0xBFEBFBFF}},
@@ -351,12 +381,12 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
   FillX86BrandString(brand_string);
   EXPECT_STREQ(brand_string, "Genuine Intel(R) CPU           @ 0000 @ 1.87GHz");
 
-#ifndef CPU_FEATURES_OS_WINDOWS
-  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
-  // feature detection > sse3.
   EXPECT_TRUE(info.features.sse);
   EXPECT_TRUE(info.features.sse2);
   EXPECT_TRUE(info.features.sse3);
+#ifndef CPU_FEATURES_OS_WINDOWS
+  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
+  // feature detection > sse3.
   EXPECT_TRUE(info.features.ssse3);
   EXPECT_TRUE(info.features.sse4_1);
   EXPECT_TRUE(info.features.sse4_2);
@@ -367,18 +397,28 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
 TEST_F(CpuidX86Test, Atom) {
   // Pre AVX cpus don't have xsave
   g_fake_cpu->SetOsBackupsExtendedRegisters(false);
-  // On Darwin we fake sysctlbyname
-  g_fake_cpu->SetSysCtlByName("hw.optional.sse");
-  g_fake_cpu->SetSysCtlByName("hw.optional.sse2");
-  g_fake_cpu->SetSysCtlByName("hw.optional.sse3");
-  g_fake_cpu->SetSysCtlByName("hw.optional.supplementalsse3");
-  g_fake_cpu->SetSysCtlByName("hw.optional.sse4_1");
-  g_fake_cpu->SetSysCtlByName("hw.optional.sse4_2");
-  // On Linux we fake /proc/cpuinfo
+#if defined(CPU_FEATURES_OS_WINDOWS)
+  g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
+      PF_XMMI_INSTRUCTIONS_AVAILABLE);
+  g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
+      PF_XMMI64_INSTRUCTIONS_AVAILABLE);
+  g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
+      PF_SSE3_INSTRUCTIONS_AVAILABLE);
+#endif  // CPU_FEATURES_OS_WINDOWS
+#if defined(CPU_FEATURES_OS_DARWIN)
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse");
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse2");
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse3");
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.supplementalsse3");
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_1");
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_2");
+#endif  // CPU_FEATURES_OS_DARWIN
+#if defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
 flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
 )");
+#endif  // CPU_FEATURES_OS_LINUX_OR_ANDROID
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x0000000B, 0x756E6547, 0x6C65746E, 0x49656E69}},
       {{0x00000001, 0}, Leaf{0x00030673, 0x00100800, 0x41D8E3BF, 0xBFEBFBFF}},
@@ -418,12 +458,12 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
   FillX86BrandString(brand_string);
   EXPECT_STREQ(brand_string, "      Intel(R) Celeron(R) CPU  J1900  @ 1.99GHz");
 
-#ifndef CPU_FEATURES_OS_WINDOWS
-  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
-  // feature detection > sse3.
   EXPECT_TRUE(info.features.sse);
   EXPECT_TRUE(info.features.sse2);
   EXPECT_TRUE(info.features.sse3);
+#ifndef CPU_FEATURES_OS_WINDOWS
+  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
+  // feature detection > sse3.
   EXPECT_TRUE(info.features.ssse3);
   EXPECT_TRUE(info.features.sse4_1);
   EXPECT_TRUE(info.features.sse4_2);
@@ -434,13 +474,23 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
 TEST_F(CpuidX86Test, P3) {
   // Pre AVX cpus don't have xsave
   g_fake_cpu->SetOsBackupsExtendedRegisters(false);
-  // On Darwin we fake sysctlbyname
-  g_fake_cpu->SetSysCtlByName("hw.optional.sse");
-  // On Linux we fake /proc/cpuinfo
+#if defined(CPU_FEATURES_OS_WINDOWS)
+  g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
+      PF_XMMI_INSTRUCTIONS_AVAILABLE);
+  g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
+      PF_XMMI64_INSTRUCTIONS_AVAILABLE);
+  g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
+      PF_SSE3_INSTRUCTIONS_AVAILABLE);
+#endif  // CPU_FEATURES_OS_WINDOWS
+#if defined(CPU_FEATURES_OS_DARWIN)
+  g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse");
+#endif  // CPU_FEATURES_OS_DARWIN
+#if defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
 flags           : fpu mmx sse
 )");
+#endif  // CPU_FEATURES_OS_LINUX_OR_ANDROID
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x00000003, 0x756E6547, 0x6C65746E, 0x49656E69}},
       {{0x00000001, 0}, Leaf{0x00000673, 0x00000000, 0x00000000, 0x0387FBFF}},
@@ -460,12 +510,12 @@ flags           : fpu mmx sse
   EXPECT_STREQ(brand_string, "");
 
   EXPECT_TRUE(info.features.mmx);
-#ifndef CPU_FEATURES_OS_WINDOWS
-  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
-  // feature detection > sse3.
   EXPECT_TRUE(info.features.sse);
   EXPECT_FALSE(info.features.sse2);
   EXPECT_FALSE(info.features.sse3);
+#ifndef CPU_FEATURES_OS_WINDOWS
+  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
+  // feature detection > sse3.
   EXPECT_FALSE(info.features.ssse3);
   EXPECT_FALSE(info.features.sse4_1);
   EXPECT_FALSE(info.features.sse4_2);

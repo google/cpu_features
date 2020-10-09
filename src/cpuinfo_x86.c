@@ -1129,39 +1129,53 @@ static OsSupport CheckOsSupport(const uint32_t max_cpuid_leaf) {
   return os_support;
 }
 
-#if defined(HAVE_SYSCTLBYNAME)
+#if defined(CPU_FEATURES_OS_WINDOWS)
 #if defined(CPU_FEATURES_MOCK_CPUID_X86)
-extern bool SysCtlByName(const char* name);
-#else
-static bool SysCtlByName(const char* name) {
+extern bool GetWindowsIsProcessorFeaturePresent(DWORD);
+#else  // CPU_FEATURES_MOCK_CPUID_X86
+static bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
+  return IsProcessorFeaturePresent(ProcessorFeature);
+}
+#endif
+#endif  // CPU_FEATURES_OS_WINDOWS
+
+#if defined(CPU_FEATURES_OS_DARWIN) && defined(HAVE_SYSCTLBYNAME)
+#if defined(CPU_FEATURES_MOCK_CPUID_X86)
+extern bool GetDarwinSysCtlByName(const char*);
+#else  // CPU_FEATURES_MOCK_CPUID_X86
+static bool GetDarwinSysCtlByName(const char* name) {
   int enabled;
   size_t enabled_len = sizeof(enabled);
   const int failure = sysctlbyname(name, &enabled, &enabled_len, NULL, 0);
   return failure ? false : enabled;
 }
-#endif  // CPU_FEATURES_MOCK_CPUID_X86
-#endif  // HAVE_SYSCTLBYNAME
+#endif
+#endif  // CPU_FEATURES_OS_DARWIN && HAVE_SYSCTLBYNAME
 
 static void DetectSseViaOs(X86Features* features) {
-#if defined(CPU_FEATURES_COMPILER_MSC)
+#if defined(CPU_FEATURES_OS_WINDOWS)
   // https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-isprocessorfeaturepresent
-  features->sse = IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
-  features->sse2 = IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
-  features->sse3 = IsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
+  features->sse =
+      GetWindowsIsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
+  features->sse2 =
+      GetWindowsIsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
+  features->sse3 =
+      GetWindowsIsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
 #elif defined(HAVE_UTSNAME_H)
   struct utsname buf;
   uname(&buf);
+#if defined(CPU_FEATURES_OS_DARWIN) && defined(HAVE_SYSCTLBYNAME)
   if (CpuFeatures_StringView_IsEquals(str(buf.sysname), str("Darwin"))) {
-#if defined(HAVE_SYSCTLBYNAME)
     // Handling Darwin platform through sysctlbyname when available.
-    features->sse = SysCtlByName("hw.optional.sse");
-    features->sse2 = SysCtlByName("hw.optional.sse2");
-    features->sse3 = SysCtlByName("hw.optional.sse3");
-    features->ssse3 = SysCtlByName("hw.optional.supplementalsse3");
-    features->sse4_1 = SysCtlByName("hw.optional.sse4_1");
-    features->sse4_2 = SysCtlByName("hw.optional.sse4_2");
-#endif  // HAVE_SYSCTLBYNAME
-  } else if (CpuFeatures_StringView_IsEquals(str(buf.sysname), str("Linux"))) {
+    features->sse = GetDarwinSysCtlByName("hw.optional.sse");
+    features->sse2 = GetDarwinSysCtlByName("hw.optional.sse2");
+    features->sse3 = GetDarwinSysCtlByName("hw.optional.sse3");
+    features->ssse3 = GetDarwinSysCtlByName("hw.optional.supplementalsse3");
+    features->sse4_1 = GetDarwinSysCtlByName("hw.optional.sse4_1");
+    features->sse4_2 = GetDarwinSysCtlByName("hw.optional.sse4_2");
+  }
+#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
+  if (CpuFeatures_StringView_IsEquals(str(buf.sysname), str("Linux"))) {
     // Handling Linux platform through /proc/cpuinfo when available.
     const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");
     if (fd >= 0) {
@@ -1186,10 +1200,11 @@ static void DetectSseViaOs(X86Features* features) {
       }
       CpuFeatures_CloseFile(fd);
     }
-  } else {
-    // Failed to probe the system.
   }
-#else   // HAVE_UTSNAME_H
+#else  // CPU_FEATURES_OS_DARWIN || CPU_FEATURES_OS_LINUX_OR_ANDROID
+#error "Unsupported fallback detection of SSE OS support."
+#endif
+#else  // HAVE_UTSNAME_H
 #error "Unsupported fallback detection of SSE OS support."
 #endif
 }
