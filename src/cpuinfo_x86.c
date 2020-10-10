@@ -25,6 +25,13 @@
 #error "Cannot compile cpuinfo_x86 on a non x86 platform."
 #endif
 
+// Generation of feature's getters/setters functions and kGetters, kSetters,
+// kCpuInfoFlags global tables.
+#define DEFINE_TABLE_FEATURE_TYPE X86Features
+#define DEFINE_TABLE_DB_FILENAME "cpuinfo_x86_db.inl"
+#define DEFINE_TABLE_DONT_GENERATE_HWCAPS
+#include "define_tables.h"
+
 // The following includes are necessary to provide SSE detections on pre-AVX
 // microarchitectures.
 #if defined(CPU_FEATURES_OS_WINDOWS)
@@ -1486,259 +1493,13 @@ void FillX86BrandString(char brand_string[49]) {
 
 int GetX86FeaturesEnumValue(const X86Features* features,
                             X86FeaturesEnum value) {
-  switch (value) {
-    case X86_FPU:
-      return features->fpu;
-    case X86_TSC:
-      return features->tsc;
-    case X86_CX8:
-      return features->cx8;
-    case X86_CLFSH:
-      return features->clfsh;
-    case X86_MMX:
-      return features->mmx;
-    case X86_AES:
-      return features->aes;
-    case X86_ERMS:
-      return features->erms;
-    case X86_F16C:
-      return features->f16c;
-    case X86_FMA4:
-      return features->fma4;
-    case X86_FMA3:
-      return features->fma3;
-    case X86_VAES:
-      return features->vaes;
-    case X86_VPCLMULQDQ:
-      return features->vpclmulqdq;
-    case X86_BMI1:
-      return features->bmi1;
-    case X86_HLE:
-      return features->hle;
-    case X86_BMI2:
-      return features->bmi2;
-    case X86_RTM:
-      return features->rtm;
-    case X86_RDSEED:
-      return features->rdseed;
-    case X86_CLFLUSHOPT:
-      return features->clflushopt;
-    case X86_CLWB:
-      return features->clwb;
-    case X86_SSE:
-      return features->sse;
-    case X86_SSE2:
-      return features->sse2;
-    case X86_SSE3:
-      return features->sse3;
-    case X86_SSSE3:
-      return features->ssse3;
-    case X86_SSE4_1:
-      return features->sse4_1;
-    case X86_SSE4_2:
-      return features->sse4_2;
-    case X86_SSE4A:
-      return features->sse4a;
-    case X86_AVX:
-      return features->avx;
-    case X86_AVX2:
-      return features->avx2;
-    case X86_AVX512F:
-      return features->avx512f;
-    case X86_AVX512CD:
-      return features->avx512cd;
-    case X86_AVX512ER:
-      return features->avx512er;
-    case X86_AVX512PF:
-      return features->avx512pf;
-    case X86_AVX512BW:
-      return features->avx512bw;
-    case X86_AVX512DQ:
-      return features->avx512dq;
-    case X86_AVX512VL:
-      return features->avx512vl;
-    case X86_AVX512IFMA:
-      return features->avx512ifma;
-    case X86_AVX512VBMI:
-      return features->avx512vbmi;
-    case X86_AVX512VBMI2:
-      return features->avx512vbmi2;
-    case X86_AVX512VNNI:
-      return features->avx512vnni;
-    case X86_AVX512BITALG:
-      return features->avx512bitalg;
-    case X86_AVX512VPOPCNTDQ:
-      return features->avx512vpopcntdq;
-    case X86_AVX512_4VNNIW:
-      return features->avx512_4vnniw;
-    case X86_AVX512_4VBMI2:
-      return features->avx512_4vbmi2;
-    case X86_AVX512_SECOND_FMA:
-      return features->avx512_second_fma;
-    case X86_AVX512_4FMAPS:
-      return features->avx512_4fmaps;
-    case X86_AVX512_BF16:
-      return features->avx512_bf16;
-    case X86_AVX512_VP2INTERSECT:
-      return features->avx512_vp2intersect;
-    case X86_AMX_BF16:
-      return features->amx_bf16;
-    case X86_AMX_TILE:
-      return features->amx_tile;
-    case X86_AMX_INT8:
-      return features->amx_int8;
-    case X86_PCLMULQDQ:
-      return features->pclmulqdq;
-    case X86_SMX:
-      return features->smx;
-    case X86_SGX:
-      return features->sgx;
-    case X86_CX16:
-      return features->cx16;
-    case X86_SHA:
-      return features->sha;
-    case X86_POPCNT:
-      return features->popcnt;
-    case X86_MOVBE:
-      return features->movbe;
-    case X86_RDRND:
-      return features->rdrnd;
-    case X86_DCA:
-      return features->dca;
-    case X86_SS:
-      return features->ss;
-    case X86_LAST_:
-      break;
-  }
-  return false;
+  if (value >= X86_LAST_) return false;
+  return kGetters[value](features);
 }
 
 const char* GetX86FeaturesEnumName(X86FeaturesEnum value) {
-  switch (value) {
-    case X86_FPU:
-      return "fpu";
-    case X86_TSC:
-      return "tsc";
-    case X86_CX8:
-      return "cx8";
-    case X86_CLFSH:
-      return "clfsh";
-    case X86_MMX:
-      return "mmx";
-    case X86_AES:
-      return "aes";
-    case X86_ERMS:
-      return "erms";
-    case X86_F16C:
-      return "f16c";
-    case X86_FMA4:
-      return "fma4";
-    case X86_FMA3:
-      return "fma3";
-    case X86_VAES:
-      return "vaes";
-    case X86_VPCLMULQDQ:
-      return "vpclmulqdq";
-    case X86_BMI1:
-      return "bmi1";
-    case X86_HLE:
-      return "hle";
-    case X86_BMI2:
-      return "bmi2";
-    case X86_RTM:
-      return "rtm";
-    case X86_RDSEED:
-      return "rdseed";
-    case X86_CLFLUSHOPT:
-      return "clflushopt";
-    case X86_CLWB:
-      return "clwb";
-    case X86_SSE:
-      return "sse";
-    case X86_SSE2:
-      return "sse2";
-    case X86_SSE3:
-      return "sse3";
-    case X86_SSSE3:
-      return "ssse3";
-    case X86_SSE4_1:
-      return "sse4_1";
-    case X86_SSE4_2:
-      return "sse4_2";
-    case X86_SSE4A:
-      return "sse4a";
-    case X86_AVX:
-      return "avx";
-    case X86_AVX2:
-      return "avx2";
-    case X86_AVX512F:
-      return "avx512f";
-    case X86_AVX512CD:
-      return "avx512cd";
-    case X86_AVX512ER:
-      return "avx512er";
-    case X86_AVX512PF:
-      return "avx512pf";
-    case X86_AVX512BW:
-      return "avx512bw";
-    case X86_AVX512DQ:
-      return "avx512dq";
-    case X86_AVX512VL:
-      return "avx512vl";
-    case X86_AVX512IFMA:
-      return "avx512ifma";
-    case X86_AVX512VBMI:
-      return "avx512vbmi";
-    case X86_AVX512VBMI2:
-      return "avx512vbmi2";
-    case X86_AVX512VNNI:
-      return "avx512vnni";
-    case X86_AVX512BITALG:
-      return "avx512bitalg";
-    case X86_AVX512VPOPCNTDQ:
-      return "avx512vpopcntdq";
-    case X86_AVX512_4VNNIW:
-      return "avx512_4vnniw";
-    case X86_AVX512_4VBMI2:
-      return "avx512_4vbmi2";
-    case X86_AVX512_SECOND_FMA:
-      return "avx512_second_fma";
-    case X86_AVX512_4FMAPS:
-      return "avx512_4fmaps";
-    case X86_AVX512_BF16:
-      return "avx512_bf16";
-    case X86_AVX512_VP2INTERSECT:
-      return "avx512_vp2intersect";
-    case X86_AMX_BF16:
-      return "amx_bf16";
-    case X86_AMX_TILE:
-      return "amx_tile";
-    case X86_AMX_INT8:
-      return "amx_int8";
-    case X86_PCLMULQDQ:
-      return "pclmulqdq";
-    case X86_SMX:
-      return "smx";
-    case X86_SGX:
-      return "sgx";
-    case X86_CX16:
-      return "cx16";
-    case X86_SHA:
-      return "sha";
-    case X86_POPCNT:
-      return "popcnt";
-    case X86_MOVBE:
-      return "movbe";
-    case X86_RDRND:
-      return "rdrnd";
-    case X86_DCA:
-      return "dca";
-    case X86_SS:
-      return "ss";
-    case X86_LAST_:
-      break;
-  }
-  return "unknown_feature";
+  if (value >= X86_LAST_) return "unknown_feature";
+  return kCpuInfoFlags[value];
 }
 
 const char* GetX86MicroarchitectureName(X86Microarchitecture uarch) {

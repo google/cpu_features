@@ -114,9 +114,7 @@ setup_include_and_definitions(utils)
 if(UNIX)
   add_library(unix_based_hardware_detection OBJECT
     ${PROJECT_SOURCE_DIR}/include/internal/hwcaps.h
-    ${PROJECT_SOURCE_DIR}/include/internal/unix_features_aggregator.h
     ${PROJECT_SOURCE_DIR}/src/hwcaps.c
-    ${PROJECT_SOURCE_DIR}/src/unix_features_aggregator.c
   )
   setup_include_and_definitions(unix_based_hardware_detection)
   check_include_file(dlfcn.h HAVE_DLFCN_H)
