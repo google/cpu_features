@@ -44,7 +44,7 @@
 // the data accordingly.
 
 // We use a bump allocator to allocate strings and nodes of the tree,
-// Memory is not intented to be reclaimed.
+// Memory is not intended to be reclaimed.
 typedef struct {
   char* ptr;
   size_t size;
