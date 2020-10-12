@@ -21,6 +21,24 @@
 #include "internal/filesystem.h"
 #include "internal/string_view.h"
 
+static bool IsSet(const uint32_t mask, const uint32_t value) {
+  if (mask == 0) return false;
+  return (value & mask) == mask;
+}
+
+bool CpuFeatures_IsHwCapsSet(const HardwareCapabilities hwcaps_mask,
+                             const HardwareCapabilities hwcaps) {
+  return IsSet(hwcaps_mask.hwcaps, hwcaps.hwcaps) ||
+         IsSet(hwcaps_mask.hwcaps2, hwcaps.hwcaps2);
+}
+
+#ifdef CPU_FEATURES_TEST
+// In test mode, hwcaps_for_testing will define the following functions.
+HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void);
+PlatformType CpuFeatures_GetPlatformType(void);
+#else
+
+// Debug facilities
 #if defined(NDEBUG)
 #define D(...)
 #else
@@ -36,9 +54,12 @@
 // Implementation of GetElfHwcapFromGetauxval
 ////////////////////////////////////////////////////////////////////////////////
 
-#if defined(CPU_FEATURES_MOCK_GET_ELF_HWCAP_FROM_GETAUXVAL)
-// Implementation will be provided by test/hwcaps_for_testing.cc.
-#elif defined(HAVE_STRONG_GETAUXVAL)
+#define AT_HWCAP 16
+#define AT_HWCAP2 26
+#define AT_PLATFORM 15
+#define AT_BASE_PLATFORM 24
+
+#if defined(HAVE_STRONG_GETAUXVAL)
 #include <sys/auxv.h>
 static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
   return getauxval(hwcap_type);
@@ -60,10 +81,6 @@ static unsigned long GetElfHwcapFromGetauxval(uint32_t hwcap_type) {
 // initialization layer.
 
 #include <dlfcn.h>
-#define AT_HWCAP 16
-#define AT_HWCAP2 26
-#define AT_PLATFORM 15
-#define AT_BASE_PLATFORM 24
 
 typedef unsigned long getauxval_func_t(unsigned long);
 
@@ -161,3 +178,5 @@ PlatformType CpuFeatures_GetPlatformType(void) {
                                       sizeof(type.base_platform));
   return type;
 }
+
+#endif  // CPU_FEATURES_TEST
