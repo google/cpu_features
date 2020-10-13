@@ -15,7 +15,7 @@
 // The following preprocessor constants must be defined before including this
 // file:
 //  - DEFINE_TABLE_FEATURE_TYPE, the underlying type (e.g. X86Features)
-//  - DEFINE_TABLE_DB_FILENAME, the db file (e.g. "cpuinfo_x86_db.inl")
+//  - DEFINE_TABLE_FEATURES, the list of FEATURE macros to be inserted.
 
 // This file is to be included once per `cpuinfo_XXX.c` in order to construct
 // feature getters and setters functions as well as several enum indexed tables
@@ -33,17 +33,14 @@
 #define SRC_DEFINE_TABLES_H_
 
 #define FEATURE(ENUM, NAME, CPUINFO_FLAG, HWCAP, HWCAP2) [ENUM] = CPUINFO_FLAG,
-static const char* kCpuInfoFlags[] = {
-#include DEFINE_TABLE_DB_FILENAME
-};
+static const char* kCpuInfoFlags[] = {DEFINE_TABLE_FEATURES};
 #undef FEATURE
 
 #ifndef DEFINE_TABLE_DONT_GENERATE_HWCAPS
 #define FEATURE(ENUM, NAME, CPUINFO_FLAG, HWCAP, HWCAP2) \
   [ENUM] = (HardwareCapabilities){HWCAP, HWCAP2},
 static const HardwareCapabilities kHardwareCapabilities[] = {
-#include DEFINE_TABLE_DB_FILENAME
-};
+    DEFINE_TABLE_FEATURES};
 #undef FEATURE
 #endif  // DEFINE_TABLE_DONT_GENERATE_HWCAPS
 
@@ -54,19 +51,17 @@ static const HardwareCapabilities kHardwareCapabilities[] = {
   static int get_##ENUM(const DEFINE_TABLE_FEATURE_TYPE* features) {        \
     return features->NAME;                                                  \
   }
-#include DEFINE_TABLE_DB_FILENAME
+DEFINE_TABLE_FEATURES
 #undef FEATURE
 
 #define FEATURE(ENUM, NAME, CPUINFO_FLAG, HWCAP, HWCAP2) [ENUM] = set_##ENUM,
-static void (*const kSetters[])(DEFINE_TABLE_FEATURE_TYPE*, bool) = {
-#include DEFINE_TABLE_DB_FILENAME
-};
+static void (*const kSetters[])(DEFINE_TABLE_FEATURE_TYPE*,
+                                bool) = {DEFINE_TABLE_FEATURES};
 #undef FEATURE
 
 #define FEATURE(ENUM, NAME, CPUINFO_FLAG, HWCAP, HWCAP2) [ENUM] = get_##ENUM,
 static int (*const kGetters[])(const DEFINE_TABLE_FEATURE_TYPE*) = {
-#include DEFINE_TABLE_DB_FILENAME
-};
+    DEFINE_TABLE_FEATURES};
 #undef FEATURE
 
 #endif  // SRC_DEFINE_TABLES_H_
