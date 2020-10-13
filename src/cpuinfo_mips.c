@@ -23,8 +23,11 @@
 
 // Generation of feature's getters/setters functions and kGetters, kSetters,
 // kCpuInfoFlags and kHardwareCapabilities global tables.
+#define DEFINE_TABLE_FEATURES                      \
+  FEATURE(MIPS_MSA, msa, "msa", MIPS_HWCAP_MSA, 0) \
+  FEATURE(MIPS_EVA, eva, "eva", 0, 0)              \
+  FEATURE(MIPS_R6, r6, "r6", MIPS_HWCAP_R6, 0)
 #define DEFINE_TABLE_FEATURE_TYPE MipsFeatures
-#define DEFINE_TABLE_DB_FILENAME "cpuinfo_mips_db.inl"
 #include "define_tables.h"
 
 static bool HandleMipsLine(const LineResult result,
