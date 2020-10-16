@@ -66,7 +66,7 @@ echo -e "${ACTION}Commit new revision${NOCOLOR}"
 git add CMakeLists.txt
 git commit -m"Release ${GIT_TAG}"
 
-echo -e "${ACTION}Commit new revision${NOCOLOR}"
+echo -e "${ACTION}Create new tag${NOCOLOR}"
 git tag ${GIT_TAG}
 
 echo -e "${FINISHED}Local release is ready. Run `git push origin --tags`${NOCOLOR}"
