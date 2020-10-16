@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e # Fail on error
+set -u # Treat unset variables as an error and exit immediately
 
 ACTION='\033[1;90m'
 FINISHED='\033[1;96m'
-READY='\033[1;92m'
 NOCOLOR='\033[0m'
 ERROR='\033[0;31m'
 
