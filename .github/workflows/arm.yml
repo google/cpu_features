@@ -1,0 +1,30 @@
+name: ARM
+
+on: [push, pull_request]
+
+jobs:
+  arm:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        targets: [
+          [aarch64-linux-gnu, aarch64],
+          [arm-linux-gnueabihf, arm],
+          [armv8l-linux-gnueabihf, arm],
+          [arm-linux-gnueabi, arm],
+          [aarch64_be-linux-gnu, DISABLED],
+          [armeb-linux-gnueabihf, DISABLED],
+          [armeb-linux-gnueabi, DISABLED]
+        ]
+      fail-fast: false
+    env:
+      CONTINUOUS_INTEGRATION: "true"
+      TOOLCHAIN: LINARO
+      TARGET: ${{ matrix.targets[0] }}
+      QEMU_ARCH: ${{ matrix.targets[1] }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: CMake version
+      run: cmake --version
+    - name: Build
+      run: bash -e -x ./scripts/run_integration.sh

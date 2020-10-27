@@ -1,0 +1,27 @@
+name: MIPS
+
+on: [push, pull_request]
+
+jobs:
+  arm:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        targets: [
+          [mips32, mips],
+          [mips32el, mipsel],
+          [mips64, mips64],
+          [mips64el, mips64el],
+        ]
+      fail-fast: false
+    env:
+      CONTINUOUS_INTEGRATION: "true"
+      TOOLCHAIN: CODESCAPE
+      TARGET: ${{ matrix.targets[0] }}
+      QEMU_ARCH: ${{ matrix.targets[1] }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: CMake version
+      run: cmake --version
+    - name: Build
+      run: bash -e -x ./scripts/run_integration.sh

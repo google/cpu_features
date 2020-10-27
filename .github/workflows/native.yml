@@ -1,0 +1,34 @@
+name: Native
+
+on: [push, pull_request]
+
+jobs:
+  runners:
+    runs-on: ${{ matrix.os[0] }}
+    strategy:
+      matrix:
+        # see: https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+        os: [
+          [ubuntu-20.04, "Unix Makefiles", test, install],
+          [macos-latest, "Xcode", RUN_TESTS, install],
+          [windows-latest, "Visual Studio 16 2019", RUN_TESTS, INSTALL]
+        ]
+        build_types: [Debug, Release]
+      fail-fast: false
+    env:
+      GENERATOR: ${{ matrix.os[1] }}
+      TEST: ${{ matrix.os[2] }}
+      INSTALL: ${{ matrix.os[3] }}
+      BUILD_TYPE: ${{ matrix.build_types }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: CMake version
+      run: cmake --version
+    - name: CMake configure
+      run: cmake -S. -Bbuild -G "${{ env.GENERATOR }}" -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX=install
+    - name: CMake build
+      run: cmake --build build --config ${{ env.BUILD_TYPE }} -v
+    - name: CMake Test
+      run: cmake --build build --config ${{ env.BUILD_TYPE }} --target ${{ env.TEST }} -v
+    - name: CMake Install
+      run: cmake --build build --config ${{ env.BUILD_TYPE }} --target ${{ env.INSTALL }} -v
