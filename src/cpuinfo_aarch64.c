@@ -75,7 +75,8 @@
   FEATURE(AARCH64_BF16, bf16, "bf16", 0, AARCH64_HWCAP2_BF16)                 \
   FEATURE(AARCH64_DGH, dgh, "dgh", 0, AARCH64_HWCAP2_DGH)                     \
   FEATURE(AARCH64_RNG, rng, "rng", 0, AARCH64_HWCAP2_RNG)                     \
-  FEATURE(AARCH64_BTI, bti, "bti", 0, AARCH64_HWCAP2_BTI)
+  FEATURE(AARCH64_BTI, bti, "bti", 0, AARCH64_HWCAP2_BTI)                     \
+  FEATURE(AARCH64_MTE, mte, "mte", 0, AARCH64_HWCAP2_MTE)
 #define DEFINE_TABLE_FEATURE_TYPE Aarch64Features
 #include "define_tables.h"
 

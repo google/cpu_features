@@ -165,6 +165,7 @@ CPU revision    : 3)");
   EXPECT_FALSE(info.features.dgh);
   EXPECT_FALSE(info.features.rng);
   EXPECT_FALSE(info.features.bti);
+  EXPECT_FALSE(info.features.mte);
 }
 
 }  // namespace

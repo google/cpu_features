@@ -79,6 +79,7 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #define AARCH64_HWCAP2_DGH (1UL << 15)
 #define AARCH64_HWCAP2_RNG (1UL << 16)
 #define AARCH64_HWCAP2_BTI (1UL << 17)
+#define AARCH64_HWCAP2_MTE (1UL << 18)
 
 // http://elixir.free-electrons.com/linux/latest/source/arch/arm/include/uapi/asm/hwcap.h
 #define ARM_HWCAP_SWP (1UL << 0)
