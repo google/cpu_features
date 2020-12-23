@@ -29,8 +29,6 @@
 #error "Darwin needs support for sysctlbyname"
 #endif
 #include <sys/sysctl.h>
-#else
-#error "Unsupported OS"
 #endif  // CPU_FEATURES_OS
 
 #if defined(CPU_FEATURES_OS_DARWIN)
