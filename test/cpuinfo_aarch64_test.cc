@@ -30,7 +30,8 @@ class FakeCpu {
   }
 
   int GetDarwinSysCtlByNameValue(std::string name) const {
-    std::map<std::string, int>::const_iterator iter = darwin_sysctlbynamevalue_.find(name);
+    std::map<std::string, int>::const_iterator iter =
+        darwin_sysctlbynamevalue_.find(name);
     if (iter != std::end(darwin_sysctlbynamevalue_)) {
       return iter->second;
     }
@@ -45,6 +46,7 @@ class FakeCpu {
   void SetDarwinSysCtlByNameValue(std::string name, int value) {
     darwin_sysctlbynamevalue_[name] = value;
   }
+
  private:
   std::set<std::string> darwin_sysctlbyname_;
   std::map<std::string, int> darwin_sysctlbynamevalue_;
@@ -56,7 +58,7 @@ extern "C" bool GetDarwinSysCtlByName(const char* name) {
   return g_fake_cpu->GetDarwinSysCtlByName(name);
 }
 
-extern "C" int GetDarwinSysCtlByNameValue(const char *name) {
+extern "C" int GetDarwinSysCtlByNameValue(const char* name) {
   return g_fake_cpu->GetDarwinSysCtlByNameValue(name);
 }
 
@@ -127,7 +129,7 @@ TEST_F(CpuinfoAarch64Test, FromDarwinSysctlFromName) {
   EXPECT_FALSE(info.features.pacg);
 }
 
-#else 
+#else
 
 void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
 

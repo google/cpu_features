@@ -14,7 +14,6 @@
 
 #include "cpuinfo_aarch64.h"
 
-#include <stdio.h>
 #include <assert.h>
 #include <ctype.h>
 
@@ -37,7 +36,7 @@
 #if defined(CPU_FEATURES_OS_DARWIN)
 #if defined(CPU_FEATURES_MOCK_CPUID_ARM64)
 extern bool GetDarwinSysCtlByName(const char*);
-extern int GetDarwinSysCtlByNameValue(const char *);
+extern int GetDarwinSysCtlByNameValue(const char*);
 #else  // CPU_FEATURES_MOCK_CPUID_ARM64
 static bool GetDarwinSysCtlByName(const char* name) {
   int enabled;
