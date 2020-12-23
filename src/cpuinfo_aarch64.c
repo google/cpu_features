@@ -14,6 +14,7 @@
 
 #include "cpuinfo_aarch64.h"
 
+#include <stdio.h>
 #include <assert.h>
 #include <ctype.h>
 
@@ -21,6 +22,37 @@
 #include "internal/hwcaps.h"
 #include "internal/stack_line_reader.h"
 #include "internal/string_view.h"
+
+// The following includes are necessary to provide SSE detections on pre-AVX
+// microarchitectures.
+#if defined(CPU_FEATURES_OS_DARWIN)
+#if !defined(HAVE_SYSCTLBYNAME)
+#error "Darwin needs support for sysctlbyname"
+#endif
+#include <sys/sysctl.h>
+#else
+#error "Unsupported OS"
+#endif  // CPU_FEATURES_OS
+
+#if defined(CPU_FEATURES_OS_DARWIN)
+#if defined(CPU_FEATURES_MOCK_CPUID_ARM64)
+extern bool GetDarwinSysCtlByName(const char*);
+extern int GetDarwinSysCtlByNameValue(const char *);
+#else  // CPU_FEATURES_MOCK_CPUID_ARM64
+static bool GetDarwinSysCtlByName(const char* name) {
+  int enabled;
+  size_t enabled_len = sizeof(enabled);
+  const int failure = sysctlbyname(name, &enabled, &enabled_len, NULL, 0);
+  return failure ? false : enabled;
+}
+static int GetDarwinSysCtlByNameValue(const char* name) {
+  int enabled;
+  size_t enabled_len = sizeof(enabled);
+  const int failure = sysctlbyname(name, &enabled, &enabled_len, NULL, 0);
+  return failure ? 0 : enabled;
+}
+#endif
+#endif  // CPU_FEATURES_OS_DARWIN
 
 // Generation of feature's getters/setters functions and kGetters, kSetters,
 // kCpuInfoFlags and kHardwareCapabilities global tables.
@@ -125,6 +157,23 @@ Aarch64Info GetAarch64Info(void) {
   // /proc/cpuinfo).
   Aarch64Info info = kEmptyAarch64Info;
 
+#if defined(CPU_FEATURES_OS_DARWIN)
+  // Handling Darwin platform through sysctlbyname.
+  info.implementer = GetDarwinSysCtlByNameValue("hw.cputype");
+  info.variant = GetDarwinSysCtlByNameValue("hw.cpusubtype");
+  info.part = GetDarwinSysCtlByNameValue("hw.cpufamily");
+  info.revision = GetDarwinSysCtlByNameValue("hw.cpusubfamily");
+
+  info.features.fp = GetDarwinSysCtlByName("hw.optional.floatingpoint");
+  info.features.fphp = GetDarwinSysCtlByName("hw.optional.neon_hpfp");
+  info.features.sha512 = GetDarwinSysCtlByName("hw.optional.armv8_2_sha512");
+  info.features.atomics = GetDarwinSysCtlByName("hw.optional.armv8_1_atomics");
+  info.features.asimdfhm = GetDarwinSysCtlByName("hw.optional.armv8_2_fhm");
+  info.features.sha3 = GetDarwinSysCtlByName("hw.optional.armv8_2_sha3");
+  info.features.crc32 = GetDarwinSysCtlByName("hw.optional.armv8_crc32");
+
+#else
+
   FillProcCpuInfoData(&info);
   const HardwareCapabilities hwcaps = CpuFeatures_GetHardwareCapabilities();
   for (size_t i = 0; i < AARCH64_LAST_; ++i) {
@@ -132,6 +181,8 @@ Aarch64Info GetAarch64Info(void) {
       kSetters[i](&info.features, true);
     }
   }
+
+#endif
 
   return info;
 }

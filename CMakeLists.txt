@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.0)
 
+if(APPLE)
+  execute_process(COMMAND uname -m OUTPUT_VARIABLE arch OUTPUT_STRIP_TRAILING_WHITESPACE)
+  set(HOST_ARCHITECTURE "${arch}")
+  string(TOLOWER ${HOST_ARCHITECTURE} HOST_ARCHITECTURE)
+endif()
+
 # option() honors normal variables.
 # see: https://cmake.org/cmake/help/git-stage/policy/CMP0077.html
 if(POLICY CMP0077)
@@ -55,16 +61,20 @@ set(PROCESSOR_IS_AARCH64 FALSE)
 set(PROCESSOR_IS_X86 FALSE)
 set(PROCESSOR_IS_POWER FALSE)
 
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "^mips")
-  set(PROCESSOR_IS_MIPS TRUE)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
-  set(PROCESSOR_IS_ARM TRUE)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64")
+if(HOST_ARCHITECTURE MATCHES "^arm64")
   set(PROCESSOR_IS_AARCH64 TRUE)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64|amd64)|(^i.86$)")
-  set(PROCESSOR_IS_X86 TRUE)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
-  set(PROCESSOR_IS_POWER TRUE)
+else()
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "^mips")
+    set(PROCESSOR_IS_MIPS TRUE)
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+    set(PROCESSOR_IS_ARM TRUE)
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^aarch64")
+    set(PROCESSOR_IS_AARCH64 TRUE)
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64|amd64)|(^i.86$)")
+    set(PROCESSOR_IS_X86 TRUE)
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
+    set(PROCESSOR_IS_POWER TRUE)
+  endif()
 endif()
 
 macro(add_cpu_features_headers_and_sources HDRS_LIST_NAME SRCS_LIST_NAME)
@@ -146,7 +156,7 @@ set_property(TARGET cpu_features PROPERTY POSITION_INDEPENDENT_CODE ${BUILD_PIC}
 target_include_directories(cpu_features
   PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cpu_features>
 )
-if(PROCESSOR_IS_X86)
+if(PROCESSOR_IS_X86 OR PROCESSOR_IS_AARCH64)
   if(APPLE)
     target_compile_definitions(cpu_features PRIVATE HAVE_SYSCTLBYNAME)
   endif()
