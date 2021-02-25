@@ -1525,6 +1525,8 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         return AMD_JAGUAR;
       case 0x17:
         return AMD_ZEN;
+      case 0x19:
+        return AMD_ZEN3;
       default:
         return X86_UNKNOWN;
     }
@@ -1617,6 +1619,8 @@ const char* GetX86MicroarchitectureName(X86Microarchitecture uarch) {
       return "AMD_JAGUAR";
     case AMD_ZEN:
       return "AMD_ZEN";
+    case AMD_ZEN3:
+      return "AMD_ZEN3";
   }
   return "unknown microarchitecture";
 }
