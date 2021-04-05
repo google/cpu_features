@@ -1164,6 +1164,19 @@ static void ParseLeaf4(const int max_cpuid_leaf, CacheInfo* info) {
   }
 }
 
+#if defined(CPU_FEATURES_OS_DARWIN)
+#if defined(CPU_FEATURES_MOCK_CPUID_X86)
+extern bool GetDarwinSysCtlByName(const char*);
+#else  // CPU_FEATURES_MOCK_CPUID_X86
+static bool GetDarwinSysCtlByName(const char* name) {
+  int enabled;
+  size_t enabled_len = sizeof(enabled);
+  const int failure = sysctlbyname(name, &enabled, &enabled_len, NULL, 0);
+  return failure ? false : enabled;
+}
+#endif
+#endif  // CPU_FEATURES_OS_DARWIN
+
 // Internal structure to hold the OS support for vector operations.
 // Avoid to recompute them since each call to cpuid is ~100 cycles.
 typedef struct {
@@ -1189,7 +1202,11 @@ static OsSupport CheckOsSupport(const uint32_t max_cpuid_leaf) {
     const uint32_t xcr0_eax = GetXCR0Eax();
     os_support.have_sse_via_cpuid = HasXmmOsXSave(xcr0_eax);
     os_support.have_avx = HasYmmOsXSave(xcr0_eax);
+#if defined(CPU_FEATURES_OS_DARWIN)
+    os_support.have_avx512 = GetDarwinSysCtlByName("hw.optional.avx512f");
+#else
     os_support.have_avx512 = HasZmmOsXSave(xcr0_eax);
+#endif  // CPU_FEATURES_OS_DARWIN
     os_support.have_amx = HasTmmOsXSave(xcr0_eax);
   } else {
     // Atom based or older cpus need to ask the OS for sse support.
@@ -1208,19 +1225,6 @@ static bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
 }
 #endif
 #endif  // CPU_FEATURES_OS_WINDOWS
-
-#if defined(CPU_FEATURES_OS_DARWIN)
-#if defined(CPU_FEATURES_MOCK_CPUID_X86)
-extern bool GetDarwinSysCtlByName(const char*);
-#else  // CPU_FEATURES_MOCK_CPUID_X86
-static bool GetDarwinSysCtlByName(const char* name) {
-  int enabled;
-  size_t enabled_len = sizeof(enabled);
-  const int failure = sysctlbyname(name, &enabled, &enabled_len, NULL, 0);
-  return failure ? false : enabled;
-}
-#endif
-#endif  // CPU_FEATURES_OS_DARWIN
 
 static void DetectSseViaOs(X86Features* features) {
 #if defined(CPU_FEATURES_OS_WINDOWS)
