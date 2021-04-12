@@ -32,7 +32,7 @@ instructions) at runtime.
 <a name="codesample"></a>
 ## Code samples
 
-**Note:** For C++ code, the library functions are defined in the `CpuFeatures` namespace.
+**Note:** For C++ code, the library functions are defined in the `cpu_features` namespace.
 
 ### Checking features at runtime
 
@@ -42,7 +42,7 @@ AES and the SSE4.2 instruction sets:
 ```c
 #include "cpuinfo_x86.h"
 
-// For C++, add `using namespace CpuFeatures;`
+// For C++, add `using namespace cpu_features;`
 static const X86Features features = GetX86Info().features;
 
 void Compute(void) {
@@ -64,7 +64,7 @@ features and then check whether AES and NEON are supported.
 #include <stdbool.h>
 #include "cpuinfo_arm.h"
 
-// For C++, add `using namespace CpuFeatures;`
+// For C++, add `using namespace cpu_features;`
 static const ArmFeatures features = GetArmInfo().features;
 static const bool has_aes_and_neon = features.aes && features.neon;
 
@@ -84,7 +84,7 @@ instruction set (e.g., `g++ -mavx`) and sets `has_avx` accordingly.
 #include <stdbool.h>
 #include "cpuinfo_x86.h"
 
-// For C++, add `using namespace CpuFeatures;`
+// For C++, add `using namespace cpu_features;`
 static const X86Features features = GetX86Info().features;
 static const bool has_avx = CPU_FEATURES_COMPILED_X86_AVX || features.avx;
 
@@ -107,7 +107,7 @@ set&mdash;but only if it's not Sandy Bridge.
 #include <stdbool.h>
 #include "cpuinfo_x86.h"
 
-// For C++, add `using namespace CpuFeatures;`
+// For C++, add `using namespace cpu_features;`
 static const X86Info info = GetX86Info();
 static const X86Microarchitecture uarch = GetX86Microarchitecture(&info);
 static const bool has_fast_avx = info.features.avx && uarch != INTEL_SNB;
