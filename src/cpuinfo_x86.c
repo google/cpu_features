@@ -88,7 +88,8 @@
   FEATURE(X86_MOVBE, movbe, "movbe", 0, 0)                                     \
   FEATURE(X86_RDRND, rdrnd, "rdrnd", 0, 0)                                     \
   FEATURE(X86_DCA, dca, "dca", 0, 0)                                           \
-  FEATURE(X86_SS, ss, "ss", 0, 0)
+  FEATURE(X86_SS, ss, "ss", 0, 0)                                              \
+  FEATURE(X86_ADX, adx, "adx", 0, 0)
 #define DEFINE_TABLE_FEATURE_TYPE X86Features
 #define DEFINE_TABLE_DONT_GENERATE_HWCAPS
 #include "define_tables.h"
@@ -1314,6 +1315,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf,
   features->sha = IsBitSet(leaf_7.ebx, 29);
   features->vaes = IsBitSet(leaf_7.ecx, 9);
   features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
+  features->adx = IsBitSet(leaf_7.ebx, 19);
 
   if (os_support.have_sse_via_os) {
     DetectSseViaOs(features);

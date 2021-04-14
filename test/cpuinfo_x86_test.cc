@@ -148,6 +148,7 @@ TEST_F(CpuidX86Test, SandyBridge) {
   EXPECT_TRUE(features.popcnt);
   EXPECT_FALSE(features.movbe);
   EXPECT_FALSE(features.rdrnd);
+  EXPECT_FALSE(features.adx);
 }
 
 const int KiB = 1024;
