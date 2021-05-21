@@ -89,6 +89,7 @@ typedef struct {
 
   int dca : 1;
   int ss : 1;
+  int adx : 1;
   // Make sure to update X86FeaturesEnum below if you add a field here.
 } X86Features;
 
@@ -214,6 +215,7 @@ typedef enum {
   X86_RDRND,
   X86_DCA,
   X86_SS,
+  X86_ADX,
   X86_LAST_,
 } X86FeaturesEnum;
 
