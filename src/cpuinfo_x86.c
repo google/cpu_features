@@ -107,6 +107,8 @@
 #error "Darwin needs support for sysctlbyname"
 #endif
 #include <sys/sysctl.h>
+#elif defined(CPU_FEATURES_OS_FREEBSD)
+#include <sys/sysctl.h>
 #else
 #error "Unsupported OS"
 #endif  // CPU_FEATURES_OS
@@ -1244,6 +1246,13 @@ static void DetectSseViaOs(X86Features* features) {
   features->ssse3 = GetDarwinSysCtlByName("hw.optional.supplementalsse3");
   features->sse4_1 = GetDarwinSysCtlByName("hw.optional.sse4_1");
   features->sse4_2 = GetDarwinSysCtlByName("hw.optional.sse4_2");
+#elif defined(CPU_FEATURES_OS_FREEBSD)
+  features->sse = sysctlbyname("hw.instruction_sse", NULL, NULL, NULL, 1);
+  features->sse2 = sysctlbyname("hw.instruction_sse2", NULL, NULL, NULL, 1);
+  features->sse3 = sysctlbyname("hw.instruction_sse3", NULL, NULL, NULL, 1);
+  features->ssse3 = sysctlbyname("hw.instruction_supplementalsse3", NULL, NULL, NULL, 1);
+  features->sse4_1 = sysctlbyname("hw.instruction_sse4_1", NULL, NULL, NULL, 1);
+  features->sse4_2 = sysctlbyname("hw.instruction_sse4_2", NULL, NULL, NULL, 1);
 #elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
   // Handling Linux platform through /proc/cpuinfo.
   const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");

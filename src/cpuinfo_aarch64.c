@@ -80,6 +80,11 @@
 #define DEFINE_TABLE_FEATURE_TYPE Aarch64Features
 #include "define_tables.h"
 
+#if defined(CPU_FEATURES_OS_FREEBSD)
+#error "FreeBSD not yet supported on this arch"
+#endif  // CPU_FEATURES_OS
+
+
 static bool HandleAarch64Line(const LineResult result,
                               Aarch64Info* const info) {
   StringView line = result.line;
