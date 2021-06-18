@@ -1421,8 +1421,10 @@ CacheInfo GetX86CacheInfo(void) {
 X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
   if (memcmp(info->vendor, "GenuineIntel", sizeof(info->vendor)) == 0) {
     switch (CPUID(info->family, info->model)) {
+      case CPUID(0x06, 0x1C):  // Intel(R) Atom(TM) CPU 230 @ 1.60GHz
       case CPUID(0x06, 0x35):
       case CPUID(0x06, 0x36):
+      case CPUID(0x06, 0x70):  // https://en.wikichip.org/wiki/intel/atom/230
         // https://en.wikipedia.org/wiki/Bonnell_(microarchitecture)
         return INTEL_ATOM_BNL;
       case CPUID(0x06, 0x37):
