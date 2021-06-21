@@ -7,7 +7,7 @@ All command must be run in this directory (ci/vagrant/freebsd)
 Docker: image
 Vagrant: box
 
-## Build box (image)
+## Build VM
 
 To build a Vagrant Box (aka Docker image)
 
