@@ -107,6 +107,8 @@
 #error "Darwin needs support for sysctlbyname"
 #endif
 #include <sys/sysctl.h>
+#elif defined(CPU_FEATURES_OS_FREEBSD)
+#include <sys/sysctl.h>
 #else
 #error "Unsupported OS"
 #endif  // CPU_FEATURES_OS
@@ -1178,6 +1180,19 @@ static bool GetDarwinSysCtlByName(const char* name) {
 #endif
 #endif  // CPU_FEATURES_OS_DARWIN
 
+#if defined(CPU_FEATURES_OS_FREEBSD)
+#if defined(CPU_FEATURES_MOCK_CPUID_X86)
+extern bool GetFreeBSDSysCtlByName(const char*);
+#else  // CPU_FEATURES_MOCK_CPUID_X86
+static bool GetFreeBSDSysCtlByName(const char* name) {
+  int enabled;
+  size_t enabled_len = sizeof(enabled);
+  const int failure = sysctlbyname(name, &enabled, &enabled_len, NULL, 0);
+  return failure ? false : enabled;
+}
+#endif
+#endif  // CPU_FEATURES_OS_FREEBSD
+
 // Internal structure to hold the OS support for vector operations.
 // Avoid to recompute them since each call to cpuid is ~100 cycles.
 typedef struct {
@@ -1244,6 +1259,14 @@ static void DetectSseViaOs(X86Features* features) {
   features->ssse3 = GetDarwinSysCtlByName("hw.optional.supplementalsse3");
   features->sse4_1 = GetDarwinSysCtlByName("hw.optional.sse4_1");
   features->sse4_2 = GetDarwinSysCtlByName("hw.optional.sse4_2");
+#elif defined(CPU_FEATURES_OS_FREEBSD)
+  // Handling FreeBSD platform through sysctlbyname.
+  features->sse = GetFreeBSDSysCtlByName("hw.instruction_sse");
+  features->sse2 = GetFreeBSDSysCtlByName("hw.instruction_sse2");
+  features->sse3 = GetFreeBSDSysCtlByName("hw.instruction_sse3");
+  features->ssse3 = GetFreeBSDSysCtlByName("hw.instruction_supplementalsse3");
+  features->sse4_1 = GetFreeBSDSysCtlByName("hw.instruction_sse4_1");
+  features->sse4_2 = GetFreeBSDSysCtlByName("hw.instruction_sse4_2");
 #elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
   // Handling Linux platform through /proc/cpuinfo.
   const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");

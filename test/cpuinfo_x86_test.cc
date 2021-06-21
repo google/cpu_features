@@ -58,6 +58,16 @@ class FakeCpu {
   }
 #endif  // CPU_FEATURES_OS_DARWIN
 
+#if defined(CPU_FEATURES_OS_FREEBSD)
+  bool GetFreeBSDSysCtlByName(std::string name) const {
+    return freebsd_sysctlbyname_.count(name);
+  }
+
+  void SetFreeBSDSysCtlByName(std::string name) {
+    freebsd_sysctlbyname_.insert(name);
+  }
+#endif  // CPU_FEATURES_OS_FREEBSD
+
 #if defined(CPU_FEATURES_OS_WINDOWS)
   bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
     return windows_isprocessorfeaturepresent_.count(ProcessorFeature);
@@ -73,6 +83,9 @@ class FakeCpu {
 #if defined(CPU_FEATURES_OS_DARWIN)
   std::set<std::string> darwin_sysctlbyname_;
 #endif  // CPU_FEATURES_OS_DARWIN
+#if defined(CPU_FEATURES_OS_FREEBSD)
+  std::set<std::string> freebsd_sysctlbyname_;
+#endif  // CPU_FEATURES_OS_FREEBSD
 #if defined(CPU_FEATURES_OS_WINDOWS)
   std::set<DWORD> windows_isprocessorfeaturepresent_;
 #endif  // CPU_FEATURES_OS_WINDOWS
@@ -92,6 +105,12 @@ extern "C" bool GetDarwinSysCtlByName(const char* name) {
   return g_fake_cpu->GetDarwinSysCtlByName(name);
 }
 #endif  // CPU_FEATURES_OS_DARWIN
+
+#if defined(CPU_FEATURES_OS_FREEBSD)
+extern "C" bool GetFreeBSDSysCtlByName(const char* name) {
+  return g_fake_cpu->GetFreeBSDSysCtlByName(name);
+}
+#endif  // CPU_FEATURES_OS_FREEBSD
 
 #if defined(CPU_FEATURES_OS_WINDOWS)
 extern "C" bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
@@ -344,6 +363,14 @@ TEST_F(CpuidX86Test, Nehalem) {
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_1");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_2");
 #endif  // CPU_FEATURES_OS_DARWIN
+#if defined(CPU_FEATURES_OS_FREEBSD)
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_sse");
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_sse2");
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_sse3");
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_supplementalsse3");
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_sse4_1");
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_sse4_2");
+#endif  // CPU_FEATURES_OS_FREEBSD
 #if defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(processor       :
@@ -421,6 +448,14 @@ TEST_F(CpuidX86Test, Atom) {
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_1");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_2");
 #endif  // CPU_FEATURES_OS_DARWIN
+#if defined(CPU_FEATURES_OS_FREEBSD)
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_sse");
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_sse2");
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_sse3");
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_supplementalsse3");
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_sse4_1");
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_sse4_2");
+#endif  // CPU_FEATURES_OS_FREEBSD
 #if defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
@@ -489,6 +524,9 @@ TEST_F(CpuidX86Test, P3) {
 #if defined(CPU_FEATURES_OS_DARWIN)
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse");
 #endif  // CPU_FEATURES_OS_DARWIN
+#if defined(CPU_FEATURES_OS_FREEBSD)
+  g_fake_cpu->SetFreeBSDSysCtlByName("hw.instruction_sse");
+#endif  // CPU_FEATURES_OS_FREEBSD
 #if defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
