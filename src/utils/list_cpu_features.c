@@ -340,6 +340,7 @@ static Node* GetCacheTypeString(CacheType cache_type) {
     case CPU_FEATURE_CACHE_PREFETCH:
       return CreateConstantString("prefetch");
   }
+  UNREACHABLE();
 }
 
 static void AddCacheInfo(Node* root, const CacheInfo* cache_info) {

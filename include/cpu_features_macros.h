@@ -213,4 +213,17 @@
 #endif  //  defined(__mips_msa)
 #endif  //  defined(CPU_FEATURES_ARCH_MIPS)
 
+////////////////////////////////////////////////////////////////////////////////
+// Utils
+////////////////////////////////////////////////////////////////////////////////
+
+// Communicates to the compiler that the block is unreachable
+#if defined(CPU_FEATURES_COMPILER_CLANG) || defined(CPU_FEATURES_COMPILER_GCC)
+#define UNREACHABLE() __builtin_unreachable()
+#elif defined(CPU_FEATURES_COMPILER_MSC)
+#define UNREACHABLE() __assume(0)
+#else
+#define UNREACHABLE()
+#endif
+
 #endif  // CPU_FEATURES_INCLUDE_CPU_FEATURES_MACROS_H_
