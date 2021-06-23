@@ -1181,11 +1181,11 @@ static bool GetDarwinSysCtlByName(const char* name) {
 // Internal structure to hold the OS support for vector operations.
 // Avoid to recompute them since each call to cpuid is ~100 cycles.
 typedef struct {
-  bool have_sse;
-  bool have_avx;
-  bool have_avx512;
-  bool have_amx;
-} OsSupport;
+  bool sse_registers;
+  bool avx_registers;
+  bool avx512_registers;
+  bool amx_registers;
+} OsPreserves;
 
 #if defined(CPU_FEATURES_OS_WINDOWS)
 #if defined(CPU_FEATURES_MOCK_CPUID_X86)
@@ -1199,7 +1199,7 @@ static bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
 
 // Reference https://en.wikipedia.org/wiki/CPUID.
 static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
-                       OsSupport* os_support) {
+                       OsPreserves* os_preserves) {
   const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
   const Leaf leaf_7 = SafeCpuId(max_cpuid_leaf, 7);
   const Leaf leaf_7_1 = SafeCpuIdEx(max_cpuid_leaf, 7, 1);
@@ -1258,19 +1258,20 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
     // Here we rely exclusively on cpuid for both CPU and OS support of vector
     // extensions.
     const uint32_t xcr0_eax = GetXCR0Eax();
-    os_support->have_sse = HasXmmOsXSave(xcr0_eax);
-    os_support->have_avx = HasYmmOsXSave(xcr0_eax);
+    os_preserves->sse_registers = HasXmmOsXSave(xcr0_eax);
+    os_preserves->avx_registers = HasYmmOsXSave(xcr0_eax);
 #if defined(CPU_FEATURES_OS_DARWIN)
     // On Darwin AVX512 support is On-demand.
     // We have to query the OS instead of querying the Zmm save/restore state.
     // https://github.com/apple/darwin-xnu/blob/8f02f2a044b9bb1ad951987ef5bab20ec9486310/osfmk/i386/fpu.c#L173-L199
-    os_support->have_avx512 = GetDarwinSysCtlByName("hw.optional.avx512f");
+    os_preserves->avx512_registers =
+        GetDarwinSysCtlByName("hw.optional.avx512f");
 #else
-    os_support->have_avx512 = HasZmmOsXSave(xcr0_eax);
+    os_preserves->avx512_registers = HasZmmOsXSave(xcr0_eax);
 #endif  // CPU_FEATURES_OS_DARWIN
-    os_support->have_amx = HasTmmOsXSave(xcr0_eax);
+    os_preserves->amx_registers = HasTmmOsXSave(xcr0_eax);
 
-    if (os_support->have_sse) {
+    if (os_preserves->sse_registers) {
       features->sse = IsBitSet(leaf_1.edx, 25);
       features->sse2 = IsBitSet(leaf_1.edx, 26);
       features->sse3 = IsBitSet(leaf_1.ecx, 0);
@@ -1278,12 +1279,12 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
       features->sse4_1 = IsBitSet(leaf_1.ecx, 19);
       features->sse4_2 = IsBitSet(leaf_1.ecx, 20);
     }
-    if (os_support->have_avx) {
+    if (os_preserves->avx_registers) {
       features->fma3 = IsBitSet(leaf_1.ecx, 12);
       features->avx = IsBitSet(leaf_1.ecx, 28);
       features->avx2 = IsBitSet(leaf_7.ebx, 5);
     }
-    if (os_support->have_avx512) {
+    if (os_preserves->avx512_registers) {
       features->avx512f = IsBitSet(leaf_7.ebx, 16);
       features->avx512cd = IsBitSet(leaf_7.ebx, 28);
       features->avx512er = IsBitSet(leaf_7.ebx, 27);
@@ -1304,7 +1305,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
       features->avx512_bf16 = IsBitSet(leaf_7_1.eax, 5);
       features->avx512_vp2intersect = IsBitSet(leaf_7.edx, 8);
     }
-    if (os_support->have_amx) {
+    if (os_preserves->amx_registers) {
       features->amx_bf16 = IsBitSet(leaf_7.edx, 22);
       features->amx_tile = IsBitSet(leaf_7.edx, 24);
       features->amx_int8 = IsBitSet(leaf_7.edx, 25);
@@ -1358,33 +1359,33 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
 #error "Unsupported fallback detection of SSE OS support."
 #endif
     // Now that we have queried the OS for SSE support, we report this back to
-    // os_support. This is needed in case of AMD CPU's to enable testing of
+    // os_preserves. This is needed in case of AMD CPU's to enable testing of
     // sse4a (See ParseExtraAMDCpuId below).
-    if (features->sse) os_support->have_sse = true;
+    if (features->sse) os_preserves->sse_registers = true;
   }
 }
 
 // Reference
 // https://en.wikipedia.org/wiki/CPUID#EAX=80000000h:_Get_Highest_Extended_Function_Implemented.
-static void ParseExtraAMDCpuId(X86Info* info, OsSupport os_support) {
+static void ParseExtraAMDCpuId(X86Info* info, OsPreserves os_preserves) {
   const Leaf leaf_80000000 = CpuId(0x80000000);
   const uint32_t max_extended_cpuid_leaf = leaf_80000000.eax;
   const Leaf leaf_80000001 = SafeCpuId(max_extended_cpuid_leaf, 0x80000001);
 
   X86Features* const features = &info->features;
 
-  if (os_support.have_sse) {
+  if (os_preserves.sse_registers) {
     features->sse4a = IsBitSet(leaf_80000001.ecx, 6);
   }
 
-  if (os_support.have_avx) {
+  if (os_preserves.avx_registers) {
     features->fma4 = IsBitSet(leaf_80000001.ecx, 16);
   }
 }
 
 static const X86Info kEmptyX86Info;
 static const CacheInfo kEmptyCacheInfo;
-static const OsSupport kEmptyOsSupport;
+static const OsPreserves kEmptyOsPreserves;
 
 X86Info GetX86Info(void) {
   X86Info info = kEmptyX86Info;
@@ -1393,11 +1394,11 @@ X86Info GetX86Info(void) {
   const bool is_amd = IsVendor(leaf_0, "AuthenticAMD");
   SetVendor(leaf_0, info.vendor);
   if (is_intel || is_amd) {
-    OsSupport os_support = kEmptyOsSupport;
+    OsPreserves os_preserves = kEmptyOsPreserves;
     const uint32_t max_cpuid_leaf = leaf_0.eax;
-    ParseCpuId(max_cpuid_leaf, &info, &os_support);
+    ParseCpuId(max_cpuid_leaf, &info, &os_preserves);
     if (is_amd) {
-      ParseExtraAMDCpuId(&info, os_support);
+      ParseExtraAMDCpuId(&info, os_preserves);
     }
   }
   return info;
