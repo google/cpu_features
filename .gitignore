@@ -1,4 +1,5 @@
 cmake_build/
 build/
+build_cross/
 
 *.swp
