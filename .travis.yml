@@ -5,6 +5,8 @@ cache:
   directories:
     - $HOME/cpu_features_archives
 
+# see: https://docs.travis-ci.com/user/reference/focal/
+dist: focal
 addons:
   apt_packages:
     - ninja-build
@@ -15,18 +17,18 @@ jobs:
     compiler: gcc
     script:
     - cmake --version
-    - cmake -S. -Bbuild -G "Ninja"
+    - cmake -S. -Bbuild
     - cmake --build build --target all -v
     - cmake --build build --target test -v
-    - cmake --build build --target install -v
+    - cmake --build build --target install -v -- DESTDIR=dist
   - os: linux
     compiler: clang
     script:
     - cmake --version
-    - cmake -S. -Bbuild -G "Ninja"
+    - cmake -S. -Bbuild
     - cmake --build build --target all -v
     - cmake --build build --target test -v
-    - cmake --build build --target install -v
+    - cmake --build build --target install -v -- DESTDIR=dist
 
   - os: osx
     compiler: gcc
@@ -48,7 +50,7 @@ jobs:
   - os: windows
     script:
     - cmake --version
-    - cmake -S. -Bbuild -G "Visual Studio 16 2019" -DCMAKE_CONFIGURATION_TYPES=Release
+    - cmake -S. -Bbuild -G "Visual Studio 15 2017 Win64" -DCMAKE_CONFIGURATION_TYPES=Release
     - cmake --build build --config Release --target ALL_BUILD
     - cmake --build build --config Release --target RUN_TESTS
     - cmake --build build --config Release --target INSTALL
@@ -59,19 +61,19 @@ jobs:
     compiler: gcc
     script:
     - cmake --version
-    - cmake -S. -Bbuild -G "Ninja"
+    - cmake -S. -Bbuild
     - cmake --build build --target all -v
     - cmake --build build --target test -v
-    - cmake --build build --target install -v
+    - cmake --build build --target install -v -- DESTDIR=dist
   - os: linux
     arch: ppc64le
     compiler: clang
     script:
     - cmake --version
-    - cmake -S. -Bbuild -G "Ninja"
+    - cmake -S. -Bbuild
     - cmake --build build --target all -v
     - cmake --build build --target test -v
-    - cmake --build build --target install -v
+    - cmake --build build --target install -v -- DESTDIR=dist
 
   # Toolchains for little-endian, 64-bit ARMv8 for GNU/Linux systems
   - os: linux
