@@ -666,21 +666,29 @@ TEST_F(CpuidX86Test, Nehalem) {
       PF_XMMI64_INSTRUCTIONS_AVAILABLE);
   g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
       PF_SSE3_INSTRUCTIONS_AVAILABLE);
-#endif  // CPU_FEATURES_OS_WINDOWS
-#if defined(CPU_FEATURES_OS_DARWIN)
+#elif defined(CPU_FEATURES_OS_DARWIN)
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse2");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse3");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.supplementalsse3");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_1");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_2");
-#endif  // CPU_FEATURES_OS_DARWIN
-#if defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
+#elif defined(CPU_FEATURES_OS_FREEBSD)
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/var/run/dmesg.boot", R"(
+  ---<<BOOT>>---
+Copyright (c) 1992-2020 The FreeBSD Project.
+FreeBSD is a registered trademark of The FreeBSD Foundation.
+  Features=0x1783fbff<FPU,VME,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,MMX,FXSR,SSE,SSE2,HTT>
+  Features2=0x5eda2203<SSE3,PCLMULQDQ,SSSE3,CX16,PCID,SSE4.1,SSE4.2,MOVBE,POPCNT,AESNI,XSAVE,OSXSAVE,RDRAND>
+real memory  = 2147418112 (2047 MB)
+)");
+#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(processor       :
 flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
 )");
-#endif  // CPU_FEATURES_OS_LINUX_OR_ANDROID
+#endif
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x0000000B, 0x756E6547, 0x6C65746E, 0x49656E69}},
       {{0x00000001, 0}, Leaf{0x000106A2, 0x00100800, 0x00BCE3BD, 0xBFEBFBFF}},
@@ -723,13 +731,13 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
   EXPECT_TRUE(info.features.sse);
   EXPECT_TRUE(info.features.sse2);
   EXPECT_TRUE(info.features.sse3);
-#ifndef CPU_FEATURES_OS_WINDOWS
+#if !defined(CPU_FEATURES_OS_WINDOWS)
   // Currently disabled on Windows as IsProcessorFeaturePresent do not support
   // feature detection > sse3.
   EXPECT_TRUE(info.features.ssse3);
   EXPECT_TRUE(info.features.sse4_1);
   EXPECT_TRUE(info.features.sse4_2);
-#endif  // CPU_FEATURES_OS_WINDOWS
+#endif  // !defined(CPU_FEATURES_OS_WINDOWS)
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0030673_Silvermont3_CPUID.txt
@@ -743,21 +751,28 @@ TEST_F(CpuidX86Test, Atom) {
       PF_XMMI64_INSTRUCTIONS_AVAILABLE);
   g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
       PF_SSE3_INSTRUCTIONS_AVAILABLE);
-#endif  // CPU_FEATURES_OS_WINDOWS
-#if defined(CPU_FEATURES_OS_DARWIN)
+#elif defined(CPU_FEATURES_OS_DARWIN)
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse2");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse3");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.supplementalsse3");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_1");
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse4_2");
-#endif  // CPU_FEATURES_OS_DARWIN
-#if defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
+#elif defined(CPU_FEATURES_OS_FREEBSD)
+  fs.CreateFile("/var/run/dmesg.boot", R"(
+  ---<<BOOT>>---
+Copyright (c) 1992-2020 The FreeBSD Project.
+FreeBSD is a registered trademark of The FreeBSD Foundation.
+  Features=0x1783fbff<FPU,VME,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,MMX,FXSR,SSE,SSE2,HTT>
+  Features2=0x5eda2203<SSE3,PCLMULQDQ,SSSE3,CX16,PCID,SSE4.1,SSE4.2,MOVBE,POPCNT,AESNI,XSAVE,OSXSAVE,RDRAND>
+real memory  = 2147418112 (2047 MB)
+)");
+#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
 flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
 )");
-#endif  // CPU_FEATURES_OS_LINUX_OR_ANDROID
+#endif
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x0000000B, 0x756E6547, 0x6C65746E, 0x49656E69}},
       {{0x00000001, 0}, Leaf{0x00030673, 0x00100800, 0x41D8E3BF, 0xBFEBFBFF}},
@@ -800,13 +815,13 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
   EXPECT_TRUE(info.features.sse);
   EXPECT_TRUE(info.features.sse2);
   EXPECT_TRUE(info.features.sse3);
-#ifndef CPU_FEATURES_OS_WINDOWS
+#if !defined(CPU_FEATURES_OS_WINDOWS)
   // Currently disabled on Windows as IsProcessorFeaturePresent do not support
   // feature detection > sse3.
   EXPECT_TRUE(info.features.ssse3);
   EXPECT_TRUE(info.features.sse4_1);
   EXPECT_TRUE(info.features.sse4_2);
-#endif  // CPU_FEATURES_OS_WINDOWS
+#endif  // !defined(CPU_FEATURES_OS_WINDOWS)
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0000673_P3_KatmaiDP_CPUID.txt
@@ -816,16 +831,22 @@ TEST_F(CpuidX86Test, P3) {
 #if defined(CPU_FEATURES_OS_WINDOWS)
   g_fake_cpu->SetWindowsIsProcessorFeaturePresent(
       PF_XMMI_INSTRUCTIONS_AVAILABLE);
-#endif  // CPU_FEATURES_OS_WINDOWS
-#if defined(CPU_FEATURES_OS_DARWIN)
+#elif defined(CPU_FEATURES_OS_DARWIN)
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse");
-#endif  // CPU_FEATURES_OS_DARWIN
-#if defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
+#elif defined(CPU_FEATURES_OS_FREEBSD)
+  fs.CreateFile("/var/run/dmesg.boot", R"(
+  ---<<BOOT>>---
+Copyright (c) 1992-2020 The FreeBSD Project.
+FreeBSD is a registered trademark of The FreeBSD Foundation.
+  Features=0x1783fbff<FPU,VME,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,MMX,FXSR,SSE>
+real memory  = 2147418112 (2047 MB)
+)");
+#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
 flags           : fpu mmx sse
 )");
-#endif  // CPU_FEATURES_OS_LINUX_OR_ANDROID
+#endif
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x00000003, 0x756E6547, 0x6C65746E, 0x49656E69}},
       {{0x00000001, 0}, Leaf{0x00000673, 0x00000000, 0x00000000, 0x0387FBFF}},
@@ -848,13 +869,13 @@ flags           : fpu mmx sse
   EXPECT_TRUE(info.features.sse);
   EXPECT_FALSE(info.features.sse2);
   EXPECT_FALSE(info.features.sse3);
-#ifndef CPU_FEATURES_OS_WINDOWS
+#if !defined(CPU_FEATURES_OS_WINDOWS)
   // Currently disabled on Windows as IsProcessorFeaturePresent do not support
   // feature detection > sse3.
   EXPECT_FALSE(info.features.ssse3);
   EXPECT_FALSE(info.features.sse4_1);
   EXPECT_FALSE(info.features.sse4_2);
-#endif  // CPU_FEATURES_OS_WINDOWS
+#endif  // !defined(CPU_FEATURES_OS_WINDOWS)
 }
 
 // TODO(user): test what happens when xsave/osxsave are not present.
