@@ -113,32 +113,38 @@ CacheInfo GetX86CacheInfo(void);
 
 typedef enum {
   X86_UNKNOWN,
-  INTEL_CORE,      // CORE
-  INTEL_PNR,       // PENRYN
-  INTEL_NHM,       // NEHALEM
-  INTEL_ATOM_BNL,  // BONNELL
-  INTEL_WSM,       // WESTMERE
-  INTEL_SNB,       // SANDYBRIDGE
-  INTEL_IVB,       // IVYBRIDGE
-  INTEL_ATOM_SMT,  // SILVERMONT
-  INTEL_HSW,       // HASWELL
-  INTEL_BDW,       // BROADWELL
-  INTEL_SKL,       // SKYLAKE
-  INTEL_ATOM_GMT,  // GOLDMONT
-  INTEL_KBL,       // KABY LAKE
-  INTEL_CFL,       // COFFEE LAKE
-  INTEL_WHL,       // WHISKEY LAKE
-  INTEL_CNL,       // CANNON LAKE
-  INTEL_ICL,       // ICE LAKE
-  INTEL_TGL,       // TIGER LAKE
-  INTEL_SPR,       // SAPPHIRE RAPIDS
-  AMD_HAMMER,      // K8
-  AMD_K10,         // K10
-  AMD_BOBCAT,      // K14
-  AMD_BULLDOZER,   // K15
-  AMD_JAGUAR,      // K16
-  AMD_ZEN,         // K17
-  AMD_ZEN3,        // K19
+  INTEL_CORE,       // CORE
+  INTEL_PNR,        // PENRYN
+  INTEL_NHM,        // NEHALEM
+  INTEL_ATOM_BNL,   // BONNELL
+  INTEL_WSM,        // WESTMERE
+  INTEL_SNB,        // SANDYBRIDGE
+  INTEL_IVB,        // IVYBRIDGE
+  INTEL_ATOM_SMT,   // SILVERMONT
+  INTEL_HSW,        // HASWELL
+  INTEL_BDW,        // BROADWELL
+  INTEL_SKL,        // SKYLAKE
+  INTEL_ATOM_GMT,   // GOLDMONT
+  INTEL_KBL,        // KABY LAKE
+  INTEL_CFL,        // COFFEE LAKE
+  INTEL_WHL,        // WHISKEY LAKE
+  INTEL_CNL,        // CANNON LAKE
+  INTEL_ICL,        // ICE LAKE
+  INTEL_TGL,        // TIGER LAKE
+  INTEL_SPR,        // SAPPHIRE RAPIDS
+  AMD_HAMMER,       // K8 Hammer
+  AMD_K10,          // K10
+  AMD_BOBCAT,       // K14 BOBCAT
+  AMD_PILEDRIVER,   // K15 PILEDRIVER
+  AMD_STREAMROLLER, // K15 STREAMROLLER
+  AMD_EXCAVATOR,    // K15 EXCAVATOR
+  AMD_BULLDOZER,    // K15 Bulldozer
+  AMD_JAGUAR,       // K16 JAGUAR
+  AMD_PUMA,         // K16 PUMA
+  AMD_ZEN,          // K17 ZEN
+  AMD_ZEN_PLUS,     // K17 ZEN+
+  AMD_ZEN2,         // K17 ZEN 2
+  AMD_ZEN3,         // K19 ZEN 3
 } X86Microarchitecture;
 
 // Returns the underlying microarchitecture by looking at X86Info's vendor,
