@@ -297,6 +297,30 @@ TEST_F(CpuidX86Test, HSWCache) {
   EXPECT_EQ(info.levels[3].partitioning, 1);
 }
 
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0500F01_K14_Bobcat_CPUID.txt
+TEST_F(CpuidX86Test, AMD_K14_BOBCAT_ZACATE) {
+    g_fake_cpu->SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000006, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x00000001, 0}, Leaf{0x00500F10, 0x00020800, 0x00802209, 0x178BFBFF}},
+      {{0x00000002, 0}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000000}},
+      {{0x00000003, 0}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000000}},
+      {{0x00000005, 0}, Leaf{0x00000040, 0x00000040, 0x00000003, 0x00000000}},
+      {{0x00000006, 0}, Leaf{0x00000000, 0x00000000, 0x00000001, 0x00000000}},
+      {{0x80000000, 0}, Leaf{0x8000001B, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000001, 0}, Leaf{0x00500F10, 0x00001242, 0x000035FF, 0x2FD3FBFF}},
+      {{0x80000002, 0}, Leaf{0x20444D41, 0x35332D45, 0x72502030, 0x7365636F}},
+      {{0x80000003, 0}, Leaf{0x00726F73, 0x00000000, 0x00000000, 0x00000000}},
+      {{0x80000004, 0}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000000}},
+      {{0x80000005, 0}, Leaf{0xFF08FF08, 0xFF280000, 0x20080140, 0x20020140}},
+    });
+    const auto info = GetX86Info();
+
+    EXPECT_STREQ(info.vendor, "AuthenticAMD");
+    EXPECT_EQ(info.family, 0x14);
+    EXPECT_EQ(info.model, 0x01);
+    EXPECT_EQ(GetX86Microarchitecture(&info),X86Microarchitecture::AMD_BOBCAT);
+}
+
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0600F20_K15_AbuDhabi_CPUID0.txt
 TEST_F(CpuidX86Test, AMD_K15_EXCAVATOR_STONEY_RIDGE) {
     g_fake_cpu->SetLeaves({
