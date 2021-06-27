@@ -321,7 +321,7 @@ TEST_F(CpuidX86Test, AMD_K14_BOBCAT_ZACATE) {
     EXPECT_EQ(GetX86Microarchitecture(&info),X86Microarchitecture::AMD_BOBCAT);
 }
 
-// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0600F20_K15_AbuDhabi_CPUID0.txt
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0670F00_K15_StoneyRidge_CPUID.txt
 TEST_F(CpuidX86Test, AMD_K15_EXCAVATOR_STONEY_RIDGE) {
     g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x0000000D, 0x68747541, 0x444D4163, 0x69746E65}},
@@ -369,7 +369,7 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI) {
     EXPECT_STREQ(brand_string, "AMD Opteron(tm) Processor 6376                 ");
 }
 
-// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0820F01_K17_Dali_CPUID.txt
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0600F12_K15_Interlagos_CPUID3.txt
 TEST_F(CpuidX86Test, AMD_K15_BULLDOZER_INTERLAGOS) {
     g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x0000000D, 0x68747541, 0x444D4163, 0x69746E65}},
