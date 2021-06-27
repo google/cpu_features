@@ -1564,7 +1564,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x10, 0x09):
       case CPUID(0x10, 0x0A):
         return AMD_K10;
-      case CPUID(0x14, 0x0F):
+      case CPUID(0x14, 0x01):
         return AMD_BOBCAT;
       case CPUID(0x15, 0x01):
         // https://en.wikichip.org/wiki/amd/microarchitectures/bulldozer
@@ -1591,7 +1591,6 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x17, 0x11):
       case CPUID(0x17, 0x18):
       case CPUID(0x17, 0x20):
-      case CPUID(0x18, 0x00): // Dhyana
         // https://en.wikichip.org/wiki/amd/microarchitectures/zen
         return AMD_ZEN;
       case CPUID(0x17, 0x08):
