@@ -24,9 +24,8 @@ namespace cpu_features {
 
 namespace {
 
-void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
-
 TEST(CpuinfoMipsTest, FromHardwareCapBoth) {
+  ResetHwcaps();
   SetHardwareCapabilities(MIPS_HWCAP_MSA | MIPS_HWCAP_R6, 0);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo
   const auto info = GetMipsInfo();
@@ -36,6 +35,7 @@ TEST(CpuinfoMipsTest, FromHardwareCapBoth) {
 }
 
 TEST(CpuinfoMipsTest, FromHardwareCapOnlyOne) {
+  ResetHwcaps();
   SetHardwareCapabilities(MIPS_HWCAP_MSA, 0);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo
   const auto info = GetMipsInfo();
@@ -44,7 +44,7 @@ TEST(CpuinfoMipsTest, FromHardwareCapOnlyOne) {
 }
 
 TEST(CpuinfoMipsTest, Ci40) {
-  DisableHardwareCapabilities();
+  ResetHwcaps();
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(system type : IMG Pistachio SoC (B0)
 machine : IMG Marduk – Ci40 with cc2520
@@ -72,7 +72,7 @@ VPE : 0
 }
 
 TEST(CpuinfoMipsTest, AR7161) {
-  DisableHardwareCapabilities();
+  ResetHwcaps();
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo",
                 R"(system type             : Atheros AR7161 rev 2
@@ -98,7 +98,7 @@ VCEI exceptions         : not available
 }
 
 TEST(CpuinfoMipsTest, Goldfish) {
-  DisableHardwareCapabilities();
+  ResetHwcaps();
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(system type		: MIPS-Goldfish
 Hardware		: goldfish
