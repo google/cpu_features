@@ -17,7 +17,6 @@
 
 #include "cpu_features_cache_info.h"
 #include "cpu_features_macros.h"
-#include "internal/hwcaps.h"
 
 CPU_FEATURES_START_CPP_NAMESPACE
 
