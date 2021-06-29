@@ -1392,12 +1392,13 @@ X86Info GetX86Info(void) {
   const Leaf leaf_0 = CpuId(0);
   const bool is_intel = IsVendor(leaf_0, "GenuineIntel");
   const bool is_amd = IsVendor(leaf_0, "AuthenticAMD");
+  const bool is_hygon = IsVendor(leaf_0, "HygonGenuine");
   SetVendor(leaf_0, info.vendor);
-  if (is_intel || is_amd) {
+  if (is_intel || is_amd || is_hygon) {
     OsPreserves os_preserves = kEmptyOsPreserves;
     const uint32_t max_cpuid_leaf = leaf_0.eax;
     ParseCpuId(max_cpuid_leaf, &info, &os_preserves);
-    if (is_amd) {
+    if (is_amd || is_hygon) {
       ParseExtraAMDCpuId(&info, os_preserves);
     }
   }
@@ -1602,16 +1603,24 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x17, 0x68):
       case CPUID(0x17, 0x71):
       case CPUID(0x17, 0x90):
+      case CPUID(0x17, 0x98):
         // https://en.wikichip.org/wiki/amd/microarchitectures/zen_2
         return AMD_ZEN2;
       case CPUID(0x19, 0x01):
       case CPUID(0x19, 0x21):
+      case CPUID(0x19, 0x30):
       case CPUID(0x19, 0x40):
       case CPUID(0x19, 0x50):
         // https://en.wikichip.org/wiki/amd/microarchitectures/zen_3
         return AMD_ZEN3;
       default:
         return X86_UNKNOWN;
+    }
+  }
+  if (memcmp(info->vendor, "HygonGenuine", sizeof(info->vendor)) == 0) {
+    switch (CPUID(info->family, info->model)) {
+      case CPUID(0x18, 0x00):
+        return AMD_ZEN;
     }
   }
   return X86_UNKNOWN;

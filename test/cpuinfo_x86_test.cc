@@ -543,8 +543,32 @@ TEST_F(CpuidX86Test, AMD_K17_ZEN2_XBOX_SERIES_X) {
   EXPECT_STREQ(brand_string, "AMD 4700S 8-Core Processor Desktop Kit");
 }
 
+// http://users.atw.hu/instlatx64/HygonGenuine/HygonGenuine0900F02_Hygon_CPUID3.txt
+TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA) {
+  g_fake_cpu->SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000D, 0x6F677948, 0x656E6975, 0x6E65476E}},
+      {{0x00000001, 0}, Leaf{0x00900F02, 0x00100800, 0x74D83209, 0x178BFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000000, 0x009C01A9, 0x0040068C, 0x00000000}},
+      {{0x80000000, 0}, Leaf{0x8000001F, 0x6F677948, 0x656E6975, 0x6E65476E}},
+      {{0x80000001, 0}, Leaf{0x00900F02, 0x60000000, 0x35C233FF, 0x2FD3FBFF}},
+      {{0x80000002, 0}, Leaf{0x6F677948, 0x3843206E, 0x31332036, 0x20203538}},
+      {{0x80000003, 0}, Leaf{0x6F632D38, 0x50206572, 0x65636F72, 0x726F7373}},
+      {{0x80000004, 0}, Leaf{0x20202020, 0x20202020, 0x20202020, 0x00202020}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "HygonGenuine");
+  EXPECT_EQ(info.family, 0x18);
+  EXPECT_EQ(info.model, 0x00);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN);
+
+  char brand_string[49];
+  FillX86BrandString(brand_string);
+  EXPECT_STREQ(brand_string, "Hygon C86 3185  8-core Processor               ");
+}
+
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0A20F10_K19_Vermeer2_CPUID.txt
-TEST_F(CpuidX86Test, AMD_K17_ZEN3_VERMEER) {
+TEST_F(CpuidX86Test, AMD_K19_ZEN3_VERMEER) {
   g_fake_cpu->SetLeaves({
       {{0x00000000, 0}, Leaf{0x00000010, 0x68747541, 0x444D4163, 0x69746E65}},
       {{0x00000001, 0}, Leaf{0x00A20F10, 0x01180800, 0x7ED8320B, 0x178BFBFF}},
