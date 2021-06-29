@@ -1,4 +1,5 @@
 cmake_build/
 build/
 
+.vagrant/
 *.swp
