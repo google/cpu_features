@@ -35,6 +35,12 @@ void SetBasePlatformPointer(const char* string) {
   g_base_platform_pointer = string;
 }
 
+void ResetHwcaps() {
+  SetHardwareCapabilities(0, 0);
+  SetPlatformPointer(nullptr);
+  SetBasePlatformPointer(nullptr);
+}
+
 HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void) {
   return *g_hardware_capabilities;
 }
@@ -43,9 +49,4 @@ const char* CpuFeatures_GetBasePlatformPointer(void) {
   return g_base_platform_pointer;
 }
 
-void ResetHwcaps(){
-  SetHardwareCapabilities(0,0);
-  SetPlatformPointer(nullptr);
-  SetBasePlatformPointer(nullptr);
-}
 }  // namespace cpu_features

@@ -22,7 +22,6 @@
 namespace cpu_features {
 namespace {
 
-
 TEST(CpustringsPPCTest, FromHardwareCap) {
   ResetHwcaps();
   SetHardwareCapabilities(PPC_FEATURE_HAS_FPU | PPC_FEATURE_HAS_VSX,

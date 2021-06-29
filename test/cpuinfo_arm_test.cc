@@ -21,7 +21,6 @@
 namespace cpu_features {
 namespace {
 
-
 TEST(CpuinfoArmTest, FromHardwareCap) {
   ResetHwcaps();
   SetHardwareCapabilities(ARM_HWCAP_NEON, ARM_HWCAP2_AES | ARM_HWCAP2_CRC32);
