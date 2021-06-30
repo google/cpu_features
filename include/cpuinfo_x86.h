@@ -21,6 +21,11 @@
 
 CPU_FEATURES_START_CPP_NAMESPACE
 
+// CPUID Vendors
+#define CPU_FEATURES_VENDOR_GENUINE_INTEL "GenuineIntel"
+#define CPU_FEATURES_VENDOR_AUTHENTIC_AMD "AuthenticAMD"
+#define CPU_FEATURES_VENDOR_HYGON_GENUINE "HygonGenuine"
+
 // See https://en.wikipedia.org/wiki/CPUID for a list of x86 cpu features.
 // The field names are based on the short name provided in the wikipedia tables.
 typedef struct {

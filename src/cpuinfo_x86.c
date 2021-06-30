@@ -256,6 +256,10 @@ static int IsVendor(const Leaf leaf, const char* const name) {
   return leaf.ebx == ebx && leaf.ecx == ecx && leaf.edx == edx;
 }
 
+static int IsVendorByX86Info(const X86Info* info, const char* const name) {
+  return memcmp(info->vendor, name, sizeof(info->vendor)) == 0;
+}
+
 static const CacheLevelInfo kEmptyCacheLevelInfo;
 
 static CacheLevelInfo GetCacheLevelInfo(const uint32_t reg) {
@@ -1140,10 +1144,13 @@ static void ParseLeaf2(const int max_cpuid_leaf, CacheInfo* info) {
   }
 }
 
-static void ParseLeaf4(const int max_cpuid_leaf, CacheInfo* info) {
+// For newer Intel CPUs uses "CPUID, eax=0x00000004".
+// For newer AMD CPUs uses "CPUID, eax=0x8000001D"
+static void ParseCacheInfo(const int max_cpuid_leaf, uint32_t leaf_id,
+                              CacheInfo* info) {
   info->size = 0;
   for (int cache_id = 0; cache_id < CPU_FEATURES_MAX_CACHE_LEVEL; cache_id++) {
-    const Leaf leaf = SafeCpuIdEx(max_cpuid_leaf, 4, cache_id);
+    const Leaf leaf = SafeCpuIdEx(max_cpuid_leaf, leaf_id, cache_id);
     CacheType cache_type = ExtractBitRange(leaf.eax, 4, 0);
     if (cache_type == CPU_FEATURE_CACHE_NULL) {
       info->levels[cache_id] = kEmptyCacheLevelInfo;
@@ -1407,10 +1414,13 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
 
 // Reference
 // https://en.wikipedia.org/wiki/CPUID#EAX=80000000h:_Get_Highest_Extended_Function_Implemented.
+static Leaf GetLeafByIdAMD(uint32_t leaf_id) {
+  uint32_t max_extended = CpuId(0x80000000).eax;
+  return SafeCpuId(max_extended, leaf_id);
+}
+
 static void ParseExtraAMDCpuId(X86Info* info, OsPreserves os_preserves) {
-  const Leaf leaf_80000000 = CpuId(0x80000000);
-  const uint32_t max_extended_cpuid_leaf = leaf_80000000.eax;
-  const Leaf leaf_80000001 = SafeCpuId(max_extended_cpuid_leaf, 0x80000001);
+  const Leaf leaf_80000001 = GetLeafByIdAMD(0x80000001);
 
   X86Features* const features = &info->features;
 
@@ -1430,9 +1440,9 @@ static const OsPreserves kEmptyOsPreserves;
 X86Info GetX86Info(void) {
   X86Info info = kEmptyX86Info;
   const Leaf leaf_0 = CpuId(0);
-  const bool is_intel = IsVendor(leaf_0, "GenuineIntel");
-  const bool is_amd = IsVendor(leaf_0, "AuthenticAMD");
-  const bool is_hygon = IsVendor(leaf_0, "HygonGenuine");
+  const bool is_intel = IsVendor(leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  const bool is_amd = IsVendor(leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
+  const bool is_hygon = IsVendor(leaf_0, CPU_FEATURES_VENDOR_HYGON_GENUINE);
   SetVendor(leaf_0, info.vendor);
   if (is_intel || is_amd || is_hygon) {
     OsPreserves os_preserves = kEmptyOsPreserves;
@@ -1448,10 +1458,13 @@ X86Info GetX86Info(void) {
 CacheInfo GetX86CacheInfo(void) {
   CacheInfo info = kEmptyCacheInfo;
   const Leaf leaf_0 = CpuId(0);
-  const uint32_t max_cpuid_leaf = leaf_0.eax;
-  if (IsVendor(leaf_0, "GenuineIntel")) {
-    ParseLeaf2(max_cpuid_leaf, &info);
-    ParseLeaf4(max_cpuid_leaf, &info);
+  if (IsVendor(leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL)) {
+    ParseLeaf2(leaf_0.eax, &info);
+    ParseCacheInfo(leaf_0.eax, 4, &info);
+  } else if (IsVendor(leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD) ||
+             IsVendor(leaf_0, CPU_FEATURES_VENDOR_HYGON_GENUINE)) {
+    const Leaf leaf_max_ext = CpuId(0x80000000);
+    ParseCacheInfo(leaf_max_ext.eax, 0x8000001D, &info);
   }
   return info;
 }
@@ -1459,7 +1472,7 @@ CacheInfo GetX86CacheInfo(void) {
 #define CPUID(FAMILY, MODEL) ((((FAMILY)&0xFF) << 8) | ((MODEL)&0xFF))
 
 X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
-  if (memcmp(info->vendor, "GenuineIntel", sizeof(info->vendor)) == 0) {
+  if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_GENUINE_INTEL)) {
     switch (CPUID(info->family, info->model)) {
       case CPUID(0x06, 0x1C):  // Intel(R) Atom(TM) CPU 230 @ 1.60GHz
       case CPUID(0x06, 0x35):
@@ -1558,7 +1571,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         return X86_UNKNOWN;
     }
   }
-  if (memcmp(info->vendor, "AuthenticAMD", sizeof(info->vendor)) == 0) {
+  if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_AUTHENTIC_AMD)) {
     switch (CPUID(info->family, info->model)) {
       // https://en.wikichip.org/wiki/amd/cpuid
       case CPUID(0xF, 0x04):
