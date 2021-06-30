@@ -39,6 +39,10 @@
 #define CPU_FEATURES_ARCH_ARM
 #endif
 
+#if (defined(__APPLE__) && defined(__arm64__))
+#define CPU_FEATURES_ARCH_AARCH64
+#endif
+
 #if defined(__aarch64__)
 #define CPU_FEATURES_ARCH_AARCH64
 #endif
