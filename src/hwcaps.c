@@ -35,7 +35,8 @@ bool CpuFeatures_IsHwCapsSet(const HardwareCapabilities hwcaps_mask,
 #ifdef CPU_FEATURES_TEST
 // In test mode, hwcaps_for_testing will define the following functions.
 HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void);
-PlatformType CpuFeatures_GetPlatformType(void);
+const char* CpuFeatures_GetPlatformPointer(void);
+const char* CpuFeatures_GetBasePlatformPointer(void);
 #else
 
 // Debug facilities
@@ -163,20 +164,12 @@ HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void) {
   return capabilities;
 }
 
-PlatformType kEmptyPlatformType;
+const char *CpuFeatures_GetPlatformPointer(void) {
+  return (const char *)GetHardwareCapabilitiesFor(AT_PLATFORM);
+}
 
-PlatformType CpuFeatures_GetPlatformType(void) {
-  PlatformType type = kEmptyPlatformType;
-  char *platform = (char *)GetHardwareCapabilitiesFor(AT_PLATFORM);
-  char *base_platform = (char *)GetHardwareCapabilitiesFor(AT_BASE_PLATFORM);
-
-  if (platform != NULL)
-    CpuFeatures_StringView_CopyString(str(platform), type.platform,
-                                      sizeof(type.platform));
-  if (base_platform != NULL)
-    CpuFeatures_StringView_CopyString(str(base_platform), type.base_platform,
-                                      sizeof(type.base_platform));
-  return type;
+const char *CpuFeatures_GetBasePlatformPointer(void) {
+  return (const char *)GetHardwareCapabilitiesFor(AT_BASE_PLATFORM);
 }
 
 #endif  // CPU_FEATURES_TEST

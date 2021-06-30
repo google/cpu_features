@@ -171,16 +171,19 @@ typedef struct {
   unsigned long hwcaps2;
 } HardwareCapabilities;
 
+// Retrieves values from auxiliary vector for types AT_HWCAP and AT_HWCAP2.
+// First tries to call getauxval(), if not available falls back to reading
+// "/proc/self/auxv".
 HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void);
+
+// Checks whether value for AT_HWCAP (or AT_HWCAP2) match hwcaps_mask.
 bool CpuFeatures_IsHwCapsSet(const HardwareCapabilities hwcaps_mask,
                              const HardwareCapabilities hwcaps);
 
-typedef struct {
-  char platform[64];       // 0 terminated string
-  char base_platform[64];  // 0 terminated string
-} PlatformType;
-
-PlatformType CpuFeatures_GetPlatformType(void);
+// Get pointer for the AT_PLATFORM type.
+const char* CpuFeatures_GetPlatformPointer(void);
+// Get pointer for the AT_BASE_PLATFORM type.
+const char* CpuFeatures_GetBasePlatformPointer(void);
 
 CPU_FEATURES_END_CPP_NAMESPACE
 

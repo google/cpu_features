@@ -24,6 +24,7 @@ namespace {
 void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
 
 TEST(CpuinfoAarch64Test, FromHardwareCap) {
+  ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_AES, 0);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo
   const auto info = GetAarch64Info();
@@ -62,6 +63,7 @@ TEST(CpuinfoAarch64Test, FromHardwareCap) {
 }
 
 TEST(CpuinfoAarch64Test, FromHardwareCap2) {
+  ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP,
                           AARCH64_HWCAP2_SVE2 | AARCH64_HWCAP2_BTI);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo
@@ -90,7 +92,7 @@ TEST(CpuinfoAarch64Test, FromHardwareCap2) {
 }
 
 TEST(CpuinfoAarch64Test, ARMCortexA53) {
-  DisableHardwareCapabilities();
+  ResetHwcaps();
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo",
                 R"(Processor   : AArch64 Processor rev 3 (aarch64)

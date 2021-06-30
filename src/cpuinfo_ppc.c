@@ -20,6 +20,7 @@
 
 #include "internal/bit_utils.h"
 #include "internal/filesystem.h"
+#include "internal/hwcaps.h"
 #include "internal/stack_line_reader.h"
 #include "internal/string_view.h"
 
@@ -133,9 +134,19 @@ static const PPCPlatformStrings kEmptyPPCPlatformStrings;
 
 PPCPlatformStrings GetPPCPlatformStrings(void) {
   PPCPlatformStrings strings = kEmptyPPCPlatformStrings;
+  const char* platform = CpuFeatures_GetPlatformPointer();
+  const char* base_platform = CpuFeatures_GetBasePlatformPointer();
 
   FillProcCpuInfoData(&strings);
-  strings.type = CpuFeatures_GetPlatformType();
+
+  if (platform != NULL)
+    CpuFeatures_StringView_CopyString(str(platform), strings.type.platform,
+                                      sizeof(strings.type.platform));
+  if (base_platform != NULL)
+    CpuFeatures_StringView_CopyString(str(base_platform),
+                                      strings.type.base_platform,
+                                      sizeof(strings.type.base_platform));
+
   return strings;
 }
 
