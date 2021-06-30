@@ -1339,29 +1339,29 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
       StackLineReader_Initialize(&reader, fd);
       for (;;) {
         const LineResult result = StackLineReader_NextLine(&reader);
+        const StringView line = result.line;
         const bool is_feature =
-            CpuFeatures_StringView_StartsWith(result.line, str("  Features="));
+            CpuFeatures_StringView_StartsWith(line, str("  Features="));
         const bool is_feature2 =
-            CpuFeatures_StringView_StartsWith(result.line, str("  Features2="));
+            CpuFeatures_StringView_StartsWith(line, str("  Features2="));
         if (is_feature || is_feature2) {
           // Lines of interests are of the following form:
           // "  Features=0x1783fbff<PSE36,MMX,FXSR,SSE,SSE2,HTT>"
           // We replace '<', '>' and ',' with space so we can search by
           // whitespace separated word.
-          for (size_t i = 0; i < result.line.size; ++i) {
-            if (result.line[i] == '<' || result.line[i] == '>' ||
-                result.line[i] == ',')
-              result.line[i] == ' ';
+          for (size_t i = 0; i < line.size; ++i) {
+            if (line.ptr[i] == '<' || line.ptr[i] == '>' || line.ptr[i] == ',')
+              line.ptr[i] == ' ';
           }
           if (is_feature) {
-            features->sse = CpuFeatures_StringView_HasWord(value, "SSE");
-            features->sse2 = CpuFeatures_StringView_HasWord(value, "SSE2");
+            features->sse = CpuFeatures_StringView_HasWord(line, "SSE");
+            features->sse2 = CpuFeatures_StringView_HasWord(line, "SSE2");
           }
           if (is_feature2) {
-            features->sse3 = CpuFeatures_StringView_HasWord(value, "SSE3");
-            features->ssse3 = CpuFeatures_StringView_HasWord(value, "SSSE3");
-            features->sse4_1 = CpuFeatures_StringView_HasWord(value, "SSE4.1");
-            features->sse4_2 = CpuFeatures_StringView_HasWord(value, "SSE4.2");
+            features->sse3 = CpuFeatures_StringView_HasWord(line, "SSE3");
+            features->ssse3 = CpuFeatures_StringView_HasWord(line, "SSSE3");
+            features->sse4_1 = CpuFeatures_StringView_HasWord(line, "SSE4.1");
+            features->sse4_2 = CpuFeatures_StringView_HasWord(line, "SSE4.2");
           }
         }
         if (result.eof) break;
