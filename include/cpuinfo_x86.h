@@ -132,8 +132,10 @@ typedef enum {
   INTEL_ICL,        // ICE LAKE
   INTEL_TGL,        // TIGER LAKE
   INTEL_SPR,        // SAPPHIRE RAPIDS
-  AMD_HAMMER,       // K8 Hammer
+  AMD_HAMMER,       // K8  HAMMER
   AMD_K10,          // K10
+  AMD_K11,          // K11
+  AMD_K12,          // K12
   AMD_BOBCAT,       // K14 BOBCAT
   AMD_PILEDRIVER,   // K15 PILEDRIVER
   AMD_STREAMROLLER, // K15 STREAMROLLER

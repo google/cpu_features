@@ -1520,7 +1520,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
   }
   if (memcmp(info->vendor, "AuthenticAMD", sizeof(info->vendor)) == 0) {
     switch (CPUID(info->family, info->model)) {
-        // https://en.wikichip.org/wiki/amd/cpuid
+      // https://en.wikichip.org/wiki/amd/cpuid
       case CPUID(0xF, 0x04):
       case CPUID(0xF, 0x05):
       case CPUID(0xF, 0x07):
@@ -1565,7 +1565,16 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x10, 0x09):
       case CPUID(0x10, 0x0A):
         return AMD_K10;
+      case CPUID(0x11, 0x03):
+        // http://developer.amd.com/wordpress/media/2012/10/41788.pdf
+        return AMD_K11;
+      case CPUID(0x12, 0x01):
+        // https://www.amd.com/system/files/TechDocs/44739_12h_Rev_Gd.pdf
+        return AMD_K12;
+      case CPUID(0x14, 0x00):
       case CPUID(0x14, 0x01):
+      case CPUID(0x14, 0x02):
+        // https://www.amd.com/system/files/TechDocs/47534_14h_Mod_00h-0Fh_Rev_Guide.pdf
         return AMD_BOBCAT;
       case CPUID(0x15, 0x01):
         // https://en.wikichip.org/wiki/amd/microarchitectures/bulldozer
@@ -1703,6 +1712,10 @@ const char* GetX86MicroarchitectureName(X86Microarchitecture uarch) {
       return "AMD_HAMMER";
     case AMD_K10:
       return "AMD_K10";
+    case AMD_K11:
+      return "AMD_K11";
+    case AMD_K12:
+      return "AMD_K12";
     case AMD_BOBCAT:
       return "AMD_BOBCAT";
     case AMD_PILEDRIVER:
