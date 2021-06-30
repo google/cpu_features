@@ -13,7 +13,7 @@ out/
 
 cmake-build-*
 
-# gitignore Cmake
+# CMake
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
