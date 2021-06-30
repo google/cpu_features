@@ -1679,7 +1679,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         return X86_UNKNOWN;
     }
   }
-  if (memcmp(info->vendor, "HygonGenuine", sizeof(info->vendor)) == 0) {
+  if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_HYGON_GENUINE)) {
     switch (CPUID(info->family, info->model)) {
       case CPUID(0x18, 0x00):
         return AMD_ZEN;
