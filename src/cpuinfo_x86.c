@@ -1392,12 +1392,13 @@ X86Info GetX86Info(void) {
   const Leaf leaf_0 = CpuId(0);
   const bool is_intel = IsVendor(leaf_0, "GenuineIntel");
   const bool is_amd = IsVendor(leaf_0, "AuthenticAMD");
+  const bool is_hygon = IsVendor(leaf_0, "HygonGenuine");
   SetVendor(leaf_0, info.vendor);
-  if (is_intel || is_amd) {
+  if (is_intel || is_amd || is_hygon) {
     OsPreserves os_preserves = kEmptyOsPreserves;
     const uint32_t max_cpuid_leaf = leaf_0.eax;
     ParseCpuId(max_cpuid_leaf, &info, &os_preserves);
-    if (is_amd) {
+    if (is_amd || is_hygon) {
       ParseExtraAMDCpuId(&info, os_preserves);
     }
   }
@@ -1518,24 +1519,117 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
     }
   }
   if (memcmp(info->vendor, "AuthenticAMD", sizeof(info->vendor)) == 0) {
-    switch (info->family) {
-        // https://en.wikipedia.org/wiki/List_of_AMD_CPU_microarchitectures
-      case 0x0F:
+    switch (CPUID(info->family, info->model)) {
+      // https://en.wikichip.org/wiki/amd/cpuid
+      case CPUID(0xF, 0x04):
+      case CPUID(0xF, 0x05):
+      case CPUID(0xF, 0x07):
+      case CPUID(0xF, 0x08):
+      case CPUID(0xF, 0x0C):
+      case CPUID(0xF, 0x0E):
+      case CPUID(0xF, 0x0F):
+      case CPUID(0xF, 0x14):
+      case CPUID(0xF, 0x15):
+      case CPUID(0xF, 0x17):
+      case CPUID(0xF, 0x18):
+      case CPUID(0xF, 0x1B):
+      case CPUID(0xF, 0x1C):
+      case CPUID(0xF, 0x1F):
+      case CPUID(0xF, 0x21):
+      case CPUID(0xF, 0x23):
+      case CPUID(0xF, 0x24):
+      case CPUID(0xF, 0x25):
+      case CPUID(0xF, 0x27):
+      case CPUID(0xF, 0x2B):
+      case CPUID(0xF, 0x2C):
+      case CPUID(0xF, 0x2F):
+      case CPUID(0xF, 0x41):
+      case CPUID(0xF, 0x43):
+      case CPUID(0xF, 0x48):
+      case CPUID(0xF, 0x4B):
+      case CPUID(0xF, 0x4C):
+      case CPUID(0xF, 0x4F):
+      case CPUID(0xF, 0x5D):
+      case CPUID(0xF, 0x5F):
+      case CPUID(0xF, 0x68):
+      case CPUID(0xF, 0x6B):
+      case CPUID(0xF, 0x6F):
+      case CPUID(0xF, 0x7F):
+      case CPUID(0xF, 0xC1):
         return AMD_HAMMER;
-      case 0x10:
+      case CPUID(0x10, 0x02):
+      case CPUID(0x10, 0x04):
+      case CPUID(0x10, 0x05):
+      case CPUID(0x10, 0x06):
+      case CPUID(0x10, 0x08):
+      case CPUID(0x10, 0x09):
+      case CPUID(0x10, 0x0A):
         return AMD_K10;
-      case 0x14:
+      case CPUID(0x11, 0x03):
+        // http://developer.amd.com/wordpress/media/2012/10/41788.pdf
+        return AMD_K11;
+      case CPUID(0x12, 0x01):
+        // https://www.amd.com/system/files/TechDocs/44739_12h_Rev_Gd.pdf
+        return AMD_K12;
+      case CPUID(0x14, 0x00):
+      case CPUID(0x14, 0x01):
+      case CPUID(0x14, 0x02):
+        // https://www.amd.com/system/files/TechDocs/47534_14h_Mod_00h-0Fh_Rev_Guide.pdf
         return AMD_BOBCAT;
-      case 0x15:
+      case CPUID(0x15, 0x01):
+        // https://en.wikichip.org/wiki/amd/microarchitectures/bulldozer
         return AMD_BULLDOZER;
-      case 0x16:
+      case CPUID(0x15, 0x02):
+      case CPUID(0x15, 0x11):
+      case CPUID(0x15, 0x13):
+        // https://en.wikichip.org/wiki/amd/microarchitectures/piledriver
+        return AMD_PILEDRIVER;
+      case CPUID(0x15, 0x30):
+      case CPUID(0x15, 0x38):
+        // https://en.wikichip.org/wiki/amd/microarchitectures/steamroller
+        return AMD_STREAMROLLER;
+      case CPUID(0x15, 0x60):
+      case CPUID(0x15, 0x65):
+      case CPUID(0x15, 0x70):
+        // https://en.wikichip.org/wiki/amd/microarchitectures/excavator
+        return AMD_EXCAVATOR;
+      case CPUID(0x16, 0x00):
         return AMD_JAGUAR;
-      case 0x17:
+      case CPUID(0x16, 0x30):
+        return AMD_PUMA;
+      case CPUID(0x17, 0x01):
+      case CPUID(0x17, 0x11):
+      case CPUID(0x17, 0x18):
+      case CPUID(0x17, 0x20):
+        // https://en.wikichip.org/wiki/amd/microarchitectures/zen
         return AMD_ZEN;
-      case 0x19:
+      case CPUID(0x17, 0x08):
+        // https://en.wikichip.org/wiki/amd/microarchitectures/zen%2B
+        return AMD_ZEN_PLUS;
+      case CPUID(0x17, 0x31):
+      case CPUID(0x17, 0x47):
+      case CPUID(0x17, 0x60):
+      case CPUID(0x17, 0x68):
+      case CPUID(0x17, 0x71):
+      case CPUID(0x17, 0x90):
+      case CPUID(0x17, 0x98):
+        // https://en.wikichip.org/wiki/amd/microarchitectures/zen_2
+        return AMD_ZEN2;
+      case CPUID(0x19, 0x01):
+      case CPUID(0x19, 0x21):
+      case CPUID(0x19, 0x30):
+      case CPUID(0x19, 0x40):
+      case CPUID(0x19, 0x50):
+        // https://en.wikichip.org/wiki/amd/microarchitectures/zen_3
         return AMD_ZEN3;
       default:
         return X86_UNKNOWN;
+    }
+  }
+  if (memcmp(info->vendor, "HygonGenuine", sizeof(info->vendor)) == 0) {
+    switch (CPUID(info->family, info->model)) {
+      case CPUID(0x18, 0x00):
+        return AMD_ZEN;
     }
   }
   return X86_UNKNOWN;
@@ -1618,14 +1712,30 @@ const char* GetX86MicroarchitectureName(X86Microarchitecture uarch) {
       return "AMD_HAMMER";
     case AMD_K10:
       return "AMD_K10";
+    case AMD_K11:
+      return "AMD_K11";
+    case AMD_K12:
+      return "AMD_K12";
     case AMD_BOBCAT:
       return "AMD_BOBCAT";
+    case AMD_PILEDRIVER:
+      return "AMD_PILEDRIVER";
+    case AMD_STREAMROLLER:
+      return "AMD_STREAMROLLER";
+    case AMD_EXCAVATOR:
+      return "AMD_EXCAVATOR";
     case AMD_BULLDOZER:
       return "AMD_BULLDOZER";
+    case AMD_PUMA:
+      return "AMD_PUMA";
     case AMD_JAGUAR:
       return "AMD_JAGUAR";
     case AMD_ZEN:
       return "AMD_ZEN";
+    case AMD_ZEN_PLUS:
+      return "AMD_ZEN_PLUS";
+    case AMD_ZEN2:
+      return "AMD_ZEN2";
     case AMD_ZEN3:
       return "AMD_ZEN3";
   }
