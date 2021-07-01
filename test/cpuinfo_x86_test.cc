@@ -834,6 +834,7 @@ TEST_F(CpuidX86Test, P3) {
 #elif defined(CPU_FEATURES_OS_DARWIN)
   g_fake_cpu->SetDarwinSysCtlByName("hw.optional.sse");
 #elif defined(CPU_FEATURES_OS_FREEBSD)
+  auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/var/run/dmesg.boot", R"(
   ---<<BOOT>>---
 Copyright (c) 1992-2020 The FreeBSD Project.
