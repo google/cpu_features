@@ -142,7 +142,7 @@ flags           : aes,avx,cx16,smx,sse4_1,sse4_2,ssse3
 ## What's supported
 
 |         | x86³ | ARM     | AArch64 | MIPS⁴   | POWER   |
-|---------|-:-:--|-:-:-----|-:-:-----|-:-:-----|-:-:-----|
+|---------|:----:|:-------:|:-------:|:-------:|:-------:|
 | Android | yes² | yes¹    | yes¹    | yes¹    | N/A     |
 | iOS     | N/A  | not yet | not yet | N/A     | N/A     |
 | Linux   | yes² | yes¹    | yes¹    | yes¹    | yes¹    |
