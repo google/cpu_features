@@ -1339,7 +1339,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
       StackLineReader_Initialize(&reader, fd);
       for (;;) {
         const LineResult result = StackLineReader_NextLine(&reader);
-        const StringView line = result.line;
+        StringView line = result.line;
         const bool is_feature =
             CpuFeatures_StringView_StartsWith(line, str("  Features="));
         const bool is_feature2 =
