@@ -1339,7 +1339,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
       StackLineReader_Initialize(&reader, fd);
       for (;;) {
         const LineResult result = StackLineReader_NextLine(&reader);
-        StringView line = result.line;
+        const StringView line = result.line;
         const bool is_feature =
             CpuFeatures_StringView_StartsWith(line, str("  Features="));
         const bool is_feature2 =
@@ -1349,9 +1349,11 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
           // "  Features=0x1783fbff<PSE36,MMX,FXSR,SSE,SSE2,HTT>"
           // We replace '<', '>' and ',' with space so we can search by
           // whitespace separated word.
+          // TODO: Fix CpuFeatures_StringView_HasWord to allow for different
+          // separators.
           for (size_t i = 0; i < line.size; ++i) {
             if (line.ptr[i] == '<' || line.ptr[i] == '>' || line.ptr[i] == ',')
-              line.ptr[i] = ' ';
+              (char*)(line.ptr)[i] = ' ';
           }
           if (is_feature) {
             features->sse = CpuFeatures_StringView_HasWord(line, "SSE");
