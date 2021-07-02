@@ -77,8 +77,8 @@ static bool HandleArmLine(const LineResult result, ArmInfo* const info,
   if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
     if (CpuFeatures_StringView_IsEquals(key, str("Features"))) {
       for (size_t i = 0; i < ARM_LAST_; ++i) {
-        kSetters[i](&info->features,
-                    CpuFeatures_StringView_HasWord(value, kCpuInfoFlags[i]));
+        kSetters[i](&info->features, CpuFeatures_StringView_HasWord(
+                                         value, kCpuInfoFlags[i], ' '));
       }
     } else if (CpuFeatures_StringView_IsEquals(key, str("CPU implementer"))) {
       info->implementer = CpuFeatures_StringView_ParsePositiveNumber(value);
