@@ -1,5 +1,9 @@
 cmake_build/
+cmake-build-*/
 build/
 
 .vagrant/
 *.swp
+
+.idea/
+.vscode/
