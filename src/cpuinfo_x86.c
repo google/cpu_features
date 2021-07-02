@@ -175,6 +175,13 @@ static Leaf SafeCpuId(uint32_t max_cpuid_leaf, uint32_t leaf_id) {
   return SafeCpuIdEx(max_cpuid_leaf, leaf_id, 0);
 }
 
+// If CPUID Fn8000_0001_ECX[bit]==0 then CPUID Fn8000_00XX_E[D,C,B,A]X is
+// reserved. https://www.amd.com/system/files/TechDocs/25481.pdf
+static bool IsReservedAMD(uint32_t max_extended, uint32_t bit) {
+  const uint32_t cpuid_ext = SafeCpuId(max_extended, 0x80000001).ecx;
+  return !IsBitSet(cpuid_ext, bit);
+}
+
 #define MASK_XMM 0x2
 #define MASK_YMM 0x4
 #define MASK_MASKREG 0x20
@@ -1463,8 +1470,10 @@ CacheInfo GetX86CacheInfo(void) {
     ParseCacheInfo(leaf_0.eax, 4, &info);
   } else if (IsVendor(leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD) ||
              IsVendor(leaf_0, CPU_FEATURES_VENDOR_HYGON_GENUINE)) {
-    const Leaf leaf_max_ext = CpuId(0x80000000);
-    ParseCacheInfo(leaf_max_ext.eax, 0x8000001D, &info);
+    const uint32_t max_ext = CpuId(0x80000000).eax;
+    if (!IsReservedAMD(max_ext, 22)) {
+      ParseCacheInfo(max_ext, 0x8000001D, &info);
+    }
   }
   return info;
 }
