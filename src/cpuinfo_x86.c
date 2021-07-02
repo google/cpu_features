@@ -1352,8 +1352,8 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
           // TODO: Fix CpuFeatures_StringView_HasWord to allow for different
           // separators.
           for (size_t i = 0; i < line.size; ++i) {
-            if (line.ptr[i] == '<' || line.ptr[i] == '>' || line.ptr[i] == ',')
-              (char*)(line.ptr)[i] = ' ';
+            char* c = (char*)(&(line.ptr[i]));
+            if (*c == '<' || *c == '>' || *c == ',') *c = ' ';
           }
           if (is_feature) {
             features->sse = CpuFeatures_StringView_HasWord(line, "SSE");
