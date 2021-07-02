@@ -1351,7 +1351,7 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
           // whitespace separated word.
           for (size_t i = 0; i < line.size; ++i) {
             if (line.ptr[i] == '<' || line.ptr[i] == '>' || line.ptr[i] == ',')
-              line.ptr[i] == ' ';
+              line.ptr[i] = ' ';
           }
           if (is_feature) {
             features->sse = CpuFeatures_StringView_HasWord(line, "SSE");
