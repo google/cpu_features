@@ -1,5 +1,6 @@
 cmake_build/
 build/
+build_cross/
 
 .vagrant/
 *.swp
