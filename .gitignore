@@ -1,9 +1,12 @@
+# Build folders
+build/
 cmake_build/
 cmake-build-*/
-build/
+out/
 
-.vagrant/
-*.swp
-
+# IDEs / CI temp files
 .idea/
+.vagrant/
 .vscode/
+.vs/
+*.swp
