@@ -435,6 +435,54 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI) {
   EXPECT_STREQ(brand_string, "AMD Opteron(tm) Processor 6376                 ");
 }
 
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0600F20_K15_AbuDhabi_CPUID0.txt
+TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI_CACHE_INFO) {
+  g_fake_cpu->SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000D, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x00000001, 0}, Leaf{0x00600F20, 0x00100800, 0x3E98320B, 0x178BFBFF}},
+      {{0x80000000, 0}, Leaf{0x8000001E, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000001, 0}, Leaf{0x00600F20, 0x30000000, 0x01EBBFFF, 0x2FD3FBFF}},
+      {{0x8000001D, 0}, Leaf{0x00000121, 0x00C0003F, 0x0000003F, 0x00000000}},
+      {{0x8000001D, 1}, Leaf{0x00004122, 0x0040003F, 0x000001FF, 0x00000000}},
+      {{0x8000001D, 2}, Leaf{0x00004143, 0x03C0003F, 0x000007FF, 0x00000001}},
+      {{0x8000001D, 3}, Leaf{0x0001C163, 0x0BC0003F, 0x000007FF, 0x00000001}},
+  });
+  const auto info = GetX86CacheInfo();
+
+  EXPECT_EQ(info.size, 4);
+  EXPECT_EQ(info.levels[0].level, 1);
+  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_size, 16 * KiB);
+  EXPECT_EQ(info.levels[0].ways, 4);
+  EXPECT_EQ(info.levels[0].line_size, 64);
+  EXPECT_EQ(info.levels[0].tlb_entries, 64);
+  EXPECT_EQ(info.levels[0].partitioning, 1);
+
+  EXPECT_EQ(info.levels[1].level, 1);
+  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_size, 64 * KiB);
+  EXPECT_EQ(info.levels[1].ways, 2);
+  EXPECT_EQ(info.levels[1].line_size, 64);
+  EXPECT_EQ(info.levels[1].tlb_entries, 512);
+  EXPECT_EQ(info.levels[1].partitioning, 1);
+
+  EXPECT_EQ(info.levels[2].level, 2);
+  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_size, 2 * MiB);
+  EXPECT_EQ(info.levels[2].ways, 16);
+  EXPECT_EQ(info.levels[2].line_size, 64);
+  EXPECT_EQ(info.levels[2].tlb_entries, 2048);
+  EXPECT_EQ(info.levels[2].partitioning, 1);
+
+  EXPECT_EQ(info.levels[3].level, 3);
+  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_size, 6 * MiB);
+  EXPECT_EQ(info.levels[3].ways, 48);
+  EXPECT_EQ(info.levels[3].line_size, 64);
+  EXPECT_EQ(info.levels[3].tlb_entries, 2048);
+  EXPECT_EQ(info.levels[3].partitioning, 1);
+}
+
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0600F12_K15_Interlagos_CPUID3.txt
 TEST_F(CpuidX86Test, AMD_K15_BULLDOZER_INTERLAGOS) {
   g_fake_cpu->SetLeaves({
@@ -629,6 +677,54 @@ TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA) {
   char brand_string[49];
   FillX86BrandString(brand_string);
   EXPECT_STREQ(brand_string, "Hygon C86 3185  8-core Processor               ");
+}
+
+// http://users.atw.hu/instlatx64/HygonGenuine/HygonGenuine0900F02_Hygon_CPUID.txt
+TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA_CACHE_INFO) {
+  g_fake_cpu->SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000D, 0x6F677948, 0x656E6975, 0x6E65476E}},
+      {{0x00000001, 0}, Leaf{0x00900F02, 0x00100800, 0x74D83209, 0x178BFBFF}},
+      {{0x80000000, 0}, Leaf{0x8000001F, 0x6F677948, 0x656E6975, 0x6E65476E}},
+      {{0x80000001, 0}, Leaf{0x00900F02, 0x60000000, 0x35C233FF, 0x2FD3FBFF}},
+      {{0x8000001D, 0}, Leaf{0x00004121, 0x01C0003F, 0x0000003F, 0x00000000}},
+      {{0x8000001D, 1}, Leaf{0x00004122, 0x00C0003F, 0x000000FF, 0x00000000}},
+      {{0x8000001D, 2}, Leaf{0x00004143, 0x01C0003F, 0x000003FF, 0x00000002}},
+      {{0x8000001D, 3}, Leaf{0x0001C163, 0x03C0003F, 0x00001FFF, 0x00000001}},
+  });
+  const auto info = GetX86CacheInfo();
+
+  EXPECT_EQ(info.size, 4);
+  EXPECT_EQ(info.levels[0].level, 1);
+  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_size, 32 * KiB);
+  EXPECT_EQ(info.levels[0].ways, 8);
+  EXPECT_EQ(info.levels[0].line_size, 64);
+  EXPECT_EQ(info.levels[0].tlb_entries, 64);
+  EXPECT_EQ(info.levels[0].partitioning, 1);
+
+  EXPECT_EQ(info.levels[1].level, 1);
+  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_size, 64 * KiB);
+  EXPECT_EQ(info.levels[1].ways, 4);
+  EXPECT_EQ(info.levels[1].line_size, 64);
+  EXPECT_EQ(info.levels[1].tlb_entries, 256);
+  EXPECT_EQ(info.levels[1].partitioning, 1);
+
+  EXPECT_EQ(info.levels[2].level, 2);
+  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_size, 512 * KiB);
+  EXPECT_EQ(info.levels[2].ways, 8);
+  EXPECT_EQ(info.levels[2].line_size, 64);
+  EXPECT_EQ(info.levels[2].tlb_entries, 1024);
+  EXPECT_EQ(info.levels[2].partitioning, 1);
+
+  EXPECT_EQ(info.levels[3].level, 3);
+  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_size, 8 * MiB);
+  EXPECT_EQ(info.levels[3].ways, 16);
+  EXPECT_EQ(info.levels[3].line_size, 64);
+  EXPECT_EQ(info.levels[3].tlb_entries, 8192);
+  EXPECT_EQ(info.levels[3].partitioning, 1);
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0A20F10_K19_Vermeer2_CPUID.txt
