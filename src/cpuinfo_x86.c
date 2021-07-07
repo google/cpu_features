@@ -1337,36 +1337,32 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
     if (fd >= 0) {
       StackLineReader reader;
       StackLineReader_Initialize(&reader, fd);
-      for (;;) {
+      for (bool stop = false; !stop;) {
         const LineResult result = StackLineReader_NextLine(&reader);
+        if (result.eof) stop = true;
         const StringView line = result.line;
-        const bool is_feature =
-            CpuFeatures_StringView_StartsWith(line, str("  Features="));
-        const bool is_feature2 =
-            CpuFeatures_StringView_StartsWith(line, str("  Features2="));
-        if (is_feature || is_feature2) {
-          // Lines of interests are of the following form:
-          // "  Features=0x1783fbff<PSE36,MMX,FXSR,SSE,SSE2,HTT>"
-          // We replace '<', '>' and ',' with space so we can search by
-          // whitespace separated word.
-          // TODO: Fix CpuFeatures_StringView_HasWord to allow for different
-          // separators.
-          for (size_t i = 0; i < line.size; ++i) {
-            char* c = (char*)(&(line.ptr[i]));
-            if (*c == '<' || *c == '>' || *c == ',') *c = ' ';
-          }
-          if (is_feature) {
-            features->sse = CpuFeatures_StringView_HasWord(line, "SSE");
-            features->sse2 = CpuFeatures_StringView_HasWord(line, "SSE2");
-          }
-          if (is_feature2) {
-            features->sse3 = CpuFeatures_StringView_HasWord(line, "SSE3");
-            features->ssse3 = CpuFeatures_StringView_HasWord(line, "SSSE3");
-            features->sse4_1 = CpuFeatures_StringView_HasWord(line, "SSE4.1");
-            features->sse4_2 = CpuFeatures_StringView_HasWord(line, "SSE4.2");
-          }
-        }
-        if (result.eof) break;
+        if (!CpuFeatures_StringView_StartsWith(line, str("  Features")))
+          continue;
+        // Lines of interests are of the following form:
+        // "  Features=0x1783fbff<PSE36,MMX,FXSR,SSE,SSE2,HTT>"
+        // We first extract the comma separated values between angle brackets.
+        StringView csv = result.line;
+        int index = CpuFeatures_StringView_IndexOfChar(csv, '<');
+        if (index >= 0) csv = CpuFeatures_StringView_PopFront(csv, index + 1);
+        if (csv.size > 0 && CpuFeatures_StringView_Back(csv) == '>')
+          csv = CpuFeatures_StringView_PopBack(csv, 1);
+        if (CpuFeatures_StringView_HasWord(csv, "SSE", ','))
+          features->sse = true;
+        if (CpuFeatures_StringView_HasWord(csv, "SSE2", ','))
+          features->sse2 = true;
+        if (CpuFeatures_StringView_HasWord(csv, "SSE3", ','))
+          features->sse3 = true;
+        if (CpuFeatures_StringView_HasWord(csv, "SSSE3", ','))
+          features->ssse3 = true;
+        if (CpuFeatures_StringView_HasWord(csv, "SSE4.1", ','))
+          features->sse4_1 = true;
+        if (CpuFeatures_StringView_HasWord(csv, "SSE4.2", ','))
+          features->sse4_2 = true;
       }
       CpuFeatures_CloseFile(fd);
     }
@@ -1376,22 +1372,21 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
     if (fd >= 0) {
       StackLineReader reader;
       StackLineReader_Initialize(&reader, fd);
-      for (;;) {
+      for (bool stop = false; !stop;) {
         const LineResult result = StackLineReader_NextLine(&reader);
+        if (result.eof) stop = true;
         const StringView line = result.line;
         StringView key, value;
-        if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
-          if (CpuFeatures_StringView_IsEquals(key, str("flags"))) {
-            features->sse = CpuFeatures_StringView_HasWord(value, "sse");
-            features->sse2 = CpuFeatures_StringView_HasWord(value, "sse2");
-            features->sse3 = CpuFeatures_StringView_HasWord(value, "sse3");
-            features->ssse3 = CpuFeatures_StringView_HasWord(value, "ssse3");
-            features->sse4_1 = CpuFeatures_StringView_HasWord(value, "sse4_1");
-            features->sse4_2 = CpuFeatures_StringView_HasWord(value, "sse4_2");
-            break;
-          }
-        }
-        if (result.eof) break;
+        if (!CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value))
+          continue;
+        if (!CpuFeatures_StringView_IsEquals(key, str("flags"))) continue;
+        features->sse = CpuFeatures_StringView_HasWord(value, "sse", ' ');
+        features->sse2 = CpuFeatures_StringView_HasWord(value, "sse2", ' ');
+        features->sse3 = CpuFeatures_StringView_HasWord(value, "sse3", ' ');
+        features->ssse3 = CpuFeatures_StringView_HasWord(value, "ssse3", ' ');
+        features->sse4_1 = CpuFeatures_StringView_HasWord(value, "sse4_1", ' ');
+        features->sse4_2 = CpuFeatures_StringView_HasWord(value, "sse4_2", ' ');
+        break;
       }
       CpuFeatures_CloseFile(fd);
     }

@@ -163,15 +163,25 @@ TEST(StringViewTest, CpuFeatures_StringView_CopyString) {
 TEST(StringViewTest, CpuFeatures_StringView_HasWord) {
   // Find flags at beginning, middle and end.
   EXPECT_TRUE(
-      CpuFeatures_StringView_HasWord(str("first middle last"), "first"));
+      CpuFeatures_StringView_HasWord(str("first middle last"), "first", ' '));
   EXPECT_TRUE(
-      CpuFeatures_StringView_HasWord(str("first middle last"), "middle"));
-  EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("first middle last"), "last"));
+      CpuFeatures_StringView_HasWord(str("first middle last"), "middle", ' '));
+  EXPECT_TRUE(
+      CpuFeatures_StringView_HasWord(str("first middle last"), "last", ' '));
+  // Find flags at beginning, middle and end with a different separator
+  EXPECT_TRUE(
+      CpuFeatures_StringView_HasWord(str("first-middle-last"), "first", '-'));
+  EXPECT_TRUE(
+      CpuFeatures_StringView_HasWord(str("first-middle-last"), "middle", '-'));
+  EXPECT_TRUE(
+      CpuFeatures_StringView_HasWord(str("first-middle-last"), "last", '-'));
   // Do not match partial flags
   EXPECT_FALSE(
-      CpuFeatures_StringView_HasWord(str("first middle last"), "irst"));
-  EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("first middle last"), "mid"));
-  EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("first middle last"), "las"));
+      CpuFeatures_StringView_HasWord(str("first middle last"), "irst", ' '));
+  EXPECT_FALSE(
+      CpuFeatures_StringView_HasWord(str("first middle last"), "mid", ' '));
+  EXPECT_FALSE(
+      CpuFeatures_StringView_HasWord(str("first middle last"), "las", ' '));
 }
 
 TEST(StringViewTest, CpuFeatures_StringView_GetAttributeKeyValue) {
