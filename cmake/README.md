@@ -20,9 +20,9 @@
   3- Add the `cpu_features` target to the `target_link_libraries()` section of
      your executable or of your library.
 
-## Enabling tests
+## Disabling tests
 
   CMake default options for cpu_features is Release built type with tests
-  disabled. To enable testing set cmake `BUILD_TESTING` variable to `ON`,
+  enabled. To disable testing set cmake `BUILD_TESTING` variable to `OFF`,
   [.travis.yml](../.travis.yml) and [appveyor.yml](../appveyor.yml) have up to
   date examples.
