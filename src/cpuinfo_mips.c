@@ -37,8 +37,8 @@ static bool HandleMipsLine(const LineResult result,
   if (CpuFeatures_StringView_GetAttributeKeyValue(result.line, &key, &value)) {
     if (CpuFeatures_StringView_IsEquals(key, str("ASEs implemented"))) {
       for (size_t i = 0; i < MIPS_LAST_; ++i) {
-        kSetters[i](features,
-                    CpuFeatures_StringView_HasWord(value, kCpuInfoFlags[i]));
+        kSetters[i](features, CpuFeatures_StringView_HasWord(
+                                  value, kCpuInfoFlags[i], ' '));
       }
     }
   }

@@ -144,7 +144,8 @@ void CpuFeatures_StringView_CopyString(const StringView src, char* dst,
 }
 
 bool CpuFeatures_StringView_HasWord(const StringView line,
-                                    const char* const word_str) {
+                                    const char* const word_str,
+                                    const char separator) {
   const StringView word = str(word_str);
   StringView remainder = line;
   for (;;) {
@@ -157,9 +158,9 @@ bool CpuFeatures_StringView_HasWord(const StringView line,
       const StringView after =
           CpuFeatures_StringView_PopFront(line, index_of_word + word.size);
       const bool valid_before =
-          before.size == 0 || CpuFeatures_StringView_Back(before) == ' ';
+          before.size == 0 || CpuFeatures_StringView_Back(before) == separator;
       const bool valid_after =
-          after.size == 0 || CpuFeatures_StringView_Front(after) == ' ';
+          after.size == 0 || CpuFeatures_StringView_Front(after) == separator;
       if (valid_before && valid_after) return true;
       remainder =
           CpuFeatures_StringView_PopFront(remainder, index_of_word + word.size);
