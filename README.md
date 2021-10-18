@@ -12,6 +12,7 @@ instructions) at runtime.
 - [Android NDK's drop in replacement](#ndk)
 - [License](#license)
 - [Build with cmake](#cmake)
+- [Community Bindings](#bindings)
 
 <a name="rationale"></a>
 ## Design Rationale
@@ -198,3 +199,16 @@ Please check the [CMake build instructions](cmake/README.md).
     ninja -C/tmp/cpu_features
     ninja -C/tmp/cpu_features test
 ```
+
+<a name="bindings"></a>
+## Community bindings
+
+Links provided here are not affiliated with Google but are kindly provided by the OSS Community.
+
+ - .Net
+   - https://github.com/toor1245/cpu_features.NET
+ - Python
+   - https://github.com/Narasimha1997/py_cpu
+
+
+_Send PR to showcase your wrapper here_
