@@ -205,7 +205,7 @@ Please check the [CMake build instructions](cmake/README.md).
 
 Links provided here are not affiliated with Google but are kindly provided by the OSS Community.
 
- - DotNet
+ - .Net
    - https://github.com/toor1245/cpu_features.NET
  - Python
    - https://github.com/Narasimha1997/py_cpu
