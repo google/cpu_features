@@ -1699,7 +1699,9 @@ void FillX86BrandString(char brand_string[49]) {
       SafeCpuId(max_cpuid_leaf_ext, 0x80000004),
   };
   const size_t leaves_size = sizeof(leaves);
+#if __STDC_VERSION__ >= 201112L
   _Static_assert(leaves_size == 48, "Leaves must be packed");
+#endif
   CpuFeatures_StringView_CopyString(view((const char*)leaves, leaves_size),
                                     brand_string, 49);
 }
