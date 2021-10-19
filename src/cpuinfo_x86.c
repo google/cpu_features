@@ -1690,21 +1690,18 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
   return X86_UNKNOWN;
 }
 
-static void SetString(const uint32_t max_cpuid_ext_leaf, const uint32_t leaf_id,
-                      char* buffer) {
-  const Leaf leaf = SafeCpuId(max_cpuid_ext_leaf, leaf_id);
-  // We allow calling memcpy from SetString which is only called when requesting
-  // X86BrandString.
-  memcpy(buffer, &leaf, sizeof(Leaf));
-}
-
 void FillX86BrandString(char brand_string[49]) {
   const Leaf leaf_ext_0 = CpuId(0x80000000);
   const uint32_t max_cpuid_leaf_ext = leaf_ext_0.eax;
-  SetString(max_cpuid_leaf_ext, 0x80000002, brand_string);
-  SetString(max_cpuid_leaf_ext, 0x80000003, brand_string + 16);
-  SetString(max_cpuid_leaf_ext, 0x80000004, brand_string + 32);
-  brand_string[48] = '\0';
+  const Leaf leaves[3] = {
+      SafeCpuId(max_cpuid_leaf_ext, 0x80000002),
+      SafeCpuId(max_cpuid_leaf_ext, 0x80000003),
+      SafeCpuId(max_cpuid_leaf_ext, 0x80000004),
+  };
+  const size_t leaves_size = sizeof(leaves);
+  _Static_assert(leaves_size == 48, "Leaves must be packed");
+  CpuFeatures_StringView_CopyString(view((const char*)leaves, leaves_size),
+                                    brand_string, 49);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
