@@ -1120,26 +1120,29 @@ static CacheLevelInfo GetCacheLevelInfo(const uint32_t reg) {
   }
 }
 
-static void GetByteArrayFromRegister(uint32_t result[4], const uint32_t reg) {
-  for (int i = 0; i < 4; ++i) {
-    result[i] = ExtractBitRange(reg, (i + 1) * 8, i * 8);
-  }
-}
-
+// From https://www.felixcloutier.com/x86/cpuid#tbl-3-12
 static void ParseLeaf2(const int max_cpuid_leaf, CacheInfo* info) {
   Leaf leaf = SafeCpuId(max_cpuid_leaf, 2);
-  uint32_t registers[] = {leaf.eax, leaf.ebx, leaf.ecx, leaf.edx};
-  for (int i = 0; i < 4; ++i) {
-    if (registers[i] & (1U << 31)) {
-      continue;  // register does not contains valid information
-    }
-    uint32_t bytes[4];
-    GetByteArrayFromRegister(bytes, registers[i]);
-    for (int j = 0; j < 4; ++j) {
-      if (bytes[j] == 0xFF)
-        break;  // leaf 4 should be used to fetch cache information
-      info->levels[info->size] = GetCacheLevelInfo(bytes[j]);
-    }
+  // The least-significant byte in register EAX (register AL) will always return
+  // 01H. Software should ignore this value and not interpret it as an
+  // informational descriptor.
+  leaf.eax &= 0xFFFFFF00;  // Zeroing out AL. 0 is the empty descriptor.
+  // The most significant bit (bit 31) of each register indicates whether the
+  // register contains valid information (set to 0) or is reserved (set to 1).
+  if (IsBitSet(leaf.eax, 31)) leaf.eax = 0;
+  if (IsBitSet(leaf.ebx, 31)) leaf.ebx = 0;
+  if (IsBitSet(leaf.ecx, 31)) leaf.ecx = 0;
+  if (IsBitSet(leaf.edx, 31)) leaf.edx = 0;
+
+  uint8_t data[16];
+#if __STDC_VERSION__ >= 201112L
+  _Static_assert(sizeof(Leaf) == sizeof(data), "Leaf must be 16 bytes");
+#endif
+  memcpy(&data, &leaf, sizeof(data));
+  for (size_t i = 0; i < sizeof(data); ++i) {
+    const uint8_t descriptor = data[i];
+    if (descriptor == 0) continue;
+    info->levels[info->size] = GetCacheLevelInfo(descriptor);
     info->size++;
   }
 }
@@ -1148,27 +1151,23 @@ static void ParseLeaf2(const int max_cpuid_leaf, CacheInfo* info) {
 // For newer AMD CPUs uses "CPUID, eax=0x8000001D"
 static void ParseCacheInfo(const int max_cpuid_leaf, uint32_t leaf_id,
                            CacheInfo* info) {
-  info->size = 0;
   for (int cache_id = 0; cache_id < CPU_FEATURES_MAX_CACHE_LEVEL; cache_id++) {
     const Leaf leaf = SafeCpuIdEx(max_cpuid_leaf, leaf_id, cache_id);
     CacheType cache_type = ExtractBitRange(leaf.eax, 4, 0);
-    if (cache_type == CPU_FEATURE_CACHE_NULL) {
-      info->levels[cache_id] = kEmptyCacheLevelInfo;
-      continue;
-    }
+    if (cache_type == CPU_FEATURE_CACHE_NULL) continue;
     int level = ExtractBitRange(leaf.eax, 7, 5);
     int line_size = ExtractBitRange(leaf.ebx, 11, 0) + 1;
     int partitioning = ExtractBitRange(leaf.ebx, 21, 12) + 1;
     int ways = ExtractBitRange(leaf.ebx, 31, 22) + 1;
     int tlb_entries = leaf.ecx + 1;
     int cache_size = (ways * partitioning * line_size * (tlb_entries));
-    info->levels[cache_id] = (CacheLevelInfo){.level = level,
-                                              .cache_type = cache_type,
-                                              .cache_size = cache_size,
-                                              .ways = ways,
-                                              .line_size = line_size,
-                                              .tlb_entries = tlb_entries,
-                                              .partitioning = partitioning};
+    info->levels[info->size] = (CacheLevelInfo){.level = level,
+                                                .cache_type = cache_type,
+                                                .cache_size = cache_size,
+                                                .ways = ways,
+                                                .line_size = line_size,
+                                                .tlb_entries = tlb_entries,
+                                                .partitioning = partitioning};
     info->size++;
   }
 }
@@ -1454,6 +1453,7 @@ CacheInfo GetX86CacheInfo(void) {
   CacheInfo info = kEmptyCacheInfo;
   const Leaf leaf_0 = CpuId(0);
   if (IsVendor(leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL)) {
+    info.size = 0;
     ParseLeaf2(leaf_0.eax, &info);
     ParseCacheInfo(leaf_0.eax, 4, &info);
   } else if (IsVendor(leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD) ||

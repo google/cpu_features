@@ -162,6 +162,7 @@ TEST_F(CpuidX86Test, SandyBridge) {
   EXPECT_FALSE(features.adx);
 }
 
+const int UNDEF = -1;
 const int KiB = 1024;
 const int MiB = 1024 * KiB;
 
@@ -924,6 +925,58 @@ flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
   EXPECT_TRUE(info.features.sse4_1);
   EXPECT_TRUE(info.features.sse4_2);
 #endif  // !defined(CPU_FEATURES_OS_WINDOWS)
+}
+
+// https://www.felixcloutier.com/x86/cpuid#example-3-1--example-of-cache-and-tlb-interpretation
+TEST_F(CpuidX86Test, P4_CacheInfo) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000002, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x00000F0A, 0x00010808, 0x00000000, 0x3FEBFBFF}},
+      {{0x00000002, 0}, Leaf{0x665B5001, 0x00000000, 0x00000000, 0x007A7000}},
+  });
+
+  const auto info = GetX86CacheInfo();
+  EXPECT_EQ(info.size, 5);
+
+  EXPECT_EQ(info.levels[0].level, UNDEF);
+  EXPECT_EQ(info.levels[0].cache_type, CPU_FEATURE_CACHE_TLB);
+  EXPECT_EQ(info.levels[0].cache_size, 4 * KiB);
+  EXPECT_EQ(info.levels[0].ways, UNDEF);
+  EXPECT_EQ(info.levels[0].line_size, UNDEF);
+  EXPECT_EQ(info.levels[0].tlb_entries, 64);
+  EXPECT_EQ(info.levels[0].partitioning, 0);
+
+  EXPECT_EQ(info.levels[1].level, UNDEF);
+  EXPECT_EQ(info.levels[1].cache_type, CPU_FEATURE_CACHE_TLB);
+  EXPECT_EQ(info.levels[1].cache_size, 4 * KiB);
+  EXPECT_EQ(info.levels[1].ways, UNDEF);
+  EXPECT_EQ(info.levels[1].line_size, UNDEF);
+  EXPECT_EQ(info.levels[1].tlb_entries, 64);
+  EXPECT_EQ(info.levels[1].partitioning, 0);
+
+  EXPECT_EQ(info.levels[2].level, 1);
+  EXPECT_EQ(info.levels[2].cache_type, CPU_FEATURE_CACHE_DATA);
+  EXPECT_EQ(info.levels[2].cache_size, 8 * KiB);
+  EXPECT_EQ(info.levels[2].ways, 4);
+  EXPECT_EQ(info.levels[2].line_size, 64);
+  EXPECT_EQ(info.levels[2].tlb_entries, UNDEF);
+  EXPECT_EQ(info.levels[2].partitioning, 0);
+
+  EXPECT_EQ(info.levels[3].level, 1);
+  EXPECT_EQ(info.levels[3].cache_type, CPU_FEATURE_CACHE_INSTRUCTION);
+  EXPECT_EQ(info.levels[3].cache_size, 12 * KiB);
+  EXPECT_EQ(info.levels[3].ways, 8);
+  EXPECT_EQ(info.levels[3].line_size, UNDEF);
+  EXPECT_EQ(info.levels[3].tlb_entries, UNDEF);
+  EXPECT_EQ(info.levels[3].partitioning, 0);
+
+  EXPECT_EQ(info.levels[4].level, 2);
+  EXPECT_EQ(info.levels[4].cache_type, CPU_FEATURE_CACHE_DATA);
+  EXPECT_EQ(info.levels[4].cache_size, 256 * KiB);
+  EXPECT_EQ(info.levels[4].ways, 8);
+  EXPECT_EQ(info.levels[4].line_size, 64);
+  EXPECT_EQ(info.levels[4].tlb_entries, UNDEF);
+  EXPECT_EQ(info.levels[4].partitioning, 2);
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0000673_P3_KatmaiDP_CPUID.txt
