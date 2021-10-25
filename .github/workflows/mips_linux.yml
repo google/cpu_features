@@ -1,0 +1,34 @@
+name: mips Linux
+
+on:
+  push:
+  pull_request:
+  schedule:
+    # min hours day(month) month day(week)
+    - cron: '0 0 7,22 * *'
+
+jobs:
+  # Building using the github runner environement directly.
+  mips:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        targets: [
+          [mips32],
+          [mips32el],
+          [mips64],
+          [mips64el]
+        ]
+      fail-fast: false
+    env:
+      TARGET: ${{ matrix.targets[0] }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Ninja
+      run: |
+        sudo apt-get update
+        sudo apt-get install ninja-build
+    - name: Build
+      run: ./scripts/run_integration.sh build
+    - name: Test
+      run: ./scripts/run_integration.sh test
