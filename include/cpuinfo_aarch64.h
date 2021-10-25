@@ -72,7 +72,6 @@ typedef struct {
   int rng : 1;         // True random number generator support.
   int bti : 1;         // Branch target identification.
   int mte : 1;         // Memory tagging extension.
-
   // Make sure to update Aarch64FeaturesEnum below if you add a field here.
 } Aarch64Features;
 
