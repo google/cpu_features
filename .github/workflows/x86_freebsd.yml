@@ -1,4 +1,4 @@
-name: FreeBSD
+name: x86 FreeBSD
 
 on:
   push:
