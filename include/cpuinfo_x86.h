@@ -116,6 +116,9 @@ CacheInfo GetX86CacheInfo(void);
 
 typedef enum {
   X86_UNKNOWN,
+  INTEL_80486,       // 80486
+  INTEL_P5,          // P5
+  INTEL_LAKEMONT,    // LAKEMONT
   INTEL_CORE,        // CORE
   INTEL_PNR,         // PENRYN
   INTEL_NHM,         // NEHALEM
@@ -135,6 +138,13 @@ typedef enum {
   INTEL_ICL,         // ICE LAKE
   INTEL_TGL,         // TIGER LAKE
   INTEL_SPR,         // SAPPHIRE RAPIDS
+  INTEL_ADL,         // ALDER LAKE
+  INTEL_RCL,         // ROCKET LAKE
+  INTEL_KNIGHTS_M,   // KNIGHTS MILL
+  INTEL_KNIGHTS_L,   // KNIGHTS LANDING
+  INTEL_KNIGHTS_F,   // KNIGHTS FERRY
+  INTEL_KNIGHTS_C,   // KNIGHTS CORNER
+  INTEL_NETBURST,    // NETBURST
   AMD_HAMMER,        // K8  HAMMER
   AMD_K10,           // K10
   AMD_K11,           // K11
