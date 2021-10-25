@@ -1,121 +1,139 @@
 language: c
 
-sudo: false
-
 cache:
   timeout: 1000
   directories:
     - $HOME/cpu_features_archives
 
+# see: https://docs.travis-ci.com/user/reference/focal/
+dist: focal
 addons:
   apt_packages:
     - ninja-build
 
-env:
-  global:
-    TOOLCHAIN=NATIVE
-    CMAKE_GENERATOR=Ninja
-
-matrix:
+jobs:
   include:
   - os: linux
     compiler: gcc
-    env:
-      TARGET=x86_64-linux-gnu
+    script:
+    - cmake --version
+    - cmake -S. -Bbuild
+    - cmake --build build --target all -v
+    - cmake --build build --target test -v
+    - cmake --build build --target install -v -- DESTDIR=dist
   - os: linux
     compiler: clang
-    env:
-      TARGET=x86_64-linux-gnu
+    script:
+    - cmake --version
+    - cmake -S. -Bbuild
+    - cmake --build build --target all -v
+    - cmake --build build --target test -v
+    - cmake --build build --target install -v -- DESTDIR=dist
+
   - os: osx
     compiler: gcc
-    env:
-      TARGET=x86_64-osx
-      CMAKE_GENERATOR="Unix Makefiles"
+    script:
+    - cmake --version
+    - cmake -S. -Bbuild -G "Xcode" -DCMAKE_CONFIGURATION_TYPES=Release
+    - cmake --build build --config Release --target ALL_BUILD -v
+    - cmake --build build --config Release --target RUN_TESTS -v
+    - cmake --build build --config Release --target install -v
   - os: osx
     compiler: clang
-    env:
-      TARGET=x86_64-osx
-      CMAKE_GENERATOR="Unix Makefiles"
+    script:
+    - cmake --version
+    - cmake -S. -Bbuild  -G "Xcode" -DCMAKE_CONFIGURATION_TYPES=Release
+    - cmake --build build --target ALL_BUILD -v
+    - cmake --build build --target RUN_TESTS -v
+    - cmake --build build --config Release --target install -v
+
   - os: windows
-    env:
-      TARGET=x86_64-windows
-      CMAKE_GENERATOR="Visual Studio 15 2017 Win64"
+    script:
+    - cmake --version
+    - cmake -S. -Bbuild -G "Visual Studio 15 2017 Win64" -DCMAKE_CONFIGURATION_TYPES=Release
+    - cmake --build build --config Release --target ALL_BUILD
+    - cmake --build build --config Release --target RUN_TESTS
+    - cmake --build build --config Release --target INSTALL
 
   # see: https://docs.travis-ci.com/user/multi-cpu-architectures/
   - os: linux
     arch: ppc64le
     compiler: gcc
-    env:
-      TARGET=ppc64le-linux-gnu
+    script:
+    - cmake --version
+    - cmake -S. -Bbuild
+    - cmake --build build --target all -v
+    - cmake --build build --target test -v
+    - cmake --build build --target install -v -- DESTDIR=dist
   - os: linux
     arch: ppc64le
     compiler: clang
-    env:
-      TARGET=ppc64le-linux-gnu
+    script:
+    - cmake --version
+    - cmake -S. -Bbuild
+    - cmake --build build --target all -v
+    - cmake --build build --target test -v
+    - cmake --build build --target install -v -- DESTDIR=dist
 
   # Toolchains for little-endian, 64-bit ARMv8 for GNU/Linux systems
   - os: linux
     env:
-      TOOLCHAIN=LINARO
       TARGET=aarch64-linux-gnu
-      QEMU_ARCH=aarch64
+    script:
+    - ./scripts/run_integration.sh
   # Toolchains for little-endian, hard-float, 32-bit ARMv7 (and earlier) for GNU/Linux systems
   - os: linux
     env:
-      TOOLCHAIN=LINARO
       TARGET=arm-linux-gnueabihf
-      QEMU_ARCH=arm
+    script:
+    - ./scripts/run_integration.sh
   # Toolchains for little-endian, 32-bit ARMv8 for GNU/Linux systems
   - os: linux
     env:
-      TOOLCHAIN=LINARO
       TARGET=armv8l-linux-gnueabihf
-      QEMU_ARCH=arm
+    script:
+    - ./scripts/run_integration.sh
   # Toolchains for little-endian, soft-float, 32-bit ARMv7 (and earlier) for GNU/Linux systems
   - os: linux
     env:
-      TOOLCHAIN=LINARO
       TARGET=arm-linux-gnueabi
-      QEMU_ARCH=arm
+    script:
+    - ./scripts/run_integration.sh
   # Toolchains for big-endian, 64-bit ARMv8 for GNU/Linux systems
   - os: linux
     env:
-      TOOLCHAIN=LINARO
       TARGET=aarch64_be-linux-gnu
-      QEMU_ARCH=DISABLED
+    script:
+    - ./scripts/run_integration.sh
   # Toolchains for big-endian, hard-float, 32-bit ARMv7 (and earlier) for GNU/Linux systems
   - os: linux
     env:
-      TOOLCHAIN=LINARO
       TARGET=armeb-linux-gnueabihf
-      QEMU_ARCH=DISABLED
+    script:
+    - ./scripts/run_integration.sh
   # Toolchains for big-endian, soft-float, 32-bit ARMv7 (and earlier) for GNU/Linux systems
   - os: linux
     env:
-      TOOLCHAIN=LINARO
       TARGET=armeb-linux-gnueabi
-      QEMU_ARCH=DISABLED
+    script:
+    - ./scripts/run_integration.sh
   - os: linux
     env:
-      TOOLCHAIN=CODESCAPE
       TARGET=mips32
-      QEMU_ARCH=mips
+    script:
+    - ./scripts/run_integration.sh
   - os: linux
     env:
-      TOOLCHAIN=CODESCAPE
       TARGET=mips32el
-      QEMU_ARCH=mipsel
+    script:
+    - ./scripts/run_integration.sh
   - os: linux
     env:
-      TOOLCHAIN=CODESCAPE
       TARGET=mips64
-      QEMU_ARCH=mips64
+    script:
+    - ./scripts/run_integration.sh
   - os: linux
     env:
-      TOOLCHAIN=CODESCAPE
       TARGET=mips64el
-      QEMU_ARCH=mips64el
-
-script:
-  - cmake --version
-  - bash -e -x ./scripts/run_integration.sh
+    script:
+    - ./scripts/run_integration.sh
