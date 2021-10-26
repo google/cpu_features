@@ -1148,31 +1148,46 @@ static void ParseLeaf2(const int max_cpuid_leaf, CacheInfo* info) {
   }
 }
 
+static const CacheInfo kEmptyCacheInfo;
+
 // For newer Intel CPUs uses "CPUID, eax=0x00000004".
+// https://www.felixcloutier.com/x86/cpuid#input-eax-=-04h--returns-deterministic-cache-parameters-for-each-level
 // For newer AMD CPUs uses "CPUID, eax=0x8000001D"
 static void ParseCacheInfo(const int max_cpuid_leaf, uint32_t leaf_id,
-                           CacheInfo* info) {
-  for (int cache_id = 0; cache_id < CPU_FEATURES_MAX_CACHE_LEVEL &&
-                         info->size < CPU_FEATURES_MAX_CACHE_LEVEL;
-       cache_id++) {
-    const Leaf leaf = SafeCpuIdEx(max_cpuid_leaf, leaf_id, cache_id);
-    CacheType cache_type = ExtractBitRange(leaf.eax, 4, 0);
-    if (cache_type == CPU_FEATURE_CACHE_NULL) continue;
+                           CacheInfo* old_info) {
+  CacheInfo info = kEmptyCacheInfo;
+  for (int index = 0; info.size < CPU_FEATURES_MAX_CACHE_LEVEL; ++index) {
+    const Leaf leaf = SafeCpuIdEx(max_cpuid_leaf, leaf_id, index);
+    int cache_type_field = ExtractBitRange(leaf.eax, 4, 0);
+    CacheType cache_type;
+    if (cache_type_field == 0)
+      break;
+    else if (cache_type_field == 1)
+      cache_type = CPU_FEATURE_CACHE_DATA;
+    else if (cache_type_field == 2)
+      cache_type = CPU_FEATURE_CACHE_INSTRUCTION;
+    else if (cache_type_field == 3)
+      cache_type = CPU_FEATURE_CACHE_UNIFIED;
+    else
+      break;  // Should not occur as per documentation.
     int level = ExtractBitRange(leaf.eax, 7, 5);
     int line_size = ExtractBitRange(leaf.ebx, 11, 0) + 1;
     int partitioning = ExtractBitRange(leaf.ebx, 21, 12) + 1;
     int ways = ExtractBitRange(leaf.ebx, 31, 22) + 1;
     int tlb_entries = leaf.ecx + 1;
-    int cache_size = (ways * partitioning * line_size * (tlb_entries));
-    info->levels[info->size] = (CacheLevelInfo){.level = level,
-                                                .cache_type = cache_type,
-                                                .cache_size = cache_size,
-                                                .ways = ways,
-                                                .line_size = line_size,
-                                                .tlb_entries = tlb_entries,
-                                                .partitioning = partitioning};
-    info->size++;
+    int cache_size = ways * partitioning * line_size * tlb_entries;
+    info.levels[info.size] = (CacheLevelInfo){.level = level,
+                                              .cache_type = cache_type,
+                                              .cache_size = cache_size,
+                                              .ways = ways,
+                                              .line_size = line_size,
+                                              .tlb_entries = tlb_entries,
+                                              .partitioning = partitioning};
+    ++info.size;
   }
+  // Override CacheInfo if we successfully extracted Deterministic Cache
+  // Parameters.
+  if (info.size > 0) *old_info = info;
 }
 
 #if defined(CPU_FEATURES_OS_DARWIN)
@@ -1431,7 +1446,6 @@ static void ParseExtraAMDCpuId(X86Info* info, OsPreserves os_preserves) {
 }
 
 static const X86Info kEmptyX86Info;
-static const CacheInfo kEmptyCacheInfo;
 static const OsPreserves kEmptyOsPreserves;
 
 X86Info GetX86Info(void) {
@@ -1456,7 +1470,6 @@ CacheInfo GetX86CacheInfo(void) {
   CacheInfo info = kEmptyCacheInfo;
   const Leaf leaf_0 = CpuId(0);
   if (IsVendor(leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL)) {
-    info.size = 0;
     ParseLeaf2(leaf_0.eax, &info);
     ParseCacheInfo(leaf_0.eax, 4, &info);
   } else if (IsVendor(leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD) ||
