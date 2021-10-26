@@ -198,16 +198,16 @@ Please check the [CMake build instructions](cmake/README.md).
 
  - build `list_cpu_features`
 ```
-    cmake -B/tmp/cpu_features -H. -GNinja -DCMAKE_BUILD_TYPE=Release
-    ninja -C/tmp/cpu_features
-    /tmp/cpu_features/list_cpu_features --json
+cmake -B/tmp/cpu_features -H. -GNinja -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
+ninja -C/tmp/cpu_features
+/tmp/cpu_features/list_cpu_features --json
 ```
 
  - run tests
 ```
-    cmake -B/tmp/cpu_features -H. -GNinja -DBUILD_TESTING=ON
-    ninja -C/tmp/cpu_features
-    ninja -C/tmp/cpu_features test
+cmake -B/tmp/cpu_features -H. -GNinja
+ninja -C/tmp/cpu_features
+ninja -C/tmp/cpu_features test
 ```
 
 <a name="bindings"></a>
