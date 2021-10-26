@@ -344,9 +344,11 @@ static Node* GetCacheTypeString(CacheType cache_type) {
 }
 
 static void AddCacheInfo(Node* root, const CacheInfo* cache_info) {
+  const int UNDEF = -1;
   Node* array = CreateArray();
   for (int i = 0; i < cache_info->size; ++i) {
     CacheLevelInfo info = cache_info->levels[i];
+    if (info.level == UNDEF || info.level > CPU_FEATURES_MAX_CACHE_LEVEL) continue;
     Node* map = CreateMap();
     AddMapEntry(map, "level", CreateInt(info.level));
     AddMapEntry(map, "cache_type", GetCacheTypeString(info.cache_type));
