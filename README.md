@@ -1,4 +1,14 @@
-# cpu_features [![Build Status](https://travis-ci.org/google/cpu_features.svg?branch=master)](https://travis-ci.org/google/cpu_features) [![Build status](https://ci.appveyor.com/api/projects/status/46d1owsj7n8dsylq/branch/master?svg=true)](https://ci.appveyor.com/project/gchatelet/cpu-features/branch/master)
+# cpu_features
+[![Linux Status][linux_svg]][linux_link]
+[![Macos Status][macos_svg]][macos_link]
+[![Windows Status][windows_svg]][windows_link]
+
+[linux_svg]: https://github.com/google/cpu_features/actions/workflows/x86_linux.yml/badge.svg?branch=master
+[linux_link]: https://github.com/google/cpu_features/actions/workflows/x86_linux.yml
+[macos_svg]: https://github.com/google/cpu_features/actions/workflows/x86_darwin.yml/badge.svg?branch=master
+[macos_link]: https://github.com/google/cpu_features/actions/workflows/x86_darwin.yml
+[windows_svg]: https://github.com/google/cpu_features/actions/workflows/x86_windows.yml/badge.svg?branch=master
+[windows_link]: https://github.com/google/cpu_features/actions/workflows/x86_windows.yml
 
 A cross-platform C library to retrieve CPU features (such as available
 instructions) at runtime.
