@@ -1152,7 +1152,9 @@ static void ParseLeaf2(const int max_cpuid_leaf, CacheInfo* info) {
 // For newer AMD CPUs uses "CPUID, eax=0x8000001D"
 static void ParseCacheInfo(const int max_cpuid_leaf, uint32_t leaf_id,
                            CacheInfo* info) {
-  for (int cache_id = 0; cache_id < CPU_FEATURES_MAX_CACHE_LEVEL; cache_id++) {
+  for (int cache_id = 0; cache_id < CPU_FEATURES_MAX_CACHE_LEVEL &&
+                         info->size < CPU_FEATURES_MAX_CACHE_LEVEL;
+       cache_id++) {
     const Leaf leaf = SafeCpuIdEx(max_cpuid_leaf, leaf_id, cache_id);
     CacheType cache_type = ExtractBitRange(leaf.eax, 4, 0);
     if (cache_type == CPU_FEATURE_CACHE_NULL) continue;
