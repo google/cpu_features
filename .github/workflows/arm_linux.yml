@@ -23,6 +23,7 @@ jobs:
       fail-fast: false
     env:
       TARGET: ${{ matrix.targets[0] }}
+      CTEST_OUTPUT_ON_FAILURE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Install Ninja

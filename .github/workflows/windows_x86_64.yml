@@ -11,6 +11,8 @@ jobs:
   # Building using the github runner environement directly.
   msvc:
     runs-on: windows-latest
+    env:
+      CTEST_OUTPUT_ON_FAILURE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Configure

@@ -11,6 +11,8 @@ jobs:
   # Building using the github runner environement directly.
   xcode:
     runs-on: macos-latest
+    env:
+      CTEST_OUTPUT_ON_FAILURE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Check cmake
@@ -25,6 +27,8 @@ jobs:
       run: cmake --build build --config Release --target install -v
   make:
     runs-on: macos-latest
+    env:
+      CTEST_OUTPUT_ON_FAILURE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Check cmake
