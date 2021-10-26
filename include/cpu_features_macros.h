@@ -39,7 +39,7 @@
 #define CPU_FEATURES_ARCH_ARM
 #endif
 
-#if (defined(__aarch64__) || defined(__arm64__))
+#if (defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64))
 #define CPU_FEATURES_ARCH_AARCH64
 #endif
 
