@@ -54,7 +54,7 @@ install(
 #
 # program : NDK compat test program
 #
-if(ENABLE_TESTING)
+if(BUILD_TESTING)
   add_executable(ndk-compat-test ndk-compat-test.c)
   target_link_libraries(ndk-compat-test PRIVATE ndk_compat)
 endif()
