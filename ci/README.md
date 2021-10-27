@@ -6,11 +6,11 @@
 | MacOS    | [![Status][macos_svg]][macos_link] | N/A | N/A | N/A |
 | Windows  | [![Status][windows_svg]][windows_link] | N/A | N/A | N/A |
 
-[freebsd_svg]: https://github.com/google/cpu_features/actions/workflows/x86_freebsd.yml/badge.svg?branch=master
-[freebsd_link]: https://github.com/google/cpu_features/actions/workflows/x86_freebsd.yml
+[freebsd_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_freebsd.yml/badge.svg?branch=master
+[freebsd_link]: https://github.com/google/cpu_features/actions/workflows/amd64_freebsd.yml
 
-[linux_svg]: https://github.com/google/cpu_features/actions/workflows/x86_linux.yml/badge.svg?branch=master
-[linux_link]: https://github.com/google/cpu_features/actions/workflows/x86_linux.yml
+[linux_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml/badge.svg?branch=master
+[linux_link]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml
 [linux_aarch64_svg]: https://github.com/google/cpu_features/actions/workflows/aarch64_linux.yml/badge.svg?branch=master
 [linux_aarch64_link]: https://github.com/google/cpu_features/actions/workflows/aarch64_linux.yml
 [linux_arm_svg]: https://github.com/google/cpu_features/actions/workflows/arm_linux.yml/badge.svg?branch=master
@@ -18,11 +18,11 @@
 [linux_mips_svg]: https://github.com/google/cpu_features/actions/workflows/mips_linux.yml/badge.svg?branch=master
 [linux_mips_link]: https://github.com/google/cpu_features/actions/workflows/mips_linux.yml
 
-[macos_svg]: https://github.com/google/cpu_features/actions/workflows/x86_darwin.yml/badge.svg?branch=master
-[macos_link]: https://github.com/google/cpu_features/actions/workflows/x86_darwin.yml
+[macos_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml/badge.svg?branch=master
+[macos_link]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml
 
-[windows_svg]: https://github.com/google/cpu_features/actions/workflows/x86_windows.yml/badge.svg?branch=master
-[windows_link]: https://github.com/google/cpu_features/actions/workflows/x86_windows.yml
+[windows_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml/badge.svg?branch=master
+[windows_link]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml
 
 ## Makefile/Docker testing
 To test the build on various distro, we are using docker containers and a Makefile for orchestration.

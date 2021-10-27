@@ -3,12 +3,12 @@
 [![Macos Status][macos_svg]][macos_link]
 [![Windows Status][windows_svg]][windows_link]
 
-[linux_svg]: https://github.com/google/cpu_features/actions/workflows/x86_linux.yml/badge.svg?branch=master
-[linux_link]: https://github.com/google/cpu_features/actions/workflows/x86_linux.yml
-[macos_svg]: https://github.com/google/cpu_features/actions/workflows/x86_darwin.yml/badge.svg?branch=master
-[macos_link]: https://github.com/google/cpu_features/actions/workflows/x86_darwin.yml
-[windows_svg]: https://github.com/google/cpu_features/actions/workflows/x86_windows.yml/badge.svg?branch=master
-[windows_link]: https://github.com/google/cpu_features/actions/workflows/x86_windows.yml
+[linux_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml/badge.svg?branch=master
+[linux_link]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml
+[macos_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml/badge.svg?branch=master
+[macos_link]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml
+[windows_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml/badge.svg?branch=master
+[windows_link]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml
 
 A cross-platform C library to retrieve CPU features (such as available
 instructions) at runtime.

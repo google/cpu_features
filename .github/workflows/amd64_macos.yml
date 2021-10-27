@@ -1,4 +1,4 @@
-name: x86 Darwin
+name: amd64 macOS
 
 on:
   push:
