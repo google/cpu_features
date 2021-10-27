@@ -23,14 +23,9 @@ jobs:
       fail-fast: false
     env:
       TARGET: ${{ matrix.targets[0] }}
-      CTEST_OUTPUT_ON_FAILURE: 1
     steps:
     - uses: actions/checkout@v2
-    - name: Install Ninja
-      run: |
-        sudo apt-get update
-        sudo apt-get install ninja-build
     - name: Build
-      run: ./scripts/run_integration.sh build
+      run: make --directory=ci ${TARGET}_build
     - name: Test
-      run: ./scripts/run_integration.sh test
+      run: make --directory=ci ${TARGET}_test
