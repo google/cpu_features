@@ -788,7 +788,7 @@ FreeBSD is a registered trademark of The FreeBSD Foundation.
   Features2=0x5eda2203<SSE3,PCLMULQDQ,SSSE3,CX16,PCID,SSE4.1,SSE4.2,MOVBE,POPCNT,AESNI,XSAVE,OSXSAVE,RDRAND>
 real memory  = 2147418112 (2047 MB)
 )");
-#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
+#elif defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(processor       :
 flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
@@ -870,7 +870,7 @@ FreeBSD is a registered trademark of The FreeBSD Foundation.
   Features2=0x5eda2203<SSE3,PCLMULQDQ,SSSE3,CX16,PCID,SSE4.1,SSE4.2,MOVBE,POPCNT,AESNI,XSAVE,OSXSAVE,RDRAND>
 real memory  = 2147418112 (2047 MB)
 )");
-#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
+#elif defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
 flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
@@ -996,7 +996,7 @@ FreeBSD is a registered trademark of The FreeBSD Foundation.
   Features=0x1783fbff<FPU,VME,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,MMX,FXSR,SSE>
 real memory  = 2147418112 (2047 MB)
 )");
-#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
+#elif defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
 flags           : fpu mmx sse
