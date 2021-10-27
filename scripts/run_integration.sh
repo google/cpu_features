@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 set -eo pipefail
 
 function extract() {
@@ -55,8 +54,8 @@ function install_qemu() {
 
   # Qemu (meson based build) depends on: pkgconf, libglib2.0, python3, ninja
   ./configure \
-    --prefix=${QEMU_INSTALL} \
-    --target-list=${QEMU_TARGET} \
+    --prefix="${QEMU_INSTALL}" \
+    --target-list="${QEMU_TARGET}" \
     --audio-drv-list= \
     --disable-brlapi \
     --disable-curl \
