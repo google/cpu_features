@@ -48,7 +48,7 @@ class FakeCpu {
     xcr0_eax_ = os_backups_extended_registers ? -1 : 0;
   }
 
-#if defined(CPU_FEATURES_OS_DARWIN)
+#if defined(CPU_FEATURES_OS_MACOS)
   bool GetDarwinSysCtlByName(std::string name) const {
     return darwin_sysctlbyname_.count(name);
   }
@@ -56,7 +56,7 @@ class FakeCpu {
   void SetDarwinSysCtlByName(std::string name) {
     darwin_sysctlbyname_.insert(name);
   }
-#endif  // CPU_FEATURES_OS_DARWIN
+#endif  // CPU_FEATURES_OS_MACOS
 
 #if defined(CPU_FEATURES_OS_WINDOWS)
   bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
@@ -70,9 +70,9 @@ class FakeCpu {
 
  private:
   std::map<std::pair<uint32_t, int>, Leaf> cpuid_leaves_;
-#if defined(CPU_FEATURES_OS_DARWIN)
+#if defined(CPU_FEATURES_OS_MACOS)
   std::set<std::string> darwin_sysctlbyname_;
-#endif  // CPU_FEATURES_OS_DARWIN
+#endif  // CPU_FEATURES_OS_MACOS
 #if defined(CPU_FEATURES_OS_WINDOWS)
   std::set<DWORD> windows_isprocessorfeaturepresent_;
 #endif  // CPU_FEATURES_OS_WINDOWS
@@ -92,11 +92,11 @@ extern "C" Leaf GetCpuidLeaf(uint32_t leaf_id, int ecx) {
 
 extern "C" uint32_t GetXCR0Eax(void) { return cpu().GetXCR0Eax(); }
 
-#if defined(CPU_FEATURES_OS_DARWIN)
+#if defined(CPU_FEATURES_OS_MACOS)
 extern "C" bool GetDarwinSysCtlByName(const char* name) {
   return cpu().GetDarwinSysCtlByName(name);
 }
-#endif  // CPU_FEATURES_OS_DARWIN
+#endif  // CPU_FEATURES_OS_MACOS
 
 #if defined(CPU_FEATURES_OS_WINDOWS)
 extern "C" bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
@@ -771,7 +771,7 @@ TEST_F(CpuidX86Test, Nehalem) {
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
-#elif defined(CPU_FEATURES_OS_DARWIN)
+#elif defined(CPU_FEATURES_OS_MACOS)
   cpu().SetDarwinSysCtlByName("hw.optional.sse");
   cpu().SetDarwinSysCtlByName("hw.optional.sse2");
   cpu().SetDarwinSysCtlByName("hw.optional.sse3");
@@ -853,7 +853,7 @@ TEST_F(CpuidX86Test, Atom) {
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
-#elif defined(CPU_FEATURES_OS_DARWIN)
+#elif defined(CPU_FEATURES_OS_MACOS)
   cpu().SetDarwinSysCtlByName("hw.optional.sse");
   cpu().SetDarwinSysCtlByName("hw.optional.sse2");
   cpu().SetDarwinSysCtlByName("hw.optional.sse3");
@@ -985,7 +985,7 @@ TEST_F(CpuidX86Test, P3) {
   cpu().SetOsBackupsExtendedRegisters(false);
 #if defined(CPU_FEATURES_OS_WINDOWS)
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
-#elif defined(CPU_FEATURES_OS_DARWIN)
+#elif defined(CPU_FEATURES_OS_MACOS)
   cpu().SetDarwinSysCtlByName("hw.optional.sse");
 #elif defined(CPU_FEATURES_OS_FREEBSD)
   auto& fs = GetEmptyFilesystem();
