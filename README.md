@@ -194,21 +194,25 @@ See [LICENSE](LICENSE) for more information.
 Please check the [CMake build instructions](cmake/README.md).
 
 <a name="quickstart"></a>
-### Quickstart with `Ninja`
+### Quickstart
 
- - build `list_cpu_features`
+ - Run `list_cpu_features`
+```sh
+cmake -S. -Bbuild -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release -j
+./build/list_cpu_features --json
 ```
-cmake -B/tmp/cpu_features -H. -GNinja -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
-ninja -C/tmp/cpu_features
-/tmp/cpu_features/list_cpu_features --json
-```
+
+_Note_: Use `--target ALL_BUILD` on the second line for `Visual Studio` and `XCode`.
 
  - run tests
+```sh
+cmake -S. -Bbuild -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build build --config Debug -j
+cmake --build build --config Debug --target test
 ```
-cmake -B/tmp/cpu_features -H. -GNinja
-ninja -C/tmp/cpu_features
-ninja -C/tmp/cpu_features test
-```
+
+_Note_: Use `--target RUN_TESTS` on the last line for `Visual Studio` and `--target RUN_TEST` for `XCode`.
 
 <a name="bindings"></a>
 ## Community bindings
