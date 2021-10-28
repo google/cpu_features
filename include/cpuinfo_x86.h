@@ -107,13 +107,11 @@ typedef struct {
 } X86Info;
 
 // Calls cpuid and returns an initialized X86info.
-// This function is guaranteed to be malloc, memset and memcpy free.
 X86Info GetX86Info(void);
 
 // Returns cache hierarchy informations.
 // Can call cpuid multiple times.
 // Only works on Intel CPU at the moment.
-// This function is guaranteed to be malloc, memset and memcpy free.
 CacheInfo GetX86CacheInfo(void);
 
 typedef enum {
@@ -162,7 +160,6 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info);
 // Calls cpuid and fills the brand_string.
 // - brand_string *must* be of size 49 (beware of array decaying).
 // - brand_string will be zero terminated.
-// - This function calls memcpy.
 void FillX86BrandString(char brand_string[49]);
 
 ////////////////////////////////////////////////////////////////////////////////
