@@ -48,7 +48,7 @@ class FakeCpu {
     xcr0_eax_ = os_backups_extended_registers ? -1 : 0;
   }
 
-#if defined(CPU_FEATURES_OS_DARWIN)
+#if defined(CPU_FEATURES_OS_MACOS)
   bool GetDarwinSysCtlByName(std::string name) const {
     return darwin_sysctlbyname_.count(name);
   }
@@ -56,7 +56,7 @@ class FakeCpu {
   void SetDarwinSysCtlByName(std::string name) {
     darwin_sysctlbyname_.insert(name);
   }
-#endif  // CPU_FEATURES_OS_DARWIN
+#endif  // CPU_FEATURES_OS_MACOS
 
 #if defined(CPU_FEATURES_OS_WINDOWS)
   bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
@@ -70,9 +70,9 @@ class FakeCpu {
 
  private:
   std::map<std::pair<uint32_t, int>, Leaf> cpuid_leaves_;
-#if defined(CPU_FEATURES_OS_DARWIN)
+#if defined(CPU_FEATURES_OS_MACOS)
   std::set<std::string> darwin_sysctlbyname_;
-#endif  // CPU_FEATURES_OS_DARWIN
+#endif  // CPU_FEATURES_OS_MACOS
 #if defined(CPU_FEATURES_OS_WINDOWS)
   std::set<DWORD> windows_isprocessorfeaturepresent_;
 #endif  // CPU_FEATURES_OS_WINDOWS
@@ -92,11 +92,11 @@ extern "C" Leaf GetCpuidLeaf(uint32_t leaf_id, int ecx) {
 
 extern "C" uint32_t GetXCR0Eax(void) { return cpu().GetXCR0Eax(); }
 
-#if defined(CPU_FEATURES_OS_DARWIN)
+#if defined(CPU_FEATURES_OS_MACOS)
 extern "C" bool GetDarwinSysCtlByName(const char* name) {
   return cpu().GetDarwinSysCtlByName(name);
 }
-#endif  // CPU_FEATURES_OS_DARWIN
+#endif  // CPU_FEATURES_OS_MACOS
 
 #if defined(CPU_FEATURES_OS_WINDOWS)
 extern "C" bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
@@ -771,7 +771,7 @@ TEST_F(CpuidX86Test, Nehalem) {
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
-#elif defined(CPU_FEATURES_OS_DARWIN)
+#elif defined(CPU_FEATURES_OS_MACOS)
   cpu().SetDarwinSysCtlByName("hw.optional.sse");
   cpu().SetDarwinSysCtlByName("hw.optional.sse2");
   cpu().SetDarwinSysCtlByName("hw.optional.sse3");
@@ -788,7 +788,7 @@ FreeBSD is a registered trademark of The FreeBSD Foundation.
   Features2=0x5eda2203<SSE3,PCLMULQDQ,SSSE3,CX16,PCID,SSE4.1,SSE4.2,MOVBE,POPCNT,AESNI,XSAVE,OSXSAVE,RDRAND>
 real memory  = 2147418112 (2047 MB)
 )");
-#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
+#elif defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(processor       :
 flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
@@ -853,7 +853,7 @@ TEST_F(CpuidX86Test, Atom) {
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
-#elif defined(CPU_FEATURES_OS_DARWIN)
+#elif defined(CPU_FEATURES_OS_MACOS)
   cpu().SetDarwinSysCtlByName("hw.optional.sse");
   cpu().SetDarwinSysCtlByName("hw.optional.sse2");
   cpu().SetDarwinSysCtlByName("hw.optional.sse3");
@@ -870,7 +870,7 @@ FreeBSD is a registered trademark of The FreeBSD Foundation.
   Features2=0x5eda2203<SSE3,PCLMULQDQ,SSSE3,CX16,PCID,SSE4.1,SSE4.2,MOVBE,POPCNT,AESNI,XSAVE,OSXSAVE,RDRAND>
 real memory  = 2147418112 (2047 MB)
 )");
-#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
+#elif defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
 flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
@@ -985,7 +985,7 @@ TEST_F(CpuidX86Test, P3) {
   cpu().SetOsBackupsExtendedRegisters(false);
 #if defined(CPU_FEATURES_OS_WINDOWS)
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
-#elif defined(CPU_FEATURES_OS_DARWIN)
+#elif defined(CPU_FEATURES_OS_MACOS)
   cpu().SetDarwinSysCtlByName("hw.optional.sse");
 #elif defined(CPU_FEATURES_OS_FREEBSD)
   auto& fs = GetEmptyFilesystem();
@@ -996,7 +996,7 @@ FreeBSD is a registered trademark of The FreeBSD Foundation.
   Features=0x1783fbff<FPU,VME,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,MMX,FXSR,SSE>
 real memory  = 2147418112 (2047 MB)
 )");
-#elif defined(CPU_FEATURES_OS_LINUX_OR_ANDROID)
+#elif defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
 flags           : fpu mmx sse

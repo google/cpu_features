@@ -67,12 +67,17 @@
 // Os
 ////////////////////////////////////////////////////////////////////////////////
 
-#if defined(__linux__)
-#define CPU_FEATURES_OS_LINUX_OR_ANDROID
+#if (defined(__freebsd__) || defined(__FreeBSD__))
+#define CPU_FEATURES_OS_FREEBSD
 #endif
 
 #if defined(__ANDROID__)
 #define CPU_FEATURES_OS_ANDROID
+#endif
+
+#if defined(__linux__) && !defined(CPU_FEATURES_OS_FREEBSD) && \
+    !defined(CPU_FEATURES_OS_ANDROID)
+#define CPU_FEATURES_OS_LINUX
 #endif
 
 #if (defined(_WIN64) || defined(_WIN32))
@@ -80,11 +85,15 @@
 #endif
 
 #if (defined(__apple__) || defined(__APPLE__) || defined(__MACH__))
-#define CPU_FEATURES_OS_DARWIN
+// From https://stackoverflow.com/a/49560690
+#include "TargetConditionals.h"
+#if defined(TARGET_OS_OSX)
+#define CPU_FEATURES_OS_MACOS
 #endif
-
-#if (defined(__freebsd__) || defined(__FreeBSD__))
-#define CPU_FEATURES_OS_FREEBSD
+#if defined(TARGET_OS_IPHONE)
+// This is set for any non-Mac Apple products (IOS, TV, WATCH)
+#define CPU_FEATURES_OS_IPHONE
+#endif
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////

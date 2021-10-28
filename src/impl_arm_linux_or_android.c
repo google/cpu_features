@@ -12,49 +12,58 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "cpu_features_macros.h"
+
+#ifdef CPU_FEATURES_ARCH_ARM
+#if defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
+
 #include "cpuinfo_arm.h"
 
-#include <assert.h>
-#include <ctype.h>
+////////////////////////////////////////////////////////////////////////////////
+// Definitions for introspection.
+////////////////////////////////////////////////////////////////////////////////
+#define INTROSPECTION_TABLE                                        \
+  LINE(ARM_SWP, swp, "swp", ARM_HWCAP_SWP, 0)                      \
+  LINE(ARM_HALF, half, "half", ARM_HWCAP_HALF, 0)                  \
+  LINE(ARM_THUMB, thumb, "thumb", ARM_HWCAP_THUMB, 0)              \
+  LINE(ARM_26BIT, _26bit, "26bit", ARM_HWCAP_26BIT, 0)             \
+  LINE(ARM_FASTMULT, fastmult, "fastmult", ARM_HWCAP_FAST_MULT, 0) \
+  LINE(ARM_FPA, fpa, "fpa", ARM_HWCAP_FPA, 0)                      \
+  LINE(ARM_VFP, vfp, "vfp", ARM_HWCAP_VFP, 0)                      \
+  LINE(ARM_EDSP, edsp, "edsp", ARM_HWCAP_EDSP, 0)                  \
+  LINE(ARM_JAVA, java, "java", ARM_HWCAP_JAVA, 0)                  \
+  LINE(ARM_IWMMXT, iwmmxt, "iwmmxt", ARM_HWCAP_IWMMXT, 0)          \
+  LINE(ARM_CRUNCH, crunch, "crunch", ARM_HWCAP_CRUNCH, 0)          \
+  LINE(ARM_THUMBEE, thumbee, "thumbee", ARM_HWCAP_THUMBEE, 0)      \
+  LINE(ARM_NEON, neon, "neon", ARM_HWCAP_NEON, 0)                  \
+  LINE(ARM_VFPV3, vfpv3, "vfpv3", ARM_HWCAP_VFPV3, 0)              \
+  LINE(ARM_VFPV3D16, vfpv3d16, "vfpv3d16", ARM_HWCAP_VFPV3D16, 0)  \
+  LINE(ARM_TLS, tls, "tls", ARM_HWCAP_TLS, 0)                      \
+  LINE(ARM_VFPV4, vfpv4, "vfpv4", ARM_HWCAP_VFPV4, 0)              \
+  LINE(ARM_IDIVA, idiva, "idiva", ARM_HWCAP_IDIVA, 0)              \
+  LINE(ARM_IDIVT, idivt, "idivt", ARM_HWCAP_IDIVT, 0)              \
+  LINE(ARM_VFPD32, vfpd32, "vfpd32", ARM_HWCAP_VFPD32, 0)          \
+  LINE(ARM_LPAE, lpae, "lpae", ARM_HWCAP_LPAE, 0)                  \
+  LINE(ARM_EVTSTRM, evtstrm, "evtstrm", ARM_HWCAP_EVTSTRM, 0)      \
+  LINE(ARM_AES, aes, "aes", 0, ARM_HWCAP2_AES)                     \
+  LINE(ARM_PMULL, pmull, "pmull", 0, ARM_HWCAP2_PMULL)             \
+  LINE(ARM_SHA1, sha1, "sha1", 0, ARM_HWCAP2_SHA1)                 \
+  LINE(ARM_SHA2, sha2, "sha2", 0, ARM_HWCAP2_SHA2)                 \
+  LINE(ARM_CRC32, crc32, "crc32", 0, ARM_HWCAP2_CRC32)
+#define INTROSPECTION_PREFIX Arm
+#define INTROSPECTION_ENUM_PREFIX ARM
+#include "define_introspection_and_hwcaps.inl"
+
+////////////////////////////////////////////////////////////////////////////////
+// Implementation.
+////////////////////////////////////////////////////////////////////////////////
+
+#include <stdbool.h>
 
 #include "internal/bit_utils.h"
 #include "internal/filesystem.h"
-#include "internal/hwcaps.h"
 #include "internal/stack_line_reader.h"
 #include "internal/string_view.h"
-
-// Generation of feature's getters/setters functions and kGetters, kSetters,
-// kCpuInfoFlags and kHardwareCapabilities global tables.
-#define DEFINE_TABLE_FEATURES                                         \
-  FEATURE(ARM_SWP, swp, "swp", ARM_HWCAP_SWP, 0)                      \
-  FEATURE(ARM_HALF, half, "half", ARM_HWCAP_HALF, 0)                  \
-  FEATURE(ARM_THUMB, thumb, "thumb", ARM_HWCAP_THUMB, 0)              \
-  FEATURE(ARM_26BIT, _26bit, "26bit", ARM_HWCAP_26BIT, 0)             \
-  FEATURE(ARM_FASTMULT, fastmult, "fastmult", ARM_HWCAP_FAST_MULT, 0) \
-  FEATURE(ARM_FPA, fpa, "fpa", ARM_HWCAP_FPA, 0)                      \
-  FEATURE(ARM_VFP, vfp, "vfp", ARM_HWCAP_VFP, 0)                      \
-  FEATURE(ARM_EDSP, edsp, "edsp", ARM_HWCAP_EDSP, 0)                  \
-  FEATURE(ARM_JAVA, java, "java", ARM_HWCAP_JAVA, 0)                  \
-  FEATURE(ARM_IWMMXT, iwmmxt, "iwmmxt", ARM_HWCAP_IWMMXT, 0)          \
-  FEATURE(ARM_CRUNCH, crunch, "crunch", ARM_HWCAP_CRUNCH, 0)          \
-  FEATURE(ARM_THUMBEE, thumbee, "thumbee", ARM_HWCAP_THUMBEE, 0)      \
-  FEATURE(ARM_NEON, neon, "neon", ARM_HWCAP_NEON, 0)                  \
-  FEATURE(ARM_VFPV3, vfpv3, "vfpv3", ARM_HWCAP_VFPV3, 0)              \
-  FEATURE(ARM_VFPV3D16, vfpv3d16, "vfpv3d16", ARM_HWCAP_VFPV3D16, 0)  \
-  FEATURE(ARM_TLS, tls, "tls", ARM_HWCAP_TLS, 0)                      \
-  FEATURE(ARM_VFPV4, vfpv4, "vfpv4", ARM_HWCAP_VFPV4, 0)              \
-  FEATURE(ARM_IDIVA, idiva, "idiva", ARM_HWCAP_IDIVA, 0)              \
-  FEATURE(ARM_IDIVT, idivt, "idivt", ARM_HWCAP_IDIVT, 0)              \
-  FEATURE(ARM_VFPD32, vfpd32, "vfpd32", ARM_HWCAP_VFPD32, 0)          \
-  FEATURE(ARM_LPAE, lpae, "lpae", ARM_HWCAP_LPAE, 0)                  \
-  FEATURE(ARM_EVTSTRM, evtstrm, "evtstrm", ARM_HWCAP_EVTSTRM, 0)      \
-  FEATURE(ARM_AES, aes, "aes", 0, ARM_HWCAP2_AES)                     \
-  FEATURE(ARM_PMULL, pmull, "pmull", 0, ARM_HWCAP2_PMULL)             \
-  FEATURE(ARM_SHA1, sha1, "sha1", 0, ARM_HWCAP2_SHA1)                 \
-  FEATURE(ARM_SHA2, sha2, "sha2", 0, ARM_HWCAP2_SHA2)                 \
-  FEATURE(ARM_CRC32, crc32, "crc32", 0, ARM_HWCAP2_CRC32)
-#define DEFINE_TABLE_FEATURE_TYPE ArmFeatures
-#include "define_tables.h"
 
 typedef struct {
   bool processor_reports_armv6;
@@ -197,16 +206,5 @@ ArmInfo GetArmInfo(void) {
   return info;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Introspection functions
-
-int GetArmFeaturesEnumValue(const ArmFeatures* features,
-                            ArmFeaturesEnum value) {
-  if (value >= ARM_LAST_) return false;
-  return kGetters[value](features);
-}
-
-const char* GetArmFeaturesEnumName(ArmFeaturesEnum value) {
-  if (value >= ARM_LAST_) return "unknown feature";
-  return kCpuInfoFlags[value];
-}
+#endif  // defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
+#endif  // CPU_FEATURES_ARCH_ARM

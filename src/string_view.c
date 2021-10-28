@@ -16,11 +16,19 @@
 
 #include <assert.h>
 #include <ctype.h>
-#include <string.h>
+
+#include "copy.h"
+#include "equals.h"
+
+static const char* CpuFeatures_memchr(const char* ptr, size_t size, char c) {
+  for (; ptr && *ptr != '\0'; ++ptr)
+    if (*ptr == c) return ptr;
+  return NULL;
+}
 
 int CpuFeatures_StringView_IndexOfChar(const StringView view, char c) {
   if (view.ptr && view.size) {
-    const char* const found = (const char*)memchr(view.ptr, c, view.size);
+    const char* const found = CpuFeatures_memchr(view.ptr, view.size, c);
     if (found) {
       return (int)(found - view.ptr);
     }
@@ -48,14 +56,14 @@ int CpuFeatures_StringView_IndexOf(const StringView view,
 
 bool CpuFeatures_StringView_IsEquals(const StringView a, const StringView b) {
   if (a.size == b.size) {
-    return a.ptr == b.ptr || memcmp(a.ptr, b.ptr, b.size) == 0;
+    return a.ptr == b.ptr || equals(a.ptr, b.ptr, b.size);
   }
   return false;
 }
 
 bool CpuFeatures_StringView_StartsWith(const StringView a, const StringView b) {
   return a.ptr && b.ptr && b.size && a.size >= b.size
-             ? memcmp(a.ptr, b.ptr, b.size) == 0
+             ? equals(a.ptr, b.ptr, b.size)
              : false;
 }
 
@@ -138,7 +146,7 @@ void CpuFeatures_StringView_CopyString(const StringView src, char* dst,
     const size_t max_copy_size = dst_size - 1;
     const size_t copy_size =
         src.size > max_copy_size ? max_copy_size : src.size;
-    memcpy(dst, src.ptr, copy_size);
+    copy(dst, src.ptr, copy_size);
     dst[copy_size] = '\0';
   }
 }

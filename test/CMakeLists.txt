@@ -47,7 +47,13 @@ add_test(NAME stack_line_reader_test COMMAND stack_line_reader_test)
 ##------------------------------------------------------------------------------
 ## cpuinfo_x86_test
 if(PROCESSOR_IS_X86)
-  add_executable(cpuinfo_x86_test cpuinfo_x86_test.cc ../src/cpuinfo_x86.c)
+  add_executable(cpuinfo_x86_test
+    cpuinfo_x86_test.cc
+    ../src/impl_x86_freebsd.c
+    ../src/impl_x86_linux_or_android.c
+    ../src/impl_x86_macos.c
+    ../src/impl_x86_windows.c
+  )
   target_compile_definitions(cpuinfo_x86_test PUBLIC CPU_FEATURES_MOCK_CPUID_X86)
   if(APPLE)
     target_compile_definitions(cpuinfo_x86_test PRIVATE HAVE_SYSCTLBYNAME)
@@ -58,28 +64,28 @@ endif()
 ##------------------------------------------------------------------------------
 ## cpuinfo_arm_test
 if(PROCESSOR_IS_ARM)
-  add_executable(cpuinfo_arm_test cpuinfo_arm_test.cc ../src/cpuinfo_arm.c)
+  add_executable(cpuinfo_arm_test cpuinfo_arm_test.cc ../src/impl_arm_linux_or_android.c)
   target_link_libraries(cpuinfo_arm_test all_libraries)
   add_test(NAME cpuinfo_arm_test COMMAND cpuinfo_arm_test)
 endif()
 ##------------------------------------------------------------------------------
 ## cpuinfo_aarch64_test
 if(PROCESSOR_IS_AARCH64)
-  add_executable(cpuinfo_aarch64_test cpuinfo_aarch64_test.cc ../src/cpuinfo_aarch64.c)
+  add_executable(cpuinfo_aarch64_test cpuinfo_aarch64_test.cc ../src/impl_aarch64_linux_or_android.c)
   target_link_libraries(cpuinfo_aarch64_test all_libraries)
   add_test(NAME cpuinfo_aarch64_test COMMAND cpuinfo_aarch64_test)
 endif()
 ##------------------------------------------------------------------------------
 ## cpuinfo_mips_test
 if(PROCESSOR_IS_MIPS)
-  add_executable(cpuinfo_mips_test cpuinfo_mips_test.cc  ../src/cpuinfo_mips.c)
+  add_executable(cpuinfo_mips_test cpuinfo_mips_test.cc  ../src/impl_mips_linux_or_android.c)
   target_link_libraries(cpuinfo_mips_test all_libraries)
   add_test(NAME cpuinfo_mips_test COMMAND cpuinfo_mips_test)
 endif()
 ##------------------------------------------------------------------------------
 ## cpuinfo_ppc_test
 if(PROCESSOR_IS_POWER)
-  add_executable(cpuinfo_ppc_test cpuinfo_ppc_test.cc  ../src/cpuinfo_ppc.c)
+  add_executable(cpuinfo_ppc_test cpuinfo_ppc_test.cc  ../src/impl_ppc_linux.c)
   target_link_libraries(cpuinfo_ppc_test all_libraries)
   add_test(NAME cpuinfo_ppc_test COMMAND cpuinfo_ppc_test)
 endif()
