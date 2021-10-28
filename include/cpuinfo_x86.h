@@ -103,7 +103,8 @@ typedef struct {
   int family;
   int model;
   int stepping;
-  char vendor[13];  // 0 terminated string
+  char vendor[13];        // 0 terminated string
+  char brand_string[49];  // 0 terminated string
 } X86Info;
 
 // Calls cpuid and returns an initialized X86info.
@@ -156,11 +157,6 @@ typedef enum {
 // Returns the underlying microarchitecture by looking at X86Info's vendor,
 // family and model.
 X86Microarchitecture GetX86Microarchitecture(const X86Info* info);
-
-// Calls cpuid and fills the brand_string.
-// - brand_string *must* be of size 49 (beware of array decaying).
-// - brand_string will be zero terminated.
-void FillX86BrandString(char brand_string[49]);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Introspection functions
