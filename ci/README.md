@@ -1,5 +1,5 @@
 # GitHub-CI Status
-| OS       | x86_64 | AArch64 | ARM | MIPS |
+| OS       | amd64 | AArch64 | ARM | MIPS |
 |:-------- | :----: | :-----: | :-: | :--: |
 | FreeBSD    | [![Status][freebsd_svg]][freebsd_link] | N/A | N/A | N/A |
 | Linux    | [![Status][linux_svg]][linux_link] | [![Status][linux_aarch64_svg]][linux_aarch64_link] | [![Status][linux_arm_svg]][linux_arm_link] | [![Status][linux_mips_svg]][linux_mips_link] |
