@@ -20,6 +20,7 @@
 #include "impl_x86__base_implementation.inl"
 
 static void OverrideOsPreserves(OsPreserves* os_preserves) {
+  (void)os_preserves;
   // No override
 }
 
