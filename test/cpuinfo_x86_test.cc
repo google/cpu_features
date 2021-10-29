@@ -1033,6 +1033,64 @@ flags           : fpu mmx sse
 #endif  // !defined(CPU_FEATURES_OS_WINDOWS)
 }
 
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0000480_486_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_80486) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000001, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x00000480, 0x00000000, 0x00000000, 0x00000003}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_EQ(info.family, 0x04);
+  EXPECT_EQ(info.model, 0x08);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_80486);
+}
+
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0000526_P54C_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_P54C) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000001, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x00000525, 0x00000000, 0x00000000, 0x000001BF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_EQ(info.family, 0x05);
+  EXPECT_EQ(info.model, 0x02);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_P5);
+}
+
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0000590_Lakemont_CPUID2.txt
+TEST_F(CpuidX86Test, INTEL_LAKEMONT) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000002, 0x756E6547, 0x6c65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x00000590, 0x00000000, 0x00010200, 0x8000237B}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_EQ(info.family, 0x05);
+  EXPECT_EQ(info.model, 0x09);
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::INTEL_LAKEMONT);
+}
+
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0050670_KnightsLanding_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_KNIGHTS_LANDING) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000D, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x00050670, 0x02FF0800, 0x7FF8F3BF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x57);
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::INTEL_KNIGHTS_L);
+}
+
 // TODO(user): test what happens when xsave/osxsave are not present.
 // TODO(user): test what happens when xmm/ymm/zmm os support are not
 // present.

@@ -384,6 +384,27 @@ X86Info GetX86Info(void) {
 X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
   if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_GENUINE_INTEL)) {
     switch (CPUID(info->family, info->model)) {
+      case CPUID(0x04, 0x01):
+      case CPUID(0x04, 0x02):
+      case CPUID(0x04, 0x03):
+      case CPUID(0x04, 0x04):
+      case CPUID(0x04, 0x05):
+      case CPUID(0x04, 0x07):
+      case CPUID(0x04, 0x08):
+      case CPUID(0x04, 0x09):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/80486
+        return INTEL_80486;
+      case CPUID(0x05, 0x01):
+      case CPUID(0x05, 0x02):
+      case CPUID(0x05, 0x04):
+      case CPUID(0x05, 0x07):
+      case CPUID(0x05, 0x08):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/p5
+        return INTEL_P5;
+      case CPUID(0x05, 0x09):
+      case CPUID(0x05, 0x0A):
+        // https://en.wikichip.org/wiki/intel/quark
+        return INTEL_LAKEMONT;
       case CPUID(0x06, 0x1C):  // Intel(R) Atom(TM) CPU 230 @ 1.60GHz
       case CPUID(0x06, 0x35):
       case CPUID(0x06, 0x36):
@@ -477,6 +498,32 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
           // https://en.wikipedia.org/wiki/Kaby_Lake
           return INTEL_KBL;
         }
+      case CPUID(0x06, 0x97):
+      case CPUID(0x06, 0x9A):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/alder_lake
+        return INTEL_ADL;
+      case CPUID(0x06, 0xA7):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/rocket_lake
+        return INTEL_RCL;
+      case CPUID(0x06, 0x85):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/knights_mill
+        return INTEL_KNIGHTS_M;
+      case CPUID(0x06, 0x57):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/knights_landing
+        return INTEL_KNIGHTS_L;
+      case CPUID(0x0B, 0x00):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/knights_ferry
+        return INTEL_KNIGHTS_F;
+      case CPUID(0x0B, 0x01):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/knights_corner
+        return INTEL_KNIGHTS_C;
+      case CPUID(0x0F, 0x01):
+      case CPUID(0x0F, 0x02):
+      case CPUID(0x0F, 0x03):
+      case CPUID(0x0F, 0x04):
+      case CPUID(0x0F, 0x06):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/netburst
+        return INTEL_NETBURST;
       default:
         return X86_UNKNOWN;
     }
@@ -1623,6 +1670,9 @@ CacheInfo GetX86CacheInfo(void) {
 
 #define X86_MICROARCHITECTURE_NAMES \
   LINE(X86_UNKNOWN)                 \
+  LINE(INTEL_80486)                 \
+  LINE(INTEL_P5)                    \
+  LINE(INTEL_LAKEMONT)              \
   LINE(INTEL_CORE)                  \
   LINE(INTEL_PNR)                   \
   LINE(INTEL_NHM)                   \
@@ -1642,6 +1692,13 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(INTEL_ICL)                   \
   LINE(INTEL_TGL)                   \
   LINE(INTEL_SPR)                   \
+  LINE(INTEL_ADL)                   \
+  LINE(INTEL_RCL)                   \
+  LINE(INTEL_KNIGHTS_M)             \
+  LINE(INTEL_KNIGHTS_L)             \
+  LINE(INTEL_KNIGHTS_F)             \
+  LINE(INTEL_KNIGHTS_C)             \
+  LINE(INTEL_NETBURST)              \
   LINE(AMD_HAMMER)                  \
   LINE(AMD_K10)                     \
   LINE(AMD_K11)                     \
