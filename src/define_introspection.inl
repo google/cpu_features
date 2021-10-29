@@ -48,11 +48,13 @@
 #define FEAT_ENUM_LAST FEAT_ENUM_LAST_(INTROSPECTION_ENUM_PREFIX)
 
 // Generate individual getters and setters.
-#define LINE(ENUM, NAME, A, B, C)                         \
-  void set_##ENUM(FEAT_TYPE_NAME* features, bool value) { \
-    features->NAME = value;                               \
-  }                                                       \
-  int get_##ENUM(const FEAT_TYPE_NAME* features) { return features->NAME; }
+#define LINE(ENUM, NAME, A, B, C)                                \
+  static void set_##ENUM(FEAT_TYPE_NAME* features, bool value) { \
+    features->NAME = value;                                      \
+  }                                                              \
+  static int get_##ENUM(const FEAT_TYPE_NAME* features) {        \
+    return features->NAME;                                       \
+  }
 INTROSPECTION_TABLE
 #undef LINE
 
