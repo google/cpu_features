@@ -16,9 +16,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "copy.h"
+#include "copy.inl"
 #include "cpuinfo_x86.h"
-#include "equals.h"
+#include "equals.inl"
 #include "internal/bit_utils.h"
 #include "internal/cpuid_x86.h"
 

@@ -17,8 +17,8 @@
 #include <assert.h>
 #include <ctype.h>
 
-#include "copy.h"
-#include "equals.h"
+#include "copy.inl"
+#include "equals.inl"
 
 static const char* CpuFeatures_memchr(const char* const ptr, const size_t size,
                                       const char c) {
