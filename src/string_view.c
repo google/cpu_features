@@ -20,9 +20,10 @@
 #include "copy.h"
 #include "equals.h"
 
-static const char* CpuFeatures_memchr(const char* ptr, size_t size, char c) {
-  for (; ptr && *ptr != '\0'; ++ptr)
-    if (*ptr == c) return ptr;
+static const char* CpuFeatures_memchr(const char* const ptr, const size_t size,
+                                      const char c) {
+  for (size_t i = 0; ptr && ptr[i] != '\0' && i < size; ++i)
+    if (ptr[i] == c) return ptr + i;
   return NULL;
 }
 
