@@ -78,6 +78,7 @@
 #define INTROSPECTION_PREFIX Aarch64
 #define INTROSPECTION_ENUM_PREFIX AARCH64
 #include "define_introspection_and_hwcaps.inl"
+#include "impl_aarch64__base_implementation.inl"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Implementation.
@@ -100,14 +101,6 @@ static bool HandleAarch64Line(const LineResult result,
         kSetters[i](&info->features, CpuFeatures_StringView_HasWord(
                                          value, kCpuInfoFlags[i], ' '));
       }
-    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU implementer"))) {
-      info->implementer = CpuFeatures_StringView_ParsePositiveNumber(value);
-    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU variant"))) {
-      info->variant = CpuFeatures_StringView_ParsePositiveNumber(value);
-    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU part"))) {
-      info->part = CpuFeatures_StringView_ParsePositiveNumber(value);
-    } else if (CpuFeatures_StringView_IsEquals(key, str("CPU revision"))) {
-      info->revision = CpuFeatures_StringView_ParsePositiveNumber(value);
     }
   }
   return !result.eof;
@@ -127,23 +120,17 @@ static void FillProcCpuInfoData(Aarch64Info* const info) {
   }
 }
 
-static const Aarch64Info kEmptyAarch64Info;
-
-Aarch64Info GetAarch64Info(void) {
-  // capabilities are fetched from both getauxval and /proc/cpuinfo so we can
-  // have some information if the executable is sandboxed (aka no access to
-  // /proc/cpuinfo).
-  Aarch64Info info = kEmptyAarch64Info;
-
-  FillProcCpuInfoData(&info);
+// capabilities are fetched from both getauxval and /proc/cpuinfo so we can
+// have some information if the executable is sandboxed (aka no access to
+// /proc/cpuinfo).
+static void DetectFeatures(Aarch64Info* info) {
+  FillProcCpuInfoData(info);
   const HardwareCapabilities hwcaps = CpuFeatures_GetHardwareCapabilities();
   for (size_t i = 0; i < AARCH64_LAST_; ++i) {
     if (CpuFeatures_IsHwCapsSet(kHardwareCapabilities[i], hwcaps)) {
-      kSetters[i](&info.features, true);
+      kSetters[i](&info->features, true);
     }
   }
-
-  return info;
 }
 
 #endif  // defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
