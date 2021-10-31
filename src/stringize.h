@@ -12,20 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CPU_FEATURES_CPUTYPE_AARCH64_H
-#define CPU_FEATURES_CPUTYPE_AARCH64_H
-
-#include "cpu_features_macros.h"
-#include <stdint.h>
-
-CPU_FEATURES_START_CPP_NAMESPACE
-
-uint64_t GetCpuid_MIDR_EL1();
-uint64_t GetCpuid_ID_AA64ISAR0_EL1();
-uint64_t GetCpuid_ID_AA64ISAR1_EL1();
-uint64_t GetCpuid_ID_AA64PFR0_EL1();
-uint64_t GetCpuid_ID_AA64ZFR0_EL1();
-
-CPU_FEATURES_END_CPP_NAMESPACE
-
-#endif  // CPU_FEATURES_CPUTYPE_AARCH64_H
+#define STRINGIZE_(s) #s
+#define STRINGIZE(s) STRINGIZE_(s)

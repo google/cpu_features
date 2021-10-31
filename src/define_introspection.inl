@@ -23,9 +23,7 @@
 #endif
 
 #include <stdbool.h>
-
-#define STRINGIZE_(s) #s
-#define STRINGIZE(s) STRINGIZE_(s)
+#include "stringize.h"
 
 #define FEAT_TYPE_NAME__(X) X##Features
 #define FEAT_TYPE_NAME_(X) FEAT_TYPE_NAME__(X)

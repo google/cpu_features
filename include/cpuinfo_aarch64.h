@@ -21,57 +21,57 @@
 CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
-  int fp : 1;          // Floating-point.
-  int asimd : 1;       // Advanced SIMD.
-  int evtstrm : 1;     // Generic timer generated events.
-  int aes : 1;         // Hardware-accelerated Advanced Encryption Standard.
-  int pmull : 1;       // Polynomial multiply long.
-  int sha1 : 1;        // Hardware-accelerated SHA1.
-  int sha2 : 1;        // Hardware-accelerated SHA2-256.
-  int crc32 : 1;       // Hardware-accelerated CRC-32.
-  int atomics : 1;     // Armv8.1 atomic instructions.
-  int fphp : 1;        // Half-precision floating point support.
-  int asimdhp : 1;     // Advanced SIMD half-precision support.
-  int cpuid : 1;       // Access to certain ID registers.
-  int asimdrdm : 1;    // Rounding Double Multiply Accumulate/Subtract.
-  int jscvt : 1;       // Support for JavaScript conversion.
-  int fcma : 1;        // Floating point complex numbers.
-  int lrcpc : 1;       // Support for weaker release consistency.
-  int dcpop : 1;       // Data persistence writeback.
-  int sha3 : 1;        // Hardware-accelerated SHA3.
-  int sm3 : 1;         // Hardware-accelerated SM3.
-  int sm4 : 1;         // Hardware-accelerated SM4.
-  int asimddp : 1;     // Dot product instruction.
-  int sha512 : 1;      // Hardware-accelerated SHA512.
-  int sve : 1;         // Scalable Vector Extension.
-  int asimdfhm : 1;    // Additional half-precision instructions.
-  int dit : 1;         // Data independent timing.
-  int uscat : 1;       // Unaligned atomics support.
-  int ilrcpc : 1;      // Additional support for weaker release consistency.
-  int flagm : 1;       // Flag manipulation instructions.
-  int ssbs : 1;        // Speculative Store Bypass Safe PSTATE bit.
-  int sb : 1;          // Speculation barrier.
-  int paca : 1;        // Address authentication.
-  int pacg : 1;        // Generic authentication.
-  int dcpodp : 1;      // Data cache clean to point of persistence.
-  int sve2 : 1;        // Scalable Vector Extension (version 2).
-  int sveaes : 1;      // SVE AES instructions.
-  int svepmull : 1;    // SVE polynomial multiply long instructions.
-  int svebitperm : 1;  // SVE bit permute instructions.
-  int svesha3 : 1;     // SVE SHA3 instructions.
-  int svesm4 : 1;      // SVE SM4 instructions.
-  int flagm2 : 1;      // Additional flag manipulation instructions.
-  int frint : 1;       // Floating point to integer rounding.
-  int svei8mm : 1;     // SVE Int8 matrix multiplication instructions.
-  int svef32mm : 1;    // SVE FP32 matrix multiplication instruction.
-  int svef64mm : 1;    // SVE FP64 matrix multiplication instructions.
-  int svebf16 : 1;     // SVE BFloat16 instructions.
-  int i8mm : 1;        // Int8 matrix multiplication instructions.
-  int bf16 : 1;        // BFloat16 instructions.
-  int dgh : 1;         // Data Gathering Hint instruction.
-  int rng : 1;         // True random number generator support.
-  int bti : 1;         // Branch target identification.
-  int mte : 1;         // Memory tagging extension.
+  int fp;          // Floating-point.
+  int asimd;       // Advanced SIMD.
+  int evtstrm;     // Generic timer generated events.
+  int aes;         // Hardware-accelerated Advanced Encryption Standard.
+  int pmull;       // Polynomial multiply long.
+  int sha1;        // Hardware-accelerated SHA1.
+  int sha2;        // Hardware-accelerated SHA2-256.
+  int crc32;       // Hardware-accelerated CRC-32.
+  int atomics;     // Armv8.1 atomic instructions.
+  int fphp;        // Half-precision floating point support.
+  int asimdhp;     // Advanced SIMD half-precision support.
+  int cpuid;       // Access to certain ID registers.
+  int asimdrdm;    // Rounding Double Multiply Accumulate/Subtract.
+  int jscvt;       // Support for JavaScript conversion.
+  int fcma;        // Floating point complex numbers.
+  int lrcpc;       // Support for weaker release consistency.
+  int dcpop;       // Data persistence writeback.
+  int sha3;        // Hardware-accelerated SHA3.
+  int sm3;         // Hardware-accelerated SM3.
+  int sm4;         // Hardware-accelerated SM4.
+  int asimddp;     // Dot product instruction.
+  int sha512;      // Hardware-accelerated SHA512.
+  int sve;         // Scalable Vector Extension.
+  int asimdfhm;    // Additional half-precision instructions.
+  int dit;         // Data independent timing.
+  int uscat;       // Unaligned atomics support.
+  int ilrcpc;      // Additional support for weaker release consistency.
+  int flagm;       // Flag manipulation instructions.
+  int ssbs;        // Speculative Store Bypass Safe PSTATE bit.
+  int sb;          // Speculation barrier.
+  int paca;        // Address authentication.
+  int pacg;        // Generic authentication.
+  int dcpodp;      // Data cache clean to point of persistence.
+  int sve2;        // Scalable Vector Extension (version 2).
+  int sveaes;      // SVE AES instructions.
+  int svepmull;    // SVE polynomial multiply long instructions.
+  int svebitperm;  // SVE bit permute instructions.
+  int svesha3;     // SVE SHA3 instructions.
+  int svesm4;      // SVE SM4 instructions.
+  int flagm2;      // Additional flag manipulation instructions.
+  int frint;       // Floating point to integer rounding.
+  int svei8mm;     // SVE Int8 matrix multiplication instructions.
+  int svef32mm;    // SVE FP32 matrix multiplication instruction.
+  int svef64mm;    // SVE FP64 matrix multiplication instructions.
+  int svebf16;     // SVE BFloat16 instructions.
+  int i8mm;        // Int8 matrix multiplication instructions.
+  int bf16;        // BFloat16 instructions.
+  int dgh;         // Data Gathering Hint instruction.
+  int rng;         // True random number generator support.
+  int bti;         // Branch target identification.
+  int mte;         // Memory tagging extension.
   // Make sure to update Aarch64FeaturesEnum below if you add a field here.
 } Aarch64Features;
 

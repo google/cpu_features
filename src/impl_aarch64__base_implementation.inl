@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "internal/bit_utils.h"
-#include "internal/cpuid_aarch64.h"
+#include <stdio.h>
 
 #include "cpuinfo_aarch64.h"
+#include "define_cpuid_aarch64.inl"
+#include "internal/bit_utils.h"
+#include "internal/cpuid_aarch64.h"
 
 #if !defined(CPU_FEATURES_ARCH_AARCH64)
 #error "Cannot compile cpuinfo_aarch64 on a non aarch64 platform."
@@ -25,11 +27,13 @@
 // Aarch64 info via mrs instruction
 ///////////////////////////////////////////////////////////////////////////////
 
-uint64_t GetCpuid_MIDR_EL1() {return READ_SYS_REG_S(SYS_MIDR_EL1 ); }
+uint64_t GetCpuid_MIDR_EL1() { return READ_SYS_REG_S(SYS_MIDR_EL1); }
 uint64_t GetCpuid_ID_AA64ISAR0_EL1() { return READ_SYS_REG(ID_AA64ISAR0_EL1); }
 uint64_t GetCpuid_ID_AA64ISAR1_EL1() { return READ_SYS_REG(ID_AA64ISAR1_EL1); }
 uint64_t GetCpuid_ID_AA64PFR0_EL1() { return READ_SYS_REG(ID_AA64PFR0_EL1); }
-uint64_t GetCpuid_ID_AA64ZFR0_EL1() { return READ_SYS_REG_S(SYS_ID_AA64ZFR0_EL1); }
+uint64_t GetCpuid_ID_AA64ZFR0_EL1() {
+  return READ_SYS_REG_S(SYS_ID_AA64ZFR0_EL1);
+}
 
 static void DetectFeaturesBase(Aarch64Info* info) {
   const uint64_t pfr0 = GetCpuid_ID_AA64PFR0_EL1();
@@ -46,7 +50,6 @@ static void DetectFeaturesBase(Aarch64Info* info) {
   //  and double-precision and half-precision data types.
   if (fp_value == 0) {
     info->features.fp = 1;
-    return;
   }
 
   // fp_value = 0b0001:
@@ -67,7 +70,6 @@ static void DetectFeaturesBase(Aarch64Info* info) {
   // and double-precision and half-precision data types.
   if (asimd_value == 0) {
     info->features.asimd = 1;
-    return;
   }
 
   // asimd_value = 0b0001:
@@ -106,12 +108,23 @@ static void DetectFeaturesBase(Aarch64Info* info) {
 
   if (info->features.sve) {
     const uint64_t zfr0 = GetCpuid_ID_AA64ZFR0_EL1();
-    const uint64_t svef64mm = ExtractBitRange(zfr0, 59, 56);
-    const uint64_t svef32mm = ExtractBitRange(zfr0, 55, 52);
-    const uint64_t svei8mm = ExtractBitRange(zfr0, 47, 44);
-    if (svef64mm == 1) info->features.svef64mm = 1;
-    if (svef32mm == 1) info->features.svef32mm = 1;
-    if (svei8mm == 1) info->features.svei8mm = 1;
+    info->features.svef64mm = ExtractBitRange(zfr0, 59, 56);
+    info->features.svef32mm = ExtractBitRange(zfr0, 55, 52);
+    info->features.svei8mm = ExtractBitRange(zfr0, 47, 44);
+    info->features.svesm4 = ExtractBitRange(zfr0, 43, 40);
+    info->features.svesha3 = ExtractBitRange(zfr0, 35, 32);
+    info->features.svebf16 = ExtractBitRange(zfr0, 23, 20);
+    info->features.svebitperm = ExtractBitRange(zfr0, 19, 16);
+    info->features.sve2 = ExtractBitRange(zfr0, 0, 3);
+
+    const uint64_t sveaes = ExtractBitRange(zfr0, 7, 4);
+    if (sveaes == 1) {
+      info->features.sveaes = 1;
+    }
+    if (sveaes == 2) {
+      info->features.sveaes = 1;
+      info->features.svepmull = 1;
+    }
   }
 }
 

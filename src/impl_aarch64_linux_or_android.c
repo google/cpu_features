@@ -86,10 +86,8 @@
 
 #include <stdbool.h>
 
-#include "internal/bit_utils.h"
 #include "internal/filesystem.h"
 #include "internal/stack_line_reader.h"
-#include "internal/string_view.h"
 
 static bool HandleAarch64Line(const LineResult result,
                               Aarch64Info* const info) {
