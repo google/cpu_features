@@ -14,16 +14,93 @@
 
 #include "cpuinfo_aarch64.h"
 
+#include <internal/cputype_aarch64.h>
+
 #include "filesystem_for_testing.h"
 #include "gtest/gtest.h"
 #include "hwcaps_for_testing.h"
+#include "internal/cpuid_aarch64.h"
 
 namespace cpu_features {
 namespace {
 
+class FakeCpuAarch64 {
+ public:
+  uint64_t GetCpuid_MIDR_EL1() const { return _midr_el1; }
+
+  uint64_t GetCpuid_ID_AA64ISAR0_EL1() const { return _id_aa64isar0_el1; }
+  uint64_t GetCpuid_ID_AA64ISAR1_EL1() const { return _id_aa64isar1_el1; }
+  uint64_t GetCpuid_ID_AA64PFR0_EL1() const { return _id_aa64pfr0_el1; }
+  uint64_t GetCpuid_ID_AA64ZFR0_EL1() const { return _id_aa64zfr0_el1; }
+
+  void SetCpuid_MIDR_EL1(uint64_t midr_el1) { _midr_el1 = midr_el1; }
+
+  void SetCpuid_ID_AA64ISAR0_EL1(uint64_t id_aa64isar0_el1) {
+    _id_aa64isar0_el1 = id_aa64isar0_el1;
+  }
+
+  void SetCpuid_ID_AA64ISAR1_EL1(uint64_t id_aa64isar1_el1) {
+    _id_aa64isar1_el1 = id_aa64isar1_el1;
+  }
+
+  void SetCpuid_ID_AA64PFR0_EL1(uint64_t id_aa64pfr0_el1) {
+    _id_aa64pfr0_el1 = id_aa64pfr0_el1;
+  }
+
+  void SetCpuid_ID_AA64ZFR0_EL1(uint64_t id_aa64zfr0_el1) {
+    _id_aa64pfr0_el1 = id_aa64zfr0_el1;
+  }
+
+ private:
+  uint64_t _midr_el1;
+  uint64_t _id_aa64isar0_el1;
+  uint64_t _id_aa64isar1_el1;
+  uint64_t _id_aa64pfr0_el1;
+  uint64_t _id_aa64zfr0_el1;
+};
+
+FakeCpuAarch64* g_fake_cpu_aarch64;
+
+FakeCpuAarch64& cpu() {
+  assert(g_fake_cpu_aarch64 != nullptr);
+  return *g_fake_cpu_aarch64;
+}
+
+extern "C" uint64_t GetCpuid_MIDR_EL1() { return cpu().GetCpuid_MIDR_EL1(); }
+
+extern "C" uint64_t GetCpuid_ID_AA64ISAR0_EL1() {
+  return cpu().GetCpuid_ID_AA64ISAR0_EL1();
+}
+
+extern "C" uint64_t GetCpuid_ID_AA64ISAR1_EL1() {
+  return cpu().GetCpuid_ID_AA64ISAR1_EL1();
+}
+
+extern "C" uint64_t GetCpuid_ID_AA64PFR0_EL1() {
+  return cpu().GetCpuid_ID_AA64ISAR1_EL1();
+}
+
+extern "C" uint64_t GetCpuid_ID_AA64ZFR0_EL1() {
+  return cpu().GetCpuid_ID_AA64ISAR1_EL1();
+}
+
 void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
 
-TEST(CpuinfoAarch64Test, FromHardwareCap) {
+class CpuInfoAarch64Test : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    assert(g_fake_cpu_aarch64 == nullptr);
+    g_fake_cpu_aarch64 = new FakeCpuAarch64();
+  }
+
+  void TearDown() override {
+    delete g_fake_cpu_aarch64;
+    g_fake_cpu_aarch64 = nullptr;
+  }
+};
+
+#if defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
+TEST_F(CpuInfoAarch64Test, FromHardwareCap_LINUX) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_AES, 0);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo
@@ -62,7 +139,7 @@ TEST(CpuinfoAarch64Test, FromHardwareCap) {
   EXPECT_FALSE(info.features.pacg);
 }
 
-TEST(CpuinfoAarch64Test, FromHardwareCap2) {
+TEST_F(CpuInfoAarch64Test, FromHardwareCap2_LINUX) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP,
                           AARCH64_HWCAP2_SVE2 | AARCH64_HWCAP2_BTI);
@@ -91,7 +168,7 @@ TEST(CpuinfoAarch64Test, FromHardwareCap2) {
   EXPECT_FALSE(info.features.rng);
 }
 
-TEST(CpuinfoAarch64Test, ARMCortexA53) {
+TEST_F(CpuInfoAarch64Test, ARMCortexA53_LINUX) {
   ResetHwcaps();
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo",
@@ -110,6 +187,7 @@ CPU architecture: AArch64
 CPU variant : 0x0
 CPU part    : 0xd03
 CPU revision    : 3)");
+  cpu().SetCpuid_MIDR_EL1(MIDR_CORTEX_A53_R3);
   const auto info = GetAarch64Info();
   EXPECT_EQ(info.implementer, 0x41);
   EXPECT_EQ(info.variant, 0x0);
@@ -169,6 +247,7 @@ CPU revision    : 3)");
   EXPECT_FALSE(info.features.bti);
   EXPECT_FALSE(info.features.mte);
 }
+#endif
 
 }  // namespace
 }  // namespace cpu_features

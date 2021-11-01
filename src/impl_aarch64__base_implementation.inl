@@ -19,7 +19,7 @@
 #include "internal/bit_utils.h"
 #include "internal/cpuid_aarch64.h"
 
-#if !defined(CPU_FEATURES_ARCH_AARCH64)
+#ifndef CPU_FEATURES_ARCH_AARCH64
 #error "Cannot compile cpuinfo_aarch64 on a non aarch64 platform."
 #endif
 
@@ -27,6 +27,9 @@
 // Aarch64 info via mrs instruction
 ///////////////////////////////////////////////////////////////////////////////
 
+#ifdef CPU_FEATURES_MOCK_CPUID_AARCH64
+// Implementation will be provided by test/cpuinfo_aarch64_test.cc.
+#else
 uint64_t GetCpuid_MIDR_EL1() { return READ_SYS_REG_S(SYS_MIDR_EL1); }
 uint64_t GetCpuid_ID_AA64ISAR0_EL1() { return READ_SYS_REG(ID_AA64ISAR0_EL1); }
 uint64_t GetCpuid_ID_AA64ISAR1_EL1() { return READ_SYS_REG(ID_AA64ISAR1_EL1); }
@@ -34,6 +37,7 @@ uint64_t GetCpuid_ID_AA64PFR0_EL1() { return READ_SYS_REG(ID_AA64PFR0_EL1); }
 uint64_t GetCpuid_ID_AA64ZFR0_EL1() {
   return READ_SYS_REG_S(SYS_ID_AA64ZFR0_EL1);
 }
+#endif
 
 static void DetectFeaturesBase(Aarch64Info* info) {
   const uint64_t pfr0 = GetCpuid_ID_AA64PFR0_EL1();
@@ -127,8 +131,6 @@ static void DetectFeaturesBase(Aarch64Info* info) {
     }
   }
 }
-
-static void DetectFeatures(Aarch64Info* info);
 
 static const Aarch64Info kEmptyAarch64Info;
 

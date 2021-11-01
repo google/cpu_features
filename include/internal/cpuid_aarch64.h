@@ -15,8 +15,9 @@
 #ifndef CPU_FEATURES_CPUTYPE_AARCH64_H
 #define CPU_FEATURES_CPUTYPE_AARCH64_H
 
-#include "cpu_features_macros.h"
 #include <stdint.h>
+
+#include "cpu_features_macros.h"
 
 CPU_FEATURES_START_CPP_NAMESPACE
 
@@ -25,6 +26,8 @@ uint64_t GetCpuid_ID_AA64ISAR0_EL1();
 uint64_t GetCpuid_ID_AA64ISAR1_EL1();
 uint64_t GetCpuid_ID_AA64PFR0_EL1();
 uint64_t GetCpuid_ID_AA64ZFR0_EL1();
+
+static void DetectFeatures(Aarch64Info* info);
 
 CPU_FEATURES_END_CPP_NAMESPACE
 
