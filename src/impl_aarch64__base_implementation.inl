@@ -31,9 +31,16 @@
 // Implementation will be provided by test/cpuinfo_aarch64_test.cc.
 #else
 uint64_t GetCpuid_MIDR_EL1() { return READ_SYS_REG_S(SYS_MIDR_EL1); }
-uint64_t GetCpuid_ID_AA64ISAR0_EL1() { return READ_SYS_REG(ID_AA64ISAR0_EL1); }
-uint64_t GetCpuid_ID_AA64ISAR1_EL1() { return READ_SYS_REG(ID_AA64ISAR1_EL1); }
-uint64_t GetCpuid_ID_AA64PFR0_EL1() { return READ_SYS_REG(ID_AA64PFR0_EL1); }
+uint64_t GetCpuid_ID_AA64PFR0_EL1() { return READ_SYS_REG_S(ID_AA64PFR0_EL1); }
+
+uint64_t GetCpuid_ID_AA64ISAR0_EL1() {
+  return READ_SYS_REG_S(ID_AA64ISAR0_EL1);
+}
+
+uint64_t GetCpuid_ID_AA64ISAR1_EL1() {
+  return READ_SYS_REG_S(ID_AA64ISAR1_EL1);
+}
+
 uint64_t GetCpuid_ID_AA64ZFR0_EL1() {
   return READ_SYS_REG_S(SYS_ID_AA64ZFR0_EL1);
 }
@@ -137,10 +144,13 @@ static const Aarch64Info kEmptyAarch64Info;
 Aarch64Info GetAarch64Info(void) {
   Aarch64Info info = kEmptyAarch64Info;
   const uint64_t midr = GetCpuid_MIDR_EL1();
-  info.implementer = ExtractBitRange(midr, 31, 24);
-  info.variant = ExtractBitRange(midr, 23, 20);
-  info.part = ExtractBitRange(midr, 15, 4);
-  info.revision = ExtractBitRange(midr, 3, 0);
-  DetectFeatures(&info);
+  if (midr) {
+    info.features.cpuid = 1;
+    info.implementer = ExtractBitRange(midr, 31, 24);
+    info.variant = ExtractBitRange(midr, 23, 20);
+    info.part = ExtractBitRange(midr, 15, 4);
+    info.revision = ExtractBitRange(midr, 3, 0);
+    DetectFeatures(&info);
+  }
   return info;
 }

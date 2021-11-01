@@ -55,10 +55,3 @@
     asm volatile(MRS_S("%0", r) : "=r"(__val)); \
     __val;                                      \
   })
-
-#define READ_SYS_REG(reg)                                  \
-  ({                                                       \
-    uint64_t __val;                                        \
-    asm volatile("mrs %0, " STRINGIZE(reg) : "=r"(__val)); \
-    __val;                                                 \
-  })
