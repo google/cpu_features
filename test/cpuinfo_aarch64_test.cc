@@ -100,7 +100,7 @@ class CpuInfoAarch64Test : public ::testing::Test {
 };
 
 #if defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
-TEST_F(CpuInfoAarch64Test, FromHardwareCap_LINUX) {
+TEST_F(CpuInfoAarch64Test, FromHardwareCap_HWCAP) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_AES, 0);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo
@@ -139,7 +139,7 @@ TEST_F(CpuInfoAarch64Test, FromHardwareCap_LINUX) {
   EXPECT_FALSE(info.features.pacg);
 }
 
-TEST_F(CpuInfoAarch64Test, FromHardwareCap2_LINUX) {
+TEST_F(CpuInfoAarch64Test, FromHardwareCap2_HWCAP2) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP,
                           AARCH64_HWCAP2_SVE2 | AARCH64_HWCAP2_BTI);
@@ -168,7 +168,7 @@ TEST_F(CpuInfoAarch64Test, FromHardwareCap2_LINUX) {
   EXPECT_FALSE(info.features.rng);
 }
 
-TEST_F(CpuInfoAarch64Test, ARMCortexA53_LINUX) {
+TEST_F(CpuInfoAarch64Test, ARMCortexA53_PROC_CPUINFO) {
   ResetHwcaps();
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo",

@@ -1,5 +1,19 @@
-#ifndef CPU_FEATURES_CPUTYPE_AARCH64_H
-#define CPU_FEATURES_CPUTYPE_AARCH64_H
+// Copyright 2021 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#ifndef CPU_FEATURES_CPUTYPE_AARCH64_H_
+#define CPU_FEATURES_CPUTYPE_AARCH64_H_
 
 // Arm Architecture Reference Manual Armv8, for A-profile architecture. D13.2.98
 // https://elixir.bootlin.com/linux/latest/source/arch/arm64/include/asm/cputype.h
@@ -150,4 +164,4 @@
 #define MIDR_APPLE_M1_FIRESTORM \
   MIDR_CPU_MODEL(ARM_CPU_IMP_APPLE, APPLE_CPU_PART_M1_FIRESTORM)
 
-#endif  // CPU_FEATURES_CPUTYPE_AARCH64_H
+#endif  // CPU_FEATURES_CPUTYPE_AARCH64_H_

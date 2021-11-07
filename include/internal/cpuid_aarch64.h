@@ -1,4 +1,4 @@
-// Copyright 2017 Google LLC
+// Copyright 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CPU_FEATURES_CPUTYPE_AARCH64_H
-#define CPU_FEATURES_CPUTYPE_AARCH64_H
+#ifndef CPU_FEATURES_CPUTYPE_AARCH64_H_
+#define CPU_FEATURES_CPUTYPE_AARCH64_H_
 
 #include <stdint.h>
 
@@ -27,8 +27,6 @@ uint64_t GetCpuid_ID_AA64ISAR1_EL1();
 uint64_t GetCpuid_ID_AA64PFR0_EL1();
 uint64_t GetCpuid_ID_AA64ZFR0_EL1();
 
-static void DetectFeatures(Aarch64Info* info);
-
 CPU_FEATURES_END_CPP_NAMESPACE
 
-#endif  // CPU_FEATURES_CPUTYPE_AARCH64_H
+#endif  // CPU_FEATURES_CPUTYPE_AARCH64_H_

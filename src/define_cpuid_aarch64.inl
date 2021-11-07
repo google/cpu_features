@@ -14,8 +14,6 @@
 
 #include "stringize.h"
 
-#define EMIT_INST(x) ".inst " STRINGIZE((x)) "\n\t"
-
 #define OP0_SHIFT 19
 #define OP1_SHIFT 16
 #define CRN_SHIFT 12
@@ -27,7 +25,16 @@
    ((crm) << CRM_SHIFT) | ((op2) << OP2_SHIFT))
 
 #define SYS_MIDR_EL1 SYS_REG(3, 0, 0, 0, 0)
+
+#define SYS_ID_AA64PFR0_EL1 SYS_REG(3, 0, 0, 4, 0)
 #define SYS_ID_AA64ZFR0_EL1 SYS_REG(3, 0, 0, 4, 4)
+
+#define SYS_ID_AA64ISAR0_EL1 SYS_REG(3, 0, 0, 6, 0)
+#define SYS_ID_AA64ISAR1_EL1 SYS_REG(3, 0, 0, 6, 1)
+
+#if (defined(CPU_FEATURES_COMPILER_GCC) || defined(CPU_FEATURES_COMPILER_CLANG))
+
+#define EMIT_INST(x) ".inst " STRINGIZE((x)) "\n\t"
 
 #define DEFINE_MRS_MSR_S_REGNUM                                               \
   "	.irp     "                                                                \
@@ -55,3 +62,25 @@
     asm volatile(MRS_S("%0", r) : "=r"(__val)); \
     __val;                                      \
   })
+#elif defined(CPU_FEATURES_COMPILER_MSC)
+#define READ_SYS_REG_S(r)                               \
+  ({                                                    \
+    uint64_t sreg;                                      \
+    __asm {                                           \
+      GBLA count                                      \
+      count SETA 0                                    \
+      WHILE count < 31                                \
+        count SETA count + 1                          \
+        GBLA __reg_num_x$count                        \
+        __reg_num_x$count SETA count                  \
+      WEND                                            \
+      GBLA __reg_num_xzr                              \
+      __reg_num_xzr SETA 31                           \
+                                                      \
+      sreg DCI 0xD5200000 :OR: sreg :OR: __reg_num_$r \
+    }                                                   \
+    sreg;                                               \
+  })
+#else
+#error "Cannot compile cpuinfo_aarch64 on a non supported compiler."
+#endif

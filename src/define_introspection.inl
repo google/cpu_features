@@ -23,6 +23,7 @@
 #endif
 
 #include <stdbool.h>
+
 #include "stringize.h"
 
 #define FEAT_TYPE_NAME__(X) X##Features
