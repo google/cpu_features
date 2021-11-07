@@ -63,24 +63,14 @@
     __val;                                      \
   })
 #elif defined(CPU_FEATURES_COMPILER_MSC)
+extern void READ_MRS_S();
 #define READ_SYS_REG_S(r)                               \
   ({                                                    \
-    uint64_t sreg;                                      \
-    __asm {                                           \
-      GBLA count                                      \
-      count SETA 0                                    \
-      WHILE count < 31                                \
-        count SETA count + 1                          \
-        GBLA __reg_num_x$count                        \
-        __reg_num_x$count SETA count                  \
-      WEND                                            \
-      GBLA __reg_num_xzr                              \
-      __reg_num_xzr SETA 31                           \
-                                                      \
-      sreg DCI 0xD5200000 :OR: sreg :OR: __reg_num_$r \
-    }                                                   \
-    sreg;                                               \
+    uint64_t __val;                                     \
+    READ_MRS_S(__val, r);                               \
+    __val;                                              \
   })
 #else
 #error "Cannot compile cpuinfo_aarch64 on a non supported compiler."
 #endif
+
