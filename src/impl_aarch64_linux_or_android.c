@@ -16,7 +16,6 @@
 
 #ifdef CPU_FEATURES_ARCH_AARCH64
 #if defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
-
 #include "cpuinfo_aarch64.h"
 
 ////////////////////////////////////////////////////////////////////////////////

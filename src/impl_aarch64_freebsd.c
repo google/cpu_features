@@ -16,7 +16,7 @@
 
 #ifdef CPU_FEATURES_ARCH_AARCH64
 #ifdef CPU_FEATURES_OS_FREEBSD
-
+#include "define_introspection_base_aarch64.inl"
 #include "impl_aarch64__base_implementation.inl"
 
 static void DetectFeatures(Aarch64Info* info) { DetectFeaturesBase(info); }
