@@ -15,11 +15,11 @@
 #include "cpu_features_macros.h"
 
 #ifdef CPU_FEATURES_ARCH_AARCH64
-#ifdef CPU_FEATURES_OS_MACOS
+#if defined(CPU_FEATURES_OS_MACOS) || defined(CPU_FEATURES_OS_IPHONE)
 
 #include "impl_aarch64__base_implementation.inl"
 
 static void DetectFeatures(Aarch64Info* info) { DetectFeaturesBase(info); }
 
-#endif  // CPU_FEATURES_OS_MACOS
+#endif  // defined(CPU_FEATURES_OS_MACOS) || defined(CPU_FEATURES_OS_IPHONE)
 #endif  // CPU_FEATURES_ARCH_AARCH64

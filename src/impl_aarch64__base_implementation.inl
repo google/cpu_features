@@ -64,9 +64,7 @@ static void DetectFeaturesBase(Aarch64Info* info) {
   //  * Single-precision and double-precision floating-point types.
   //  * Conversions between single-precision and half-precision data types,
   //  and double-precision and half-precision data types.
-  if (fp == 0) {
-    info->features.fp = 1;
-  }
+  if (fp == 0) info->features.fp = 1;
 
   // fp_value = 0b0001:
   // As for 0b0000, and also includes support for half-precision
@@ -84,9 +82,7 @@ static void DetectFeaturesBase(Aarch64Info* info) {
   //  * Single-precision and double-precision floating-point arithmetic.
   //  * Conversions between single-precision and half-precision data types,
   // and double-precision and half-precision data types.
-  if (asimd == 0) {
-    info->features.asimd = 1;
-  }
+  if (asimd == 0) info->features.asimd = 1;
 
   // asimd = 0b0001:
   // As for 0b0000, and also includes support for half-precision
@@ -116,13 +112,8 @@ static void DetectFeaturesBase(Aarch64Info* info) {
   info->features.asimddp = ExtractBitRange(isa0, 47, 44);
   info->features.asimdfhm = ExtractBitRange(isa0, 51, 48);
   const uint64_t ts = ExtractBitRange(isa0, 55, 52);
-  if (ts == 1) {
-    info->features.flagm = 1;
-  }
-  if (ts == 2) {
-    info->features.flagm = 1;
-    info->features.flagm2 = 1;
-  }
+  if (ts >= 1) info->features.flagm = 1;
+  if (ts >= 2) info->features.flagm2 = 1;
   info->features.rng = ExtractBitRange(isa0, 63, 60);
 
   const uint64_t isa1 = GetCpuid_ID_AA64ISAR1_EL1();

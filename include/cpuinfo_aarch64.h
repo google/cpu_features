@@ -15,65 +15,63 @@
 #ifndef CPU_FEATURES_INCLUDE_CPUINFO_AARCH64_H_
 #define CPU_FEATURES_INCLUDE_CPUINFO_AARCH64_H_
 
-#include <stdint.h>
-
 #include "cpu_features_cache_info.h"
 #include "cpu_features_macros.h"
 
 CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
-  uint8_t fp;          // Floating-point.
-  uint8_t asimd;       // Advanced SIMD.
-  uint8_t evtstrm;     // Generic timer generated events.
-  uint8_t aes;         // Hardware-accelerated Advanced Encryption Standard.
-  uint8_t pmull;       // Polynomial multiply long.
-  uint8_t sha1;        // Hardware-accelerated SHA1.
-  uint8_t sha2;        // Hardware-accelerated SHA2-256.
-  uint8_t crc32;       // Hardware-accelerated CRC-32.
-  uint8_t atomics;     // Armv8.1 atomic instructions.
-  uint8_t fphp;        // Half-precision floating point support.
-  uint8_t asimdhp;     // Advanced SIMD half-precision support.
-  uint8_t cpuid;       // Access to certain ID registers.
-  uint8_t asimdrdm;    // Rounding Double Multiply Accumulate/Subtract.
-  uint8_t jscvt;       // Support for JavaScript conversion.
-  uint8_t fcma;        // Floating point complex numbers.
-  uint8_t lrcpc;       // Support for weaker release consistency.
-  uint8_t dcpop;       // Data persistence writeback.
-  uint8_t sha3;        // Hardware-accelerated SHA3.
-  uint8_t sm3;         // Hardware-accelerated SM3.
-  uint8_t sm4;         // Hardware-accelerated SM4.
-  uint8_t asimddp;     // Dot product instruction.
-  uint8_t sha512;      // Hardware-accelerated SHA512.
-  uint8_t sve;         // Scalable Vector Extension.
-  uint8_t asimdfhm;    // Additional half-precision instructions.
-  uint8_t dit;         // Data independent timing.
-  uint8_t uscat;       // Unaligned atomics support.
-  uint8_t ilrcpc;      // Additional support for weaker release consistency.
-  uint8_t flagm;       // Flag manipulation instructions.
-  uint8_t ssbs;        // Speculative Store Bypass Safe PSTATE bit.
-  uint8_t sb;          // Speculation barrier.
-  uint8_t paca;        // Address authentication.
-  uint8_t pacg;        // Generic authentication.
-  uint8_t dcpodp;      // Data cache clean to point of persistence.
-  uint8_t sve2;        // Scalable Vector Extension (version 2).
-  uint8_t sveaes;      // SVE AES instructions.
-  uint8_t svepmull;    // SVE polynomial multiply long instructions.
-  uint8_t svebitperm;  // SVE bit permute instructions.
-  uint8_t svesha3;     // SVE SHA3 instructions.
-  uint8_t svesm4;      // SVE SM4 instructions.
-  uint8_t flagm2;      // Additional flag manipulation instructions.
-  uint8_t frint;       // Floating point to integer rounding.
-  uint8_t svei8mm;     // SVE Int8 matrix multiplication instructions.
-  uint8_t svef32mm;    // SVE FP32 matrix multiplication instruction.
-  uint8_t svef64mm;    // SVE FP64 matrix multiplication instructions.
-  uint8_t svebf16;     // SVE BFloat16 instructions.
-  uint8_t i8mm;        // Int8 matrix multiplication instructions.
-  uint8_t bf16;        // BFloat16 instructions.
-  uint8_t dgh;         // Data Gathering Hint instruction.
-  uint8_t rng;         // True random number generator support.
-  uint8_t bti;         // Branch target identification.
-  uint8_t mte;         // Memory tagging extension.
+  int fp : 1;          // Floating-point.
+  int asimd : 1;       // Advanced SIMD.
+  int evtstrm : 1;     // Generic timer generated events.
+  int aes : 1;         // Hardware-accelerated Advanced Encryption Standard.
+  int pmull : 1;       // Polynomial multiply long.
+  int sha1 : 1;        // Hardware-accelerated SHA1.
+  int sha2 : 1;        // Hardware-accelerated SHA2-256.
+  int crc32 : 1;       // Hardware-accelerated CRC-32.
+  int atomics : 1;     // Armv8.1 atomic instructions.
+  int fphp : 1;        // Half-precision floating point support.
+  int asimdhp : 1;     // Advanced SIMD half-precision support.
+  int cpuid : 1;       // Access to certain ID registers.
+  int asimdrdm : 1;    // Rounding Double Multiply Accumulate/Subtract.
+  int jscvt : 1;       // Support for JavaScript conversion.
+  int fcma : 1;        // Floating point complex numbers.
+  int lrcpc : 1;       // Support for weaker release consistency.
+  int dcpop : 1;       // Data persistence writeback.
+  int sha3 : 1;        // Hardware-accelerated SHA3.
+  int sm3 : 1;         // Hardware-accelerated SM3.
+  int sm4 : 1;         // Hardware-accelerated SM4.
+  int asimddp : 1;     // Dot product instruction.
+  int sha512 : 1;      // Hardware-accelerated SHA512.
+  int sve : 1;         // Scalable Vector Extension.
+  int asimdfhm : 1;    // Additional half-precision instructions.
+  int dit : 1;         // Data independent timing.
+  int uscat : 1;       // Unaligned atomics support.
+  int ilrcpc : 1;      // Additional support for weaker release consistency.
+  int flagm : 1;       // Flag manipulation instructions.
+  int ssbs : 1;        // Speculative Store Bypass Safe PSTATE bit.
+  int sb : 1;          // Speculation barrier.
+  int paca : 1;        // Address authentication.
+  int pacg : 1;        // Generic authentication.
+  int dcpodp : 1;      // Data cache clean to point of persistence.
+  int sve2 : 1;        // Scalable Vector Extension (version 2).
+  int sveaes : 1;      // SVE AES instructions.
+  int svepmull : 1;    // SVE polynomial multiply long instructions.
+  int svebitperm : 1;  // SVE bit permute instructions.
+  int svesha3 : 1;     // SVE SHA3 instructions.
+  int svesm4 : 1;      // SVE SM4 instructions.
+  int flagm2 : 1;      // Additional flag manipulation instructions.
+  int frint : 1;       // Floating point to integer rounding.
+  int svei8mm : 1;     // SVE Int8 matrix multiplication instructions.
+  int svef32mm : 1;    // SVE FP32 matrix multiplication instruction.
+  int svef64mm : 1;    // SVE FP64 matrix multiplication instructions.
+  int svebf16 : 1;     // SVE BFloat16 instructions.
+  int i8mm : 1;        // Int8 matrix multiplication instructions.
+  int bf16 : 1;        // BFloat16 instructions.
+  int dgh : 1;         // Data Gathering Hint instruction.
+  int rng : 1;         // True random number generator support.
+  int bti : 1;         // Branch target identification.
+  int mte : 1;         // Memory tagging extension.
 
   // Make sure to update Aarch64FeaturesEnum below if you add a field here.
 } Aarch64Features;

@@ -166,4 +166,46 @@
 #define MIDR_APPLE_M1_FIRESTORM_TONGA \
   MIDR_CPU_MODEL_IP(ARM_CPU_IMP_APPLE, APPLE_CPU_PART_M1_FIRESTORM_TONGA)
 
+#define ID_AA64_SCHEME0_SHIFT 0
+#define ID_AA64_SCHEME1_SHIFT 4
+#define ID_AA64_SCHEME2_SHIFT 8
+#define ID_AA64_SCHEME3_SHIFT 12
+#define ID_AA64_SCHEME4_SHIFT 16
+#define ID_AA64_SCHEME5_SHIFT 20
+#define ID_AA64_SCHEME6_SHIFT 24
+#define ID_AA64_SCHEME7_SHIFT 28
+#define ID_AA64_SCHEME8_SHIFT 32
+#define ID_AA64_SCHEME9_SHIFT 36
+#define ID_AA64_SCHEME10_SHIFT 40
+#define ID_AA64_SCHEME11_SHIFT 44
+#define ID_AA64_SCHEME12_SHIFT 48
+#define ID_AA64_SCHEME13_SHIFT 52
+#define ID_AA64_SCHEME14_SHIFT 56
+#define ID_AA64_SCHEME15_SHIFT 60
+
+#define ID_AA64_SCHEME_MODEL(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, \
+                             r12, r13, r14, r15)                               \
+  (((r15) << ID_AA64_SCHEME15_SHIFT) | ((r14) << ID_AA64_SCHEME14_SHIFT) |     \
+   ((r13) << ID_AA64_SCHEME13_SHIFT) | ((r12) << ID_AA64_SCHEME12_SHIFT) |     \
+   ((r11) << ID_AA64_SCHEME11_SHIFT) | ((r10) << ID_AA64_SCHEME10_SHIFT) |     \
+   ((r9) << ID_AA64_SCHEME9_SHIFT) | ((r8) << ID_AA64_SCHEME8_SHIFT) |         \
+   ((r7) << ID_AA64_SCHEME7_SHIFT) | ((r6) << ID_AA64_SCHEME6_SHIFT) |         \
+   ((r5) << ID_AA64_SCHEME5_SHIFT) | ((r4) << ID_AA64_SCHEME4_SHIFT) |         \
+   ((r3) << ID_AA64_SCHEME3_SHIFT) | ((r2) << ID_AA64_SCHEME2_SHIFT) |         \
+   ((r1) << ID_AA64_SCHEME1_SHIFT) | ((r0) << ID_AA64_SCHEME0_SHIFT))
+
+///////////////////////////////////////////////////////////////////////////////
+// ID_AA64ISAR0_EL1
+///////////////////////////////////////////////////////////////////////////////
+#define ID_AA64ISAR0_EL1_ARM_CORTEX_A53_R3                                    \
+  ID_AA64_SCHEME_MODEL(0UL, 2UL, 1UL, 1UL, 1UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, \
+                       0UL, 0UL, 0UL, 0UL, 0UL)
+
+///////////////////////////////////////////////////////////////////////////////
+// ID_AA64PFR0_EL1
+///////////////////////////////////////////////////////////////////////////////
+#define ID_AA64PFR0_EL1_ARM_CORTEX_A53_R3                                     \
+  ID_AA64_SCHEME_MODEL(0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, \
+                       0UL, 0UL, 0UL, 0UL, 0UL)
+
 #endif  // CPU_FEATURES_CPUTYPE_AARCH64_H_

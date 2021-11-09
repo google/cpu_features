@@ -62,5 +62,5 @@
     __val;                                      \
   })
 #else
-#error "Cannot compile cpuinfo_aarch64 on a non supported compiler."
+#error "Unsupported compiler, aarch64 cpuid requires either GCC or Clang."
 #endif

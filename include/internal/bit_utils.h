@@ -27,8 +27,8 @@ inline static bool IsBitSet(uint32_t reg, uint32_t bit) {
   return (reg >> bit) & 0x1;
 }
 
-inline static uint32_t ExtractBitRange(uint32_t reg, uint32_t msb,
-                                       uint32_t lsb) {
+inline static uint64_t ExtractBitRange(uint64_t reg, uint64_t msb,
+                                       uint64_t lsb) {
   const uint64_t bits = msb - lsb + 1ULL;
   const uint64_t mask = (1ULL << bits) - 1ULL;
   assert(msb >= lsb);
