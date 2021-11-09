@@ -33,7 +33,6 @@
 #define SYS_ID_AA64ISAR1_EL1 SYS_REG(3, 0, 0, 6, 1)
 
 #if (defined(CPU_FEATURES_COMPILER_GCC) || defined(CPU_FEATURES_COMPILER_CLANG))
-
 #define EMIT_INST(x) ".inst " STRINGIZE((x)) "\n\t"
 
 #define DEFINE_MRS_MSR_S_REGNUM                                               \
@@ -62,15 +61,6 @@
     asm volatile(MRS_S("%0", r) : "=r"(__val)); \
     __val;                                      \
   })
-#elif defined(CPU_FEATURES_COMPILER_MSC)
-extern void READ_MRS_S();
-#define READ_SYS_REG_S(r)                               \
-  ({                                                    \
-    uint64_t __val;                                     \
-    READ_MRS_S(__val, r);                               \
-    __val;                                              \
-  })
 #else
 #error "Cannot compile cpuinfo_aarch64 on a non supported compiler."
 #endif
-

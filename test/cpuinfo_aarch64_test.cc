@@ -20,6 +20,7 @@
 #include "gtest/gtest.h"
 #include "hwcaps_for_testing.h"
 #include "internal/cpuid_aarch64.h"
+#include "cputype_aarch64_for_testing.h"
 
 namespace cpu_features {
 namespace {
@@ -104,6 +105,7 @@ TEST_F(CpuInfoAarch64Test, FromHardwareCap_HWCAP) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_AES, 0);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo
+  cpu().SetCpuid_MIDR_EL1(1);
   const auto info = GetAarch64Info();
   EXPECT_TRUE(info.features.fp);
   EXPECT_FALSE(info.features.asimd);
@@ -116,7 +118,7 @@ TEST_F(CpuInfoAarch64Test, FromHardwareCap_HWCAP) {
   EXPECT_FALSE(info.features.atomics);
   EXPECT_FALSE(info.features.fphp);
   EXPECT_FALSE(info.features.asimdhp);
-  EXPECT_FALSE(info.features.cpuid);
+  EXPECT_TRUE(info.features.cpuid);
   EXPECT_FALSE(info.features.asimdrdm);
   EXPECT_FALSE(info.features.jscvt);
   EXPECT_FALSE(info.features.fcma);
@@ -144,6 +146,7 @@ TEST_F(CpuInfoAarch64Test, FromHardwareCap2_HWCAP2) {
   SetHardwareCapabilities(AARCH64_HWCAP_FP,
                           AARCH64_HWCAP2_SVE2 | AARCH64_HWCAP2_BTI);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo
+  cpu().SetCpuid_MIDR_EL1(1);
   const auto info = GetAarch64Info();
   EXPECT_TRUE(info.features.fp);
 
@@ -246,6 +249,37 @@ CPU revision    : 3)");
   EXPECT_FALSE(info.features.rng);
   EXPECT_FALSE(info.features.bti);
   EXPECT_FALSE(info.features.mte);
+}
+#else
+TEST_F(CpuInfoAarch64Test, ARM_CORTEX_A72_MRS_MIDR_EL1) {
+  cpu().SetCpuid_MIDR_EL1(MIDR_CORTEX_A72);
+  const auto info = GetAarch64Info();
+  EXPECT_EQ(info.implementer, 0x41);
+  EXPECT_EQ(info.variant, 0x0);
+  EXPECT_EQ(info.part, 0xD08);
+  EXPECT_EQ(info.revision, 0);
+}
+
+TEST_F(CpuInfoAarch64Test, ARM_CORTEX_A53_R3_MRS_ID_AA64ISAR0_EL1) {
+  cpu().SetCpuid_MIDR_EL1(MIDR_CORTEX_A53_R3);
+  cpu().SetCpuid_ID_AA64ISAR0_EL1(ID_AA64ISAR0_EL1_ARM_CORTEX_A53_R3);
+  const auto info = GetAarch64Info();
+  EXPECT_EQ(info.implementer, 0x41);
+  EXPECT_EQ(info.variant, 0x0);
+  EXPECT_EQ(info.part, 0xD03);
+  EXPECT_EQ(info.revision, 3);
+
+  EXPECT_TRUE(info.features.cpuid);
+  EXPECT_TRUE(info.features.aes);
+  EXPECT_TRUE(info.features.pmull);
+  EXPECT_TRUE(info.features.sha1);
+  EXPECT_TRUE(info.features.sha2);
+  EXPECT_TRUE(info.features.crc32);
+  EXPECT_FALSE(info.features.atomics);
+  EXPECT_TRUE(info.features.cpuid);
+  EXPECT_FALSE(info.features.sha3);
+  EXPECT_FALSE(info.features.sm3);
+  EXPECT_FALSE(info.features.sm4);
 }
 #endif
 

@@ -162,7 +162,7 @@ Aarch64Info GetAarch64Info(void) {
     info.variant = ExtractBitRange(midr, 23, 20);
     info.part = ExtractBitRange(midr, 15, 4);
     info.revision = ExtractBitRange(midr, 3, 0);
-    DetectFeaturesBase(&info);
+    DetectFeatures(&info);
   }
   return info;
 }
