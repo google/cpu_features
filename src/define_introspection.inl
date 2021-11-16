@@ -24,7 +24,7 @@
 
 #include <stdbool.h>
 
-#include "stringize.h"
+#include "stringize.inl"
 
 #define FEAT_TYPE_NAME__(X) X##Features
 #define FEAT_TYPE_NAME_(X) FEAT_TYPE_NAME__(X)

@@ -45,17 +45,28 @@ uint64_t GetCpuid_ID_AA64ISAR1_EL1() {
 uint64_t GetCpuid_ID_AA64ZFR0_EL1() {
   return READ_SYS_REG_S(SYS_ID_AA64ZFR0_EL1);
 }
+
+uint64_t GetCpuid_ID_AA64MMFR2_EL1() {
+  return READ_SYS_REG_S(SYS_ID_AA64MMFR2_EL1);
+}
+
+uint64_t GetCpuid_ID_AA64PFR1_EL1() {
+  return READ_SYS_REG_S(SYS_ID_AA64PFR1_EL1);
+}
 #endif
+
+#define ID_SCHEME(reg, msb, lsb) ExtractBitRange((reg), (msb), (lsb)) >= 1
 
 // This function have to be implemented by the OS or
 // can use base implementation DetectFeaturesBase.
 static void DetectFeatures(Aarch64Info* info);
 
 static void DetectFeaturesBase(Aarch64Info* info) {
+  // ID_AA64PFR0_EL1
   const uint64_t pfr0 = GetCpuid_ID_AA64PFR0_EL1();
 
-  info->features.sve = ExtractBitRange(pfr0, 35, 32);
-  info->features.dit = ExtractBitRange(pfr0, 51, 48);
+  info->features.sve = ID_SCHEME(pfr0, 35, 32);
+  info->features.dit = ID_SCHEME(pfr0, 51, 48);
 
   const uint64_t fp = ExtractBitRange(pfr0, 19, 16);
 
@@ -92,54 +103,89 @@ static void DetectFeaturesBase(Aarch64Info* info) {
     info->features.asimdhp = 1;
   }
 
-  const uint64_t isa0 = GetCpuid_ID_AA64ISAR0_EL1();
+  // ID_AA64PFR1_EL1
+  const uint64_t pfr1 = GetCpuid_ID_AA64PFR1_EL1();
+  info->features.bti = ID_SCHEME(pfr1, 3, 0);
 
+  const uint64_t ssbs = ExtractBitRange(pfr1, 7, 4);
+  if (ssbs >= 2) info->features.ssbs = 1;
+
+  info->features.bti = ID_SCHEME(pfr1, 11, 8);
+
+  // ID_AA64ISAR0_EL1
+  const uint64_t isa0 = GetCpuid_ID_AA64ISAR0_EL1();
   const uint64_t aes = ExtractBitRange(isa0, 7, 4);
   if (aes >= 1) info->features.aes = 1;
   if (aes >= 2) info->features.pmull = 1;
 
-  info->features.sha1 = ExtractBitRange(isa0, 11, 8);
+  info->features.sha1 = ID_SCHEME(isa0, 11, 8);
+
   const uint64_t sha2 = ExtractBitRange(isa0, 15, 12);
   if (sha2 >= 1) info->features.sha2 = 1;
   if (sha2 >= 2) info->features.sha512 = 1;
 
-  info->features.crc32 = ExtractBitRange(isa0, 19, 16);
-  info->features.atomics = ExtractBitRange(isa0, 23, 20);
-  info->features.asimdrdm = ExtractBitRange(isa0, 31, 28);
-  info->features.sha3 = ExtractBitRange(isa0, 35, 32);
-  info->features.sm3 = ExtractBitRange(isa0, 39, 36);
-  info->features.sm4 = ExtractBitRange(isa0, 43, 40);
-  info->features.asimddp = ExtractBitRange(isa0, 47, 44);
-  info->features.asimdfhm = ExtractBitRange(isa0, 51, 48);
+  info->features.crc32 = ID_SCHEME(isa0, 19, 16);
+  info->features.atomics = ID_SCHEME(isa0, 23, 20);
+  info->features.asimdrdm = ID_SCHEME(isa0, 31, 28);
+  info->features.sha3 = ID_SCHEME(isa0, 35, 32);
+  info->features.sm3 = ID_SCHEME(isa0, 39, 36);
+  info->features.sm4 = ID_SCHEME(isa0, 43, 40);
+  info->features.asimddp = ID_SCHEME(isa0, 47, 44);
+  info->features.asimdfhm = ID_SCHEME(isa0, 51, 48);
+
   const uint64_t ts = ExtractBitRange(isa0, 55, 52);
   if (ts >= 1) info->features.flagm = 1;
   if (ts >= 2) info->features.flagm2 = 1;
-  info->features.rng = ExtractBitRange(isa0, 63, 60);
 
+  info->features.rng = ID_SCHEME(isa0, 63, 60);
+
+  // ID_AA64ISAR1_EL1
   const uint64_t isa1 = GetCpuid_ID_AA64ISAR1_EL1();
-  info->features.jscvt = ExtractBitRange(isa1, 15, 12);
-  info->features.fcma = ExtractBitRange(isa1, 19, 16);
-  info->features.lrcpc = ExtractBitRange(isa1, 23, 20);
-  info->features.sb = ExtractBitRange(isa1, 39, 36);
-  info->features.bf16 = ExtractBitRange(isa1, 47, 44);
-  info->features.dgh = ExtractBitRange(isa1, 51, 48);
-  info->features.i8mm = ExtractBitRange(isa1, 55, 52);
+  const uint64_t dpb = ExtractBitRange(isa1, 3, 0);
+  if (dpb >= 1) info->features.dcpop = 1;
+  if (dpb >= 2) info->features.dcpodp = 1;
 
+  const uint64_t apa = ExtractBitRange(isa1, 7, 4);
+  const uint64_t api = ExtractBitRange(isa1, 11, 8);
+  if (apa >= 1 || api >= 1) info->features.paca = 1;
+
+  info->features.jscvt = ID_SCHEME(isa1, 15, 12);
+  info->features.fcma = ID_SCHEME(isa1, 19, 16);
+
+  const uint64_t lrcpc = ExtractBitRange(isa1, 23, 20);
+  if (lrcpc >= 1) info->features.lrcpc = 1;
+  if (lrcpc >= 2) info->features.ilrcpc = 1;
+
+  const uint64_t gpa = ExtractBitRange(isa1, 27, 24);
+  const uint64_t gpi = ExtractBitRange(isa1, 31, 28);
+  if (gpa >= 1 || gpi >= 1) info->features.pacg = 1;
+
+  info->features.frint = ID_SCHEME(isa1, 35, 32);
+  info->features.sb = ID_SCHEME(isa1, 39, 36);
+  info->features.bf16 = ID_SCHEME(isa1, 47, 44);
+  info->features.dgh = ID_SCHEME(isa1, 51, 48);
+  info->features.i8mm = ID_SCHEME(isa1, 55, 52);
+
+  // ID_AA64ZFR0_EL1
   if (info->features.sve) {
     const uint64_t zfr0 = GetCpuid_ID_AA64ZFR0_EL1();
-    info->features.sve2 = ExtractBitRange(zfr0, 0, 3);
-    info->features.svebitperm = ExtractBitRange(zfr0, 19, 16);
-    info->features.svebf16 = ExtractBitRange(zfr0, 23, 20);
-    info->features.svesha3 = ExtractBitRange(zfr0, 35, 32);
-    info->features.svesm4 = ExtractBitRange(zfr0, 43, 40);
-    info->features.svei8mm = ExtractBitRange(zfr0, 47, 44);
-    info->features.svef32mm = ExtractBitRange(zfr0, 55, 52);
-    info->features.svef64mm = ExtractBitRange(zfr0, 59, 56);
+    info->features.sve2 = ID_SCHEME(zfr0, 0, 3);
+    info->features.svebitperm = ID_SCHEME(zfr0, 19, 16);
+    info->features.svebf16 = ID_SCHEME(zfr0, 23, 20);
+    info->features.svesha3 = ID_SCHEME(zfr0, 35, 32);
+    info->features.svesm4 = ID_SCHEME(zfr0, 43, 40);
+    info->features.svei8mm = ID_SCHEME(zfr0, 47, 44);
+    info->features.svef32mm = ID_SCHEME(zfr0, 55, 52);
+    info->features.svef64mm = ID_SCHEME(zfr0, 59, 56);
 
     const uint64_t sveaes = ExtractBitRange(zfr0, 7, 4);
     if (sveaes >= 1) info->features.sveaes = 1;
     if (sveaes >= 2) info->features.svepmull = 1;
   }
+
+  // ID_AA64MMFR2_EL1
+  const uint64_t mmfr2 = GetCpuid_ID_AA64MMFR2_EL1();
+  info->features.uscat = ID_SCHEME(mmfr2, 35, 32);
 }
 
 static const Aarch64Info kEmptyAarch64Info;

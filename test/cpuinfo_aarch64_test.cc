@@ -32,6 +32,8 @@ class FakeCpuAarch64 {
   uint64_t GetCpuid_ID_AA64ISAR1_EL1() const { return _id_aa64isar1_el1; }
   uint64_t GetCpuid_ID_AA64PFR0_EL1() const { return _id_aa64pfr0_el1; }
   uint64_t GetCpuid_ID_AA64ZFR0_EL1() const { return _id_aa64zfr0_el1; }
+  uint64_t GetCpuid_ID_AA64PFR1_EL1() const { return _id_aa64pfr1_el1; }
+  uint64_t GetCpuid_ID_AA64MMFR2_EL1() const { return _id_aa64mmfr2_el1; }
 
   void SetCpuid_MIDR_EL1(uint64_t midr_el1) { _midr_el1 = midr_el1; }
 
@@ -51,12 +53,22 @@ class FakeCpuAarch64 {
     _id_aa64pfr0_el1 = id_aa64zfr0_el1;
   }
 
+  void SetCpuid_ID_AA64PFR1_EL1(uint64_t id_aa64pfr1_el1) {
+    _id_aa64pfr1_el1 = id_aa64pfr1_el1;
+  }
+
+  void SetCpuid_ID_AA64MMFR2_EL1(uint64_t id_aa64mmfr2_el1) {
+    _id_aa64mmfr2_el1 = id_aa64mmfr2_el1;
+  }
+
  private:
   uint64_t _midr_el1;
   uint64_t _id_aa64isar0_el1;
   uint64_t _id_aa64isar1_el1;
   uint64_t _id_aa64pfr0_el1;
   uint64_t _id_aa64zfr0_el1;
+  uint64_t _id_aa64mmfr2_el1;
+  uint64_t _id_aa64pfr1_el1;
 };
 
 FakeCpuAarch64* g_fake_cpu_aarch64;
@@ -82,6 +94,14 @@ extern "C" uint64_t GetCpuid_ID_AA64PFR0_EL1() {
 
 extern "C" uint64_t GetCpuid_ID_AA64ZFR0_EL1() {
   return cpu().GetCpuid_ID_AA64ISAR1_EL1();
+}
+
+extern "C" uint64_t GetCpuid_ID_AA64PFR1_EL1() {
+  return cpu().GetCpuid_ID_AA64PFR1_EL1();
+}
+
+extern "C" uint64_t GetCpuid_ID_AA64MMFR2_EL1() {
+  return cpu().GetCpuid_ID_AA64MMFR2_EL1();
 }
 
 void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }

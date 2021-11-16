@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "stringize.h"
+#include "stringize.inl"
 
 #define OP0_SHIFT 19
 #define OP1_SHIFT 16
@@ -27,10 +27,13 @@
 #define SYS_MIDR_EL1 SYS_REG(3, 0, 0, 0, 0)
 
 #define SYS_ID_AA64PFR0_EL1 SYS_REG(3, 0, 0, 4, 0)
+#define SYS_ID_AA64PFR1_EL1 SYS_REG(3, 0, 0, 4, 1)
 #define SYS_ID_AA64ZFR0_EL1 SYS_REG(3, 0, 0, 4, 4)
 
 #define SYS_ID_AA64ISAR0_EL1 SYS_REG(3, 0, 0, 6, 0)
 #define SYS_ID_AA64ISAR1_EL1 SYS_REG(3, 0, 0, 6, 1)
+
+#define SYS_ID_AA64MMFR2_EL1 SYS_REG(3, 0, 0, 7, 2)
 
 #if (defined(CPU_FEATURES_COMPILER_GCC) || defined(CPU_FEATURES_COMPILER_CLANG))
 #define EMIT_INST(x) ".inst " STRINGIZE((x)) "\n\t"

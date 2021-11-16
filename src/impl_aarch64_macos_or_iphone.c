@@ -16,6 +16,7 @@
 
 #ifdef CPU_FEATURES_ARCH_AARCH64
 #if defined(CPU_FEATURES_OS_MACOS) || defined(CPU_FEATURES_OS_IPHONE)
+#include "cpuinfo_aarch64.h"
 #include "define_introspection_base_aarch64.inl"
 #include "impl_aarch64__base_implementation.inl"
 

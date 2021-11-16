@@ -26,6 +26,8 @@ uint64_t GetCpuid_ID_AA64ISAR0_EL1();
 uint64_t GetCpuid_ID_AA64ISAR1_EL1();
 uint64_t GetCpuid_ID_AA64PFR0_EL1();
 uint64_t GetCpuid_ID_AA64ZFR0_EL1();
+uint64_t GetCpuid_ID_AA64MMFR2_EL1();
+uint64_t GetCpuid_ID_AA64PFR1_EL1();
 
 CPU_FEATURES_END_CPP_NAMESPACE
 
