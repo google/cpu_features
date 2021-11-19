@@ -146,7 +146,10 @@ add_library(CpuFeature::cpu_features ALIAS cpu_features)
 # program : list_cpu_features
 #
 
-add_executable(list_cpu_features ${PROJECT_SOURCE_DIR}/src/utils/list_cpu_features.c)
+file(GLOB LIST_CPU_FEATURES_SRCS CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/src/utils/list_cpu_features_*.c")
+add_executable(list_cpu_features
+        ${PROJECT_SOURCE_DIR}/src/utils/list_cpu_features.c
+        ${LIST_CPU_FEATURES_SRCS})
 target_link_libraries(list_cpu_features PRIVATE cpu_features)
 add_executable(CpuFeature::list_cpu_features ALIAS list_cpu_features)
 
