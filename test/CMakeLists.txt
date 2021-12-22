@@ -71,7 +71,7 @@ endif()
 ##------------------------------------------------------------------------------
 ## cpuinfo_aarch64_test
 if(PROCESSOR_IS_AARCH64)
-  add_executable(cpuinfo_aarch64_test cpuinfo_aarch64_test.cc ../src/impl_aarch64_linux_or_android.c)
+  add_executable(cpuinfo_aarch64_test cpuinfo_aarch64_test.cc ../src/impl_aarch64.c)
   target_link_libraries(cpuinfo_aarch64_test all_libraries)
   add_test(NAME cpuinfo_aarch64_test COMMAND cpuinfo_aarch64_test)
 endif()
