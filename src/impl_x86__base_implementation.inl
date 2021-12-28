@@ -121,7 +121,22 @@ static Leaves ReadLeaves(void) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // OS support
-// TODO: Add documentation
+// Before an application attempts to use the SIMD extensions,
+// it should check that they are present on the processor and supported by OS:
+//  1. Check that operating system saves and restores XMM/YMM/ZMM/TMM
+//     registers during context switches. Detect CPUID.1:ECX.OSXSAVE[bit 27]
+//     this feature flag specifies that operating system provides extended state
+//     management implied HW support for XSAVE, XRSTOR, XGETBV, XCR0.
+//  2. Check that the SIMD extensions supports by hardware.
+//     Detect CPUID.1:ECX.XSAVE[bit 26]
+//  3. Check enabled state in XCR0 via XGETBV.
+//  4. Check feature flag for instruction set.
+//
+//  Note:
+//  It is unwise for an application to rely exclusively on feature flag for
+//  instruction set or at all on CPUID.1:ECX.XSAVE[bit 26]: These indicate
+//  hardware support but not operating system support. If XMM/YMM/ZMM/TMM state
+//  management is not enabled by an operating systems, instructions will #UD
 ////////////////////////////////////////////////////////////////////////////////
 
 #define MASK_XMM 0x2
