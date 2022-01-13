@@ -73,8 +73,6 @@ uint32_t GetXCR0Eax(void) { return (uint32_t)_xgetbv(0); }
 #error "Unsupported compiler, x86 cpuid requires either GCC, Clang or MSVC."
 #endif
 
-static Leaf CpuId(uint32_t leaf_id) { return GetCpuidLeaf(leaf_id, 0); }
-
 static const Leaf kEmptyLeaf;
 
 static Leaf SafeCpuIdEx(uint32_t max_cpuid_leaf, uint32_t leaf_id, int ecx) {
@@ -85,8 +83,40 @@ static Leaf SafeCpuIdEx(uint32_t max_cpuid_leaf, uint32_t leaf_id, int ecx) {
   }
 }
 
-static Leaf SafeCpuId(uint32_t max_cpuid_leaf, uint32_t leaf_id) {
-  return SafeCpuIdEx(max_cpuid_leaf, leaf_id, 0);
+typedef struct {
+  uint32_t max_cpuid_leaf;
+  Leaf leaf_0;    // Root
+  Leaf leaf_1;    // Family, Model, Stepping
+  Leaf leaf_2;    // Intel cache info + features
+  Leaf leaf_7;    // Features
+  Leaf leaf_7_1;  // Features
+  uint32_t max_cpuid_leaf_ext;
+  Leaf leaf_80000000;  // Root for extended leaves
+  Leaf leaf_80000001;  // AMD features features and cache
+  Leaf leaf_80000002;  // brand string
+  Leaf leaf_80000003;  // brand string
+  Leaf leaf_80000004;  // brand string
+} Leaves;
+
+static Leaves ReadLeaves() {
+  const Leaf leaf_0 = GetCpuidLeaf(0, 0);
+  const uint32_t max_cpuid_leaf = leaf_0.eax;
+  const Leaf leaf_80000000 = GetCpuidLeaf(0x80000000, 0);
+  const uint32_t max_cpuid_leaf_ext = leaf_80000000.eax;
+  return (Leaves){
+      .max_cpuid_leaf = max_cpuid_leaf,
+      .leaf_0 = leaf_0,
+      .leaf_1 = SafeCpuIdEx(max_cpuid_leaf, 0x00000001, 0),
+      .leaf_2 = SafeCpuIdEx(max_cpuid_leaf, 0x00000002, 0),
+      .leaf_7 = SafeCpuIdEx(max_cpuid_leaf, 0x00000007, 0),
+      .leaf_7_1 = SafeCpuIdEx(max_cpuid_leaf, 0x00000007, 1),
+      .max_cpuid_leaf_ext = max_cpuid_leaf_ext,
+      .leaf_80000000 = leaf_80000000,
+      .leaf_80000001 = SafeCpuIdEx(max_cpuid_leaf_ext, 0x80000001, 0),
+      .leaf_80000002 = SafeCpuIdEx(max_cpuid_leaf_ext, 0x80000002, 0),
+      .leaf_80000003 = SafeCpuIdEx(max_cpuid_leaf_ext, 0x80000003, 0),
+      .leaf_80000004 = SafeCpuIdEx(max_cpuid_leaf_ext, 0x80000004, 0),
+  };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -155,17 +185,16 @@ static int IsVendorByX86Info(const X86Info* info, const char* const name) {
 }
 
 void FillX86BrandString(char brand_string[49]) {
-  const Leaf leaf_ext_0 = CpuId(0x80000000);
-  const uint32_t max_cpuid_leaf_ext = leaf_ext_0.eax;
-  const Leaf leaves[3] = {
-      SafeCpuId(max_cpuid_leaf_ext, 0x80000002),
-      SafeCpuId(max_cpuid_leaf_ext, 0x80000003),
-      SafeCpuId(max_cpuid_leaf_ext, 0x80000004),
+  const Leaves leaves = ReadLeaves();
+  const Leaf packed[3] = {
+      leaves.leaf_80000002,
+      leaves.leaf_80000003,
+      leaves.leaf_80000004,
   };
 #if __STDC_VERSION__ >= 201112L
-  _Static_assert(sizeof(leaves) == 48, "Leaves must be packed");
+  _Static_assert(sizeof(packed) == 48, "Leaves must be packed");
 #endif
-  copy(brand_string, (const char*)(leaves), 48);
+  copy(brand_string, (const char*)(packed), 48);
   brand_string[48] = '\0';
 }
 
@@ -217,11 +246,11 @@ static void OverrideOsPreserves(OsPreserves* os_preserves);
 static void DetectFeaturesFromOs(X86Features* features);
 
 // Reference https://en.wikipedia.org/wiki/CPUID.
-static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
+static void ParseCpuId(const Leaves* leaves, X86Info* info,
                        OsPreserves* os_preserves) {
-  const Leaf leaf_1 = SafeCpuId(max_cpuid_leaf, 1);
-  const Leaf leaf_7 = SafeCpuId(max_cpuid_leaf, 7);
-  const Leaf leaf_7_1 = SafeCpuIdEx(max_cpuid_leaf, 7, 1);
+  const Leaf leaf_1 = leaves->leaf_1;
+  const Leaf leaf_7 = leaves->leaf_7;
+  const Leaf leaf_7_1 = leaves->leaf_7_1;
 
   const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
   const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
@@ -333,15 +362,9 @@ static void ParseCpuId(const uint32_t max_cpuid_leaf, X86Info* info,
   }
 }
 
-// Reference
-// https://en.wikipedia.org/wiki/CPUID#EAX=80000000h:_Get_Highest_Extended_Function_Implemented.
-static Leaf GetLeafByIdAMD(uint32_t leaf_id) {
-  uint32_t max_extended = CpuId(0x80000000).eax;
-  return SafeCpuId(max_extended, leaf_id);
-}
-
-static void ParseExtraAMDCpuId(X86Info* info, OsPreserves os_preserves) {
-  const Leaf leaf_80000001 = GetLeafByIdAMD(0x80000001);
+static void ParseExtraAMDCpuId(const Leaves* leaves, X86Info* info,
+                               OsPreserves os_preserves) {
+  const Leaf leaf_80000001 = leaves->leaf_80000001;
 
   X86Features* const features = &info->features;
 
@@ -359,17 +382,19 @@ static const OsPreserves kEmptyOsPreserves;
 
 X86Info GetX86Info(void) {
   X86Info info = kEmptyX86Info;
-  const Leaf leaf_0 = CpuId(0);
-  const bool is_intel = IsVendor(leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL);
-  const bool is_amd = IsVendor(leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
-  const bool is_hygon = IsVendor(leaf_0, CPU_FEATURES_VENDOR_HYGON_GENUINE);
-  SetVendor(leaf_0, info.vendor);
+  const Leaves leaves = ReadLeaves();
+  const bool is_intel =
+      IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  const bool is_amd =
+      IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
+  const bool is_hygon =
+      IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_HYGON_GENUINE);
+  SetVendor(leaves.leaf_0, info.vendor);
   if (is_intel || is_amd || is_hygon) {
     OsPreserves os_preserves = kEmptyOsPreserves;
-    const uint32_t max_cpuid_leaf = leaf_0.eax;
-    ParseCpuId(max_cpuid_leaf, &info, &os_preserves);
+    ParseCpuId(&leaves, &info, &os_preserves);
     if (is_amd || is_hygon) {
-      ParseExtraAMDCpuId(&info, os_preserves);
+      ParseExtraAMDCpuId(&leaves, &info, os_preserves);
     }
   }
   return info;
@@ -1510,8 +1535,8 @@ static CacheLevelInfo GetCacheLevelInfo(const uint32_t reg) {
 }
 
 // From https://www.felixcloutier.com/x86/cpuid#tbl-3-12
-static void ParseLeaf2(const int max_cpuid_leaf, CacheInfo* info) {
-  Leaf leaf = SafeCpuId(max_cpuid_leaf, 2);
+static void ParseLeaf2(const Leaves* leaves, CacheInfo* info) {
+  Leaf leaf = leaves->leaf_2;
   // The least-significant byte in register EAX (register AL) will always return
   // 01H. Software should ignore this value and not interpret it as an
   // informational descriptor.
@@ -1580,20 +1605,17 @@ static void ParseCacheInfo(const int max_cpuid_leaf, uint32_t leaf_id,
 
 CacheInfo GetX86CacheInfo(void) {
   CacheInfo info = kEmptyCacheInfo;
-  const Leaf leaf_0 = CpuId(0);
-  if (IsVendor(leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL)) {
-    ParseLeaf2(leaf_0.eax, &info);
-    ParseCacheInfo(leaf_0.eax, 4, &info);
-  } else if (IsVendor(leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD) ||
-             IsVendor(leaf_0, CPU_FEATURES_VENDOR_HYGON_GENUINE)) {
-    const uint32_t max_ext = CpuId(0x80000000).eax;
-    const uint32_t cpuid_ext = SafeCpuId(max_ext, 0x80000001).ecx;
-
+  const Leaves leaves = ReadLeaves();
+  if (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL)) {
+    ParseLeaf2(&leaves, &info);
+    ParseCacheInfo(leaves.max_cpuid_leaf, 4, &info);
+  } else if (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD) ||
+             IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_HYGON_GENUINE)) {
     // If CPUID Fn8000_0001_ECX[TopologyExtensions]==0
     // then CPUID Fn8000_0001_E[D,C,B,A]X is reserved.
     // https://www.amd.com/system/files/TechDocs/25481.pdf
-    if (IsBitSet(cpuid_ext, 22)) {
-      ParseCacheInfo(max_ext, 0x8000001D, &info);
+    if (IsBitSet(leaves.leaf_80000001.ecx, 22)) {
+      ParseCacheInfo(leaves.max_cpuid_leaf_ext, 0x8000001D, &info);
     }
   }
   return info;
