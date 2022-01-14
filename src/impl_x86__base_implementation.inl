@@ -1686,6 +1686,104 @@ static void ParseCacheInfo(const int max_cpuid_leaf, uint32_t leaf_id,
   if (info.size > 0) *old_info = info;
 }
 
+static CacheLevelInfo GetCacheLevelInfoLegacyAMD(uint32_t cache_id,
+                                                 CacheType cache_type,
+                                                 int cache_size, int level,
+                                                 int ways) {
+  const int KiB = 1024;
+  const int UNDEF = -1;
+  return (CacheLevelInfo){.level = level,
+                          .cache_type = cache_type,
+                          .cache_size = cache_size * KiB,
+                          .ways = ways,
+                          .line_size = ExtractBitRange(cache_id, 7, 0),
+                          .tlb_entries = UNDEF,
+                          .partitioning = UNDEF};
+}
+
+// https://www.amd.com/system/files/TechDocs/25481.pdf
+// See Table 4: L2/L3 Cache and TLB Associativity Field Definition.
+static int GetWaysLegacyAMD(const uint32_t cache_id) {
+  const int ways = ExtractBitRange(cache_id, 15, 12);
+  switch (ways) {
+    case 0x0:
+    case 0x1:
+    case 0x2:
+    case 0x4:
+      return ways;
+    case 0x6:
+      return 8;
+    case 0x8:
+      return 16;
+    case 0xA:
+      return 32;
+    case 0xB:
+      return 48;
+    case 0xC:
+      return 64;
+    case 0xD:
+      return 96;
+    case 0xE:
+      return 128;
+    case 0xF:
+      return 255;
+    default:
+      return -1;  // Reserved
+  }
+}
+
+static CacheLevelInfo GetCacheL1InfoLegacyAMD(const uint32_t cache_id,
+                                              CacheType cache_type) {
+  const uint32_t cache_size = ExtractBitRange(cache_id, 31, 24);
+  const int ways = ExtractBitRange(cache_id, 23, 16);
+  return GetCacheLevelInfoLegacyAMD(cache_id, cache_type, cache_size, 1, ways);
+}
+
+static CacheLevelInfo GetCacheL2InfoLegacyAMD(const uint32_t cache_id,
+                                              CacheType cache_type) {
+  const uint32_t cache_size = ExtractBitRange(cache_id, 31, 16);
+  const int ways = GetWaysLegacyAMD(cache_id);
+  return GetCacheLevelInfoLegacyAMD(cache_id, cache_type, cache_size, 2, ways);
+}
+
+static CacheLevelInfo GetCacheL3InfoLegacyAMD(const uint32_t cache_id,
+                                              CacheType cache_type,
+                                              CacheInfo* info) {
+  const uint32_t cache_size = ExtractBitRange(cache_id, 31, 18);
+  if (cache_size == 0) {
+    info->size = 3;
+    return kEmptyCacheLevelInfo;
+  }
+  info->size = 4;
+
+  const int ways = GetWaysLegacyAMD(cache_id);
+  return GetCacheLevelInfoLegacyAMD(cache_id, cache_type, cache_size * 512, 3,
+                                    ways);
+}
+
+// https://www.amd.com/system/files/TechDocs/25481.pdf
+// CPUID Fn8000_0005_E[A,B,C,D]X, Fn8000_0006_E[A,B,C,D]X - TLB and Cache info
+static void ParseCacheInfoLegacyAMD(const uint32_t max_ext, CacheInfo* info) {
+  const Leaf cache_tlb_leaf1 = SafeCpuIdEx(max_ext, 0x80000005, 0);
+  const Leaf cache_tlb_leaf2 = SafeCpuIdEx(max_ext, 0x80000006, 0);
+
+  const uint32_t cache_l1d = cache_tlb_leaf1.ecx;
+  const uint32_t cache_l1i = cache_tlb_leaf1.edx;
+  const uint32_t cache_l2 = cache_tlb_leaf2.ecx;
+  const uint32_t cache_l3 = cache_tlb_leaf2.edx;
+
+  info->levels[0] = GetCacheL1InfoLegacyAMD(cache_l1d, CPU_FEATURE_CACHE_DATA);
+
+  info->levels[1] =
+      GetCacheL1InfoLegacyAMD(cache_l1i, CPU_FEATURE_CACHE_INSTRUCTION);
+
+  info->levels[2] =
+      GetCacheL2InfoLegacyAMD(cache_l2, CPU_FEATURE_CACHE_UNIFIED);
+
+  info->levels[3] =
+      GetCacheL3InfoLegacyAMD(cache_l3, CPU_FEATURE_CACHE_UNIFIED, info);
+}
+
 CacheInfo GetX86CacheInfo(void) {
   CacheInfo info = kEmptyCacheInfo;
   const Leaves leaves = ReadLeaves();
@@ -1701,6 +1799,8 @@ CacheInfo GetX86CacheInfo(void) {
     // https://www.amd.com/system/files/TechDocs/25481.pdf
     if (IsBitSet(leaves.leaf_80000001.ecx, 22)) {
       ParseCacheInfo(leaves.max_cpuid_leaf_ext, 0x8000001D, &info);
+    } else {
+      ParseCacheInfoLegacyAMD(leaves.max_cpuid_leaf_ext, &info);
     }
   }
   return info;

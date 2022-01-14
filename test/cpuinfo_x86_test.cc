@@ -869,6 +869,111 @@ TEST_F(CpuidX86Test, INTEL_ALDER_LAKE_AVX_VNNI) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ADL);
 }
 
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0100FA0_K10_Thuban_CPUID.txt
+TEST_F(CpuidX86Test, AMD_THUBAN_CACHE_INFO) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000006, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000000, 0}, Leaf{0x8000001B, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000001, 0}, Leaf{0x00100FA0, 0x10000050, 0x000037FF, 0xEFD3FBFF}},
+      {{0x80000005, 0}, Leaf{0xFF30FF10, 0xFF30FF20, 0x40020140, 0x40020140}},
+      {{0x80000006, 0}, Leaf{0x20800000, 0x42004200, 0x02008140, 0x0030B140}},
+  });
+  const auto info = GetX86CacheInfo();
+
+  EXPECT_EQ(info.size, 4);
+  EXPECT_EQ(info.levels[0].level, 1);
+  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_size, 64 * KiB);
+  EXPECT_EQ(info.levels[0].ways, 2);
+  EXPECT_EQ(info.levels[0].line_size, 64);
+
+  EXPECT_EQ(info.levels[1].level, 1);
+  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_size, 64 * KiB);
+  EXPECT_EQ(info.levels[1].ways, 2);
+  EXPECT_EQ(info.levels[1].line_size, 64);
+
+  EXPECT_EQ(info.levels[2].level, 2);
+  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_size, 512 * KiB);
+  EXPECT_EQ(info.levels[2].ways, 16);
+  EXPECT_EQ(info.levels[2].line_size, 64);
+
+  EXPECT_EQ(info.levels[3].level, 3);
+  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_size, 6 * MiB);
+  EXPECT_EQ(info.levels[3].ways, 48);
+  EXPECT_EQ(info.levels[3].line_size, 64);
+}
+
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0020FB1_K8_Manchester_CPUID.txt
+TEST_F(CpuidX86Test, AMD_MANCHESTER_CACHE_INFO) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000001, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000000, 0}, Leaf{0x80000018, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000001, 0}, Leaf{0x00020FB1, 0x00000150, 0x00000003, 0xE3D3FBFF}},
+      {{0x80000005, 0}, Leaf{0xFF08FF08, 0xFF20FF20, 0x40020140, 0x40020140}},
+      {{0x80000006, 0}, Leaf{0x00000000, 0x42004200, 0x02008140, 0x00000000}},
+  });
+  const auto info = GetX86CacheInfo();
+
+  EXPECT_EQ(info.size, 3);
+  EXPECT_EQ(info.levels[0].level, 1);
+  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_size, 64 * KiB);
+  EXPECT_EQ(info.levels[0].ways, 2);
+  EXPECT_EQ(info.levels[0].line_size, 64);
+
+  EXPECT_EQ(info.levels[1].level, 1);
+  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_size, 64 * KiB);
+  EXPECT_EQ(info.levels[1].ways, 2);
+  EXPECT_EQ(info.levels[1].line_size, 64);
+
+  EXPECT_EQ(info.levels[2].level, 2);
+  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_size, 512 * KiB);
+  EXPECT_EQ(info.levels[2].ways, 16);
+  EXPECT_EQ(info.levels[2].line_size, 64);
+}
+
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0100F22_K10_Agena_CPUID.txt
+TEST_F(CpuidX86Test, AMD_AGENA_CACHE_INFO) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000005, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000000, 0}, Leaf{0x8000001A, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000001, 0}, Leaf{0x00100F22, 0x10000000, 0x000007FF, 0xEFD3FBFF}},
+      {{0x80000005, 0}, Leaf{0xFF30FF10, 0xFF30FF20, 0x40020140, 0x40020140}},
+      {{0x80000006, 0}, Leaf{0x20800000, 0x42004200, 0x02008140, 0x0010A140}},
+  });
+  const auto info = GetX86CacheInfo();
+
+  EXPECT_EQ(info.size, 4);
+  EXPECT_EQ(info.levels[0].level, 1);
+  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_size, 64 * KiB);
+  EXPECT_EQ(info.levels[0].ways, 2);
+  EXPECT_EQ(info.levels[0].line_size, 64);
+
+  EXPECT_EQ(info.levels[1].level, 1);
+  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_size, 64 * KiB);
+  EXPECT_EQ(info.levels[1].ways, 2);
+  EXPECT_EQ(info.levels[1].line_size, 64);
+
+  EXPECT_EQ(info.levels[2].level, 2);
+  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_size, 512 * KiB);
+  EXPECT_EQ(info.levels[2].ways, 16);
+  EXPECT_EQ(info.levels[2].line_size, 64);
+
+  EXPECT_EQ(info.levels[3].level, 3);
+  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_size, 2 * MiB);
+  EXPECT_EQ(info.levels[3].ways, 32);
+  EXPECT_EQ(info.levels[3].line_size, 64);
+}
+
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00106A1_Nehalem_CPUID.txt
 TEST_F(CpuidX86Test, Nehalem) {
   // Pre AVX cpus don't have xsave
