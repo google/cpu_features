@@ -103,7 +103,8 @@ typedef struct {
   int family;
   int model;
   int stepping;
-  char vendor[13];  // 0 terminated string
+  char vendor[13];        // 0 terminated string
+  char brand_string[49];  // 0 terminated string
 } X86Info;
 
 // Calls cpuid and returns an initialized X86info.
@@ -170,6 +171,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info);
 // Calls cpuid and fills the brand_string.
 // - brand_string *must* be of size 49 (beware of array decaying).
 // - brand_string will be zero terminated.
+CPU_FEATURES_DEPRECATED("brand_string is now embedded in X86Info by default")
 void FillX86BrandString(char brand_string[49]);
 
 ////////////////////////////////////////////////////////////////////////////////
