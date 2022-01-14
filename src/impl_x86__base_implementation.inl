@@ -184,6 +184,7 @@ static int IsVendorByX86Info(const X86Info* info, const char* const name) {
   return equals(info->vendor, name, sizeof(info->vendor));
 }
 
+// TODO: Remove when deprecation period is over,
 void FillX86BrandString(char brand_string[49]) {
   const Leaves leaves = ReadLeaves();
   const Leaf packed[3] = {
@@ -202,31 +203,33 @@ void FillX86BrandString(char brand_string[49]) {
 // CpuId
 ////////////////////////////////////////////////////////////////////////////////
 
-static bool HasSecondFMA(uint32_t model) {
+static bool HasSecondFMA(const X86Info* info) {
   // Skylake server
-  if (model == 0x55) {
-    char proc_name[49] = {0};
-    FillX86BrandString(proc_name);
+  if (info->model == 0x55) {
     // detect Xeon
-    if (proc_name[9] == 'X') {
+    if (info->brand_string[9] == 'X') {
       // detect Silver or Bronze
-      if (proc_name[17] == 'S' || proc_name[17] == 'B') return false;
+      if (info->brand_string[17] == 'S' || info->brand_string[17] == 'B')
+        return false;
       // detect Gold 5_20 and below, except for Gold 53__
-      if (proc_name[17] == 'G' && proc_name[22] == '5')
-        return ((proc_name[23] == '3') ||
-                (proc_name[24] == '2' && proc_name[25] == '2'));
+      if (info->brand_string[17] == 'G' && info->brand_string[22] == '5')
+        return (
+            (info->brand_string[23] == '3') ||
+            (info->brand_string[24] == '2' && info->brand_string[25] == '2'));
       // detect Xeon W 210x
-      if (proc_name[17] == 'W' && proc_name[21] == '0') return false;
+      if (info->brand_string[17] == 'W' && info->brand_string[21] == '0')
+        return false;
       // detect Xeon D 2xxx
-      if (proc_name[17] == 'D' && proc_name[19] == '2' && proc_name[20] == '1')
+      if (info->brand_string[17] == 'D' && info->brand_string[19] == '2' &&
+          info->brand_string[20] == '1')
         return false;
     }
     return true;
   }
   // Cannon Lake client
-  if (model == 0x66) return false;
+  if (info->model == 0x66) return false;
   // Ice Lake client
-  if (model == 0x7d || model == 0x7e) return false;
+  if (info->model == 0x7d || info->model == 0x7e) return false;
   // This is the right default...
   return true;
 }
@@ -263,10 +266,24 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
 
   X86Features* const features = &info->features;
 
+  // Fill Family, Model and Stepping.
   info->family = extended_family + family;
   info->model = (extended_model << 4) + model;
   info->stepping = ExtractBitRange(leaf_1.eax, 3, 0);
 
+  // Fill Brand String.
+  const Leaf packed[3] = {
+      leaves->leaf_80000002,
+      leaves->leaf_80000003,
+      leaves->leaf_80000004,
+  };
+#if __STDC_VERSION__ >= 201112L
+  _Static_assert(sizeof(packed) == 48, "Leaves must be packed");
+#endif
+  copy(info->brand_string, (const char*)(packed), 48);
+  info->brand_string[48] = '\0';
+
+  // Fill cpu features.
   features->fpu = IsBitSet(leaf_1.edx, 0);
   features->tsc = IsBitSet(leaf_1.edx, 4);
   features->cx8 = IsBitSet(leaf_1.edx, 8);
@@ -341,7 +358,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
       features->avx512vpopcntdq = IsBitSet(leaf_7.ecx, 14);
       features->avx512_4vnniw = IsBitSet(leaf_7.edx, 2);
       features->avx512_4vbmi2 = IsBitSet(leaf_7.edx, 3);
-      features->avx512_second_fma = HasSecondFMA(info->model);
+      features->avx512_second_fma = HasSecondFMA(info);
       features->avx512_4fmaps = IsBitSet(leaf_7.edx, 3);
       features->avx512_bf16 = IsBitSet(leaf_7_1.eax, 5);
       features->avx512_vp2intersect = IsBitSet(leaf_7.edx, 8);
