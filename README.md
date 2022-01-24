@@ -3,11 +3,11 @@
 [![Macos Status][macos_svg]][macos_link]
 [![Windows Status][windows_svg]][windows_link]
 
-[linux_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml/badge.svg?branch=master
+[linux_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml/badge.svg?branch=main
 [linux_link]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml
-[macos_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml/badge.svg?branch=master
+[macos_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml/badge.svg?branch=main
 [macos_link]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml
-[windows_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml/badge.svg?branch=master
+[windows_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml/badge.svg?branch=main
 [windows_link]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml
 
 A cross-platform C library to retrieve CPU features (such as available
@@ -179,7 +179,7 @@ flags           : aes,avx,cx16,smx,sse4_1,sse4_2,ssse3
 ## Android NDK's drop in replacement
 
 [cpu_features](https://github.com/google/cpu_features) is now officially
-supporting Android and offers a drop in replacement of for the NDK's [cpu-features.h](https://android.googlesource.com/platform/ndk/+/master/sources/android/cpufeatures/cpu-features.h)
+supporting Android and offers a drop in replacement of for the NDK's [cpu-features.h](https://android.googlesource.com/platform/ndk/+/main/sources/android/cpufeatures/cpu-features.h)
 , see [ndk_compat](ndk_compat) folder for details.
 
 <a name="license"></a>

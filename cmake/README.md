@@ -6,7 +6,7 @@ For API / ABI compatibility reasons, it is recommended to build and use
 cpu_features in a subdirectory of your project or as an embedded dependency.
 
 This is similar to the recommended usage of the googletest framework
-( https://github.com/google/googletest/blob/master/googletest/README.md )
+( https://github.com/google/googletest/blob/main/googletest/README.md )
 
 Build and use step-by-step
 

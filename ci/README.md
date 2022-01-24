@@ -6,22 +6,22 @@
 | MacOS    | [![Status][macos_svg]][macos_link] | N/A | N/A | N/A |
 | Windows  | [![Status][windows_svg]][windows_link] | N/A | N/A | N/A |
 
-[freebsd_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_freebsd.yml/badge.svg?branch=master
+[freebsd_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_freebsd.yml/badge.svg?branch=main
 [freebsd_link]: https://github.com/google/cpu_features/actions/workflows/amd64_freebsd.yml
 
-[linux_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml/badge.svg?branch=master
+[linux_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml/badge.svg?branch=main
 [linux_link]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml
-[linux_aarch64_svg]: https://github.com/google/cpu_features/actions/workflows/aarch64_linux.yml/badge.svg?branch=master
+[linux_aarch64_svg]: https://github.com/google/cpu_features/actions/workflows/aarch64_linux.yml/badge.svg?branch=main
 [linux_aarch64_link]: https://github.com/google/cpu_features/actions/workflows/aarch64_linux.yml
-[linux_arm_svg]: https://github.com/google/cpu_features/actions/workflows/arm_linux.yml/badge.svg?branch=master
+[linux_arm_svg]: https://github.com/google/cpu_features/actions/workflows/arm_linux.yml/badge.svg?branch=main
 [linux_arm_link]: https://github.com/google/cpu_features/actions/workflows/arm_linux.yml
-[linux_mips_svg]: https://github.com/google/cpu_features/actions/workflows/mips_linux.yml/badge.svg?branch=master
+[linux_mips_svg]: https://github.com/google/cpu_features/actions/workflows/mips_linux.yml/badge.svg?branch=main
 [linux_mips_link]: https://github.com/google/cpu_features/actions/workflows/mips_linux.yml
 
-[macos_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml/badge.svg?branch=master
+[macos_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml/badge.svg?branch=main
 [macos_link]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml
 
-[windows_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml/badge.svg?branch=master
+[windows_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml/badge.svg?branch=main
 [windows_link]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml
 
 ## Makefile/Docker testing
