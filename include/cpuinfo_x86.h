@@ -25,8 +25,8 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #define CPU_FEATURES_VENDOR_GENUINE_INTEL "GenuineIntel"
 #define CPU_FEATURES_VENDOR_AUTHENTIC_AMD "AuthenticAMD"
 #define CPU_FEATURES_VENDOR_HYGON_GENUINE "HygonGenuine"
-#define CPU_FEATURES_VENDOR_ZHAOXIN_CTH "CentaurHauls"
-#define CPU_FEATURES_VENDOR_ZHAOXIN_SH "  Shanghai  "
+#define CPU_FEATURES_VENDOR_CENTAUR_HAULS "CentaurHauls"
+#define CPU_FEATURES_VENDOR_SHANGHAI "  Shanghai  "
 
 // See https://en.wikipedia.org/wiki/CPUID for a list of x86 cpu features.
 // The field names are based on the short name provided in the wikipedia tables.
@@ -119,7 +119,10 @@ CacheInfo GetX86CacheInfo(void);
 
 typedef enum {
   X86_UNKNOWN,
-  ZHAOXIN,           // ZX
+  ZHAOXIN_ZHANGJIANG,  // ZhangJiang
+  ZHAOXIN_WUDAOKOU,  //WuDaoKou
+  ZHAOXIN_LUJIAZUI,  //LuJiaZui
+  ZHAOXIN_YONGFENG,  //YongFeng
   INTEL_80486,       // 80486
   INTEL_P5,          // P5
   INTEL_LAKEMONT,    // LAKEMONT
