@@ -406,11 +406,11 @@ X86Info GetX86Info(void) {
       IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   const bool is_hygon =
       IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_HYGON_GENUINE);
-  const bool is_zx = 
-      (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_ZHAOXIN_CTH) || 
-	     IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_ZHAOXIN_SH));
+  const bool is_zhaoxin = 
+      (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_CENTAUR_HAULS) || 
+       IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_SHANGHAI));
   SetVendor(leaves.leaf_0, info.vendor);
-  if (is_intel || is_amd || is_hygon || is_zx) {
+  if (is_intel || is_amd || is_hygon || is_zhaoxin) {
     OsPreserves os_preserves = kEmptyOsPreserves;
     ParseCpuId(&leaves, &info, &os_preserves);
     if (is_amd || is_hygon) {
@@ -573,9 +573,24 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         return X86_UNKNOWN;
     }
   }
-  if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_ZHAOXIN_CTH) || 
-      IsVendorByX86Info(info, CPU_FEATURES_VENDOR_ZHAOXIN_SH)) {
-        return ZHAOXIN;
+  if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_CENTAUR_HAULS) || 
+      IsVendorByX86Info(info, CPU_FEATURES_VENDOR_SHANGHAI)) {
+    switch (CPUID(info->family, info->model)) {
+      case CPUID(0x06, 0x0F):
+      case CPUID(0x06, 0x19):
+        // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/zhangjiang
+        return ZHAOXIN_ZHANGJIANG;
+      case CPUID(0x07, 0x1B):
+	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/wudaokou
+	return ZHAOXIN_WUDAOKOU;
+      case CPUID(0x07, 0x3B):
+	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/lujiazui
+	return ZHAOXIN_LUJIAZUI;
+      case CPUID(0x07, 0x5B):
+	return ZHAOXIN_YONGFENG;
+      default:
+	return X86_UNKNOWN;
+    }
   }
   if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_AUTHENTIC_AMD)) {
     switch (CPUID(info->family, info->model)) {
@@ -1630,7 +1645,9 @@ static void ParseCacheInfo(const int max_cpuid_leaf, uint32_t leaf_id,
 CacheInfo GetX86CacheInfo(void) {
   CacheInfo info = kEmptyCacheInfo;
   const Leaves leaves = ReadLeaves();
-  if (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL)) {
+  if (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL ||
+      IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_CENTAUR_HAULS) ||
+      IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_SHANGHAI)) {
     ParseLeaf2(&leaves, &info);
     ParseCacheInfo(leaves.max_cpuid_leaf, 4, &info);
   } else if (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD) ||
@@ -1641,10 +1658,6 @@ CacheInfo GetX86CacheInfo(void) {
     if (IsBitSet(leaves.leaf_80000001.ecx, 22)) {
       ParseCacheInfo(leaves.max_cpuid_leaf_ext, 0x8000001D, &info);
     }
-  } else if (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_ZHAOXIN_CTH) || 
-	           IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_ZHAOXIN_SH)) {
-    ParseLeaf2(&leaves, &info);
-    ParseCacheInfo(leaves.max_cpuid_leaf, 4, &info); 
   }
   return info;
 }
@@ -1720,7 +1733,10 @@ CacheInfo GetX86CacheInfo(void) {
 
 #define X86_MICROARCHITECTURE_NAMES \
   LINE(X86_UNKNOWN)                 \
-  LINE(ZHAOXIN)                     \
+  LINE(ZHAOXIN_ZHANGJIANG)          \
+  LINE(ZHAOXIN_WUDAOKOU)            \
+  LINE(ZHAOXIN_LUJIAZUI)            \
+  LINE(ZHAOXIN_YONGFENG)            \
   LINE(INTEL_80486)                 \
   LINE(INTEL_P5)                    \
   LINE(INTEL_LAKEMONT)              \
