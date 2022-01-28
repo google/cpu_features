@@ -120,9 +120,9 @@ CacheInfo GetX86CacheInfo(void);
 typedef enum {
   X86_UNKNOWN,
   ZHAOXIN_ZHANGJIANG,  // ZhangJiang
-  ZHAOXIN_WUDAOKOU,  //WuDaoKou
-  ZHAOXIN_LUJIAZUI,  //LuJiaZui
-  ZHAOXIN_YONGFENG,  //YongFeng
+  ZHAOXIN_WUDAOKOU,  // WuDaoKou
+  ZHAOXIN_LUJIAZUI,  // LuJiaZui
+  ZHAOXIN_YONGFENG,  // YongFeng
   INTEL_80486,       // 80486
   INTEL_P5,          // P5
   INTEL_LAKEMONT,    // LAKEMONT
