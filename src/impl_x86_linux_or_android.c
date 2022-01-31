@@ -27,7 +27,8 @@ static void OverrideOsPreserves(OsPreserves* os_preserves) {
 #include "internal/filesystem.h"
 #include "internal/stack_line_reader.h"
 #include "internal/string_view.h"
-static void DetectFeaturesFromOs(X86Features* features) {
+static void DetectFeaturesFromOs(X86Info* info, X86Features* features) {
+  (void)info;
   // Handling Linux platform through /proc/cpuinfo.
   const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");
   if (fd >= 0) {
