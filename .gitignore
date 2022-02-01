@@ -11,3 +11,9 @@ out/
 .vscode/
 .vs/
 *.swp
+
+# Bazel artifacts
+**/bazel-*
+
+# Per-user bazelrc files
+user.bazelrc
