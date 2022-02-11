@@ -573,8 +573,25 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         return X86_UNKNOWN;
     }
   }
-  if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_CENTAUR_HAULS) || 
-      IsVendorByX86Info(info, CPU_FEATURES_VENDOR_SHANGHAI)) {
+  if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_CENTAUR_HAULS)) {
+    switch (CPUID(info->family, info->model)) {
+      case CPUID(0x06, 0x0F):
+      case CPUID(0x06, 0x19):
+        // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/zhangjiang
+        return ZHAOXIN_ZHANGJIANG;
+      case CPUID(0x07, 0x1B):
+	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/wudaokou
+	return ZHAOXIN_WUDAOKOU;
+      case CPUID(0x07, 0x3B):
+	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/lujiazui
+	return ZHAOXIN_LUJIAZUI;
+      case CPUID(0x07, 0x5B):
+	return ZHAOXIN_YONGFENG;
+      default:
+	return X86_UNKNOWN;
+    }
+  }
+  if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_SHANGHAI)) {
     switch (CPUID(info->family, info->model)) {
       case CPUID(0x06, 0x0F):
       case CPUID(0x06, 0x19):
