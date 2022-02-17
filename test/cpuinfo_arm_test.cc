@@ -327,6 +327,24 @@ CPU revision	: 3)");
   EXPECT_EQ(GetArmCpuId(&info), 0x510006f3);
 }
 
+// The 2013 Nexus 7 (Qualcomm Krait) kernel configuration forgets to report IDIV
+// support.
+TEST(CpuinfoArmTest, Nexus7_2013_0x511006f0) {
+  ResetHwcaps();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo",
+                R"(CPU implementer  : 0x51
+CPU architecture: 7
+CPU variant : 0x1
+CPU part  : 0x06f
+CPU revision  : 0)");
+  const auto info = GetArmInfo();
+  EXPECT_TRUE(info.features.idiva);
+  EXPECT_TRUE(info.features.idivt);
+
+  EXPECT_EQ(GetArmCpuId(&info), 0x511006f0);
+}
+
 // The emulator-specific Android 4.2 kernel fails to report support for the
 // 32-bit ARM IDIV instruction. Technically, this is a feature of the virtual
 // CPU implemented by the emulator.

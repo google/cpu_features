@@ -246,7 +246,7 @@ typedef struct {
 // These two functions have to be implemented by the OS, that is the file
 // including this file.
 static void OverrideOsPreserves(OsPreserves* os_preserves);
-static void DetectFeaturesFromOs(X86Features* features);
+static void DetectFeaturesFromOs(X86Info* info, X86Features* features);
 
 // Reference https://en.wikipedia.org/wiki/CPUID.
 static void ParseCpuId(const Leaves* leaves, X86Info* info,
@@ -371,7 +371,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
   } else {
     // When XCR0 is not available (Atom based or older cpus) we need to defer to
     // the OS via custom code.
-    DetectFeaturesFromOs(features);
+    DetectFeaturesFromOs(info, features);
     // Now that we have queried the OS for SSE support, we report this back to
     // os_preserves. This is needed in case of AMD CPU's to enable testing of
     // sse4a (See ParseExtraAMDCpuId below).

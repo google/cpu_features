@@ -34,7 +34,7 @@ static bool GetWindowsIsProcessorFeaturePresent(DWORD ProcessorFeature) {
 }
 #endif
 
-static void DetectFeaturesFromOs(X86Features* features) {
+static void DetectFeaturesFromOs(X86Info* info, X86Features* features) {
   // Handling Windows platform through IsProcessorFeaturePresent.
   // https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-isprocessorfeaturepresent
   features->sse =
@@ -43,6 +43,15 @@ static void DetectFeaturesFromOs(X86Features* features) {
       GetWindowsIsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
   features->sse3 =
       GetWindowsIsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
+
+// https://github.com/google/cpu_features/issues/200
+#if (_WIN32_WINNT >= 0x0601)  // Win7+
+  if (GetX86Microarchitecture(info) == INTEL_WSM) {
+    features->ssse3 = true;
+    features->sse4_1 = true;
+    features->sse4_2 = true;
+  }
+#endif
 }
 
 #endif  // CPU_FEATURES_OS_WINDOWS

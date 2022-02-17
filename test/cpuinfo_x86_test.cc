@@ -1117,6 +1117,32 @@ TEST_F(CpuidX86Test, INTEL_KNIGHTS_LANDING) {
             X86Microarchitecture::INTEL_KNIGHTS_L);
 }
 
+// https://github.com/google/cpu_features/issues/200
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00206F2_Eagleton_CPUID.txt
+#if defined(CPU_FEATURES_OS_WINDOWS)
+TEST_F(CpuidX86Test, WIN_INTEL_WESTMERE_EX) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000B, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000206F2, 0x00400800, 0x02BEE3FF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x2F);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_WSM);
+
+#if (_WIN32_WINNT < 0x0601)  // before Win7
+  EXPECT_FALSE(info.features.ssse3);
+  EXPECT_FALSE(info.features.sse4_1);
+  EXPECT_FALSE(info.features.sse4_2);
+#else
+  EXPECT_TRUE(info.features.ssse3);
+  EXPECT_TRUE(info.features.sse4_1);
+  EXPECT_TRUE(info.features.sse4_2);
+#endif
+}
+#endif  // CPU_FEATURES_OS_WINDOWS
+
 // TODO(user): test what happens when xsave/osxsave are not present.
 // TODO(user): test what happens when xmm/ymm/zmm os support are not
 // present.

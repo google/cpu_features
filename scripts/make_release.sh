@@ -19,16 +19,16 @@ declare -r VERSION=$1
 declare -r GIT_TAG="v$1"
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [[ "${BRANCH}" != "master" ]]
+if [[ "${BRANCH}" != "main" ]]
 then
-    echo -e "${ERROR}Not on master. Aborting. ${NOCOLOR}"
+    echo -e "${ERROR}Not on main. Aborting. ${NOCOLOR}"
     echo
     exit 1
 fi
 
 git fetch
 HEADHASH=$(git rev-parse HEAD)
-UPSTREAMHASH=$(git rev-parse master@{upstream})
+UPSTREAMHASH=$(git rev-parse main@{upstream})
 
 if [[ "${HEADHASH}" != "${UPSTREAMHASH}" ]]
 then
