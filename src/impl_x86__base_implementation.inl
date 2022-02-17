@@ -1662,7 +1662,7 @@ static void ParseCacheInfo(const int max_cpuid_leaf, uint32_t leaf_id,
 CacheInfo GetX86CacheInfo(void) {
   CacheInfo info = kEmptyCacheInfo;
   const Leaves leaves = ReadLeaves();
-  if (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL ||
+  if (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_GENUINE_INTEL) ||
       IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_CENTAUR_HAULS) ||
       IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_SHANGHAI)) {
     ParseLeaf2(&leaves, &info);
