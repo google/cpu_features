@@ -10,11 +10,9 @@ package(
 
 exports_files(["LICENSE"])
 
-CC_FLAGS = [
-    "-Iinclude",
-]
+INCLUDES = ["include"]
 
-C99_FLAGS = CC_FLAGS + [
+C99_FLAGS = [
     "-std=c99",
     "-Wall",
     "-Wextra",
@@ -32,12 +30,14 @@ cc_library(
     name = "cpu_features_macros",
     hdrs = ["include/cpu_features_macros.h"],
     copts = C99_FLAGS,
+    includes = INCLUDES,
 )
 
 cc_library(
     name = "cpu_features_cache_info",
     hdrs = ["include/cpu_features_cache_info.h"],
     copts = C99_FLAGS,
+    includes = INCLUDES,
     deps = [":cpu_features_macros"],
 )
 
@@ -45,13 +45,14 @@ cc_library(
     name = "bit_utils",
     hdrs = ["include/internal/bit_utils.h"],
     copts = C99_FLAGS,
+    includes = INCLUDES,
     deps = [":cpu_features_macros"],
 )
 
 cc_test(
     name = "bit_utils_test",
     srcs = ["test/bit_utils_test.cc"],
-    copts = CC_FLAGS,
+    includes = INCLUDES,
     deps = [
         ":bit_utils",
         "@com_google_googletest//:gtest_main",
@@ -61,6 +62,7 @@ cc_test(
 cc_library(
     name = "memory_utils",
     copts = C99_FLAGS,
+    includes = INCLUDES,
     textual_hdrs = [
         "src/copy.inl",
         "src/equals.inl",
@@ -74,6 +76,7 @@ cc_library(
     ],
     hdrs = ["include/internal/string_view.h"],
     copts = C99_FLAGS,
+    includes = INCLUDES,
     deps = [
         ":cpu_features_macros",
         ":memory_utils",
@@ -83,7 +86,7 @@ cc_library(
 cc_test(
     name = "string_view_test",
     srcs = ["test/string_view_test.cc"],
-    copts = CC_FLAGS,
+    includes = INCLUDES,
     deps = [
         ":string_view",
         "@com_google_googletest//:gtest_main",
@@ -95,6 +98,7 @@ cc_library(
     srcs = ["src/filesystem.c"],
     hdrs = ["include/internal/filesystem.h"],
     copts = C99_FLAGS,
+    includes = INCLUDES,
     deps = [":cpu_features_macros"],
 )
 
@@ -109,7 +113,7 @@ cc_library(
         "include/internal/filesystem.h",
         "test/filesystem_for_testing.h",
     ],
-    copts = CC_FLAGS,
+    includes = INCLUDES,
     defines = ["CPU_FEATURES_MOCK_FILESYSTEM"],
     deps = [
         ":cpu_features_macros",
@@ -121,6 +125,7 @@ cc_library(
     srcs = ["src/stack_line_reader.c"],
     hdrs = ["include/internal/stack_line_reader.h"],
     copts = C99_FLAGS,
+    includes = INCLUDES,
     defines = ["STACK_LINE_READER_BUFFER_SIZE=1024"],
     deps = [
         ":cpu_features_macros",
@@ -136,7 +141,7 @@ cc_test(
         "src/stack_line_reader.c",
         "test/stack_line_reader_test.cc",
     ],
-    copts = CC_FLAGS,
+    includes = INCLUDES,
     defines = ["STACK_LINE_READER_BUFFER_SIZE=16"],
     deps = [
         ":cpu_features_macros",
@@ -152,6 +157,7 @@ cc_library(
     srcs = ["src/stack_line_reader.c"],
     hdrs = ["include/internal/stack_line_reader.h"],
     copts = C99_FLAGS,
+    includes = INCLUDES,
     defines = ["STACK_LINE_READER_BUFFER_SIZE=1024"],
     deps = [
         ":cpu_features_macros",
@@ -165,6 +171,7 @@ cc_library(
     srcs = ["src/hwcaps.c"],
     hdrs = ["include/internal/hwcaps.h"],
     copts = C99_FLAGS,
+    includes = INCLUDES,
     defines = ["HAVE_STRONG_GETAUXVAL"],
     deps = [
         ":cpu_features_macros",
@@ -184,7 +191,7 @@ cc_library(
         "include/internal/hwcaps.h",
         "test/hwcaps_for_testing.h",
     ],
-    copts = CC_FLAGS,
+    includes = INCLUDES,
     defines = [
         "CPU_FEATURES_MOCK_GET_ELF_HWCAP_FROM_GETAUXVAL",
         "CPU_FEATURES_TEST",
@@ -221,6 +228,7 @@ cc_library(
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
     }),
     copts = C99_FLAGS,
+    includes = INCLUDES,
     textual_hdrs = selects.with_or({
         PLATFORM_CPU_X86_64: ["src/impl_x86__base_implementation.inl"],
         "//conditions:default": [],
@@ -266,6 +274,7 @@ cc_library(
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
     }),
     copts = C99_FLAGS,
+    includes = INCLUDES,
     defines = selects.with_or({
         PLATFORM_CPU_X86_64: ["CPU_FEATURES_MOCK_CPUID_X86"],
         "//conditions:default": [],
@@ -298,7 +307,7 @@ cc_test(
         PLATFORM_CPU_PPC: ["test/cpuinfo_ppc_test.cc"],
         PLATFORM_CPU_X86_64: ["test/cpuinfo_x86_test.cc"],
     }),
-    copts = CC_FLAGS,
+    includes = INCLUDES,
     deps = [
         ":cpuinfo_for_testing",
         ":filesystem_for_testing",
@@ -312,6 +321,7 @@ cc_binary(
     name = "list_cpu_features",
     srcs = ["src/utils/list_cpu_features.c"],
     copts = C99_FLAGS,
+    includes = INCLUDES,
     deps = [
         ":bit_utils",
         ":cpu_features_macros",
