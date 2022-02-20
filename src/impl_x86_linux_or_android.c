@@ -44,7 +44,7 @@ static void DetectFeaturesFromOs(X86Info* info, X86Features* features) {
       if (!CpuFeatures_StringView_IsEquals(key, str("flags"))) continue;
       features->sse = CpuFeatures_StringView_HasWord(value, "sse", ' ');
       features->sse2 = CpuFeatures_StringView_HasWord(value, "sse2", ' ');
-      features->sse3 = CpuFeatures_StringView_HasWord(value, "sse3", ' ');
+      features->sse3 = CpuFeatures_StringView_HasWord(value, "pni", ' ');
       features->ssse3 = CpuFeatures_StringView_HasWord(value, "ssse3", ' ');
       features->sse4_1 = CpuFeatures_StringView_HasWord(value, "sse4_1", ' ');
       features->sse4_2 = CpuFeatures_StringView_HasWord(value, "sse4_2", ' ');
