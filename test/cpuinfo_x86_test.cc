@@ -812,7 +812,7 @@ real memory  = 2147418112 (2047 MB)
 #elif defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(processor       :
-flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
+flags           : fpu mmx sse sse2 pni ssse3 sse4_1 sse4_2
 )");
 #endif
   cpu().SetLeaves({
@@ -896,7 +896,7 @@ real memory  = 2147418112 (2047 MB)
 #elif defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(
-flags           : fpu mmx sse sse2 sse3 ssse3 sse4_1 sse4_2
+flags           : fpu mmx sse sse2 pni ssse3 sse4_1 sse4_2
 )");
 #endif
   cpu().SetLeaves({
