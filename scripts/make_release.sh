@@ -50,7 +50,7 @@ then
     exit 1
 fi
 
-declare -r LATEST_GIT_TAG=$(git describe --tags)
+declare -r LATEST_GIT_TAG=$(git describe --tags --abbrev=0)
 declare -r LATEST_VERSION=${LATEST_GIT_TAG#"v"}
 
 if ! dpkg --compare-versions "${VERSION}" "gt" "${LATEST_VERSION}"
