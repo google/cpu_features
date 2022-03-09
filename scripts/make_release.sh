@@ -69,4 +69,7 @@ git commit -m"Release ${GIT_TAG}"
 echo -e "${ACTION}Create new tag${NOCOLOR}"
 git tag ${GIT_TAG}
 
-echo -e "${FINISHED}Local release is ready. Run `git push origin --tags`${NOCOLOR}"
+echo -e "${FINISHED}Manual steps:${NOCOLOR}"
+echo -e "${FINISHED} - Push the tag upstream 'git push origin ${GIT_TAG}'${NOCOLOR}"
+echo -e "${FINISHED} - Create a new release https://github.com/google/cpu_features/releases/new${NOCOLOR}"
+echo -e "${FINISHED} - Update the Release Notes 'gren release --override'${NOCOLOR}"
