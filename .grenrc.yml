@@ -1,6 +1,6 @@
 ---
   dataSource: "prs"
-  ignoreLabels: 
+  ignoreLabels:
     - "Apple M1"
     - "duplicate"
     - "help wanted"
