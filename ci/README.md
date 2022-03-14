@@ -1,28 +1,26 @@
 # GitHub-CI Status
-| OS       | amd64 | AArch64 | ARM | MIPS |
-|:-------- | :----: | :-----: | :-: | :--: |
-| FreeBSD    | [![Status][freebsd_svg]][freebsd_link] | N/A | N/A | N/A |
-| Linux    | [![Status][linux_svg]][linux_link] | [![Status][linux_aarch64_svg]][linux_aarch64_link] | [![Status][linux_arm_svg]][linux_arm_link] | [![Status][linux_mips_svg]][linux_mips_link] |
-| MacOS    | [![Status][macos_svg]][macos_link] | N/A | N/A | N/A |
-| Windows  | [![Status][windows_svg]][windows_link] | N/A | N/A | N/A |
+| Os                    | amd64                 | AArch64               | ARM                   | MIPS                  |
+| :--                   | --:                   | --:                   | --:                   | --:                   |
+| FreeBSD               | [![][img_1a]][lnk_1a] | ![][img_na]           | ![][img_na]           | ![][img_na]           |
+| Linux                 | [![][img_2a]][lnk_2a] | [![][img_2b]][lnk_2b] | [![][img_2c]][lnk_2c] | [![][img_2d]][lnk_2d] |
+| MacOS                 | [![][img_3a]][lnk_3a] | ![][img_na]           | ![][img_na]           | ![][img_na]           |
+| Windows               | [![][img_4a]][lnk_4a] | ![][img_na]           | ![][img_na]           | ![][img_na]           |
 
-[freebsd_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_freebsd.yml/badge.svg?branch=main
-[freebsd_link]: https://github.com/google/cpu_features/actions/workflows/amd64_freebsd.yml
-
-[linux_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml/badge.svg?branch=main
-[linux_link]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml
-[linux_aarch64_svg]: https://github.com/google/cpu_features/actions/workflows/aarch64_linux.yml/badge.svg?branch=main
-[linux_aarch64_link]: https://github.com/google/cpu_features/actions/workflows/aarch64_linux.yml
-[linux_arm_svg]: https://github.com/google/cpu_features/actions/workflows/arm_linux.yml/badge.svg?branch=main
-[linux_arm_link]: https://github.com/google/cpu_features/actions/workflows/arm_linux.yml
-[linux_mips_svg]: https://github.com/google/cpu_features/actions/workflows/mips_linux.yml/badge.svg?branch=main
-[linux_mips_link]: https://github.com/google/cpu_features/actions/workflows/mips_linux.yml
-
-[macos_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml/badge.svg?branch=main
-[macos_link]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml
-
-[windows_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml/badge.svg?branch=main
-[windows_link]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml
+[img_na]: https://img.shields.io/badge/build-N%2FA-lightgrey
+[lnk_1a]: https://github.com/google/cpu_features/actions/workflows/amd64_FreeBSD.yml
+[img_1a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20FreeBSD/main
+[lnk_2a]: https://github.com/google/cpu_features/actions/workflows/amd64_Linux.yml
+[img_2a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20Linux/main
+[lnk_3a]: https://github.com/google/cpu_features/actions/workflows/amd64_macOS.yml
+[img_3a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20macOS/main
+[lnk_4a]: https://github.com/google/cpu_features/actions/workflows/amd64_Windows.yml
+[img_4a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20Windows/main
+[lnk_2b]: https://github.com/google/cpu_features/actions/workflows/aarch64_Linux.yml
+[img_2b]: https://img.shields.io/github/workflow/status/google/cpu_features/aarch64%20Linux/main
+[lnk_2c]: https://github.com/google/cpu_features/actions/workflows/arm_Linux.yml
+[img_2c]: https://img.shields.io/github/workflow/status/google/cpu_features/arm%20Linux/main
+[lnk_2d]: https://github.com/google/cpu_features/actions/workflows/mips_Linux.yml
+[img_2d]: https://img.shields.io/github/workflow/status/google/cpu_features/mips%20Linux/main
 
 ## Makefile/Docker testing
 To test the build on various distro, we are using docker containers and a Makefile for orchestration.
