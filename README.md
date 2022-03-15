@@ -1,17 +1,12 @@
 # cpu_features
-[![Linux Status][linux_svg]][linux_link]
-[![Macos Status][macos_svg]][macos_link]
-[![Windows Status][windows_svg]][windows_link]
-
-[linux_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml/badge.svg?branch=main
-[linux_link]: https://github.com/google/cpu_features/actions/workflows/amd64_linux.yml
-[macos_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml/badge.svg?branch=main
-[macos_link]: https://github.com/google/cpu_features/actions/workflows/amd64_macos.yml
-[windows_svg]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml/badge.svg?branch=main
-[windows_link]: https://github.com/google/cpu_features/actions/workflows/amd64_windows.yml
 
 A cross-platform C library to retrieve CPU features (such as available
 instructions) at runtime.
+
+# GitHub-CI Status
+
+ - [CMake Status](cmake/ci/README.md)
+ - [Bazel Status](bazel/ci/README.md)
 
 ## Table of Contents
 

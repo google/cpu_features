@@ -42,7 +42,7 @@ make
 
 note: you can also use from top directory
 ```sh
-make --directory=ci
+make --directory=cmake/ci
 ```
 
 ### Example
