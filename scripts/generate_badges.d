@@ -1,10 +1,16 @@
-import std.algorithm : each, map, cartesianProduct, filter;
+import std.algorithm : each, map, cartesianProduct, filter, joiner, sort, uniq;
 import std.array : array;
 import std.conv : to;
 import std.format;
 import std.range : chain, only;
 import std.stdio;
 import std.traits : EnumMembers;
+
+enum BuildSystem
+{
+    CMake,
+    Bazel
+}
 
 enum Cpu
 {
@@ -22,46 +28,73 @@ enum Os
     Windows
 }
 
-struct Configuration
+struct Badge
 {
 const:
+
     Cpu cpu;
     Os os;
+    BuildSystem build_system;
 
-    bool disabled()
+    string id()
     {
-        import std.algorithm.comparison : among;
-
-        return os.among(Os.FreeBSD, Os.Windows, Os.MacOS) && cpu.among(Cpu.AArch64, Cpu.ARM, Cpu
-                .MIPS);
+        return format("%d%c%d", cast(uint)(os) + 1, cast(char)('a' + cpu), cast(uint)(build_system));
     }
 
-    string cell()
+    string disabled_image_ref()
     {
-        return format("%d%c", cast(uint)(os) + 1, cast(char)('a' + cpu));
+        return format("[d%d]", cast(uint)(build_system));
     }
 
     string link_ref()
     {
-        return format("[lnk_%s]", cell());
+        return format("[l%s]", id());
     }
 
     string image_ref()
     {
-        return format("[img_%s]", cell());
+        return format("[i%s]", id());
     }
 
-    string cell_text()
+    bool enabled()
     {
-        if (disabled())
-            return "![][img_na]";
-        return format("[![]%s]%s", image_ref, link_ref);
+        final switch (build_system)
+        {
+        case BuildSystem.CMake:
+            return os == Os.Linux || cpu == Cpu.amd64;
+        case BuildSystem.Bazel:
+            return os == Os.Linux && cpu == Cpu.amd64;
+        }
     }
 
-}
+    string text()
+    {
+        if (enabled())
+            return format("[![]%s]%s", image_ref, link_ref);
+        return format("![]%s", disabled_image_ref);
+    }
 
-immutable allCpus = [EnumMembers!Cpu];
-immutable allOses = [EnumMembers!Os];
+    string disabled_image_link()
+    {
+        return format("%s: https://img.shields.io/badge/%s-N%%2FA-lightgrey", disabled_image_ref, build_system);
+    }
+
+    string link_decl()
+    {
+        import std.uni : toLower;
+
+        const filename = toLower(format("%s_%s_%s.yml", cpu, os, build_system));
+        return format("%s: https://github.com/google/cpu_features/actions/workflows/%s", link_ref, filename);
+    }
+
+    string image_decl()
+    {
+        import std.uri : encode;
+
+        const worflow_name = encode(format("%s %s %s", cpu, os, build_system));
+        return format("%s: https://img.shields.io/github/workflow/status/google/cpu_features/%s/main?label=%s", image_ref, worflow_name, build_system);
+    }
+}
 
 auto tableHeader(in Cpu[] cpus)
 {
@@ -73,40 +106,55 @@ auto tableAlignment(in Cpu[] cpus)
     return chain(only(":--"), cpus.map!(v => "--:")).array;
 }
 
-auto tableRow(in Os os, in Cpu[] cpus)
+auto tableCell(Range)(in Os os, in Cpu cpu, Range badges)
 {
-    return chain(only(os.to!string), cpus.map!(cpu => Configuration(cpu, os).cell_text())).array;
+    return badges
+        .filter!(b => b.cpu == cpu && b.os == os)
+        .map!(b => b.text())
+        .joiner("<br/>")
+        .to!string;
 }
 
-auto tableRows(in Os[] oses, in Cpu[] cpus)
+auto tableRow(Range)(in Os os, in Cpu[] cpus, Range badges)
 {
-    return oses.map!(os => tableRow(os, cpus)).array;
+    return chain(only(os.to!string), cpus.map!(cpu => tableCell(os, cpu, badges))).array;
 }
 
-auto table(in Os[] oses, in Cpu[] cpus)
+auto tableRows(Range)(in Os[] oses, in Cpu[] cpus, Range badges)
 {
-    return chain(only(tableHeader(cpus)), only(tableAlignment(cpus)), tableRows(oses, cpus));
+    return oses.map!(os => tableRow(os, cpus, badges)).array;
+}
+
+auto table(Range)(in Os[] oses, in Cpu[] cpus, Range badges)
+{
+    return chain(only(tableHeader(cpus)), only(tableAlignment(cpus)), tableRows(oses, cpus, badges));
 }
 
 void main()
 {
     immutable allCpus = [EnumMembers!Cpu];
     immutable allOses = [EnumMembers!Os];
+    immutable allBuildSystems = [EnumMembers!BuildSystem];
 
-    writefln("%(|%-( %-21s |%) |\n%) |", table(allOses, allCpus));
+    auto badges = cartesianProduct(allCpus, allOses, allBuildSystems).map!(
+        t => Badge(t[0], t[1], t[2]));
+
+    writefln("%(|%-( %s |%) |\n%) |", table(allOses, allCpus, badges));
     writeln();
-    writeln("[img_na]: https://img.shields.io/badge/build-N%2FA-lightgrey");
-    cartesianProduct(allCpus, allOses)
-        .map!(t => Configuration(t[0], t[1]))
-        .filter!(conf => !conf.disabled)
-        .each!((conf) {
-            import std.uni : toLower;
-            import std.uri : encode;
+    badges
+        .filter!(b => !b.enabled)
+        .map!(b => b.disabled_image_link())
+        .array
+        .sort
+        .uniq
+        .each!writeln;
 
-            const filename = toLower(format("%s_%s_%s.yml", conf.cpu, conf.os, "cmake"));
-            writefln("%s: https://github.com/google/cpu_features/actions/workflows/%s", conf.link_ref, filename);
-
-            const worflow_name = encode(format("%s %s %s", conf.cpu, conf.os, "CMake"));
-            writefln("%s: https://img.shields.io/github/workflow/status/google/cpu_features/%s/main", conf.image_ref, worflow_name);
-        });
+    badges
+        .filter!(b => b.enabled)
+        .map!(b => [b.link_decl(), b.image_decl()])
+        .joiner()
+        .array
+        .sort
+        .uniq
+        .each!writeln;
 }
