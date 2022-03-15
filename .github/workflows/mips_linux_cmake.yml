@@ -1,4 +1,4 @@
-name: mips Linux
+name: MIPS Linux CMake
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   # Building using the github runner environement directly.
-  mips:
+  make:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,6 +25,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: make --directory=ci ${TARGET}_build
+      run: make --directory=cmake/ci ${TARGET}_build
     - name: Test
-      run: make --directory=ci ${TARGET}_test
+      run: make --directory=cmake/ci ${TARGET}_test

@@ -113,7 +113,7 @@ $(targets_amd64): amd64_%: docker/amd64/Dockerfile
  --tag ${IMAGE}:amd64_$* \
  --target=$* \
  -f $< \
- ..
+ ../..
 
 #$(info Create targets: save_amd64 $(addprefix save_amd64_, $(STAGES)) (debug).)
 save_targets_amd64 = $(addprefix save_amd64_, $(STAGES))
@@ -160,7 +160,7 @@ $$(targets_toolchain_$1): %_$1: docker/toolchain/Dockerfile
  --build-arg TARGET=$$* \
  --target=$1 \
  -f $$< \
- ..
+ ../..
 
 #$$(info Create targets: save_toolchain_$1 $(addprefix save_, $(addsuffix _$1, $(TOOLCHAIN_TARGETS))) (debug).)
 save_targets_toolchain_$1 = $(addprefix save_, $(addsuffix _$1, $(TOOLCHAIN_TARGETS)))

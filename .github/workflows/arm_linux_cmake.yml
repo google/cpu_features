@@ -1,4 +1,4 @@
-name: aarch64 Linux
+name: ARM Linux CMake
 
 on:
   push:
@@ -9,13 +9,16 @@ on:
 
 jobs:
   # Building using the github runner environement directly.
-  aarch64:
+  make:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         targets: [
-          [aarch64-linux-gnu],
-          [aarch64_be-linux-gnu]
+          [arm-linux-gnueabihf],
+          [armv8l-linux-gnueabihf],
+          [arm-linux-gnueabi],
+          [armeb-linux-gnueabihf],
+          [armeb-linux-gnueabi]
         ]
       fail-fast: false
     env:
@@ -23,6 +26,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: make --directory=ci ${TARGET}_build
+      run: make --directory=cmake/ci ${TARGET}_build
     - name: Test
-      run: make --directory=ci ${TARGET}_test
+      run: make --directory=cmake/ci ${TARGET}_test

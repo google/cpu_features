@@ -7,20 +7,20 @@
 | Windows               | [![][img_4a]][lnk_4a] | ![][img_na]           | ![][img_na]           | ![][img_na]           |
 
 [img_na]: https://img.shields.io/badge/build-N%2FA-lightgrey
-[lnk_1a]: https://github.com/google/cpu_features/actions/workflows/amd64_FreeBSD.yml
-[img_1a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20FreeBSD/main
-[lnk_2a]: https://github.com/google/cpu_features/actions/workflows/amd64_Linux.yml
-[img_2a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20Linux/main
-[lnk_3a]: https://github.com/google/cpu_features/actions/workflows/amd64_macOS.yml
-[img_3a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20macOS/main
-[lnk_4a]: https://github.com/google/cpu_features/actions/workflows/amd64_Windows.yml
-[img_4a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20Windows/main
-[lnk_2b]: https://github.com/google/cpu_features/actions/workflows/aarch64_Linux.yml
-[img_2b]: https://img.shields.io/github/workflow/status/google/cpu_features/aarch64%20Linux/main
-[lnk_2c]: https://github.com/google/cpu_features/actions/workflows/arm_Linux.yml
-[img_2c]: https://img.shields.io/github/workflow/status/google/cpu_features/arm%20Linux/main
-[lnk_2d]: https://github.com/google/cpu_features/actions/workflows/mips_Linux.yml
-[img_2d]: https://img.shields.io/github/workflow/status/google/cpu_features/mips%20Linux/main
+[lnk_1a]: https://github.com/google/cpu_features/actions/workflows/amd64_freebsd_cmake.yml
+[img_1a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20FreeBSD%20CMake/main
+[lnk_2a]: https://github.com/google/cpu_features/actions/workflows/amd64_linux_cmake.yml
+[img_2a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20Linux%20CMake/main
+[lnk_3a]: https://github.com/google/cpu_features/actions/workflows/amd64_macos_cmake.yml
+[img_3a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20MacOS%20CMake/main
+[lnk_4a]: https://github.com/google/cpu_features/actions/workflows/amd64_windows_cmake.yml
+[img_4a]: https://img.shields.io/github/workflow/status/google/cpu_features/amd64%20Windows%20CMake/main
+[lnk_2b]: https://github.com/google/cpu_features/actions/workflows/aarch64_linux_cmake.yml
+[img_2b]: https://img.shields.io/github/workflow/status/google/cpu_features/AArch64%20Linux%20CMake/main
+[lnk_2c]: https://github.com/google/cpu_features/actions/workflows/arm_linux_cmake.yml
+[img_2c]: https://img.shields.io/github/workflow/status/google/cpu_features/ARM%20Linux%20CMake/main
+[lnk_2d]: https://github.com/google/cpu_features/actions/workflows/mips_linux_cmake.yml
+[img_2d]: https://img.shields.io/github/workflow/status/google/cpu_features/MIPS%20Linux%20CMake/main
 
 ## Makefile/Docker testing
 To test the build on various distro, we are using docker containers and a Makefile for orchestration.
