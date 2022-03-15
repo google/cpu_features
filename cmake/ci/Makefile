@@ -160,7 +160,7 @@ $$(targets_toolchain_$1): %_$1: docker/toolchain/Dockerfile
  --build-arg TARGET=$$* \
  --target=$1 \
  -f $$< \
- ..
+ ../..
 
 #$$(info Create targets: save_toolchain_$1 $(addprefix save_, $(addsuffix _$1, $(TOOLCHAIN_TARGETS))) (debug).)
 save_targets_toolchain_$1 = $(addprefix save_, $(addsuffix _$1, $(TOOLCHAIN_TARGETS)))
