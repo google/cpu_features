@@ -1,4 +1,4 @@
-name: amd64 Windows
+name: amd64 Windows CMake
 
 on:
   push:

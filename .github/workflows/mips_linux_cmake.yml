@@ -1,4 +1,4 @@
-name: aarch64 Linux
+name: MIPS Linux CMake
 
 on:
   push:
@@ -9,13 +9,15 @@ on:
 
 jobs:
   # Building using the github runner environement directly.
-  aarch64:
+  make:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         targets: [
-          [aarch64-linux-gnu],
-          [aarch64_be-linux-gnu]
+          [mips32],
+          [mips32el],
+          [mips64],
+          [mips64el]
         ]
       fail-fast: false
     env:
@@ -23,6 +25,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: make --directory=ci ${TARGET}_build
+      run: make --directory=cmake/ci ${TARGET}_build
     - name: Test
-      run: make --directory=ci ${TARGET}_test
+      run: make --directory=cmake/ci ${TARGET}_test

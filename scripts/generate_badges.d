@@ -22,36 +22,6 @@ enum Os
     Windows
 }
 
-string getWorkflowName(Cpu cpu)
-{
-    final switch (cpu)
-    {
-    case Cpu.amd64:
-        return "amd64";
-    case Cpu.AArch64:
-        return "aarch64";
-    case Cpu.ARM:
-        return "arm";
-    case Cpu.MIPS:
-        return "mips";
-    }
-}
-
-string getWorkflowName(Os os)
-{
-    final switch (os)
-    {
-    case Os.FreeBSD:
-        return "FreeBSD";
-    case Os.Linux:
-        return "Linux";
-    case Os.MacOS:
-        return "macOS";
-    case Os.Windows:
-        return "Windows";
-    }
-}
-
 struct Configuration
 {
 const:
@@ -130,10 +100,13 @@ void main()
         .map!(t => Configuration(t[0], t[1]))
         .filter!(conf => !conf.disabled)
         .each!((conf) {
-            const cpu_name = getWorkflowName(conf.cpu);
-            const os_name = getWorkflowName(conf.os);
-            writefln("%s: https://github.com/google/cpu_features/actions/workflows/%s_%s.yml", conf.link_ref, cpu_name, os_name);
-            writefln("%s: https://img.shields.io/github/workflow/status/google/cpu_features/%s%%20%s/main", conf
-                .image_ref, cpu_name, os_name);
+            import std.uni : toLower;
+            import std.uri : encode;
+
+            const filename = toLower(format("%s_%s_%s.yml", conf.cpu, conf.os, "cmake"));
+            writefln("%s: https://github.com/google/cpu_features/actions/workflows/%s", conf.link_ref, filename);
+
+            const worflow_name = encode(format("%s %s %s", conf.cpu, conf.os, "CMake"));
+            writefln("%s: https://img.shields.io/github/workflow/status/google/cpu_features/%s/main", conf.image_ref, worflow_name);
         });
 }

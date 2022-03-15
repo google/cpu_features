@@ -113,7 +113,7 @@ $(targets_amd64): amd64_%: docker/amd64/Dockerfile
  --tag ${IMAGE}:amd64_$* \
  --target=$* \
  -f $< \
- ..
+ ../..
 
 #$(info Create targets: save_amd64 $(addprefix save_amd64_, $(STAGES)) (debug).)
 save_targets_amd64 = $(addprefix save_amd64_, $(STAGES))

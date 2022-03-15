@@ -1,4 +1,4 @@
-name: amd64 macOS
+name: amd64 MacOS CMake
 
 on:
   push:
