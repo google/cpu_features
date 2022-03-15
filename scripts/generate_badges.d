@@ -32,7 +32,8 @@ const:
     {
         import std.algorithm.comparison : among;
 
-        return !(os == Os.Linux && cpu == Cpu.amd64);
+        return os.among(Os.FreeBSD, Os.Windows, Os.MacOS) && cpu.among(Cpu.AArch64, Cpu.ARM, Cpu
+                .MIPS);
     }
 
     string cell()
@@ -105,7 +106,7 @@ void main()
             const filename = toLower(format("%s_%s_%s.yml", conf.cpu, conf.os, "cmake"));
             writefln("%s: https://github.com/google/cpu_features/actions/workflows/%s", conf.link_ref, filename);
 
-            const worflow_name = encode(format("%s %s %s", conf.cpu, conf.os, "Bazel"));
+            const worflow_name = encode(format("%s %s %s", conf.cpu, conf.os, "CMake"));
             writefln("%s: https://img.shields.io/github/workflow/status/google/cpu_features/%s/main", conf.image_ref, worflow_name);
         });
 }
