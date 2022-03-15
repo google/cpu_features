@@ -1,4 +1,4 @@
-name: arm Linux CMake
+name: ARM Linux CMake
 
 on:
   push:
