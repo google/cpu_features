@@ -74,7 +74,10 @@
   LINE(AARCH64_DGH, dgh, "dgh", 0, AARCH64_HWCAP2_DGH)                     \
   LINE(AARCH64_RNG, rng, "rng", 0, AARCH64_HWCAP2_RNG)                     \
   LINE(AARCH64_BTI, bti, "bti", 0, AARCH64_HWCAP2_BTI)                     \
-  LINE(AARCH64_MTE, mte, "mte", 0, AARCH64_HWCAP2_MTE)
+  LINE(AARCH64_MTE, mte, "mte", 0, AARCH64_HWCAP2_MTE)                     \
+  LINE(AARCH64_ECV, ecv, "ecv", 0, AARCH64_HWCAP2_ECV)                     \
+  LINE(AARCH64_AFP, afp, "afp", 0, AARCH64_HWCAP2_AFP)                     \
+  LINE(AARCH64_RPRES, rpres, "rpres", 0, AARCH64_HWCAP2_RPRES)
 #define INTROSPECTION_PREFIX Aarch64
 #define INTROSPECTION_ENUM_PREFIX AARCH64
 #include "define_introspection_and_hwcaps.inl"

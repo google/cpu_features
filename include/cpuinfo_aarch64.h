@@ -72,6 +72,9 @@ typedef struct {
   int rng : 1;         // True random number generator support.
   int bti : 1;         // Branch target identification.
   int mte : 1;         // Memory tagging extension.
+  int ecv : 1;         // Enhanced counter virtualization.
+  int afp : 1;         // Alternate floating-point behaviour.
+  int rpres : 1;       // 12-bit reciprocal (square root) estimate precision.
 
   // Make sure to update Aarch64FeaturesEnum below if you add a field here.
 } Aarch64Features;
@@ -141,6 +144,9 @@ typedef enum {
   AARCH64_RNG,
   AARCH64_BTI,
   AARCH64_MTE,
+  AARCH64_ECV,
+  AARCH64_AFP,
+  AARCH64_RPRES,
   AARCH64_LAST_,
 } Aarch64FeaturesEnum;
 
