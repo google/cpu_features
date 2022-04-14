@@ -54,18 +54,18 @@ char gGlobalBuffer[64 * 1024];
 BumpAllocator gBumpAllocator = {.ptr = gGlobalBuffer,
                                 .size = sizeof(gGlobalBuffer)};
 
-static void internal_error() {
+static void internal_error(void) {
   fputs("internal error\n", stderr);
   exit(EXIT_FAILURE);
 }
 
 #define ALIGN 8
 
-static void assertAligned() {
+static void assertAligned(void) {
   if ((uintptr_t)(gBumpAllocator.ptr) % ALIGN) internal_error();
 }
 
-static void BA_Align() {
+static void BA_Align(void) {
   while (gBumpAllocator.size && (uintptr_t)(gBumpAllocator.ptr) % ALIGN) {
     --gBumpAllocator.size;
     ++gBumpAllocator.ptr;
@@ -129,10 +129,10 @@ static Node* CreateConstantString(const char* value) {
 }
 
 // Adds a map node.
-static Node* CreateMap() { return BA_CreateNode(NT_MAP); }
+static Node* CreateMap(void) { return BA_CreateNode(NT_MAP); }
 
 // Adds an array node.
-static Node* CreateArray() { return BA_CreateNode(NT_ARRAY); }
+static Node* CreateArray(void) { return BA_CreateNode(NT_ARRAY); }
 
 // Adds a formatted string node.
 static Node* CreatePrintfString(const char* format, ...) {
@@ -360,7 +360,7 @@ static void AddCacheInfo(Node* root, const CacheInfo* cache_info) {
   AddMapEntry(root, "cache_info", array);
 }
 
-static Node* CreateTree() {
+static Node* CreateTree(void) {
   Node* root = CreateMap();
 #if defined(CPU_FEATURES_ARCH_X86)
   char brand_string[49];
