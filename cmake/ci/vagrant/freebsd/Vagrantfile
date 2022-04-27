@@ -99,4 +99,9 @@ Vagrant.configure("2") do |config|
   cd project
   cmake --build build --target test -v
   SHELL
+  config.vm.provision "test", type: "shell", inline:<<-SHELL
+  set -x
+  cd project
+  cmake --build build --target install -v
+  SHELL
 end
