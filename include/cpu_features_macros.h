@@ -224,6 +224,11 @@
 #else
 #define CPU_FEATURES_COMPILED_MIPS_MSA 0
 #endif  //  defined(__mips_msa)
+#if defined(__mips3d)
+#define CPU_FEATURES_COMPILED_MIPS_MIPS3D 1
+#else
+#define CPU_FEATURES_COMPILED_MIPS_MIPS3D 0
+#endif
 #endif  //  defined(CPU_FEATURES_ARCH_MIPS)
 
 ////////////////////////////////////////////////////////////////////////////////
