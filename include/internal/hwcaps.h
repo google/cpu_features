@@ -117,6 +117,13 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #define MIPS_HWCAP_R6 (1UL << 0)
 #define MIPS_HWCAP_MSA (1UL << 1)
 #define MIPS_HWCAP_CRC32 (1UL << 2)
+#define MIPS_HWCAP_MIPS16 (1UL << 3)
+#define MIPS_HWCAP_MDMX (1UL << 4)
+#define MIPS_HWCAP_MIPS3D (1UL << 5)
+#define MIPS_HWCAP_SMARTMIPS (1UL << 6)
+#define MIPS_HWCAP_DSP (1UL << 7)
+#define MIPS_HWCAP_DSP2 (1UL << 8)
+#define MIPS_HWCAP_DSP3 (1UL << 9)
 
 // http://elixir.free-electrons.com/linux/latest/source/arch/powerpc/include/uapi/asm/cputable.h
 #ifndef _UAPI__ASM_POWERPC_CPUTABLE_H

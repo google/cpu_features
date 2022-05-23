@@ -69,6 +69,12 @@ VPE : 0
   const auto info = GetMipsInfo();
   EXPECT_FALSE(info.features.msa);
   EXPECT_TRUE(info.features.eva);
+  EXPECT_FALSE(info.features.r6);
+  EXPECT_TRUE(info.features.mips16);
+  EXPECT_FALSE(info.features.mdmx);
+  EXPECT_FALSE(info.features.mips3d);
+  EXPECT_FALSE(info.features.smart);
+  EXPECT_TRUE(info.features.dsp);
 }
 
 TEST(CpuinfoMipsTest, AR7161) {
@@ -95,6 +101,7 @@ VCEI exceptions         : not available
   const auto info = GetMipsInfo();
   EXPECT_FALSE(info.features.msa);
   EXPECT_FALSE(info.features.eva);
+  EXPECT_TRUE(info.features.mips16);
 }
 
 TEST(CpuinfoMipsTest, Goldfish) {
@@ -120,6 +127,37 @@ VCEI exceptions		: not available
   const auto info = GetMipsInfo();
   EXPECT_FALSE(info.features.msa);
   EXPECT_FALSE(info.features.eva);
+}
+
+TEST(CpuinfoMipsTest, BCM1250) {
+  ResetHwcaps();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo", R"(system type		: SiByte BCM91250A (SWARM)
+processor		: 0
+cpu model               : SiByte SB1 V0.2  FPU V0.2
+BogoMIPS                : 532.48
+wait instruction        : no
+microsecond timers      : yes
+tlb_entries             : 64
+extra interrupt vector  : yes
+hardware watchpoint     : yes, count: 1, address/irw mask: [0x0ff8]
+isa                     : mips1 mips2 mips3 mips4 mips5 mips32r1 mips32r2 mips64r1 mips64r2
+ASEs implemented        : mdmx mips3d
+shadow register sets    : 1
+kscratch registers      : 0
+package                 : 0
+core                    : 0
+VCED exceptions         : not available
+VCEI exceptions         : not available
+)");
+  const auto info = GetMipsInfo();
+  EXPECT_FALSE(info.features.msa);
+  EXPECT_FALSE(info.features.eva);
+  EXPECT_FALSE(info.features.mips16);
+  EXPECT_TRUE(info.features.mdmx);
+  EXPECT_TRUE(info.features.mips3d);
+  EXPECT_FALSE(info.features.smart);
+  EXPECT_FALSE(info.features.dsp);
 }
 
 }  // namespace
