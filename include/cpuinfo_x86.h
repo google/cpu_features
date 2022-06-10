@@ -167,6 +167,7 @@ typedef enum {
   AMD_ZEN_PLUS,        // K17 ZEN+
   AMD_ZEN2,            // K17 ZEN 2
   AMD_ZEN3,            // K19 ZEN 3
+  AMD_ZEN4,            // K19 ZEN 4
   X86_MICROARCHITECTURE_LAST_,
 } X86Microarchitecture;
 

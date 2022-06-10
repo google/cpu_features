@@ -706,13 +706,19 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x17, 0x98):
         // https://en.wikichip.org/wiki/amd/microarchitectures/zen_2
         return AMD_ZEN2;
+      case CPUID(0x19, 0x00):
       case CPUID(0x19, 0x01):
+      case CPUID(0x19, 0x08):
       case CPUID(0x19, 0x21):
       case CPUID(0x19, 0x30):
       case CPUID(0x19, 0x40):
+      case CPUID(0x19, 0x44):
       case CPUID(0x19, 0x50):
         // https://en.wikichip.org/wiki/amd/microarchitectures/zen_3
         return AMD_ZEN3;
+      case CPUID(0x19, 0x10):
+        // https://en.wikichip.org/wiki/amd/microarchitectures/zen_4
+        return AMD_ZEN4;
       default:
         return X86_UNKNOWN;
     }
@@ -720,6 +726,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
   if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_HYGON_GENUINE)) {
     switch (CPUID(info->family, info->model)) {
       case CPUID(0x18, 0x00):
+      case CPUID(0x18, 0x01):
         return AMD_ZEN;
     }
   }
@@ -1797,7 +1804,8 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(AMD_ZEN)                     \
   LINE(AMD_ZEN_PLUS)                \
   LINE(AMD_ZEN2)                    \
-  LINE(AMD_ZEN3)
+  LINE(AMD_ZEN3)                    \
+  LINE(AMD_ZEN4)
 
 const char* GetX86MicroarchitectureName(X86Microarchitecture value) {
 #define LINE(ENUM) [ENUM] = STRINGIZE(ENUM),
