@@ -784,6 +784,48 @@ TEST_F(CpuidX86Test, AMD_K19_ZEN3_VERMEER) {
   EXPECT_STREQ(brand_string, "AMD Ryzen 9 5900X 12-Core Processor            ");
 }
 
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0A40F41_K19_Rembrandt_03_CPUID.txt
+TEST_F(CpuidX86Test, AMD_K19_ZEN3) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000010, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x00000001, 0}, Leaf{0x00A40F41, 0x00100800, 0x7EF8320B, 0x178BFBFF}},
+      {{0x80000000, 0}, Leaf{0x80000023, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000001, 0}, Leaf{0x00A40F41, 0x50000000, 0x75C237FF, 0x2FD3FBFF}},
+      {{0x80000002, 0}, Leaf{0x20444D41, 0x657A7952, 0x2039206E, 0x30303936}},
+      {{0x80000003, 0}, Leaf{0x77205848, 0x20687469, 0x65646152, 0x47206E6F}},
+      {{0x80000004, 0}, Leaf{0x68706172, 0x20736369, 0x20202020, 0x00202020}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_EQ(info.family, 0x19);
+  EXPECT_EQ(info.model, 0x44);
+  EXPECT_STREQ(info.brand_string,
+               "AMD Ryzen 9 6900HX with Radeon Graphics        ");
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN3);
+}
+
+// http://users.atw.hu/instlatx64/HygonGenuine/HygonGenuine0900F11_Hygon_01_CPUID.txt
+TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA_OCTAL_CORE_C86_3250) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000D, 0x6F677948, 0x656E6975, 0x6E65476E}},
+      {{0x00000001, 0}, Leaf{0x00900F11, 0x00100800, 0x76D8320B, 0x178BFBFF}},
+      {{0x80000000, 0}, Leaf{0x8000001F, 0x6F677948, 0x656E6975, 0x6E65476E}},
+      {{0x80000001, 0}, Leaf{0x00900F11, 0x60000000, 0x35C233FF, 0x2FD3FBFF}},
+      {{0x80000002, 0}, Leaf{0x6F677948, 0x3843206E, 0x32332036, 0x20203035}},
+      {{0x80000003, 0}, Leaf{0x6F632D38, 0x50206572, 0x65636F72, 0x726F7373}},
+      {{0x80000004, 0}, Leaf{0x20202020, 0x20202020, 0x20202020, 0x00202020}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_EQ(info.model, 0x01);
+  EXPECT_EQ(info.family, 0x18);
+  EXPECT_STREQ(info.vendor, "HygonGenuine");
+  EXPECT_STREQ(info.brand_string,
+               "Hygon C86 3250  8-core Processor               ");
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN);
+}
+
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00106A1_Nehalem_CPUID.txt
 TEST_F(CpuidX86Test, Nehalem) {
   // Pre AVX cpus don't have xsave
