@@ -63,6 +63,22 @@
 #define CPU_FEATURES_ARCH_PPC
 #endif
 
+#if defined(__riscv)
+#define CPU_FEATURES_ARCH_RISCV
+#endif
+
+#if defined(__riscv) && defined(__riscv_xlen) && __riscv_xlen == 32
+#define CPU_FEATURES_ARCH_RISCV32
+#endif
+
+#if defined(__riscv) && defined(__riscv_xlen) && __riscv_xlen == 64
+#define CPU_FEATURES_ARCH_RISCV64
+#endif
+
+#if defined(__riscv) && defined(__riscv_xlen) && __riscv_xlen == 128
+#define CPU_FEATURES_ARCH_RISCV128
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // Os
 ////////////////////////////////////////////////////////////////////////////////
@@ -230,6 +246,114 @@
 #define CPU_FEATURES_COMPILED_MIPS_MIPS3D 0
 #endif
 #endif  //  defined(CPU_FEATURES_ARCH_MIPS)
+
+#if defined(CPU_FEATURES_ARCH_RISCV)
+#if defined(__riscv_e)
+#define CPU_FEATURES_COMPILED_RISCV_E 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_E 0
+#endif
+#if defined(__riscv_i)
+#define CPU_FEATURES_COMPILED_RISCV_I 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_I 0
+#endif
+#if defined(__riscv_m)
+#define CPU_FEATURES_COMPILED_RISCV_M 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_M 0
+#endif
+#if defined(__riscv_a)
+#define CPU_FEATURES_COMPILED_RISCV_A 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_A 0
+#endif
+#if defined(__riscv_f)
+#define CPU_FEATURES_COMPILED_RISCV_F 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_F 0
+#endif
+#if defined(__riscv_d)
+#define CPU_FEATURES_COMPILED_RISCV_D 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_D 0
+#endif
+#if defined(__riscv_q)
+#define CPU_FEATURES_COMPILED_RISCV_Q 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_Q 0
+#endif
+#if defined(__riscv_c)
+#define CPU_FEATURES_COMPILED_RISCV_C 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_C 0
+#endif
+#if defined(__riscv_v)
+#define CPU_FEATURES_COMPILED_RISCV_V 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_V 0
+#endif
+#if defined(__riscv_zba)
+#define CPU_FEATURES_COMPILED_RISCV_ZBA 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZBA 0
+#endif
+#if defined(__riscv_zbb)
+#define CPU_FEATURES_COMPILED_RISCV_ZBB 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZBB 0
+#endif
+#if defined(__riscv_zbc)
+#define CPU_FEATURES_COMPILED_RISCV_ZBC 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZBC 0
+#endif
+#if defined(__riscv_zbs)
+#define CPU_FEATURES_COMPILED_RISCV_ZBS 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZBS 0
+#endif
+#if defined(__riscv_zfh)
+#define CPU_FEATURES_COMPILED_RISCV_ZFH 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZFH 0
+#endif
+#if defined(__riscv_zfhmin)
+#define CPU_FEATURES_COMPILED_RISCV_ZFHMIN 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZFHMIN 0
+#endif
+#if defined(__riscv_zknd)
+#define CPU_FEATURES_COMPILED_RISCV_ZKND 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZKND 0
+#endif
+#if defined(__riscv_zkne)
+#define CPU_FEATURES_COMPILED_RISCV_ZKNE 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZKNE 0
+#endif
+#if defined(__riscv_zknh)
+#define CPU_FEATURES_COMPILED_RISCV_ZKNH 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZKNH 0
+#endif
+#if defined(__riscv_zksed)
+#define CPU_FEATURES_COMPILED_RISCV_ZKSED 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZKSED 0
+#endif
+#if defined(__riscv_zksh)
+#define CPU_FEATURES_COMPILED_RISCV_ZKSH 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZKSH 0
+#endif
+#if defined(__riscv_zkr)
+#define CPU_FEATURES_COMPILED_RISCV_ZKR 1
+#else
+#define CPU_FEATURES_COMPILED_RISCV_ZKR 0
+#endif
+#endif  //  defined(CPU_FEATURES_ARCH_RISCV)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Utils
