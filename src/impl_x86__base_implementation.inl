@@ -532,6 +532,8 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
             return INTEL_CFL;  // https://en.wikipedia.org/wiki/Coffee_Lake
           case 11:
             return INTEL_WHL;  // https://en.wikipedia.org/wiki/Whiskey_Lake_(microarchitecture)
+          case 12:
+            return INTEL_CML;  // https://en.wikichip.org/wiki/intel/microarchitectures/comet_lake
           default:
             return X86_UNKNOWN;
         }
@@ -547,6 +549,9 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x06, 0x9A):
         // https://en.wikichip.org/wiki/intel/microarchitectures/alder_lake
         return INTEL_ADL;
+      case CPUID(0x06, 0xA5):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/comet_lake
+        return INTEL_CML;
       case CPUID(0x06, 0xA7):
         // https://en.wikichip.org/wiki/intel/microarchitectures/rocket_lake
         return INTEL_RCL;
@@ -1779,6 +1784,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(INTEL_KBL)                   \
   LINE(INTEL_CFL)                   \
   LINE(INTEL_WHL)                   \
+  LINE(INTEL_CML)                   \
   LINE(INTEL_CNL)                   \
   LINE(INTEL_ICL)                   \
   LINE(INTEL_TGL)                   \
