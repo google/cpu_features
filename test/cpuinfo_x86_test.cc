@@ -20,6 +20,20 @@
 #include <set>
 #if defined(CPU_FEATURES_OS_WINDOWS)
 #include <windows.h>  // IsProcessorFeaturePresent
+
+// modern WinSDK winnt.h contains newer features detection definitions
+#if !defined(PF_SSSE3_INSTRUCTIONS_AVAILABLE)
+#define PF_SSSE3_INSTRUCTIONS_AVAILABLE             36
+#endif
+
+#if !defined(PF_SSE4_1_INSTRUCTIONS_AVAILABLE)
+#define PF_SSE4_1_INSTRUCTIONS_AVAILABLE            37
+#endif
+
+#if !defined(PF_SSE4_2_INSTRUCTIONS_AVAILABLE)
+#define PF_SSE4_2_INSTRUCTIONS_AVAILABLE            38
+#endif
+
 #endif                // CPU_FEATURES_OS_WINDOWS
 
 #include "filesystem_for_testing.h"
@@ -834,6 +848,9 @@ TEST_F(CpuidX86Test, Nehalem) {
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
+  cpu().SetWindowsIsProcessorFeaturePresent(PF_SSSE3_INSTRUCTIONS_AVAILABLE);
+  cpu().SetWindowsIsProcessorFeaturePresent(PF_SSE4_1_INSTRUCTIONS_AVAILABLE);
+  cpu().SetWindowsIsProcessorFeaturePresent(PF_SSE4_2_INSTRUCTIONS_AVAILABLE);
 #elif defined(CPU_FEATURES_OS_MACOS)
   cpu().SetDarwinSysCtlByName("hw.optional.sse");
   cpu().SetDarwinSysCtlByName("hw.optional.sse2");
@@ -901,13 +918,9 @@ flags           : fpu mmx sse sse2 pni ssse3 sse4_1 sse4_2
   EXPECT_TRUE(info.features.sse);
   EXPECT_TRUE(info.features.sse2);
   EXPECT_TRUE(info.features.sse3);
-#if !defined(CPU_FEATURES_OS_WINDOWS)
-  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
-  // feature detection > sse3.
   EXPECT_TRUE(info.features.ssse3);
   EXPECT_TRUE(info.features.sse4_1);
   EXPECT_TRUE(info.features.sse4_2);
-#endif  // !defined(CPU_FEATURES_OS_WINDOWS)
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0030673_Silvermont3_CPUID.txt
@@ -918,6 +931,9 @@ TEST_F(CpuidX86Test, Atom) {
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
+  cpu().SetWindowsIsProcessorFeaturePresent(PF_SSSE3_INSTRUCTIONS_AVAILABLE);
+  cpu().SetWindowsIsProcessorFeaturePresent(PF_SSE4_1_INSTRUCTIONS_AVAILABLE);
+  cpu().SetWindowsIsProcessorFeaturePresent(PF_SSE4_2_INSTRUCTIONS_AVAILABLE);
 #elif defined(CPU_FEATURES_OS_MACOS)
   cpu().SetDarwinSysCtlByName("hw.optional.sse");
   cpu().SetDarwinSysCtlByName("hw.optional.sse2");
@@ -985,13 +1001,9 @@ flags           : fpu mmx sse sse2 pni ssse3 sse4_1 sse4_2
   EXPECT_TRUE(info.features.sse);
   EXPECT_TRUE(info.features.sse2);
   EXPECT_TRUE(info.features.sse3);
-#if !defined(CPU_FEATURES_OS_WINDOWS)
-  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
-  // feature detection > sse3.
   EXPECT_TRUE(info.features.ssse3);
   EXPECT_TRUE(info.features.sse4_1);
   EXPECT_TRUE(info.features.sse4_2);
-#endif  // !defined(CPU_FEATURES_OS_WINDOWS)
 }
 
 // https://www.felixcloutier.com/x86/cpuid#example-3-1--example-of-cache-and-tlb-interpretation
@@ -1092,13 +1104,9 @@ flags           : fpu mmx sse
   EXPECT_TRUE(info.features.sse);
   EXPECT_FALSE(info.features.sse2);
   EXPECT_FALSE(info.features.sse3);
-#if !defined(CPU_FEATURES_OS_WINDOWS)
-  // Currently disabled on Windows as IsProcessorFeaturePresent do not support
-  // feature detection > sse3.
   EXPECT_FALSE(info.features.ssse3);
   EXPECT_FALSE(info.features.sse4_1);
   EXPECT_FALSE(info.features.sse4_2);
-#endif  // !defined(CPU_FEATURES_OS_WINDOWS)
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0000480_486_CPUID.txt

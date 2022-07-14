@@ -26,6 +26,19 @@ static void OverrideOsPreserves(OsPreserves* os_preserves) {
 
 #include <windows.h>  // IsProcessorFeaturePresent
 
+// modern WinSDK winnt.h contains newer features detection definitions
+#if !defined(PF_SSSE3_INSTRUCTIONS_AVAILABLE)
+#define PF_SSSE3_INSTRUCTIONS_AVAILABLE             36
+#endif
+
+#if !defined(PF_SSE4_1_INSTRUCTIONS_AVAILABLE)
+#define PF_SSE4_1_INSTRUCTIONS_AVAILABLE            37
+#endif
+
+#if !defined(PF_SSE4_2_INSTRUCTIONS_AVAILABLE)
+#define PF_SSE4_2_INSTRUCTIONS_AVAILABLE            38
+#endif
+
 #if defined(CPU_FEATURES_MOCK_CPUID_X86)
 extern bool GetWindowsIsProcessorFeaturePresent(DWORD);
 #else  // CPU_FEATURES_MOCK_CPUID_X86
@@ -43,6 +56,15 @@ static void DetectFeaturesFromOs(X86Info* info, X86Features* features) {
       GetWindowsIsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
   features->sse3 =
       GetWindowsIsProcessorFeaturePresent(PF_SSE3_INSTRUCTIONS_AVAILABLE);
+  features->ssse3 =
+      GetWindowsIsProcessorFeaturePresent(PF_SSSE3_INSTRUCTIONS_AVAILABLE);
+  features->sse4_1 =
+      GetWindowsIsProcessorFeaturePresent(PF_SSE4_1_INSTRUCTIONS_AVAILABLE);
+  features->sse4_2 =
+      GetWindowsIsProcessorFeaturePresent(PF_SSE4_2_INSTRUCTIONS_AVAILABLE);
+
+// do not bother checking PF_AVX*
+// cause AVX enabled processor will have XCR0 be exposed and this function will be skipped at all
 
 // https://github.com/google/cpu_features/issues/200
 #if (_WIN32_WINNT >= 0x0601)  // Win7+
