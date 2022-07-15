@@ -65,15 +65,6 @@ static void DetectFeaturesFromOs(X86Info* info, X86Features* features) {
 
 // do not bother checking PF_AVX*
 // cause AVX enabled processor will have XCR0 be exposed and this function will be skipped at all
-
-// https://github.com/google/cpu_features/issues/200
-#if (_WIN32_WINNT >= 0x0601)  // Win7+
-  if (GetX86Microarchitecture(info) == INTEL_WSM) {
-    features->ssse3 = true;
-    features->sse4_1 = true;
-    features->sse4_2 = true;
-  }
-#endif
 }
 
 #endif  // CPU_FEATURES_OS_WINDOWS
