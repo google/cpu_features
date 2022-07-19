@@ -19,21 +19,7 @@
 #include <map>
 #include <set>
 #if defined(CPU_FEATURES_OS_WINDOWS)
-#include <windows.h>  // IsProcessorFeaturePresent
-
-// modern WinSDK winnt.h contains newer features detection definitions
-#if !defined(PF_SSSE3_INSTRUCTIONS_AVAILABLE)
-#define PF_SSSE3_INSTRUCTIONS_AVAILABLE             36
-#endif
-
-#if !defined(PF_SSE4_1_INSTRUCTIONS_AVAILABLE)
-#define PF_SSE4_1_INSTRUCTIONS_AVAILABLE            37
-#endif
-
-#if !defined(PF_SSE4_2_INSTRUCTIONS_AVAILABLE)
-#define PF_SSE4_2_INSTRUCTIONS_AVAILABLE            38
-#endif
-
+#include "internal/windows_utils.h"
 #endif                // CPU_FEATURES_OS_WINDOWS
 
 #include "filesystem_for_testing.h"
