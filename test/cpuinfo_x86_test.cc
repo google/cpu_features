@@ -1182,7 +1182,6 @@ TEST_F(CpuidX86Test, WIN_INTEL_WESTMERE_EX) {
   EXPECT_TRUE(info.features.ssse3);
   EXPECT_TRUE(info.features.sse4_1);
   EXPECT_TRUE(info.features.sse4_2);
-
 }
 #endif  // CPU_FEATURES_OS_WINDOWS
 
