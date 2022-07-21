@@ -176,6 +176,17 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #define PPC_FEATURE2_HTM_NO_SUSPEND 0x00080000
 #endif
 
+// https://elixir.bootlin.com/linux/latest/source/arch/riscv/include/uapi/asm/hwcap.h
+#define RISCV_HWCAP_A (1UL << ('A' - 'A'))
+#define RISCV_HWCAP_C (1UL << ('C' - 'A'))
+#define RISCV_HWCAP_D (1UL << ('D' - 'A'))
+#define RISCV_HWCAP_E (1UL << ('E' - 'A'))
+#define RISCV_HWCAP_F (1UL << ('F' - 'A'))
+#define RISCV_HWCAP_I (1UL << ('I' - 'A'))
+#define RISCV_HWCAP_M (1UL << ('M' - 'A'))
+#define RISCV_HWCAP_V (1UL << ('V' - 'A'))
+#define RISCV_HWCAP_Q (1UL << ('Q' - 'A'))
+
 typedef struct {
   unsigned long hwcaps;
   unsigned long hwcaps2;
