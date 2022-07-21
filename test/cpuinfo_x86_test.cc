@@ -1153,6 +1153,37 @@ TEST_F(CpuidX86Test, INTEL_KNIGHTS_LANDING) {
             X86Microarchitecture::INTEL_KNIGHTS_L);
 }
 
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00806EC_CometLake_CPUID2.txt
+TEST_F(CpuidX86Test, INTEL_CML_U) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000806EC, 0x00100800, 0x7FFAFBBF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x8E);
+  EXPECT_EQ(info.stepping, 0x0C);
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::INTEL_CML);
+}
+
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00A0652_CometLake_CPUID1.txt
+TEST_F(CpuidX86Test, INTEL_CML_H) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000A0652, 0x00100800, 0x7FFAFBBF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0xA5);
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::INTEL_CML);
+}
+
 // https://github.com/google/cpu_features/issues/200
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00206F2_Eagleton_CPUID.txt
 #if defined(CPU_FEATURES_OS_WINDOWS)
