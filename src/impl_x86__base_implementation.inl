@@ -1784,6 +1784,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(INTEL_BDW)                   \
   LINE(INTEL_SKL)                   \
   LINE(INTEL_ATOM_GMT)              \
+  LINE(INTEL_ATOM_GMT_P)            \
   LINE(INTEL_KBL)                   \
   LINE(INTEL_CFL)                   \
   LINE(INTEL_WHL)                   \
