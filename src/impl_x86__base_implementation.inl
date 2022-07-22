@@ -1757,8 +1757,8 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_RDRND, rdrnd, , , )                             \
   LINE(X86_DCA, dca, , , )                                 \
   LINE(X86_SS, ss, , , )                                   \
-  LINE(X86_LZCNT, lzcnt, , , )                             \
-  LINE(X86_ADX, adx, , , )
+  LINE(X86_ADX, adx, , , )                                 \
+  LINE(X86_LZCNT, lzcnt, , , )
 #define INTROSPECTION_PREFIX X86
 #define INTROSPECTION_ENUM_PREFIX X86
 #include "define_introspection.inl"
