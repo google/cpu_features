@@ -138,6 +138,7 @@ typedef enum {
   INTEL_BDW,           // BROADWELL
   INTEL_SKL,           // SKYLAKE
   INTEL_ATOM_GMT,      // GOLDMONT
+  INTEL_ATOM_GMT_P,    // GOLDMONT+
   INTEL_KBL,           // KABY LAKE
   INTEL_CFL,           // COFFEE LAKE
   INTEL_WHL,           // WHISKEY LAKE

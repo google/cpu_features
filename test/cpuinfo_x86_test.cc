@@ -1138,6 +1138,21 @@ TEST_F(CpuidX86Test, INTEL_LAKEMONT) {
             X86Microarchitecture::INTEL_LAKEMONT);
 }
 
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00706A8_GoldmontPlus_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_GOLDMONT_PLUS) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000018, 0x756E6547, 0x6c65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000706A8, 0x00400800, 0x4FF8EBBF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x7A);
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::INTEL_ATOM_GMT_P);
+}
+
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0050670_KnightsLanding_CPUID.txt
 TEST_F(CpuidX86Test, INTEL_KNIGHTS_LANDING) {
   cpu().SetLeaves({
