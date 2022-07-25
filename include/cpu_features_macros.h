@@ -371,6 +371,8 @@
 // Communicates to the compiler that the function is now deprecated
 #if defined(CPU_FEATURES_COMPILER_CLANG) || defined(CPU_FEATURES_COMPILER_GCC)
 #define CPU_FEATURES_DEPRECATED(message) __attribute__((deprecated(message)))
+#elif defined(CPU_FEATURES_COMPILER_MSC)
+#define CPU_FEATURES_DEPRECATED(message) __declspec(deprecated(message))
 #else
 #define CPU_FEATURES_DEPRECATED(message)
 #endif

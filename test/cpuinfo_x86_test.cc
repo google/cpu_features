@@ -206,9 +206,8 @@ TEST_F(CpuidX86Test, Branding) {
       {{0x80000003, 0}, Leaf{0x37692029, 0x3035362D, 0x43205530, 0x40205550}},
       {{0x80000004, 0}, Leaf{0x352E3220, 0x7A484730, 0x00000000, 0x00000000}},
   });
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz");
+  const auto info = GetX86Info();
+  EXPECT_STREQ(info.brand_string, "Intel(R) Core(TM) i7-6500U CPU @ 2.50GHz");
 }
 
 TEST_F(CpuidX86Test, KabyLakeCache) {
@@ -418,10 +417,6 @@ TEST_F(CpuidX86Test, AMD_K15_EXCAVATOR_STONEY_RIDGE) {
                "AMD A9-9410 RADEON R5, 5 COMPUTE CORES 2C+3G   ");
   EXPECT_EQ(GetX86Microarchitecture(&info),
             X86Microarchitecture::AMD_EXCAVATOR);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "AMD A9-9410 RADEON R5, 5 COMPUTE CORES 2C+3G   ");
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0600F20_K15_AbuDhabi_CPUID0.txt
@@ -446,9 +441,7 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI) {
   EXPECT_EQ(GetX86Microarchitecture(&info),
             X86Microarchitecture::AMD_PILEDRIVER);
 
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "AMD Opteron(tm) Processor 6376                 ");
+  EXPECT_STREQ(info.brand_string, "AMD Opteron(tm) Processor 6376                 ");
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0600F20_K15_AbuDhabi_CPUID0.txt
@@ -520,10 +513,6 @@ TEST_F(CpuidX86Test, AMD_K15_BULLDOZER_INTERLAGOS) {
                "AMD Opteron(TM) Processor 6238                 ");
   EXPECT_EQ(GetX86Microarchitecture(&info),
             X86Microarchitecture::AMD_BULLDOZER);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "AMD Opteron(TM) Processor 6238                 ");
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD0630F81_K15_Godavari_CPUID.txt
@@ -549,10 +538,6 @@ TEST_F(CpuidX86Test, AMD_K15_STREAMROLLER_GODAVARI) {
                "AMD A8-7670K Radeon R7, 10 Compute Cores 4C+6G ");
   EXPECT_EQ(GetX86Microarchitecture(&info),
             X86Microarchitecture::AMD_STREAMROLLER);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "AMD A8-7670K Radeon R7, 10 Compute Cores 4C+6G ");
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0700F01_K16_Kabini_CPUID.txt
@@ -575,10 +560,6 @@ TEST_F(CpuidX86Test, AMD_K16_JAGUAR_KABINI) {
   EXPECT_STREQ(info.brand_string,
                "AMD A4-5000 APU with Radeon(TM) HD Graphics    ");
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_JAGUAR);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "AMD A4-5000 APU with Radeon(TM) HD Graphics    ");
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0730F01_K16_Beema_CPUID2.txt
@@ -601,10 +582,6 @@ TEST_F(CpuidX86Test, AMD_K16_PUMA_BEEMA) {
   EXPECT_STREQ(info.brand_string,
                "AMD A6-6310 APU with AMD Radeon R4 Graphics    ");
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_PUMA);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "AMD A6-6310 APU with AMD Radeon R4 Graphics    ");
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0820F01_K17_Dali_CPUID.txt
@@ -627,10 +604,6 @@ TEST_F(CpuidX86Test, AMD_K17_ZEN_DALI) {
   EXPECT_STREQ(info.brand_string,
                "AMD 3020e with Radeon Graphics                 ");
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "AMD 3020e with Radeon Graphics                 ");
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0800F82_K17_ZenP_CPUID.txt
@@ -653,10 +626,6 @@ TEST_F(CpuidX86Test, AMD_K17_ZEN_PLUS_PINNACLE_RIDGE) {
   EXPECT_STREQ(info.brand_string,
                "AMD Ryzen 7 2700X Eight-Core Processor         ");
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN_PLUS);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "AMD Ryzen 7 2700X Eight-Core Processor         ");
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0840F70_K17_CPUID.txt
@@ -678,10 +647,6 @@ TEST_F(CpuidX86Test, AMD_K17_ZEN2_XBOX_SERIES_X) {
   EXPECT_EQ(info.model, 0x47);
   EXPECT_STREQ(info.brand_string, "AMD 4700S 8-Core Processor Desktop Kit");
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN2);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "AMD 4700S 8-Core Processor Desktop Kit");
 }
 
 // http://users.atw.hu/instlatx64/HygonGenuine/HygonGenuine0900F02_Hygon_CPUID3.txt
@@ -704,10 +669,6 @@ TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA) {
   EXPECT_STREQ(info.brand_string,
                "Hygon C86 3185  8-core Processor               ");
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "Hygon C86 3185  8-core Processor               ");
 }
 
 // http://users.atw.hu/instlatx64/HygonGenuine/HygonGenuine0900F02_Hygon_CPUID.txt
@@ -778,10 +739,6 @@ TEST_F(CpuidX86Test, AMD_K19_ZEN3_VERMEER) {
   EXPECT_STREQ(info.brand_string,
                "AMD Ryzen 9 5900X 12-Core Processor            ");
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN3);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "AMD Ryzen 9 5900X 12-Core Processor            ");
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0A40F41_K19_Rembrandt_03_CPUID.txt
@@ -897,10 +854,6 @@ flags           : fpu mmx sse sse2 pni ssse3 sse4_1 sse4_2
                "Genuine Intel(R) CPU           @ 0000 @ 1.87GHz");
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_NHM);
 
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "Genuine Intel(R) CPU           @ 0000 @ 1.87GHz");
-
   EXPECT_TRUE(info.features.sse);
   EXPECT_TRUE(info.features.sse2);
   EXPECT_TRUE(info.features.sse3);
@@ -979,10 +932,6 @@ flags           : fpu mmx sse sse2 pni ssse3 sse4_1 sse4_2
                "      Intel(R) Celeron(R) CPU  J1900  @ 1.99GHz");
   EXPECT_EQ(GetX86Microarchitecture(&info),
             X86Microarchitecture::INTEL_ATOM_SMT);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "      Intel(R) Celeron(R) CPU  J1900  @ 1.99GHz");
 
   EXPECT_TRUE(info.features.sse);
   EXPECT_TRUE(info.features.sse2);
@@ -1081,10 +1030,6 @@ flags           : fpu mmx sse
   EXPECT_EQ(info.stepping, 0x03);
   EXPECT_STREQ(info.brand_string, "");
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::X86_UNKNOWN);
-
-  char brand_string[49];
-  FillX86BrandString(brand_string);
-  EXPECT_STREQ(brand_string, "");
 
   EXPECT_TRUE(info.features.mmx);
   EXPECT_TRUE(info.features.sse);
