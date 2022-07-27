@@ -157,7 +157,6 @@ typedef enum {
   AMD_K10,             // K10
   AMD_K11,             // K11
   AMD_K12,             // K12
-  AMD_LLANO,           // LLANO
   AMD_BOBCAT,          // K14 BOBCAT
   AMD_PILEDRIVER,      // K15 PILEDRIVER
   AMD_STREAMROLLER,    // K15 STREAMROLLER
