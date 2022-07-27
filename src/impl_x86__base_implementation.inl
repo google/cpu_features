@@ -664,12 +664,10 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x11, 0x03):
         // http://developer.amd.com/wordpress/media/2012/10/41788.pdf
         return AMD_K11;
+      case CPUID(0x12, 0x00):
       case CPUID(0x12, 0x01):
         // https://www.amd.com/system/files/TechDocs/44739_12h_Rev_Gd.pdf
         return AMD_K12;
-      case CPUID(0x12, 0x00):
-        // https://www.amd.com/system/files/TechDocs/44739_12h_Rev_Gd.pdf
-        return AMD_LLANO;
       case CPUID(0x14, 0x00):
       case CPUID(0x14, 0x01):
       case CPUID(0x14, 0x02):
@@ -699,12 +697,11 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         return AMD_PUMA;
       case CPUID(0x17, 0x01):
       case CPUID(0x17, 0x11):
+      case CPUID(0x17, 0x18):
       case CPUID(0x17, 0x20):
-      case CPUID(0x18, 0x00):
         // https://en.wikichip.org/wiki/amd/microarchitectures/zen
         return AMD_ZEN;
       case CPUID(0x17, 0x08):
-      case CPUID(0x17, 0x18):
         // https://en.wikichip.org/wiki/amd/microarchitectures/zen%2B
         return AMD_ZEN_PLUS;
       case CPUID(0x17, 0x31):
@@ -1804,8 +1801,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(AMD_HAMMER)                  \
   LINE(AMD_K10)                     \
   LINE(AMD_K11)                     \
-  LINE(AMD_K12)                     \
-  LINE(AMD_LLANO)                   \
+  LINE(AMD_K12) /* K12 LLANO */     \
   LINE(AMD_BOBCAT)                  \
   LINE(AMD_PILEDRIVER)              \
   LINE(AMD_STREAMROLLER)            \
