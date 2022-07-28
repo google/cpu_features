@@ -20,7 +20,7 @@
 #include <set>
 #if defined(CPU_FEATURES_OS_WINDOWS)
 #include "internal/windows_utils.h"
-#endif                // CPU_FEATURES_OS_WINDOWS
+#endif  // CPU_FEATURES_OS_WINDOWS
 
 #include "filesystem_for_testing.h"
 #include "gtest/gtest.h"
@@ -538,6 +538,27 @@ TEST_F(CpuidX86Test, AMD_K15_STREAMROLLER_GODAVARI) {
                "AMD A8-7670K Radeon R7, 10 Compute Cores 4C+6G ");
   EXPECT_EQ(GetX86Microarchitecture(&info),
             X86Microarchitecture::AMD_STREAMROLLER);
+}
+
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0600F12_K15_Zambezi8C_CPUID.txt
+TEST_F(CpuidX86Test, AMD_K15_BULLDOZER_ZAMBEZI_ABM) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000D, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x00000001, 0}, Leaf{0x00600F12, 0x00080800, 0x1E98220B, 0x178BFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000000}},
+      {{0x80000000, 0}, Leaf{0x8000001E, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000001, 0}, Leaf{0x00600F12, 0x10000000, 0x01C9BFFF, 0x2FD3FBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_EQ(info.family, 0x15);
+  EXPECT_EQ(info.model, 0x01);
+
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::AMD_BULLDOZER);
+
+  EXPECT_TRUE(info.features.lzcnt);
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0700F01_K16_Kabini_CPUID.txt
@@ -1110,8 +1131,7 @@ TEST_F(CpuidX86Test, INTEL_CML_U) {
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x8E);
   EXPECT_EQ(info.stepping, 0x0C);
-  EXPECT_EQ(GetX86Microarchitecture(&info),
-            X86Microarchitecture::INTEL_CML);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_CML);
 }
 
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00A0652_CometLake_CPUID1.txt
@@ -1125,8 +1145,26 @@ TEST_F(CpuidX86Test, INTEL_CML_H) {
   EXPECT_STREQ(info.vendor, "GenuineIntel");
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0xA5);
-  EXPECT_EQ(GetX86Microarchitecture(&info),
-            X86Microarchitecture::INTEL_CML);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_CML);
+}
+
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00306F2_HaswellEP2_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_HASWELL_LZCNT) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000F, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000306F2, 0x00200800, 0x7FFEFBFF, 0xBFEBFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000000, 0x000037AB, 0x00000000, 0x00000000}},
+      {{0x80000000, 0}, Leaf{0x80000008, 0x00000000, 0x00000000, 0x00000000}},
+      {{0x80000001, 0}, Leaf{0x00000000, 0x00000000, 0x00000021, 0x2C100000}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x3F);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_HSW);
+
+  EXPECT_TRUE(info.features.lzcnt);
 }
 
 // https://github.com/google/cpu_features/issues/200
