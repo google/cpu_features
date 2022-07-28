@@ -124,7 +124,7 @@ TEST_F(CpuidX86Test, X86MicroarchitectureEnum) {
    for (int i = static_cast<int>(X86_UNKNOWN); i != static_cast<int>(X86_MICROARCHITECTURE_LAST_); ++i) {
       const auto micro = static_cast<X86Microarchitecture>(i);
       const char *name = GetX86MicroarchitectureName(micro);
-      EXPECT_FALSE(name == nullptr);
+      ASSERT_FALSE(name == nullptr);
       EXPECT_STRNE(name, "");
       EXPECT_STRNE(name, last_name);
    }
@@ -136,7 +136,7 @@ TEST_F(CpuidX86Test, X86FeaturesEnum) {
    for (int i = static_cast<int>(X86_FPU); i != static_cast<int>(X86_LAST_); ++i) {
       const auto feature = static_cast<X86FeaturesEnum>(i);
       const char *name = GetX86FeaturesEnumName(feature);
-      EXPECT_FALSE(name == nullptr);
+      ASSERT_FALSE(name == nullptr);
       EXPECT_STRNE(name, "");
       EXPECT_STRNE(name, last_name);
    }
