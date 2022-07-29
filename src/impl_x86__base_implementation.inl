@@ -1801,7 +1801,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(AMD_HAMMER)                  \
   LINE(AMD_K10)                     \
   LINE(AMD_K11)                     \
-  LINE(AMD_K12) /* K12 LLANO */     \
+  LINE(AMD_K12)                     \
   LINE(AMD_BOBCAT)                  \
   LINE(AMD_PILEDRIVER)              \
   LINE(AMD_STREAMROLLER)            \
