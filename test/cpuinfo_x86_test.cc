@@ -1172,17 +1172,17 @@ TEST_F(CpuidX86Test, INTEL_CML_H) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_CML);
 }
 
-// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00906C0_JasperLake_01_CPUID.txt
-TEST_F(CpuidX86Test, INTEL_ATOM_TMT_JASPER_LAKE) {
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00806A1_Lakefield_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_ATOM_TMT_LAKEFIELD) {
   cpu().SetLeaves({
       {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
-      {{0x00000001, 0}, Leaf{0x000906C0, 0x00800800, 0x4FF8EBBF, 0xBFEBFBFF}},
+      {{0x00000001, 0}, Leaf{0x000806A1, 0x00100800, 0x4FD8EBBF, 0xBFEBFBFF}},
   });
   const auto info = GetX86Info();
 
   EXPECT_STREQ(info.vendor, "GenuineIntel");
   EXPECT_EQ(info.family, 0x06);
-  EXPECT_EQ(info.model, 0x9C);
+  EXPECT_EQ(info.model, 0x8A);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
 }
 
@@ -1197,6 +1197,20 @@ TEST_F(CpuidX86Test, INTEL_ATOM_TMT_ELKHART_LAKE) {
   EXPECT_STREQ(info.vendor, "GenuineIntel");
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x96);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
+}
+
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00906C0_JasperLake_01_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_ATOM_TMT_JASPER_LAKE) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000906C0, 0x00800800, 0x4FF8EBBF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x9C);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
 }
 
