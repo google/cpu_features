@@ -1190,6 +1190,21 @@ TEST_F(CpuidX86Test, INTEL_CML_H) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_CML);
 }
 
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00A0660_CometLake_CPUID1.txt
+TEST_F(CpuidX86Test, INTEL_CML_U2) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000A0660, 0x00100800, 0x7FFAFBBF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0xA6);
+  EXPECT_EQ(info.stepping, 0x00);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_CML);
+}
+
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00806A1_Lakefield_CPUID.txt
 TEST_F(CpuidX86Test, INTEL_ATOM_TMT_LAKEFIELD) {
   cpu().SetLeaves({
