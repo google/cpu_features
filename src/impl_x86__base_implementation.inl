@@ -465,6 +465,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x06, 0x5C):
         // https://en.wikipedia.org/wiki/Goldmont
         return INTEL_ATOM_GMT;
+      case CPUID(0x06, 0x8A):
       case CPUID(0x06, 0x96):
       case CPUID(0x06, 0x9C):
         // https://en.wikichip.org/wiki/intel/microarchitectures/tremont
