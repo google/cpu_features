@@ -677,7 +677,6 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikichip.org/wiki/amd/microarchitectures/bulldozer
         return AMD_BULLDOZER;
       case CPUID(0x15, 0x02):
-      case CPUID(0x15, 0x10):
       case CPUID(0x15, 0x11):
       case CPUID(0x15, 0x13):
         // https://en.wikichip.org/wiki/amd/microarchitectures/piledriver
