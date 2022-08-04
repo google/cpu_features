@@ -672,6 +672,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x11, 0x03):
         // http://developer.amd.com/wordpress/media/2012/10/41788.pdf
         return AMD_K11;
+      case CPUID(0x12, 0x00):
       case CPUID(0x12, 0x01):
         // https://www.amd.com/system/files/TechDocs/44739_12h_Rev_Gd.pdf
         return AMD_K12;
