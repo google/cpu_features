@@ -363,7 +363,6 @@ static void AddCacheInfo(Node* root, const CacheInfo* cache_info) {
 static Node* CreateTree(void) {
   Node* root = CreateMap();
 #if defined(CPU_FEATURES_ARCH_X86)
-  char brand_string[49];
   const X86Info info = GetX86Info();
   const CacheInfo cache_info = GetX86CacheInfo();
   AddMapEntry(root, "arch", CreateString("x86"));

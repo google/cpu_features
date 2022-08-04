@@ -24,6 +24,18 @@ namespace cpu_features {
 
 namespace {
 
+TEST(CpuinfoMipsTest, MipsFeaturesEnum) {
+   const char *last_name = GetMipsFeaturesEnumName(MIPS_LAST_);
+   EXPECT_STREQ(last_name, "unknown_feature");
+   for (int i = static_cast<int>(MIPS_MSA); i != static_cast<int>(MIPS_LAST_); ++i) {
+      const auto feature = static_cast<MipsFeaturesEnum>(i);
+      const char *name = GetMipsFeaturesEnumName(feature);
+      ASSERT_FALSE(name == nullptr);
+      EXPECT_STRNE(name, "");
+      EXPECT_STRNE(name, last_name);
+   }
+}
+
 TEST(CpuinfoMipsTest, FromHardwareCapBoth) {
   ResetHwcaps();
   SetHardwareCapabilities(MIPS_HWCAP_MSA | MIPS_HWCAP_R6, 0);

@@ -254,6 +254,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
   const Leaf leaf_1 = leaves->leaf_1;
   const Leaf leaf_7 = leaves->leaf_7;
   const Leaf leaf_7_1 = leaves->leaf_7_1;
+  const Leaf leaf_80000001 = leaves->leaf_80000001;
 
   const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
   const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
@@ -312,6 +313,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
   features->vaes = IsBitSet(leaf_7.ecx, 9);
   features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
   features->adx = IsBitSet(leaf_7.ebx, 19);
+  features->lzcnt = IsBitSet(leaf_80000001.ecx, 5);
 
   /////////////////////////////////////////////////////////////////////////////
   // The following section is devoted to Vector Extensions.
@@ -406,8 +408,8 @@ X86Info GetX86Info(void) {
       IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   const bool is_hygon =
       IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_HYGON_GENUINE);
-  const bool is_zhaoxin = 
-      (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_CENTAUR_HAULS) || 
+  const bool is_zhaoxin =
+      (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_CENTAUR_HAULS) ||
        IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_SHANGHAI));
   SetVendor(leaves.leaf_0, info.vendor);
   if (is_intel || is_amd || is_hygon || is_zhaoxin) {
@@ -585,15 +587,15 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/zhangjiang
         return ZHAOXIN_ZHANGJIANG;
       case CPUID(0x07, 0x1B):
-	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/wudaokou
-	return ZHAOXIN_WUDAOKOU;
+        // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/wudaokou
+        return ZHAOXIN_WUDAOKOU;
       case CPUID(0x07, 0x3B):
-	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/lujiazui
-	return ZHAOXIN_LUJIAZUI;
+        // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/lujiazui
+        return ZHAOXIN_LUJIAZUI;
       case CPUID(0x07, 0x5B):
-	return ZHAOXIN_YONGFENG;
+        return ZHAOXIN_YONGFENG;
       default:
-	return X86_UNKNOWN;
+        return X86_UNKNOWN;
     }
   }
   if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_SHANGHAI)) {
@@ -603,15 +605,15 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/zhangjiang
         return ZHAOXIN_ZHANGJIANG;
       case CPUID(0x07, 0x1B):
-	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/wudaokou
-	return ZHAOXIN_WUDAOKOU;
+        // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/wudaokou
+        return ZHAOXIN_WUDAOKOU;
       case CPUID(0x07, 0x3B):
-	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/lujiazui
-	return ZHAOXIN_LUJIAZUI;
+        // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/lujiazui
+        return ZHAOXIN_LUJIAZUI;
       case CPUID(0x07, 0x5B):
-	return ZHAOXIN_YONGFENG;
+        return ZHAOXIN_YONGFENG;
       default:
-	return X86_UNKNOWN;
+        return X86_UNKNOWN;
     }
   }
   if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_AUTHENTIC_AMD)) {
@@ -1756,7 +1758,8 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_RDRND, rdrnd, , , )                             \
   LINE(X86_DCA, dca, , , )                                 \
   LINE(X86_SS, ss, , , )                                   \
-  LINE(X86_ADX, adx, , , )
+  LINE(X86_ADX, adx, , , )                                 \
+  LINE(X86_LZCNT, lzcnt, , , )
 #define INTROSPECTION_PREFIX X86
 #define INTROSPECTION_ENUM_PREFIX X86
 #include "define_introspection.inl"
