@@ -60,6 +60,7 @@ typedef struct {
   int sse4a : 1;
 
   int avx : 1;
+  int avx_vnni : 1;
   int avx2 : 1;
 
   int avx512f : 1;
@@ -215,6 +216,7 @@ typedef enum {
   X86_SSE4_2,
   X86_SSE4A,
   X86_AVX,
+  X86_AVX_VNNI,
   X86_AVX2,
   X86_AVX512F,
   X86_AVX512CD,

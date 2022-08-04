@@ -828,6 +828,24 @@ TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA_OCTAL_CORE_C86_3250) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN);
 }
 
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00906A4_AlderLakeP_00_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_ALDER_LAKE_AVX_VNNI) {
+  cpu().SetOsBackupsExtendedRegisters(true);
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000020, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000906A4, 0x00400800, 0x7FFAFBBF, 0xBFEBFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000001, 0x239CA7EB, 0x984007AC, 0xFC18C410}},
+      {{0x00000007, 1}, Leaf{0x00400810, 0x00000000, 0x00000000, 0x00000000}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x9A);
+  EXPECT_TRUE(info.features.avx_vnni);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ADL);
+}
+
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00106A1_Nehalem_CPUID.txt
 TEST_F(CpuidX86Test, Nehalem) {
   // Pre AVX cpus don't have xsave
