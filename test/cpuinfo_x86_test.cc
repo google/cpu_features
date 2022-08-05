@@ -513,7 +513,7 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_A10) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x15);
   EXPECT_EQ(info.model, 0x10);
   EXPECT_STREQ(info.brand_string,
