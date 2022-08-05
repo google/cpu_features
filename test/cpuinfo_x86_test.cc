@@ -1146,7 +1146,7 @@ TEST_F(CpuidX86Test, INTEL_GOLDMONT_PLUS) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x7A);
   EXPECT_EQ(GetX86Microarchitecture(&info),
