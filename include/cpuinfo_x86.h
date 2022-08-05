@@ -60,6 +60,7 @@ typedef struct {
   int sse4a : 1;
 
   int avx : 1;
+  int avx_vnni : 1;
   int avx2 : 1;
 
   int avx512f : 1;
@@ -97,6 +98,7 @@ typedef struct {
   int dca : 1;
   int ss : 1;
   int adx : 1;
+  int lzcnt : 1;  // Note: this flag is called ABM for AMD, LZCNT for Intel.
   // Make sure to update X86FeaturesEnum below if you add a field here.
 } X86Features;
 
@@ -139,6 +141,7 @@ typedef enum {
   INTEL_SKL,           // SKYLAKE
   INTEL_ATOM_GMT,      // GOLDMONT
   INTEL_ATOM_GMT_P,    // GOLDMONT+
+  INTEL_ATOM_TMT,      // TREMONT
   INTEL_KBL,           // KABY LAKE
   INTEL_CFL,           // COFFEE LAKE
   INTEL_WHL,           // WHISKEY LAKE
@@ -157,7 +160,7 @@ typedef enum {
   AMD_HAMMER,          // K8  HAMMER
   AMD_K10,             // K10
   AMD_K11,             // K11
-  AMD_K12,             // K12
+  AMD_K12,             // K12 LLANO
   AMD_BOBCAT,          // K14 BOBCAT
   AMD_PILEDRIVER,      // K15 PILEDRIVER
   AMD_STREAMROLLER,    // K15 STREAMROLLER
@@ -214,6 +217,7 @@ typedef enum {
   X86_SSE4_2,
   X86_SSE4A,
   X86_AVX,
+  X86_AVX_VNNI,
   X86_AVX2,
   X86_AVX512F,
   X86_AVX512CD,
@@ -248,6 +252,7 @@ typedef enum {
   X86_DCA,
   X86_SS,
   X86_ADX,
+  X86_LZCNT,
   X86_LAST_,
 } X86FeaturesEnum;
 

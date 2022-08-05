@@ -254,6 +254,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
   const Leaf leaf_1 = leaves->leaf_1;
   const Leaf leaf_7 = leaves->leaf_7;
   const Leaf leaf_7_1 = leaves->leaf_7_1;
+  const Leaf leaf_80000001 = leaves->leaf_80000001;
 
   const bool have_xsave = IsBitSet(leaf_1.ecx, 26);
   const bool have_osxsave = IsBitSet(leaf_1.ecx, 27);
@@ -312,6 +313,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
   features->vaes = IsBitSet(leaf_7.ecx, 9);
   features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
   features->adx = IsBitSet(leaf_7.ebx, 19);
+  features->lzcnt = IsBitSet(leaf_80000001.ecx, 5);
 
   /////////////////////////////////////////////////////////////////////////////
   // The following section is devoted to Vector Extensions.
@@ -340,6 +342,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
     if (os_preserves->avx_registers) {
       features->fma3 = IsBitSet(leaf_1.ecx, 12);
       features->avx = IsBitSet(leaf_1.ecx, 28);
+      features->avx_vnni = IsBitSet(leaf_7_1.eax, 4);
       features->avx2 = IsBitSet(leaf_7.ebx, 5);
     }
     if (os_preserves->avx512_registers) {
@@ -406,8 +409,8 @@ X86Info GetX86Info(void) {
       IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   const bool is_hygon =
       IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_HYGON_GENUINE);
-  const bool is_zhaoxin = 
-      (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_CENTAUR_HAULS) || 
+  const bool is_zhaoxin =
+      (IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_CENTAUR_HAULS) ||
        IsVendor(leaves.leaf_0, CPU_FEATURES_VENDOR_SHANGHAI));
   SetVendor(leaves.leaf_0, info.vendor);
   if (is_intel || is_amd || is_hygon || is_zhaoxin) {
@@ -466,6 +469,11 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x06, 0x7A):
         // https://en.wikichip.org/wiki/intel/microarchitectures/goldmont_plus
         return INTEL_ATOM_GMT_P;
+      case CPUID(0x06, 0x8A):
+      case CPUID(0x06, 0x96):
+      case CPUID(0x06, 0x9C):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/tremont
+        return INTEL_ATOM_TMT;
       case CPUID(0x06, 0x0F):
       case CPUID(0x06, 0x16):
         // https://en.wikipedia.org/wiki/Intel_Core_(microarchitecture)
@@ -588,15 +596,15 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/zhangjiang
         return ZHAOXIN_ZHANGJIANG;
       case CPUID(0x07, 0x1B):
-	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/wudaokou
-	return ZHAOXIN_WUDAOKOU;
+        // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/wudaokou
+        return ZHAOXIN_WUDAOKOU;
       case CPUID(0x07, 0x3B):
-	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/lujiazui
-	return ZHAOXIN_LUJIAZUI;
+        // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/lujiazui
+        return ZHAOXIN_LUJIAZUI;
       case CPUID(0x07, 0x5B):
-	return ZHAOXIN_YONGFENG;
+        return ZHAOXIN_YONGFENG;
       default:
-	return X86_UNKNOWN;
+        return X86_UNKNOWN;
     }
   }
   if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_SHANGHAI)) {
@@ -606,15 +614,15 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/zhangjiang
         return ZHAOXIN_ZHANGJIANG;
       case CPUID(0x07, 0x1B):
-	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/wudaokou
-	return ZHAOXIN_WUDAOKOU;
+        // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/wudaokou
+        return ZHAOXIN_WUDAOKOU;
       case CPUID(0x07, 0x3B):
-	// https://en.wikichip.org/wiki/zhaoxin/microarchitectures/lujiazui
-	return ZHAOXIN_LUJIAZUI;
+        // https://en.wikichip.org/wiki/zhaoxin/microarchitectures/lujiazui
+        return ZHAOXIN_LUJIAZUI;
       case CPUID(0x07, 0x5B):
-	return ZHAOXIN_YONGFENG;
+        return ZHAOXIN_YONGFENG;
       default:
-	return X86_UNKNOWN;
+        return X86_UNKNOWN;
     }
   }
   if (IsVendorByX86Info(info, CPU_FEATURES_VENDOR_AUTHENTIC_AMD)) {
@@ -667,6 +675,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x11, 0x03):
         // http://developer.amd.com/wordpress/media/2012/10/41788.pdf
         return AMD_K11;
+      case CPUID(0x12, 0x00):
       case CPUID(0x12, 0x01):
         // https://www.amd.com/system/files/TechDocs/44739_12h_Rev_Gd.pdf
         return AMD_K12;
@@ -1725,6 +1734,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_SSE4_2, sse4_2, , , )                           \
   LINE(X86_SSE4A, sse4a, , , )                             \
   LINE(X86_AVX, avx, , , )                                 \
+  LINE(X86_AVX_VNNI, avx_vnni, , , )                       \
   LINE(X86_AVX2, avx2, , , )                               \
   LINE(X86_AVX512F, avx512f, , , )                         \
   LINE(X86_AVX512CD, avx512cd, , , )                       \
@@ -1758,7 +1768,8 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_RDRND, rdrnd, , , )                             \
   LINE(X86_DCA, dca, , , )                                 \
   LINE(X86_SS, ss, , , )                                   \
-  LINE(X86_ADX, adx, , , )
+  LINE(X86_ADX, adx, , , )                                 \
+  LINE(X86_LZCNT, lzcnt, , , )
 #define INTROSPECTION_PREFIX X86
 #define INTROSPECTION_ENUM_PREFIX X86
 #include "define_introspection.inl"
@@ -1785,6 +1796,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(INTEL_SKL)                   \
   LINE(INTEL_ATOM_GMT)              \
   LINE(INTEL_ATOM_GMT_P)            \
+  LINE(INTEL_ATOM_TMT)              \
   LINE(INTEL_KBL)                   \
   LINE(INTEL_CFL)                   \
   LINE(INTEL_WHL)                   \
