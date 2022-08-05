@@ -516,6 +516,29 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI_CACHE_INFO) {
   EXPECT_EQ(info.levels[3].partitioning, 1);
 }
 
+// https://github.com/InstLatx64/InstLatx64/blob/master/AuthenticAMD/AuthenticAMD0610F01_K15_Piledriver_CPUID.txt
+TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_A10) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000D, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x00000001, 0}, Leaf{0x00610F01, 0x00040800, 0x3E98320B, 0x178BFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000000, 0x00000008, 0x00000000, 0x00000000}},
+      {{0x80000000, 0}, Leaf{0x8000001E, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000001, 0}, Leaf{0x00610F01, 0x20000000, 0x01EBBFFF, 0x2FD3FBFF}},
+      {{0x80000002, 0}, Leaf{0x20444D41, 0x2D303141, 0x30303835, 0x5041204B}},
+      {{0x80000003, 0}, Leaf{0x69772055, 0x52206874, 0x6F656461, 0x6D74286E}},
+      {{0x80000004, 0}, Leaf{0x44482029, 0x61724720, 0x63696870, 0x00202073}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
+  EXPECT_EQ(info.family, 0x15);
+  EXPECT_EQ(info.model, 0x10);
+  EXPECT_STREQ(info.brand_string,
+               "AMD A10-5800K APU with Radeon(tm) HD Graphics  ");
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::AMD_PILEDRIVER);
+}
+
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0600F12_K15_Interlagos_CPUID3.txt
 TEST_F(CpuidX86Test, AMD_K15_BULLDOZER_INTERLAGOS) {
   cpu().SetLeaves({
