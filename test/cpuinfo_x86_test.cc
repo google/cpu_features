@@ -1158,7 +1158,7 @@ TEST_F(CpuidX86Test, INTEL_GOLDMONT_PLUS) {
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x7A);
   EXPECT_EQ(GetX86Microarchitecture(&info),
-            X86Microarchitecture::INTEL_ATOM_GMT_P);
+            X86Microarchitecture::INTEL_ATOM_GMT_PLUS);
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0050670_KnightsLanding_CPUID.txt
