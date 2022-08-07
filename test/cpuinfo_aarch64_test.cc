@@ -23,6 +23,18 @@ namespace {
 
 void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
 
+TEST(CpuinfoAarch64Test, Aarch64FeaturesEnum) {
+   const char *last_name = GetAarch64FeaturesEnumName(AARCH64_LAST_);
+   EXPECT_STREQ(last_name, "unknown_feature");
+   for (int i = static_cast<int>(AARCH64_FP); i != static_cast<int>(AARCH64_LAST_); ++i) {
+      const auto feature = static_cast<Aarch64FeaturesEnum>(i);
+      const char *name = GetAarch64FeaturesEnumName(feature);
+      ASSERT_FALSE(name == nullptr);
+      EXPECT_STRNE(name, "");
+      EXPECT_STRNE(name, last_name);
+   }
+}
+
 TEST(CpuinfoAarch64Test, FromHardwareCap) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_AES, 0);
