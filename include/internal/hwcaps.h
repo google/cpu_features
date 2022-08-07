@@ -205,6 +205,9 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #define HWCAP_S390_SIE          4194304
 
 // https://elixir.bootlin.com/linux/latest/source/arch/riscv/include/uapi/asm/hwcap.h
+#define RISCV_HWCAP_32 0x32
+#define RISCV_HWCAP_64 0x64
+#define RISCV_HWCAP_128 0x128
 #define RISCV_HWCAP_A (1UL << ('A' - 'A'))
 #define RISCV_HWCAP_C (1UL << ('C' - 'A'))
 #define RISCV_HWCAP_D (1UL << ('D' - 'A'))
