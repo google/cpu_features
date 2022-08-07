@@ -342,6 +342,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
     if (os_preserves->avx_registers) {
       features->fma3 = IsBitSet(leaf_1.ecx, 12);
       features->avx = IsBitSet(leaf_1.ecx, 28);
+      features->avx_vnni = IsBitSet(leaf_7_1.eax, 4);
       features->avx2 = IsBitSet(leaf_7.ebx, 5);
     }
     if (os_preserves->avx512_registers) {
@@ -465,6 +466,11 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x06, 0x5C):
         // https://en.wikipedia.org/wiki/Goldmont
         return INTEL_ATOM_GMT;
+      case CPUID(0x06, 0x8A):
+      case CPUID(0x06, 0x96):
+      case CPUID(0x06, 0x9C):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/tremont
+        return INTEL_ATOM_TMT;
       case CPUID(0x06, 0x0F):
       case CPUID(0x06, 0x16):
         // https://en.wikipedia.org/wiki/Intel_Core_(microarchitecture)
@@ -552,6 +558,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikichip.org/wiki/intel/microarchitectures/alder_lake
         return INTEL_ADL;
       case CPUID(0x06, 0xA5):
+      case CPUID(0x06, 0xA6):
         // https://en.wikichip.org/wiki/intel/microarchitectures/comet_lake
         return INTEL_CML;
       case CPUID(0x06, 0xA7):
@@ -679,9 +686,11 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikichip.org/wiki/amd/microarchitectures/bulldozer
         return AMD_BULLDOZER;
       case CPUID(0x15, 0x02):
+      case CPUID(0x15, 0x10):
       case CPUID(0x15, 0x11):
       case CPUID(0x15, 0x13):
         // https://en.wikichip.org/wiki/amd/microarchitectures/piledriver
+        // https://www.amd.com/system/files/TechDocs/48931_15h_Mod_10h-1Fh_Rev_Guide.pdf
         return AMD_PILEDRIVER;
       case CPUID(0x15, 0x30):
       case CPUID(0x15, 0x38):
@@ -1725,6 +1734,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_SSE4_2, sse4_2, , , )                           \
   LINE(X86_SSE4A, sse4a, , , )                             \
   LINE(X86_AVX, avx, , , )                                 \
+  LINE(X86_AVX_VNNI, avx_vnni, , , )                       \
   LINE(X86_AVX2, avx2, , , )                               \
   LINE(X86_AVX512F, avx512f, , , )                         \
   LINE(X86_AVX512CD, avx512cd, , , )                       \
@@ -1785,6 +1795,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(INTEL_BDW)                   \
   LINE(INTEL_SKL)                   \
   LINE(INTEL_ATOM_GMT)              \
+  LINE(INTEL_ATOM_TMT)              \
   LINE(INTEL_KBL)                   \
   LINE(INTEL_CFL)                   \
   LINE(INTEL_WHL)                   \

@@ -150,7 +150,7 @@ TEST_F(CpuidX86Test, SandyBridge) {
       {{0x00000007, 0}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000000}},
   });
   const auto info = GetX86Info();
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x02A);
   EXPECT_EQ(info.stepping, 0x06);
@@ -212,7 +212,7 @@ TEST_F(CpuidX86Test, SkyLake) {
       {{0x00000007, 0}, Leaf{0x00000000, 0x029C67AF, 0x00000000, 0x00000000}},
   });
   const auto info = GetX86Info();
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x04E);
   EXPECT_EQ(info.stepping, 0x03);
@@ -342,7 +342,7 @@ TEST_F(CpuidX86Test, AMD_K11_GRIFFIN) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x11);
   EXPECT_EQ(info.model, 0x03);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_K11);
@@ -358,7 +358,7 @@ TEST_F(CpuidX86Test, AMD_K12_LLANO) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x12);
   EXPECT_EQ(info.model, 0x01);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_K12);
@@ -374,7 +374,7 @@ TEST_F(CpuidX86Test, AMD_K14_BOBCAT_AMD0500F01) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x14);
   EXPECT_EQ(info.model, 0x00);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_BOBCAT);
@@ -398,7 +398,7 @@ TEST_F(CpuidX86Test, AMD_K14_BOBCAT_AMD0500F10) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x14);
   EXPECT_EQ(info.model, 0x01);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_BOBCAT);
@@ -414,7 +414,7 @@ TEST_F(CpuidX86Test, AMD_K14_BOBCAT_AMD0500F20) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x14);
   EXPECT_EQ(info.model, 0x02);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_BOBCAT);
@@ -434,7 +434,7 @@ TEST_F(CpuidX86Test, AMD_K15_EXCAVATOR_STONEY_RIDGE) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x15);
   EXPECT_EQ(info.model, 0x70);
   EXPECT_STREQ(info.brand_string,
@@ -457,7 +457,7 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x15);
   EXPECT_EQ(info.model, 0x02);
   EXPECT_STREQ(info.brand_string,
@@ -516,6 +516,29 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI_CACHE_INFO) {
   EXPECT_EQ(info.levels[3].partitioning, 1);
 }
 
+// https://github.com/InstLatx64/InstLatx64/blob/master/AuthenticAMD/AuthenticAMD0610F01_K15_Piledriver_CPUID.txt
+TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_A10) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000D, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x00000001, 0}, Leaf{0x00610F01, 0x00040800, 0x3E98320B, 0x178BFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000000, 0x00000008, 0x00000000, 0x00000000}},
+      {{0x80000000, 0}, Leaf{0x8000001E, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000001, 0}, Leaf{0x00610F01, 0x20000000, 0x01EBBFFF, 0x2FD3FBFF}},
+      {{0x80000002, 0}, Leaf{0x20444D41, 0x2D303141, 0x30303835, 0x5041204B}},
+      {{0x80000003, 0}, Leaf{0x69772055, 0x52206874, 0x6F656461, 0x6D74286E}},
+      {{0x80000004, 0}, Leaf{0x44482029, 0x61724720, 0x63696870, 0x00202073}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
+  EXPECT_EQ(info.family, 0x15);
+  EXPECT_EQ(info.model, 0x10);
+  EXPECT_STREQ(info.brand_string,
+               "AMD A10-5800K APU with Radeon(tm) HD Graphics  ");
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::AMD_PILEDRIVER);
+}
+
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0600F12_K15_Interlagos_CPUID3.txt
 TEST_F(CpuidX86Test, AMD_K15_BULLDOZER_INTERLAGOS) {
   cpu().SetLeaves({
@@ -530,7 +553,7 @@ TEST_F(CpuidX86Test, AMD_K15_BULLDOZER_INTERLAGOS) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x15);
   EXPECT_EQ(info.model, 0x01);
   EXPECT_STREQ(info.brand_string,
@@ -554,7 +577,7 @@ TEST_F(CpuidX86Test, AMD_K15_STREAMROLLER_GODAVARI) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x15);
   EXPECT_EQ(info.model, 0x38);
   EXPECT_EQ(info.stepping, 0x01);
@@ -575,7 +598,7 @@ TEST_F(CpuidX86Test, AMD_K15_BULLDOZER_ZAMBEZI_ABM) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x15);
   EXPECT_EQ(info.model, 0x01);
 
@@ -599,7 +622,7 @@ TEST_F(CpuidX86Test, AMD_K16_JAGUAR_KABINI) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x16);
   EXPECT_EQ(info.model, 0x00);
   EXPECT_STREQ(info.brand_string,
@@ -621,7 +644,7 @@ TEST_F(CpuidX86Test, AMD_K16_PUMA_BEEMA) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x16);
   EXPECT_EQ(info.model, 0x30);
   EXPECT_STREQ(info.brand_string,
@@ -643,7 +666,7 @@ TEST_F(CpuidX86Test, AMD_K17_ZEN_DALI) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x17);
   EXPECT_EQ(info.model, 0x20);
   EXPECT_STREQ(info.brand_string,
@@ -665,7 +688,7 @@ TEST_F(CpuidX86Test, AMD_K17_ZEN_PLUS_PINNACLE_RIDGE) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x17);
   EXPECT_EQ(info.model, 0x08);
   EXPECT_STREQ(info.brand_string,
@@ -687,7 +710,7 @@ TEST_F(CpuidX86Test, AMD_K17_ZEN2_XBOX_SERIES_X) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x17);
   EXPECT_EQ(info.model, 0x47);
   EXPECT_STREQ(info.brand_string, "AMD 4700S 8-Core Processor Desktop Kit");
@@ -708,7 +731,7 @@ TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "HygonGenuine");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_HYGON_GENUINE);
   EXPECT_EQ(info.family, 0x18);
   EXPECT_EQ(info.model, 0x00);
   EXPECT_STREQ(info.brand_string,
@@ -778,7 +801,7 @@ TEST_F(CpuidX86Test, AMD_K19_ZEN3_VERMEER) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x19);
   EXPECT_EQ(info.model, 0x21);
   EXPECT_STREQ(info.brand_string,
@@ -799,7 +822,7 @@ TEST_F(CpuidX86Test, AMD_K19_ZEN3) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "AuthenticAMD");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x19);
   EXPECT_EQ(info.model, 0x44);
   EXPECT_STREQ(info.brand_string,
@@ -822,10 +845,28 @@ TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA_OCTAL_CORE_C86_3250) {
 
   EXPECT_EQ(info.model, 0x01);
   EXPECT_EQ(info.family, 0x18);
-  EXPECT_STREQ(info.vendor, "HygonGenuine");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_HYGON_GENUINE);
   EXPECT_STREQ(info.brand_string,
                "Hygon C86 3250  8-core Processor               ");
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN);
+}
+
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00906A4_AlderLakeP_00_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_ALDER_LAKE_AVX_VNNI) {
+  cpu().SetOsBackupsExtendedRegisters(true);
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000020, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000906A4, 0x00400800, 0x7FFAFBBF, 0xBFEBFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000001, 0x239CA7EB, 0x984007AC, 0xFC18C410}},
+      {{0x00000007, 1}, Leaf{0x00400810, 0x00000000, 0x00000000, 0x00000000}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x9A);
+  EXPECT_TRUE(info.features.avx_vnni);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ADL);
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00106A1_Nehalem_CPUID.txt
@@ -891,7 +932,7 @@ flags           : fpu mmx sse sse2 pni ssse3 sse4_1 sse4_2
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x1A);
   EXPECT_EQ(info.stepping, 0x02);
@@ -969,7 +1010,7 @@ flags           : fpu mmx sse sse2 pni ssse3 sse4_1 sse4_2
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x37);
   EXPECT_EQ(info.stepping, 0x03);
@@ -1069,7 +1110,7 @@ flags           : fpu mmx sse
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x07);
   EXPECT_EQ(info.stepping, 0x03);
@@ -1093,7 +1134,7 @@ TEST_F(CpuidX86Test, INTEL_80486) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x04);
   EXPECT_EQ(info.model, 0x08);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_80486);
@@ -1107,7 +1148,7 @@ TEST_F(CpuidX86Test, INTEL_P54C) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x05);
   EXPECT_EQ(info.model, 0x02);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_P5);
@@ -1121,7 +1162,7 @@ TEST_F(CpuidX86Test, INTEL_LAKEMONT) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x05);
   EXPECT_EQ(info.model, 0x09);
   EXPECT_EQ(GetX86Microarchitecture(&info),
@@ -1136,7 +1177,7 @@ TEST_F(CpuidX86Test, INTEL_KNIGHTS_LANDING) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x57);
   EXPECT_EQ(GetX86Microarchitecture(&info),
@@ -1151,7 +1192,7 @@ TEST_F(CpuidX86Test, INTEL_CML_U) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x8E);
   EXPECT_EQ(info.stepping, 0x0C);
@@ -1166,10 +1207,67 @@ TEST_F(CpuidX86Test, INTEL_CML_H) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0xA5);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_CML);
+}
+
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00A0660_CometLake_CPUID1.txt
+TEST_F(CpuidX86Test, INTEL_CML_U2) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000A0660, 0x00100800, 0x7FFAFBBF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0xA6);
+  EXPECT_EQ(info.stepping, 0x00);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_CML);
+}
+
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00806A1_Lakefield_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_ATOM_TMT_LAKEFIELD) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000806A1, 0x00100800, 0x4FD8EBBF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x8A);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
+}
+
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0090661_ElkhartLake_CPUID01.txt
+TEST_F(CpuidX86Test, INTEL_ATOM_TMT_ELKHART_LAKE) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x00090661, 0x00800800, 0x4FF8EBBF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x96);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
+}
+
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00906C0_JasperLake_01_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_ATOM_TMT_JASPER_LAKE) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000906C0, 0x00800800, 0x4FF8EBBF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x9C);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
 }
 
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00306F2_HaswellEP2_CPUID.txt
@@ -1183,7 +1281,7 @@ TEST_F(CpuidX86Test, INTEL_HASWELL_LZCNT) {
   });
   const auto info = GetX86Info();
 
-  EXPECT_STREQ(info.vendor, "GenuineIntel");
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x3F);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_HSW);
