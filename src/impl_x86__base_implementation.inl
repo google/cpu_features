@@ -474,6 +474,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x06, 0x9C):
         // https://en.wikichip.org/wiki/intel/microarchitectures/tremont
         return INTEL_ATOM_TMT;
+      case CPUID(0x06, 0x0E):
       case CPUID(0x06, 0x0F):
       case CPUID(0x06, 0x16):
         // https://en.wikipedia.org/wiki/Intel_Core_(microarchitecture)
