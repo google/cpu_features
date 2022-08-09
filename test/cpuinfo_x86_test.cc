@@ -671,7 +671,7 @@ TEST_F(CpuidX86Test, AMD_K16_CATO) {
   EXPECT_EQ(info.model, 0x26);
   EXPECT_STREQ(info.brand_string,
                "AMD A9-9820 Processor");
-  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_CATO);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_JAGUAR);
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0820F01_K17_Dali_CPUID.txt

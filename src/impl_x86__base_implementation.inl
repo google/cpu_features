@@ -705,9 +705,8 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikichip.org/wiki/amd/microarchitectures/excavator
         return AMD_EXCAVATOR;
       case CPUID(0x16, 0x00):
-        return AMD_JAGUAR;
       case CPUID(0x16, 0x26):
-        return AMD_CATO;
+        return AMD_JAGUAR;
       case CPUID(0x16, 0x30):
         return AMD_PUMA;
       case CPUID(0x17, 0x01):
@@ -1827,7 +1826,6 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(AMD_EXCAVATOR)               \
   LINE(AMD_BULLDOZER)               \
   LINE(AMD_JAGUAR)                  \
-  LINE(AMD_CATO)                    \
   LINE(AMD_PUMA)                    \
   LINE(AMD_ZEN)                     \
   LINE(AMD_ZEN_PLUS)                \
