@@ -167,6 +167,7 @@ typedef enum {
   AMD_EXCAVATOR,       // K15 EXCAVATOR
   AMD_BULLDOZER,       // K15 BULLDOZER
   AMD_JAGUAR,          // K16 JAGUAR
+  AMD_CATO,            // K16 CATO
   AMD_PUMA,            // K16 PUMA
   AMD_ZEN,             // K17 ZEN
   AMD_ZEN_PLUS,        // K17 ZEN+
