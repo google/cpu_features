@@ -466,6 +466,9 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x06, 0x5C):
         // https://en.wikipedia.org/wiki/Goldmont
         return INTEL_ATOM_GMT;
+      case CPUID(0x06, 0x7A):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/goldmont_plus
+        return INTEL_ATOM_GMT_PLUS;
       case CPUID(0x06, 0x8A):
       case CPUID(0x06, 0x96):
       case CPUID(0x06, 0x9C):
@@ -1795,6 +1798,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(INTEL_BDW)                   \
   LINE(INTEL_SKL)                   \
   LINE(INTEL_ATOM_GMT)              \
+  LINE(INTEL_ATOM_GMT_PLUS)         \
   LINE(INTEL_ATOM_TMT)              \
   LINE(INTEL_KBL)                   \
   LINE(INTEL_CFL)                   \
