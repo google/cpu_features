@@ -13,6 +13,66 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// A note on x86 SIMD instructions availability
+// -----------------------------------------------------------------------------
+// A number of conditions need to be met for an application to use SIMD
+// instructions:
+// 1. The CPU itself must support the instruction.
+// - we use `CPUID` to check whether the feature is supported.
+// 2. The OS must save and restore the associated SIMD register across context
+//    switches, we check that:
+// - the CPU reports supporting hardware context switching instructions via
+//   CPUID.1:ECX.XSAVE[bit 26]
+// - the OS reports supporting hardware context switching instructions via
+//   CPUID.1:ECX.OSXSAVE[bit 27]
+// - the CPU extended control register 0 (XCR0) is set to save and restore the
+//   needed SIMD registers
+//
+// Note that if `XSAVE`/`OSXSAVE` are missing, we delegate the detection to the
+// OS via the `DetectFeaturesFromOs` function or via microarchitecture
+// heuristics.
+//
+// Encoding
+// -----------------------------------------------------------------------------
+// `X86Info` contains fields such as `vendor` and `brand_string` they are
+// represents characters in ASCII encoding. `vendor` length of characters is 13
+// and `brand_string` is 49 (with null terminated string). We use
+// CPUID.1:E[D,C,B]X to get `vendor` and CPUID.8000_000[4:2]:E[D,C,B,A]X to get
+// `brand_string`
+//
+// Microarchitecture
+// -----------------------------------------------------------------------------
+// `GetX86Microarchitecture` function consists of check on vendor via
+// `IsVendorByX86Info`. We use `CPUID(family, model)` macro to define
+//  microarchitecture of vendor. In cases where the `family` and `model` is the
+//  same for several microarchitectures we do a stepping check or in the worst
+//  case parsing `brand_string` as example `HasSecondFMA`. Details of
+//  identification by `brand_string` can be found in the `Identification`
+//  section by reference:
+//  https://en.wikichip.org/wiki/intel/microarchitectures/cascade_lake
+//
+// CacheInfo X86
+// -----------------------------------------------------------------------------
+// We use common struct `CacheInfo` for all CPU architectures and this struct
+// contains of `levels` with certain maximum number of cache levels, you can
+// feel free increase this value if more cache levels are needed. We have full
+// support of cache identification for Intel CPUs. For old processors of Intel
+// we parse descriptors via `GetCacheLevelInfo`, see Application Note 485: Intel
+// Processor Identification and CPUID Instruction. Currently, we don't have of
+// support cache detection of legacy AMD processors. For newer AMD and Intel
+// CPUs we use `ParseCacheInfo` function with difference of `leaf_id`.
+// Most other processors have the same approach as Intel and AMD, thus CPUs of
+// Hygon we detect via AMD cache detection.
+//
+// Internal structures
+// -----------------------------------------------------------------------------
+// We use internal structures such as `Leaves` and `OsPreserves` to hold cpuid
+// info and support of registers, since latency of `CPUID` instruction ~100
+// clock cycles, see https://www.agner.org/optimize/instruction_tables.pdf.
+// Hence, we use `ReadLeaves` function for `GetX86Info`, `GetCacheInfo` and
+// `FillX86BrandString` to read leaves and hold these values to avoid redundant
+// call on the same leaf.
+
 #include <stdbool.h>
 #include <string.h>
 
@@ -121,22 +181,6 @@ static Leaves ReadLeaves(void) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // OS support
-// Before an application attempts to use the SIMD extensions,
-// it should check that they are present on the processor and supported by OS:
-//  1. Check that operating system saves and restores XMM/YMM/ZMM/TMM
-//     registers during context switches. Detect CPUID.1:ECX.OSXSAVE[bit 27]
-//     this feature flag specifies that operating system provides extended state
-//     management implied HW support for XSAVE, XRSTOR, XGETBV, XCR0.
-//  2. Check that the SIMD extensions supports by hardware.
-//     Detect CPUID.1:ECX.XSAVE[bit 26]
-//  3. Check enabled state in XCR0 via XGETBV.
-//  4. Check feature flag for instruction set.
-//
-//  Note:
-//  It is unwise for an application to rely exclusively on feature flag for
-//  instruction set or at all on CPUID.1:ECX.XSAVE[bit 26]: These indicate
-//  hardware support but not operating system support. If XMM/YMM/ZMM/TMM state
-//  management is not enabled by an operating systems, instructions will #UD
 ////////////////////////////////////////////////////////////////////////////////
 
 #define MASK_XMM 0x2
