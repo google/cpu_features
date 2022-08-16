@@ -1686,24 +1686,23 @@ static void ParseCacheInfo(const int max_cpuid_leaf, uint32_t leaf_id,
   if (info.size > 0) *old_info = info;
 }
 
-static CacheLevelInfo GetCacheLevelInfoLegacyAMD(uint32_t cache_id,
-                                                 CacheType cache_type,
-                                                 int cache_size, int level,
-                                                 int ways) {
-  const int KiB = 1024;
-  const int UNDEF = -1;
-  return (CacheLevelInfo){.level = level,
-                          .cache_type = cache_type,
-                          .cache_size = cache_size * KiB,
-                          .ways = ways,
-                          .line_size = ExtractBitRange(cache_id, 7, 0),
-                          .tlb_entries = UNDEF,
-                          .partitioning = UNDEF};
-}
+typedef struct {
+  int level;
+  int cache_id;
+  CacheType cache_type;
+} CacheLevelInfoLegacyAMD;
 
-// https://www.amd.com/system/files/TechDocs/25481.pdf
-// See Table 4: L2/L3 Cache and TLB Associativity Field Definition.
-static int GetWaysLegacyAMD(const uint32_t cache_id) {
+static int GetWaysLegacyAMD(int cache_level, const uint32_t cache_id) {
+  // https://www.amd.com/system/files/TechDocs/25481.pdf page 23
+  // CPUID.8000_0005_ECX[23:16] L1 data cache associativity.
+  // CPUID.8000_0005_EDX[23:16] L1 instruction cache associativity.
+  if (cache_level == 1) {
+    return ExtractBitRange(cache_id, 23, 16);
+  }
+  // https://www.amd.com/system/files/TechDocs/25481.pdf page 24
+  // See Table 4: L2/L3 Cache and TLB Associativity Field Definition.
+  // CPUID.8000_0006_ECX[15:12] L2 cache associativity.
+  // CPUID.8000_0006_EDX[15:12] L3 cache associativity.
   const int ways = ExtractBitRange(cache_id, 15, 12);
   switch (ways) {
     case 0x0:
@@ -1732,36 +1731,29 @@ static int GetWaysLegacyAMD(const uint32_t cache_id) {
   }
 }
 
-static CacheLevelInfo GetCacheL1InfoLegacyAMD(const uint32_t cache_id,
-                                              CacheType cache_type) {
-  const uint32_t cache_size = ExtractBitRange(cache_id, 31, 24);
-  const int ways = ExtractBitRange(cache_id, 23, 16);
-  return GetCacheLevelInfoLegacyAMD(cache_id, cache_type, cache_size, 1, ways);
-}
-
-static CacheLevelInfo GetCacheL2InfoLegacyAMD(const uint32_t cache_id,
-                                              CacheType cache_type) {
-  const uint32_t cache_size = ExtractBitRange(cache_id, 31, 16);
-  const int ways = GetWaysLegacyAMD(cache_id);
-  return GetCacheLevelInfoLegacyAMD(cache_id, cache_type, cache_size, 2, ways);
-}
-
-static CacheLevelInfo GetCacheL3InfoLegacyAMD(const uint32_t cache_id,
-                                              CacheType cache_type,
-                                              CacheInfo* info) {
-  const uint32_t cache_size = ExtractBitRange(cache_id, 31, 18);
-  if (cache_size == 0) {
-    info->size = 3;
-    return kEmptyCacheLevelInfo;
+static int GetCacheSizeLegacyAMD(int cache_level, const uint32_t cache_id) {
+  switch (cache_level) {
+    case 1:
+      // https://www.amd.com/system/files/TechDocs/25481.pdf page 23
+      // CPUID.8000_0005_ECX[31:24] L1 data cache size in KB.
+      // CPUID.8000_0005_EDX[31:24] L1 instruction cache size KB.
+      return ExtractBitRange(cache_id, 31, 24);
+    case 2:
+      // https://www.amd.com/system/files/TechDocs/25481.pdf page 25
+      // CPUID.8000_0006_ECX[31:16] L2 cache size in KB.
+      return ExtractBitRange(cache_id, 31, 16);
+    case 3:
+      // https://www.amd.com/system/files/TechDocs/25481.pdf page 25
+      // CPUID.8000_0006_EDX[31:18] L3 cache size.
+      // Specifies the L3 cache size is within the following range:
+      // (L3Size[31:18] * 512KB) <= L3 cache size < ((L3Size[31:18]+1) * 512KB).
+      return ExtractBitRange(cache_id, 31, 18) * 512;
+    default:
+      return 0;
   }
-  info->size = 4;
-
-  const int ways = GetWaysLegacyAMD(cache_id);
-  // https://www.amd.com/system/files/TechDocs/25481.pdf page 25
-  // CPUID Fn8000_0006_EDX L3 Cache Identifiers
-  return GetCacheLevelInfoLegacyAMD(cache_id, cache_type, cache_size * 512, 3,
-                                    ways);
 }
+
+#define LEGACY_AMD_MAX_CACHE_LEVEL 4
 
 // https://www.amd.com/system/files/TechDocs/25481.pdf
 // CPUID Fn8000_0005_E[A,B,C,D]X, Fn8000_0006_E[A,B,C,D]X - TLB and Cache info
@@ -1769,21 +1761,38 @@ static void ParseCacheInfoLegacyAMD(const uint32_t max_ext, CacheInfo* info) {
   const Leaf cache_tlb_leaf1 = SafeCpuIdEx(max_ext, 0x80000005, 0);
   const Leaf cache_tlb_leaf2 = SafeCpuIdEx(max_ext, 0x80000006, 0);
 
-  const uint32_t cache_l1d = cache_tlb_leaf1.ecx;
-  const uint32_t cache_l1i = cache_tlb_leaf1.edx;
-  const uint32_t cache_l2 = cache_tlb_leaf2.ecx;
-  const uint32_t cache_l3 = cache_tlb_leaf2.edx;
+  const CacheLevelInfoLegacyAMD legacy_cache_info[LEGACY_AMD_MAX_CACHE_LEVEL] =
+      {(CacheLevelInfoLegacyAMD){.cache_id = cache_tlb_leaf1.ecx,
+                                 .cache_type = CPU_FEATURE_CACHE_DATA,
+                                 .level = 1},
+       (CacheLevelInfoLegacyAMD){.cache_id = cache_tlb_leaf1.edx,
+                                 .cache_type = CPU_FEATURE_CACHE_INSTRUCTION,
+                                 .level = 1},
+       (CacheLevelInfoLegacyAMD){.cache_id = cache_tlb_leaf2.ecx,
+                                 .cache_type = CPU_FEATURE_CACHE_UNIFIED,
+                                 .level = 2},
+       (CacheLevelInfoLegacyAMD){.cache_id = cache_tlb_leaf2.edx,
+                                 .cache_type = CPU_FEATURE_CACHE_UNIFIED,
+                                 .level = 3}};
 
-  info->levels[0] = GetCacheL1InfoLegacyAMD(cache_l1d, CPU_FEATURE_CACHE_DATA);
-
-  info->levels[1] =
-      GetCacheL1InfoLegacyAMD(cache_l1i, CPU_FEATURE_CACHE_INSTRUCTION);
-
-  info->levels[2] =
-      GetCacheL2InfoLegacyAMD(cache_l2, CPU_FEATURE_CACHE_UNIFIED);
-
-  info->levels[3] =
-      GetCacheL3InfoLegacyAMD(cache_l3, CPU_FEATURE_CACHE_UNIFIED, info);
+  const int KiB = 1024;
+  const int UNDEF = -1;
+  for (int i = 0; i < LEGACY_AMD_MAX_CACHE_LEVEL; ++i) {
+    const int level = legacy_cache_info[i].level;
+    const int cache_id = legacy_cache_info[i].cache_id;
+    const CacheType cache_type = legacy_cache_info[i].cache_type;
+    const int cache_size = GetCacheSizeLegacyAMD(level, cache_id);
+    if (cache_size == 0) break;
+    info->levels[i] =
+        (CacheLevelInfo){.level = level,
+                         .cache_type = cache_type,
+                         .cache_size = cache_size * KiB,
+                         .ways = GetWaysLegacyAMD(level, cache_id),
+                         .line_size = ExtractBitRange(cache_id, 7, 0),
+                         .tlb_entries = UNDEF,
+                         .partitioning = UNDEF};
+    ++info->size;
+  }
 }
 
 CacheInfo GetX86CacheInfo(void) {
