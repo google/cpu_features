@@ -1757,6 +1757,8 @@ static CacheLevelInfo GetCacheL3InfoLegacyAMD(const uint32_t cache_id,
   info->size = 4;
 
   const int ways = GetWaysLegacyAMD(cache_id);
+  // https://www.amd.com/system/files/TechDocs/25481.pdf page 25
+  // CPUID Fn8000_0006_EDX L3 Cache Identifiers
   return GetCacheLevelInfoLegacyAMD(cache_id, cache_type, cache_size * 512, 3,
                                     ways);
 }
