@@ -1656,9 +1656,7 @@ static void ParseCacheInfo(const int max_cpuid_leaf, uint32_t leaf_id,
     const Leaf leaf = SafeCpuIdEx(max_cpuid_leaf, leaf_id, index);
     int cache_type_field = ExtractBitRange(leaf.eax, 4, 0);
     CacheType cache_type;
-    if (cache_type_field == 0)
-      break;
-    else if (cache_type_field == 1)
+    if (cache_type_field == 1)
       cache_type = CPU_FEATURE_CACHE_DATA;
     else if (cache_type_field == 2)
       cache_type = CPU_FEATURE_CACHE_INSTRUCTION;
