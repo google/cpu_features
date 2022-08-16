@@ -124,7 +124,6 @@ X86Info GetX86Info(void);
 
 // Returns cache hierarchy informations.
 // Can call cpuid multiple times.
-// Only works on Intel CPU at the moment.
 CacheInfo GetX86CacheInfo(void);
 
 typedef enum {

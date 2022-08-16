@@ -58,11 +58,10 @@
 // feel free increase this value if more cache levels are needed. We have full
 // support of cache identification for Intel CPUs. For old processors of Intel
 // we parse descriptors via `GetCacheLevelInfo`, see Application Note 485: Intel
-// Processor Identification and CPUID Instruction. Currently, we don't have of
-// support cache detection of legacy AMD processors. For newer AMD and Intel
+// Processor Identification and CPUID Instruction. For newer AMD and Intel
 // CPUs we use `ParseCacheInfo` function with difference of `leaf_id`.
 // Most other processors have the same approach as Intel and AMD, thus CPUs of
-// Hygon we detect via AMD cache detection.
+// Hygon we detect via AMD cache detection and Zhaoxin via Intel.
 //
 // Internal structures
 // -----------------------------------------------------------------------------
