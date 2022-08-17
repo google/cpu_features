@@ -89,3 +89,10 @@ if(PROCESSOR_IS_POWER)
   target_link_libraries(cpuinfo_ppc_test all_libraries)
   add_test(NAME cpuinfo_ppc_test COMMAND cpuinfo_ppc_test)
 endif()
+##------------------------------------------------------------------------------
+## cpuinfo_riscv_test
+if(PROCESSOR_IS_RISCV)
+  add_executable(cpuinfo_riscv_test cpuinfo_riscv_test.cc  ../src/impl_riscv_linux.c)
+  target_link_libraries(cpuinfo_riscv_test all_libraries)
+  add_test(NAME cpuinfo_riscv_test COMMAND cpuinfo_riscv_test)
+endif()

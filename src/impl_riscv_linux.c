@@ -14,8 +14,8 @@
 
 #include "cpu_features_macros.h"
 
-//#ifndef CPU_FEATURES_ARCH_RISCV
-//#if defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
+#ifdef CPU_FEATURES_ARCH_RISCV
+#if defined(CPU_FEATURES_OS_LINUX)
 
 #include "cpuinfo_riscv.h"
 
@@ -43,11 +43,6 @@
 // Implementation.
 ////////////////////////////////////////////////////////////////////////////////
 
-/*
-  UARCH FOUND:
-  sifive,bullet0 -> Series 7
-*/
-
 #include "internal/stack_line_reader.h"
 #include "internal/filesystem.h"
 
@@ -62,26 +57,31 @@ static bool HandleRiscVLine(const LineResult result,
   StringView key, value;
   if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
     if (CpuFeatures_StringView_IsEquals(key, str("isa"))) {
-      //CpuFeatures_StringView_IndexOf
       StringView tmp_sv;
+      value.ptr+=2; // ignore 'rv' prefix at the beginning
+      value.size-=2;
       for (size_t i = 0; i < RISCV_LAST_; ++i){
         tmp_sv.ptr = kCpuInfoFlags[i];
         tmp_sv.size = strlen(kCpuInfoFlags[i]);
-
         kSetters[i](&info->features,
-                    CpuFeatures_StringView_IndexOf(value, tmp_sv) > 1);
-        
+                    CpuFeatures_StringView_IndexOf(value, tmp_sv) != -1);
+      
       }
     }
     if (CpuFeatures_StringView_IsEquals(key, str("uarch"))){
-      //TODO
+      int separatorIdx = CpuFeatures_StringView_IndexOfChar(value, ',');
+      StringView vendor = {.ptr = value.ptr, .size = separatorIdx};
+      StringView uarch = {.ptr = value.ptr + separatorIdx + 1, .size = value.size - separatorIdx - 1};
+
+      CpuFeatures_StringView_CopyString(vendor,info->vendor,sizeof(info->vendor));
+      CpuFeatures_StringView_CopyString(uarch,info->uarch,sizeof(info->uarch));
     }
   }
   return !result.eof;
 }
 
 static void FillProcCpuInfoData(RiscvInfo* const info) {
-  const int fd = CpuFeatures_OpenFile("/Users/danieleaffinita/Desktop/cpu/infocpu");
+  const int fd = CpuFeatures_OpenFile("/proc/cpuinfo");
   if (fd >= 0) {
     StackLineReader reader;
     StackLineReader_Initialize(&reader, fd);
@@ -99,22 +99,13 @@ RiscvInfo GetRiscvInfo(void){
     RiscvInfo info = kEmptyRiscvInfo;
     FillProcCpuInfoData(&info);
 
-    //just testing
-    printf("PRETEST\n");
-    printf("32 -> %d\n",info.features.riscv32);
-    printf("64 -> %d\n",info.features.riscv64);
-    printf("128 -> %d\n",info.features.riscv128);
-    printf("a -> %d\n",info.features.a);
-    printf("c -> %d\n",info.features.c);
-    printf("d -> %d\n",info.features.d);
-    printf("e -> %d\n",info.features.e);
-    printf("f -> %d\n",info.features.f);
-    printf("i -> %d\n",info.features.i);
-    printf("m -> %d\n",info.features.m);
-    printf("v -> %d\n",info.features.v);
-    printf("q -> %d\n",info.features.q);
-    fflush(stdout);
+    if(!*info.vendor)
+      strcpy(info.vendor, "unknown_vendor");
+    if(!*info.uarch)
+      strcpy(info.uarch, "unknown_uarch");
+      
+    return info;
 }
 
-//#endif  //  defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
-//#endif  // CPU_FEATURES_ARCH_RISCV
+#endif  //  defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
+#endif  // CPU_FEATURES_ARCH_RISCV

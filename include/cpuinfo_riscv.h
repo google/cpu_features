@@ -18,9 +18,9 @@
 #include "cpu_features_cache_info.h"
 #include "cpu_features_macros.h"
 
-//#if !defined(CPU_FEATURES_ARCH_RISCV)
-//#error "Including cpuinfo_riscv.h from a non-riscv target."
-//#endif
+#if !defined(CPU_FEATURES_ARCH_RISCV)
+#error "Including cpuinfo_riscv.h from a non-riscv target."
+#endif
 
 CPU_FEATURES_START_CPP_NAMESPACE
 
@@ -39,31 +39,11 @@ typedef struct {
     int q : 1;        // Quad Precision Floating Point
 } RiscvFeatures;
 
-typedef enum 
-{
-    RISCV_UNKNOWN,
-    N25,
-    CODIX_BK3,
-    CODIX_BK5,
-    CODIX_BK7,
-    ET_MINION, 
-    ET_MAXION,
-    BOTTLEROCKET,
-    MI_V,
-    NV_RISCV,
-    E31,
-    E51,
-    E54_MC,
-    _7_SERIES,
-    VANILLA_5,
-    ROCKET,
-    RISCV_MICROARCHITECTURE_LAST_
-} RiscvMicroarchitecture;
 
 typedef struct {
-    RiscvFeatures          features;
-    RiscvMicroarchitecture uarch;
-    //Address space size (32, 64, 128)?
+    RiscvFeatures features;
+    char          uarch[64];  // 0 terminated string
+    char          vendor[64]; // 0 terminated string
 } RiscvInfo;
 
 typedef enum {
@@ -83,6 +63,8 @@ typedef enum {
 } RiscvFeaturesEnum;
 
 RiscvInfo GetRiscvInfo(void);
+int GetRiscvFeaturesEnumValue(const RiscvFeatures* features, RiscvFeaturesEnum value);
+const char* GetRiscvFeaturesEnumName(RiscvFeaturesEnum);
 
 CPU_FEATURES_END_CPP_NAMESPACE
 
