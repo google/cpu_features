@@ -705,6 +705,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikichip.org/wiki/amd/microarchitectures/excavator
         return AMD_EXCAVATOR;
       case CPUID(0x16, 0x00):
+      case CPUID(0x16, 0x26):
         return AMD_JAGUAR;
       case CPUID(0x16, 0x30):
         return AMD_PUMA;

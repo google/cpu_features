@@ -652,6 +652,28 @@ TEST_F(CpuidX86Test, AMD_K16_PUMA_BEEMA) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_PUMA);
 }
 
+// https://github.com/InstLatx64/InstLatx64/blob/master/AuthenticAMD/AuthenticAMD0720F61_K16_Cato_CPUID.txt
+TEST_F(CpuidX86Test, AMD_K16_CATO) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000D, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x00000001, 0}, Leaf{0x00720F61, 0x00080800, 0x3ED8220B, 0x178BFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000000, 0x00000008, 0x00000000, 0x00000000}},
+      {{0x80000000, 0}, Leaf{0x8000001E, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000001, 0}, Leaf{0x00720F61, 0x00000000, 0x154837FF, 0x2FD3FBFF}},
+      {{0x80000002, 0}, Leaf{0x20444D41, 0x392D3941, 0x20303238, 0x636F7250}},
+      {{0x80000003, 0}, Leaf{0x6F737365, 0x00000072, 0x00000000, 0x00000000}},
+      {{0x80000004, 0}, Leaf{0x00000000, 0x00000000, 0x00000000, 0x00000000}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
+  EXPECT_EQ(info.family, 0x16);
+  EXPECT_EQ(info.model, 0x26);
+  EXPECT_STREQ(info.brand_string,
+               "AMD A9-9820 Processor");
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_JAGUAR);
+}
+
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0820F01_K17_Dali_CPUID.txt
 TEST_F(CpuidX86Test, AMD_K17_ZEN_DALI) {
   cpu().SetLeaves({
