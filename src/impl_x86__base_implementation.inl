@@ -705,6 +705,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikichip.org/wiki/amd/microarchitectures/excavator
         return AMD_EXCAVATOR;
       case CPUID(0x16, 0x00):
+      case CPUID(0x16, 0x26):
         return AMD_JAGUAR;
       case CPUID(0x16, 0x30):
         return AMD_PUMA;
@@ -1656,16 +1657,18 @@ static void ParseCacheInfo(const int max_cpuid_leaf, uint32_t leaf_id,
     const Leaf leaf = SafeCpuIdEx(max_cpuid_leaf, leaf_id, index);
     int cache_type_field = ExtractBitRange(leaf.eax, 4, 0);
     CacheType cache_type;
-    if (cache_type_field == 0)
-      break;
-    else if (cache_type_field == 1)
+    if (cache_type_field == 1)
       cache_type = CPU_FEATURE_CACHE_DATA;
     else if (cache_type_field == 2)
       cache_type = CPU_FEATURE_CACHE_INSTRUCTION;
     else if (cache_type_field == 3)
       cache_type = CPU_FEATURE_CACHE_UNIFIED;
     else
-      break;  // Should not occur as per documentation.
+      // Intel Processor Identification and the CPUID Instruction Application
+      // Note 485 page 37 Table 5-10. Deterministic Cache Parameters.
+      // We skip cache parsing in case null of cache type or cache type in the
+      // range of 4-31 according to documentation.
+      break;
     int level = ExtractBitRange(leaf.eax, 7, 5);
     int line_size = ExtractBitRange(leaf.ebx, 11, 0) + 1;
     int partitioning = ExtractBitRange(leaf.ebx, 21, 12) + 1;
