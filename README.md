@@ -172,14 +172,14 @@ flags           : aes,avx,cx16,smx,sse4_1,sse4_2,ssse3
 <a name="support"></a>
 ## What's supported
 
-|         | x86³ | ARM     | AArch64 | MIPS⁴   | POWER   |
-|---------|:----:|:-------:|:-------:|:-------:|:-------:|
-| Android | yes² | yes¹    | yes¹    | yes¹    | N/A     |
-| iOS     | N/A  | not yet | not yet | N/A     | N/A     |
-| Linux   | yes² | yes¹    | yes¹    | yes¹    | yes¹    |
-| MacOs   | yes² | N/A     | not yet | N/A     | no      |
-| Windows | yes² | not yet | not yet | N/A     | N/A     |
-| FreeBSD | yes² | not yet | not yet | not yet | not yet |
+|         | x86³ | ARM     | AArch64 | MIPS⁴   | POWER   | RISC-V  |
+|---------|:----:|:-------:|:-------:|:-------:|:-------:|:-------:|
+| Android | yes² | yes¹    | yes¹    | yes¹    | N/A     | N/A     |
+| iOS     | N/A  | not yet | not yet | N/A     | N/A     | N/A     |
+| Linux   | yes² | yes¹    | yes¹    | yes¹    | yes¹    | yes¹    |
+| MacOs   | yes² | N/A     | not yet | N/A     | no      | N/A     |
+| Windows | yes² | not yet | not yet | N/A     | N/A     | N/A     |
+| FreeBSD | yes² | not yet | not yet | not yet | not yet | N/A     |
 
 1.  **Features revealed from Linux.** We gather data from several sources
     depending on availability:
