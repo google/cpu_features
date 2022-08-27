@@ -219,6 +219,34 @@ TEST_F(CpuidX86Test, SkyLake) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_SKL);
 }
 
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel0050654_SkylakeXeon_CPUID8.txt
+TEST_F(CpuidX86Test, SkyLakeXeon) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x00050654, 0x00100800, 0x7FFEFBFF, 0xBFEBFBFF}}
+  });
+  const auto info = GetX86Info();
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x055);
+  EXPECT_EQ(info.stepping, 0x04);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_SKL);
+}
+
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel0050657_CascadeLakeXeon_CPUID.txt
+TEST_F(CpuidX86Test, CascadeLake) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x00050657, 0x00400800, 0x7FFEFBFF, 0xBFEBFBFF}}
+  });
+  const auto info = GetX86Info();
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x055);
+  EXPECT_EQ(info.stepping, 0x07);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_CCL);
+}
+
 TEST_F(CpuidX86Test, Branding) {
   cpu().SetLeaves({
       {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
