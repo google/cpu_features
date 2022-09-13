@@ -418,9 +418,12 @@ static Node* CreateTree(void) {
   const S390XPlatformStrings strings = GetS390XPlatformStrings();
   AddMapEntry(root, "arch", CreateString("s390x"));
   AddMapEntry(root, "platform", CreateString("zSeries"));
-  //AddMapEntry(root, "model", CreateString(strings.model));
   if (strstr(strings.machine, "3931") != NULL)
-    AddMapEntry(root, "model", CreateString("z16"));
+    AddMapEntry(root, "model", CreateString("z16 Model A01"));
+  else if (strstr(strings.machine, "3932") != NULL)
+    AddMapEntry(root, "model", CreateString("z15 Model T01"));
+  else if (strstr(strings.machine, "8562") != NULL)
+    AddMapEntry(root, "model", CreateString("z15 Model T02"));
   AddMapEntry(root, "machine", CreateString(strings.machine));
   AddMapEntry(root, "# processors", CreateString(strings.num_processors));
   AddMapEntry(root, "instruction", CreateString(strings.type.platform));
