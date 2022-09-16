@@ -56,13 +56,9 @@ S390XInfo GetS390XInfo(void);
 
 typedef struct {
   char platform[64];       // 0 terminated string
-  char base_platform[64];  // 0 terminated string
 } S390XPlatformTypeStrings;
 
 typedef struct {
-  char platform[64];  // 0 terminated string
-  char model[64];     // 0 terminated string
-  char machine[64];   // 0 terminated string
   char num_processors[64];       // 0 terminated string
   S390XPlatformTypeStrings type;
 } S390XPlatformStrings;

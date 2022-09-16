@@ -67,18 +67,9 @@ static bool HandleS390XLine(const LineResult result,
   StringView line = result.line;
   StringView key, value;
   if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
-    if (CpuFeatures_StringView_HasWord(key, "platform", ' ')) {
-      CpuFeatures_StringView_CopyString(value, strings->platform,
-                                        sizeof(strings->platform));
-    } else if (CpuFeatures_StringView_IsEquals(key, str("model"))) {
-      CpuFeatures_StringView_CopyString(value, strings->model,
-                                        sizeof(strings->platform));
-    } else if (CpuFeatures_StringView_IsEquals(key, str("machine"))) {
-      CpuFeatures_StringView_CopyString(value, strings->machine,
-                                        sizeof(strings->platform));
-    } else if (CpuFeatures_StringView_IsEquals(key, str("# processors"))) {
+    if (CpuFeatures_StringView_IsEquals(key, str("# processors"))) {
       CpuFeatures_StringView_CopyString(value, strings->num_processors,
-                                        sizeof(strings->platform));
+                                        sizeof(strings->num_processors));
     }
   }
   return !result.eof;
@@ -116,17 +107,12 @@ static const S390XPlatformStrings kEmptyS390XPlatformStrings;
 S390XPlatformStrings GetS390XPlatformStrings(void) {
   S390XPlatformStrings strings = kEmptyS390XPlatformStrings;
   const char* platform = CpuFeatures_GetPlatformPointer();
-  const char* base_platform = CpuFeatures_GetBasePlatformPointer();
 
   FillProcCpuInfoData(&strings);
 
   if (platform != NULL)
     CpuFeatures_StringView_CopyString(str(platform), strings.type.platform,
                                       sizeof(strings.type.platform));
-  if (base_platform != NULL)
-    CpuFeatures_StringView_CopyString(str(base_platform),
-                                      strings.type.base_platform,
-                                      sizeof(strings.type.base_platform));
 
   return strings;
 }
