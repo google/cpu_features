@@ -89,3 +89,10 @@ if(PROCESSOR_IS_POWER)
   target_link_libraries(cpuinfo_ppc_test all_libraries)
   add_test(NAME cpuinfo_ppc_test COMMAND cpuinfo_ppc_test)
 endif()
+##------------------------------------------------------------------------------
+## cpuinfo_s390x_test
+if(PROCESSOR_IS_S390X)
+  add_executable(cpuinfo_s390x_test cpuinfo_s390x_test.cc  ../src/impl_s390x_linux.c)
+  target_link_libraries(cpuinfo_s390x_test all_libraries)
+  add_test(NAME cpuinfo_s390x_test COMMAND cpuinfo_s390x_test)
+endif()
