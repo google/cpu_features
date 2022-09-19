@@ -514,9 +514,14 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikipedia.org/wiki/Broadwell_(microarchitecture)
         return INTEL_BDW;
       case CPUID(0x06, 0x4E):
-      case CPUID(0x06, 0x55):
       case CPUID(0x06, 0x5E):
         // https://en.wikipedia.org/wiki/Skylake_(microarchitecture)
+        return INTEL_SKL;
+      case CPUID(0x06, 0x55):
+        if (info->stepping >= 6 && info->stepping <= 7) {
+          // https://en.wikipedia.org/wiki/Cascade_Lake_(microprocessor)
+          return INTEL_CCL;
+        }
         return INTEL_SKL;
       case CPUID(0x06, 0x66):
         // https://en.wikipedia.org/wiki/Cannon_Lake_(microarchitecture)
@@ -1911,6 +1916,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(INTEL_HSW)                   \
   LINE(INTEL_BDW)                   \
   LINE(INTEL_SKL)                   \
+  LINE(INTEL_CCL)                   \
   LINE(INTEL_ATOM_GMT)              \
   LINE(INTEL_ATOM_GMT_PLUS)         \
   LINE(INTEL_ATOM_TMT)              \
