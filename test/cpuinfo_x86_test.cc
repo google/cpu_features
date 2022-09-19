@@ -279,7 +279,7 @@ TEST_F(CpuidX86Test, KabyLakeCache) {
   const auto info = GetX86CacheInfo();
   EXPECT_EQ(info.size, 4);
   EXPECT_EQ(info.levels[0].level, 1);
-  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_type, CacheType::CPU_FEATURE_CACHE_DATA);
   EXPECT_EQ(info.levels[0].cache_size, 32 * KiB);
   EXPECT_EQ(info.levels[0].ways, 8);
   EXPECT_EQ(info.levels[0].line_size, 64);
@@ -287,7 +287,8 @@ TEST_F(CpuidX86Test, KabyLakeCache) {
   EXPECT_EQ(info.levels[0].partitioning, 1);
 
   EXPECT_EQ(info.levels[1].level, 1);
-  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_type,
+            CacheType::CPU_FEATURE_CACHE_INSTRUCTION);
   EXPECT_EQ(info.levels[1].cache_size, 32 * KiB);
   EXPECT_EQ(info.levels[1].ways, 8);
   EXPECT_EQ(info.levels[1].line_size, 64);
@@ -295,7 +296,7 @@ TEST_F(CpuidX86Test, KabyLakeCache) {
   EXPECT_EQ(info.levels[1].partitioning, 1);
 
   EXPECT_EQ(info.levels[2].level, 2);
-  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[2].cache_size, 256 * KiB);
   EXPECT_EQ(info.levels[2].ways, 4);
   EXPECT_EQ(info.levels[2].line_size, 64);
@@ -303,7 +304,7 @@ TEST_F(CpuidX86Test, KabyLakeCache) {
   EXPECT_EQ(info.levels[2].partitioning, 1);
 
   EXPECT_EQ(info.levels[3].level, 3);
-  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[3].cache_size, 6 * MiB);
   EXPECT_EQ(info.levels[3].ways, 12);
   EXPECT_EQ(info.levels[3].line_size, 64);
@@ -328,7 +329,7 @@ TEST_F(CpuidX86Test, HSWCache) {
   const auto info = GetX86CacheInfo();
   EXPECT_EQ(info.size, 4);
   EXPECT_EQ(info.levels[0].level, 1);
-  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_type, CacheType::CPU_FEATURE_CACHE_DATA);
   EXPECT_EQ(info.levels[0].cache_size, 32 * KiB);
   EXPECT_EQ(info.levels[0].ways, 8);
   EXPECT_EQ(info.levels[0].line_size, 64);
@@ -336,7 +337,8 @@ TEST_F(CpuidX86Test, HSWCache) {
   EXPECT_EQ(info.levels[0].partitioning, 1);
 
   EXPECT_EQ(info.levels[1].level, 1);
-  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_type,
+            CacheType::CPU_FEATURE_CACHE_INSTRUCTION);
   EXPECT_EQ(info.levels[1].cache_size, 32 * KiB);
   EXPECT_EQ(info.levels[1].ways, 8);
   EXPECT_EQ(info.levels[1].line_size, 64);
@@ -344,7 +346,7 @@ TEST_F(CpuidX86Test, HSWCache) {
   EXPECT_EQ(info.levels[1].partitioning, 1);
 
   EXPECT_EQ(info.levels[2].level, 2);
-  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[2].cache_size, 256 * KiB);
   EXPECT_EQ(info.levels[2].ways, 8);
   EXPECT_EQ(info.levels[2].line_size, 64);
@@ -352,7 +354,7 @@ TEST_F(CpuidX86Test, HSWCache) {
   EXPECT_EQ(info.levels[2].partitioning, 1);
 
   EXPECT_EQ(info.levels[3].level, 3);
-  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[3].cache_size, 6 * MiB);
   EXPECT_EQ(info.levels[3].ways, 12);
   EXPECT_EQ(info.levels[3].line_size, 64);
@@ -512,7 +514,7 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI_CACHE_INFO) {
 
   EXPECT_EQ(info.size, 4);
   EXPECT_EQ(info.levels[0].level, 1);
-  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_type, CacheType::CPU_FEATURE_CACHE_DATA);
   EXPECT_EQ(info.levels[0].cache_size, 16 * KiB);
   EXPECT_EQ(info.levels[0].ways, 4);
   EXPECT_EQ(info.levels[0].line_size, 64);
@@ -520,7 +522,8 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI_CACHE_INFO) {
   EXPECT_EQ(info.levels[0].partitioning, 1);
 
   EXPECT_EQ(info.levels[1].level, 1);
-  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_type,
+            CacheType::CPU_FEATURE_CACHE_INSTRUCTION);
   EXPECT_EQ(info.levels[1].cache_size, 64 * KiB);
   EXPECT_EQ(info.levels[1].ways, 2);
   EXPECT_EQ(info.levels[1].line_size, 64);
@@ -528,7 +531,7 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI_CACHE_INFO) {
   EXPECT_EQ(info.levels[1].partitioning, 1);
 
   EXPECT_EQ(info.levels[2].level, 2);
-  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[2].cache_size, 2 * MiB);
   EXPECT_EQ(info.levels[2].ways, 16);
   EXPECT_EQ(info.levels[2].line_size, 64);
@@ -536,7 +539,7 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI_CACHE_INFO) {
   EXPECT_EQ(info.levels[2].partitioning, 1);
 
   EXPECT_EQ(info.levels[3].level, 3);
-  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[3].cache_size, 6 * MiB);
   EXPECT_EQ(info.levels[3].ways, 48);
   EXPECT_EQ(info.levels[3].line_size, 64);
@@ -805,7 +808,7 @@ TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA_CACHE_INFO) {
 
   EXPECT_EQ(info.size, 4);
   EXPECT_EQ(info.levels[0].level, 1);
-  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_type, CacheType::CPU_FEATURE_CACHE_DATA);
   EXPECT_EQ(info.levels[0].cache_size, 32 * KiB);
   EXPECT_EQ(info.levels[0].ways, 8);
   EXPECT_EQ(info.levels[0].line_size, 64);
@@ -813,7 +816,8 @@ TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA_CACHE_INFO) {
   EXPECT_EQ(info.levels[0].partitioning, 1);
 
   EXPECT_EQ(info.levels[1].level, 1);
-  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_type,
+            CacheType::CPU_FEATURE_CACHE_INSTRUCTION);
   EXPECT_EQ(info.levels[1].cache_size, 64 * KiB);
   EXPECT_EQ(info.levels[1].ways, 4);
   EXPECT_EQ(info.levels[1].line_size, 64);
@@ -821,7 +825,7 @@ TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA_CACHE_INFO) {
   EXPECT_EQ(info.levels[1].partitioning, 1);
 
   EXPECT_EQ(info.levels[2].level, 2);
-  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[2].cache_size, 512 * KiB);
   EXPECT_EQ(info.levels[2].ways, 8);
   EXPECT_EQ(info.levels[2].line_size, 64);
@@ -829,7 +833,7 @@ TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA_CACHE_INFO) {
   EXPECT_EQ(info.levels[2].partitioning, 1);
 
   EXPECT_EQ(info.levels[3].level, 3);
-  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[3].cache_size, 8 * MiB);
   EXPECT_EQ(info.levels[3].ways, 16);
   EXPECT_EQ(info.levels[3].line_size, 64);
@@ -932,25 +936,26 @@ TEST_F(CpuidX86Test, AMD_THUBAN_CACHE_INFO) {
 
   EXPECT_EQ(info.size, 4);
   EXPECT_EQ(info.levels[0].level, 1);
-  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_type, CacheType::CPU_FEATURE_CACHE_DATA);
   EXPECT_EQ(info.levels[0].cache_size, 64 * KiB);
   EXPECT_EQ(info.levels[0].ways, 2);
   EXPECT_EQ(info.levels[0].line_size, 64);
 
   EXPECT_EQ(info.levels[1].level, 1);
-  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_type,
+            CacheType::CPU_FEATURE_CACHE_INSTRUCTION);
   EXPECT_EQ(info.levels[1].cache_size, 64 * KiB);
   EXPECT_EQ(info.levels[1].ways, 2);
   EXPECT_EQ(info.levels[1].line_size, 64);
 
   EXPECT_EQ(info.levels[2].level, 2);
-  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[2].cache_size, 512 * KiB);
   EXPECT_EQ(info.levels[2].ways, 16);
   EXPECT_EQ(info.levels[2].line_size, 64);
 
   EXPECT_EQ(info.levels[3].level, 3);
-  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[3].cache_size, 6 * MiB);
   EXPECT_EQ(info.levels[3].ways, 48);
   EXPECT_EQ(info.levels[3].line_size, 64);
@@ -969,19 +974,20 @@ TEST_F(CpuidX86Test, AMD_MANCHESTER_CACHE_INFO) {
 
   EXPECT_EQ(info.size, 3);
   EXPECT_EQ(info.levels[0].level, 1);
-  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_type, CacheType::CPU_FEATURE_CACHE_DATA);
   EXPECT_EQ(info.levels[0].cache_size, 64 * KiB);
   EXPECT_EQ(info.levels[0].ways, 2);
   EXPECT_EQ(info.levels[0].line_size, 64);
 
   EXPECT_EQ(info.levels[1].level, 1);
-  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_type,
+            CacheType::CPU_FEATURE_CACHE_INSTRUCTION);
   EXPECT_EQ(info.levels[1].cache_size, 64 * KiB);
   EXPECT_EQ(info.levels[1].ways, 2);
   EXPECT_EQ(info.levels[1].line_size, 64);
 
   EXPECT_EQ(info.levels[2].level, 2);
-  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[2].cache_size, 512 * KiB);
   EXPECT_EQ(info.levels[2].ways, 16);
   EXPECT_EQ(info.levels[2].line_size, 64);
@@ -1000,25 +1006,26 @@ TEST_F(CpuidX86Test, AMD_AGENA_CACHE_INFO) {
 
   EXPECT_EQ(info.size, 4);
   EXPECT_EQ(info.levels[0].level, 1);
-  EXPECT_EQ(info.levels[0].cache_type, 1);
+  EXPECT_EQ(info.levels[0].cache_type, CacheType::CPU_FEATURE_CACHE_DATA);
   EXPECT_EQ(info.levels[0].cache_size, 64 * KiB);
   EXPECT_EQ(info.levels[0].ways, 2);
   EXPECT_EQ(info.levels[0].line_size, 64);
 
   EXPECT_EQ(info.levels[1].level, 1);
-  EXPECT_EQ(info.levels[1].cache_type, 2);
+  EXPECT_EQ(info.levels[1].cache_type,
+            CacheType::CPU_FEATURE_CACHE_INSTRUCTION);
   EXPECT_EQ(info.levels[1].cache_size, 64 * KiB);
   EXPECT_EQ(info.levels[1].ways, 2);
   EXPECT_EQ(info.levels[1].line_size, 64);
 
   EXPECT_EQ(info.levels[2].level, 2);
-  EXPECT_EQ(info.levels[2].cache_type, 3);
+  EXPECT_EQ(info.levels[2].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[2].cache_size, 512 * KiB);
   EXPECT_EQ(info.levels[2].ways, 16);
   EXPECT_EQ(info.levels[2].line_size, 64);
 
   EXPECT_EQ(info.levels[3].level, 3);
-  EXPECT_EQ(info.levels[3].cache_type, 3);
+  EXPECT_EQ(info.levels[3].cache_type, CacheType::CPU_FEATURE_CACHE_UNIFIED);
   EXPECT_EQ(info.levels[3].cache_size, 2 * MiB);
   EXPECT_EQ(info.levels[3].ways, 32);
   EXPECT_EQ(info.levels[3].line_size, 64);
@@ -1194,7 +1201,7 @@ TEST_F(CpuidX86Test, P4_CacheInfo) {
   EXPECT_EQ(info.size, 5);
 
   EXPECT_EQ(info.levels[0].level, UNDEF);
-  EXPECT_EQ(info.levels[0].cache_type, CPU_FEATURE_CACHE_TLB);
+  EXPECT_EQ(info.levels[0].cache_type, CacheType::CPU_FEATURE_CACHE_TLB);
   EXPECT_EQ(info.levels[0].cache_size, 4 * KiB);
   EXPECT_EQ(info.levels[0].ways, UNDEF);
   EXPECT_EQ(info.levels[0].line_size, UNDEF);
@@ -1202,7 +1209,7 @@ TEST_F(CpuidX86Test, P4_CacheInfo) {
   EXPECT_EQ(info.levels[0].partitioning, 0);
 
   EXPECT_EQ(info.levels[1].level, UNDEF);
-  EXPECT_EQ(info.levels[1].cache_type, CPU_FEATURE_CACHE_TLB);
+  EXPECT_EQ(info.levels[1].cache_type, CacheType::CPU_FEATURE_CACHE_TLB);
   EXPECT_EQ(info.levels[1].cache_size, 4 * KiB);
   EXPECT_EQ(info.levels[1].ways, UNDEF);
   EXPECT_EQ(info.levels[1].line_size, UNDEF);
@@ -1210,7 +1217,7 @@ TEST_F(CpuidX86Test, P4_CacheInfo) {
   EXPECT_EQ(info.levels[1].partitioning, 0);
 
   EXPECT_EQ(info.levels[2].level, 1);
-  EXPECT_EQ(info.levels[2].cache_type, CPU_FEATURE_CACHE_DATA);
+  EXPECT_EQ(info.levels[2].cache_type, CacheType::CPU_FEATURE_CACHE_DATA);
   EXPECT_EQ(info.levels[2].cache_size, 8 * KiB);
   EXPECT_EQ(info.levels[2].ways, 4);
   EXPECT_EQ(info.levels[2].line_size, 64);
@@ -1218,7 +1225,8 @@ TEST_F(CpuidX86Test, P4_CacheInfo) {
   EXPECT_EQ(info.levels[2].partitioning, 0);
 
   EXPECT_EQ(info.levels[3].level, 1);
-  EXPECT_EQ(info.levels[3].cache_type, CPU_FEATURE_CACHE_INSTRUCTION);
+  EXPECT_EQ(info.levels[3].cache_type,
+            CacheType::CPU_FEATURE_CACHE_INSTRUCTION);
   EXPECT_EQ(info.levels[3].cache_size, 12 * KiB);
   EXPECT_EQ(info.levels[3].ways, 8);
   EXPECT_EQ(info.levels[3].line_size, UNDEF);
@@ -1226,7 +1234,7 @@ TEST_F(CpuidX86Test, P4_CacheInfo) {
   EXPECT_EQ(info.levels[3].partitioning, 0);
 
   EXPECT_EQ(info.levels[4].level, 2);
-  EXPECT_EQ(info.levels[4].cache_type, CPU_FEATURE_CACHE_DATA);
+  EXPECT_EQ(info.levels[4].cache_type, CacheType::CPU_FEATURE_CACHE_DATA);
   EXPECT_EQ(info.levels[4].cache_size, 256 * KiB);
   EXPECT_EQ(info.levels[4].ways, 8);
   EXPECT_EQ(info.levels[4].line_size, 64);
