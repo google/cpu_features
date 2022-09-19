@@ -176,7 +176,7 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #define PPC_FEATURE2_HTM_NO_SUSPEND 0x00080000
 #endif
 
-// S390X HWCAPS
+// https://elixir.bootlin.com/linux/v6.0-rc6/source/arch/s390/include/asm/elf.h
 #define HWCAP_S390_ESAN3        1
 #define HWCAP_S390_ZARCH        2
 #define HWCAP_S390_STFLE        4
