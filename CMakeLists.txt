@@ -163,8 +163,8 @@ endif()
 # tests
 #
 
-include(CTest)
 if(BUILD_TESTING)
+  include(CTest)
   # Automatically incorporate googletest into the CMake Project if target not
   # found.
   enable_language(CXX)
