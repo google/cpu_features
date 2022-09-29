@@ -28,24 +28,24 @@ C99_FLAGS = [
 
 cc_library(
     name = "cpu_features_macros",
-    hdrs = ["include/cpu_features_macros.h"],
     copts = C99_FLAGS,
     includes = INCLUDES,
+    textual_hdrs = ["include/cpu_features_macros.h"],
 )
 
 cc_library(
     name = "cpu_features_cache_info",
-    hdrs = ["include/cpu_features_cache_info.h"],
     copts = C99_FLAGS,
     includes = INCLUDES,
+    textual_hdrs = ["include/cpu_features_cache_info.h"],
     deps = [":cpu_features_macros"],
 )
 
 cc_library(
     name = "bit_utils",
-    hdrs = ["include/internal/bit_utils.h"],
     copts = C99_FLAGS,
     includes = INCLUDES,
+    textual_hdrs = ["include/internal/bit_utils.h"],
     deps = [":cpu_features_macros"],
 )
 
@@ -74,9 +74,9 @@ cc_library(
     srcs = [
         "src/string_view.c",
     ],
-    hdrs = ["include/internal/string_view.h"],
     copts = C99_FLAGS,
     includes = INCLUDES,
+    textual_hdrs = ["include/internal/string_view.h"],
     deps = [
         ":cpu_features_macros",
         ":memory_utils",
@@ -96,9 +96,9 @@ cc_test(
 cc_library(
     name = "filesystem",
     srcs = ["src/filesystem.c"],
-    hdrs = ["include/internal/filesystem.h"],
     copts = C99_FLAGS,
     includes = INCLUDES,
+    textual_hdrs = ["include/internal/filesystem.h"],
     deps = [":cpu_features_macros"],
 )
 
@@ -113,8 +113,8 @@ cc_library(
         "include/internal/filesystem.h",
         "test/filesystem_for_testing.h",
     ],
-    includes = INCLUDES,
     defines = ["CPU_FEATURES_MOCK_FILESYSTEM"],
+    includes = INCLUDES,
     deps = [
         ":cpu_features_macros",
     ],
@@ -123,10 +123,10 @@ cc_library(
 cc_library(
     name = "stack_line_reader",
     srcs = ["src/stack_line_reader.c"],
-    hdrs = ["include/internal/stack_line_reader.h"],
     copts = C99_FLAGS,
-    includes = INCLUDES,
     defines = ["STACK_LINE_READER_BUFFER_SIZE=1024"],
+    includes = INCLUDES,
+    textual_hdrs = ["include/internal/stack_line_reader.h"],
     deps = [
         ":cpu_features_macros",
         ":filesystem",
@@ -141,8 +141,8 @@ cc_test(
         "src/stack_line_reader.c",
         "test/stack_line_reader_test.cc",
     ],
-    includes = INCLUDES,
     defines = ["STACK_LINE_READER_BUFFER_SIZE=16"],
+    includes = INCLUDES,
     deps = [
         ":cpu_features_macros",
         ":filesystem_for_testing",
@@ -157,8 +157,8 @@ cc_library(
     srcs = ["src/stack_line_reader.c"],
     hdrs = ["include/internal/stack_line_reader.h"],
     copts = C99_FLAGS,
-    includes = INCLUDES,
     defines = ["STACK_LINE_READER_BUFFER_SIZE=1024"],
+    includes = INCLUDES,
     deps = [
         ":cpu_features_macros",
         ":filesystem_for_testing",
@@ -169,10 +169,10 @@ cc_library(
 cc_library(
     name = "hwcaps",
     srcs = ["src/hwcaps.c"],
-    hdrs = ["include/internal/hwcaps.h"],
     copts = C99_FLAGS,
-    includes = INCLUDES,
     defines = ["HAVE_STRONG_GETAUXVAL"],
+    includes = INCLUDES,
+    textual_hdrs = ["include/internal/hwcaps.h"],
     deps = [
         ":cpu_features_macros",
         ":filesystem",
@@ -191,11 +191,11 @@ cc_library(
         "include/internal/hwcaps.h",
         "test/hwcaps_for_testing.h",
     ],
-    includes = INCLUDES,
     defines = [
         "CPU_FEATURES_MOCK_GET_ELF_HWCAP_FROM_GETAUXVAL",
         "CPU_FEATURES_TEST",
     ],
+    includes = INCLUDES,
     deps = [
         ":cpu_features_macros",
         ":filesystem_for_testing",
@@ -217,8 +217,11 @@ cc_library(
         PLATFORM_CPU_MIPS: ["src/impl_mips_linux_or_android.c"],
         PLATFORM_CPU_PPC: ["src/impl_ppc_linux.c"],
     }),
-    hdrs = selects.with_or({
+    copts = C99_FLAGS,
+    includes = INCLUDES,
+    textual_hdrs = selects.with_or({
         PLATFORM_CPU_X86_64: [
+            "src/impl_x86__base_implementation.inl",
             "include/cpuinfo_x86.h",
             "include/internal/cpuid_x86.h",
             "include/internal/windows_utils.h",
@@ -227,12 +230,6 @@ cc_library(
         PLATFORM_CPU_ARM64: ["include/cpuinfo_aarch64.h"],
         PLATFORM_CPU_MIPS: ["include/cpuinfo_mips.h"],
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
-    }),
-    copts = C99_FLAGS,
-    includes = INCLUDES,
-    textual_hdrs = selects.with_or({
-        PLATFORM_CPU_X86_64: ["src/impl_x86__base_implementation.inl"],
-        "//conditions:default": [],
     }) + [
         "src/define_introspection.inl",
         "src/define_introspection_and_hwcaps.inl",
@@ -276,11 +273,11 @@ cc_library(
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
     }),
     copts = C99_FLAGS,
-    includes = INCLUDES,
     defines = selects.with_or({
         PLATFORM_CPU_X86_64: ["CPU_FEATURES_MOCK_CPUID_X86"],
         "//conditions:default": [],
     }),
+    includes = INCLUDES,
     textual_hdrs = selects.with_or({
         PLATFORM_CPU_X86_64: ["src/impl_x86__base_implementation.inl"],
         "//conditions:default": [],
