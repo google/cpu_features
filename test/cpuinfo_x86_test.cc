@@ -923,6 +923,73 @@ TEST_F(CpuidX86Test, INTEL_ALDER_LAKE_AVX_VNNI) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ADL);
 }
 
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0090672_AlderLake_BC_AVX512_CPUID01.txt
+TEST_F(CpuidX86Test, INTEL_ALDER_LAKE_AVX512) {
+  cpu().SetOsBackupsExtendedRegisters(true);
+#if defined(CPU_FEATURES_OS_MACOS)
+  cpu().SetDarwinSysCtlByName("hw.optional.avx512f");
+#endif
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000020, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000906A4, 0x00400800, 0x7FFAFBBF, 0xBFEBFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000001, 0xF3BFA7EB, 0x98C07FEE, 0xFC9CC510}},
+      {{0x00000007, 1}, Leaf{0x00401C30, 0x00000000, 0x00000000, 0x00000000}},
+  });
+
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x9A);
+  EXPECT_TRUE(info.features.avx512f);
+  EXPECT_TRUE(info.features.avx512bw);
+  EXPECT_TRUE(info.features.avx512dq);
+  EXPECT_TRUE(info.features.avx512cd);
+  EXPECT_TRUE(info.features.avx512vl);
+  EXPECT_TRUE(info.features.avx512_vp2intersect);
+  EXPECT_TRUE(info.features.avx512vbmi);
+  EXPECT_TRUE(info.features.avx512vbmi2);
+  EXPECT_TRUE(info.features.avx512bitalg);
+  EXPECT_TRUE(info.features.avx512vpopcntdq);
+  EXPECT_TRUE(info.features.avx512ifma);
+  EXPECT_TRUE(info.features.avx512_bf16);
+  EXPECT_TRUE(info.features.avx512_fp16);
+
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ADL);
+}
+
+// https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00806C1_TigerLake_CPUID3.txt
+TEST_F(CpuidX86Test, INTEL_TIGER_LAKE_AVX512) {
+  cpu().SetOsBackupsExtendedRegisters(true);
+#if defined(CPU_FEATURES_OS_MACOS)
+  cpu().SetDarwinSysCtlByName("hw.optional.avx512f");
+#endif
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000806C1, 0x00100800, 0x7FFAFBBF, 0xBFEBFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000000, 0xF3BFA7EB, 0x18C05FCE, 0xFC100510}},
+  });
+
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x8C);
+  EXPECT_TRUE(info.features.avx512f);
+  EXPECT_TRUE(info.features.avx512bw);
+  EXPECT_TRUE(info.features.avx512dq);
+  EXPECT_TRUE(info.features.avx512cd);
+  EXPECT_TRUE(info.features.avx512vl);
+  EXPECT_TRUE(info.features.avx512_vp2intersect);
+  EXPECT_TRUE(info.features.avx512vbmi);
+  EXPECT_TRUE(info.features.avx512vbmi2);
+  EXPECT_TRUE(info.features.avx512bitalg);
+  EXPECT_TRUE(info.features.avx512vpopcntdq);
+  EXPECT_TRUE(info.features.avx512ifma);
+
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_TGL);
+}
+
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0100FA0_K10_Thuban_CPUID.txt
 TEST_F(CpuidX86Test, AMD_THUBAN_CACHE_INFO) {
   cpu().SetLeaves({
