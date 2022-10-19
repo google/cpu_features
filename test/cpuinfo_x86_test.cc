@@ -884,6 +884,27 @@ TEST_F(CpuidX86Test, AMD_K19_ZEN3) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN3);
 }
 
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0A60F12_K19_Raphael_01_CPUID.txt
+TEST_F(CpuidX86Test, AMD_K19_ZEN4_RAPHAEL) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000010, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x00000001, 0}, Leaf{0x00A60F12, 0x000C0800, 0x7EF8320B, 0x178BFBFF}},
+      {{0x80000000, 0}, Leaf{0x80000028, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x80000001, 0}, Leaf{0x00A60F12, 0x00000000, 0x75C237FF, 0x2FD3FBFF}},
+      {{0x80000002, 0}, Leaf{0x20444D41, 0x657A7952, 0x2035206E, 0x30303637}},
+      {{0x80000003, 0}, Leaf{0x2D362058, 0x65726F43, 0x6F725020, 0x73736563}},
+      {{0x80000004, 0}, Leaf{0x2020726F, 0x20202020, 0x20202020, 0x00202020}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
+  EXPECT_EQ(info.family, 0x19);
+  EXPECT_EQ(info.model, 0x61);
+  EXPECT_STREQ(info.brand_string,
+               "AMD Ryzen 5 7600X 6-Core Processor             ");
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN4);
+}
+
 // http://users.atw.hu/instlatx64/HygonGenuine/HygonGenuine0900F11_Hygon_01_CPUID.txt
 TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA_OCTAL_CORE_C86_3250) {
   cpu().SetLeaves({
