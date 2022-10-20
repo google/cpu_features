@@ -365,6 +365,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
       features->avx512_4fmaps = IsBitSet(leaf_7.edx, 3);
       features->avx512_bf16 = IsBitSet(leaf_7_1.eax, 5);
       features->avx512_vp2intersect = IsBitSet(leaf_7.edx, 8);
+      features->avx512_fp16 = IsBitSet(leaf_7.edx, 23);
     }
     if (os_preserves->amx_registers) {
       features->amx_bf16 = IsBitSet(leaf_7.edx, 22);
@@ -1879,6 +1880,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_AVX512_4FMAPS, avx512_4fmaps, , , )             \
   LINE(X86_AVX512_BF16, avx512_bf16, , , )                 \
   LINE(X86_AVX512_VP2INTERSECT, avx512_vp2intersect, , , ) \
+  LINE(X86_AVX512_FP16, avx512_fp16, , , )                 \
   LINE(X86_AMX_BF16, amx_bf16, , , )                       \
   LINE(X86_AMX_TILE, amx_tile, , , )                       \
   LINE(X86_AMX_INT8, amx_int8, , , )                       \

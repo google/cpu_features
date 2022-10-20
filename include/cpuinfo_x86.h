@@ -82,6 +82,7 @@ typedef struct {
   int avx512_4fmaps : 1;
   int avx512_bf16 : 1;
   int avx512_vp2intersect : 1;
+  int avx512_fp16 : 1;
   int amx_bf16 : 1;
   int amx_tile : 1;
   int amx_int8 : 1;
@@ -239,6 +240,7 @@ typedef enum {
   X86_AVX512_4FMAPS,
   X86_AVX512_BF16,
   X86_AVX512_VP2INTERSECT,
+  X86_AVX512_FP16,
   X86_AMX_BF16,
   X86_AMX_TILE,
   X86_AMX_INT8,
