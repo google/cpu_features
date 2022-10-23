@@ -100,6 +100,7 @@ typedef struct {
   int ss : 1;
   int adx : 1;
   int lzcnt : 1;  // Note: this flag is called ABM for AMD, LZCNT for Intel.
+  int gfni: 1;
   // Make sure to update X86FeaturesEnum below if you add a field here.
 } X86Features;
 
@@ -256,6 +257,7 @@ typedef enum {
   X86_SS,
   X86_ADX,
   X86_LZCNT,
+  X86_GFNI,
   X86_LAST_,
 } X86FeaturesEnum;
 

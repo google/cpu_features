@@ -310,6 +310,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
   features->clflushopt = IsBitSet(leaf_7.ebx, 23);
   features->clwb = IsBitSet(leaf_7.ebx, 24);
   features->sha = IsBitSet(leaf_7.ebx, 29);
+  features->gfni = IsBitSet(leaf_7.ecx, 8);
   features->vaes = IsBitSet(leaf_7.ecx, 9);
   features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
   features->adx = IsBitSet(leaf_7.ebx, 19);
@@ -1895,7 +1896,8 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_DCA, dca, , , )                                 \
   LINE(X86_SS, ss, , , )                                   \
   LINE(X86_ADX, adx, , , )                                 \
-  LINE(X86_LZCNT, lzcnt, , , )
+  LINE(X86_LZCNT, lzcnt, , , )                             \
+  LINE(X86_GFNI, gfni, , , )
 #define INTROSPECTION_PREFIX X86
 #define INTROSPECTION_ENUM_PREFIX X86
 #include "define_introspection.inl"
