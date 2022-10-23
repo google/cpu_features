@@ -1011,6 +1011,24 @@ TEST_F(CpuidX86Test, INTEL_TIGER_LAKE_AVX512) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_TGL);
 }
 
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00706E5_IceLakeY_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_ICE_LAKE_GFNI) {
+    cpu().SetLeaves({
+        {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
+        {{0x00000001, 0}, Leaf{0x000706E5, 0x00100800, 0x7FFAFBBF, 0xBFEBFBFF}},
+        {{0x00000007, 0}, Leaf{0x00000000, 0xF2BF27EF, 0x40405F4E, 0xBC000410}},
+    });
+
+    const auto info = GetX86Info();
+
+    EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+    EXPECT_EQ(info.family, 0x06);
+    EXPECT_EQ(info.model, 0x7E);
+    EXPECT_TRUE(info.features.gfni);
+
+    EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ICL);
+}
+
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0100FA0_K10_Thuban_CPUID.txt
 TEST_F(CpuidX86Test, AMD_THUBAN_CACHE_INFO) {
   cpu().SetLeaves({
