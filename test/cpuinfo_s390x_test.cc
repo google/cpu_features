@@ -1,4 +1,4 @@
-// Copyright 2018 IBM.
+// Copyright 2022 IBM.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,11 +13,9 @@
 // limitations under the License.
 
 #include "cpuinfo_s390x.h"
-
 #include "filesystem_for_testing.h"
 #include "gtest/gtest.h"
 #include "hwcaps_for_testing.h"
-#include "internal/string_view.h"
 
 namespace cpu_features {
 namespace {

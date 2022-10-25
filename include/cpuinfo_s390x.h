@@ -21,29 +21,29 @@
 CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
-  int esan3: 1;
-  int zarch: 1;
-  int stfle: 1;
-  int msa: 1;
-  int ldisp: 1;
-  int eimm: 1;
-  int dfp: 1;
-  int edat: 1;
-  int etf3eh: 1;
-  int highgprs: 1;
-  int te: 1;
-  int vx: 1;
-  int vxd: 1;
-  int vxe: 1;
-  int gs: 1;
-  int vxe2: 1;
-  int vxp: 1;
-  int sort: 1;
-  int dflt: 1;
-  int vxp2: 1;
-  int nnpa: 1;
-  int pcimio: 1;
-  int sie: 1;
+  int esan3: 1;     // instructions named N3, "backported" to esa-mode
+  int zarch: 1;     // z/Architecture mode active
+  int stfle: 1;     // store-facility-list-extended
+  int msa: 1;       // message-security assist
+  int ldisp: 1;     // long-displacement
+  int eimm: 1;      // extended-immediate
+  int dfp: 1;       // decimal floating point & perform floating point operation
+  int edat: 1;      // huge page support
+  int etf3eh: 1;    // extended-translation facility 3 enhancement
+  int highgprs: 1;  // 64-bit register support for 31-bit processes
+  int te: 1;        // transactional execution
+  int vx: 1;        // vector extension facility
+  int vxd: 1;       // vector-packed-decimal facility
+  int vxe: 1;       // vector-enhancement facility 1
+  int gs: 1;        // guarded-storage facility
+  int vxe2: 1;      // vector-enhancements facility 2
+  int vxp: 1;       // vector-packed-decimal-enhancement facility
+  int sort: 1;      // enhanced-sort facility
+  int dflt: 1;      // deflate-conversion facility
+  int vxp2: 1;      // vector-packed-decimal-enhancement facility 2
+  int nnpa: 1;      // neural network processing assist facility
+  int pcimio: 1;    // PCI mio facility
+  int sie: 1;       // virtualization support
 
   // Make sure to update S390XFeaturesEnum below if you add a field here.
 } S390XFeatures;
@@ -59,7 +59,7 @@ typedef struct {
 } S390XPlatformTypeStrings;
 
 typedef struct {
-  char num_processors[64];       // 0 terminated string
+  char num_processors[64];       // in form "# processors    : <processors>"
   S390XPlatformTypeStrings type;
 } S390XPlatformStrings;
 
@@ -69,22 +69,21 @@ S390XPlatformStrings GetS390XPlatformStrings(void);
 // Introspection functions
 
 typedef enum {
-  S390_ESAN3,        /* instructions named N3, "backported" to esa-mode */
-  S390_ZARCH,        /* z/Architecture mode active */
-  S390_STFLE,        /* store-facility-list-extended */
-  S390_MSA,          /* message-security assist */ 
-  S390_LDISP,        /* long-displacement */
-  S390_EIMM,         /* extended-immediate */
-  S390_DFP,          /* decimal floating point & perform floating point
-                        operation */
-  S390_EDAT,        /* huge page support */
-  S390_ETF3EH,       /* extended-translation facility 3 enhancement */
-  S390_HIGHGPRS,    /* 64-bit register support for 31-bit processes */
-  S390_TE,           /* transactional execution */
-  S390_VX,         /* vector extension */
+  S390_ESAN3,
+  S390_ZARCH,
+  S390_STFLE,
+  S390_MSA,
+  S390_LDISP,
+  S390_EIMM,
+  S390_DFP,
+  S390_EDAT,
+  S390_ETF3EH,
+  S390_HIGHGPRS,
+  S390_TE,
+  S390_VX,
   S390_VXD,
   S390_VXE,
-  S390_GS,           /* guarded storage */
+  S390_GS,
   S390_VXE2,
   S390_VXP,
   S390_SORT,
@@ -92,7 +91,7 @@ typedef enum {
   S390_VXP2,
   S390_NNPA,
   S390_PCIMIO,
-  S390_SIE,         /* virtualization support */
+  S390_SIE,
   S390X_LAST_,
 } S390XFeaturesEnum;
 
