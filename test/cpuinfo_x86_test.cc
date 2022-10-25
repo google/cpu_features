@@ -1029,6 +1029,25 @@ TEST_F(CpuidX86Test, INTEL_ICE_LAKE_GFNI) {
     EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ICL);
 }
 
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00906C0_JasperLake_CPUID01.txt
+TEST_F(CpuidX86Test, INTEL_TREMONT_JASPER_LAKE_MOVDR) {
+    cpu().SetLeaves({
+        {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
+        {{0x00000001, 0}, Leaf{0x00090661, 0x00800800, 0x4FF8EBBF, 0xBFEBFBFF}},
+        {{0x00000007, 0}, Leaf{0x00000000, 0x2394A2C3, 0x18400124, 0xFC000400}},
+    });
+
+    const auto info = GetX86Info();
+
+    EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+    EXPECT_EQ(info.family, 0x06);
+    EXPECT_EQ(info.model, 0x96);
+    EXPECT_TRUE(info.features.movdiri);
+    EXPECT_TRUE(info.features.movdir64b);
+
+    EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
+}
+
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0100FA0_K10_Thuban_CPUID.txt
 TEST_F(CpuidX86Test, AMD_THUBAN_CACHE_INFO) {
   cpu().SetLeaves({
