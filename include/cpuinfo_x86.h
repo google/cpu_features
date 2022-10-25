@@ -100,9 +100,13 @@ typedef struct {
   int ss : 1;
   int adx : 1;
   int lzcnt : 1;  // Note: this flag is called ABM for AMD, LZCNT for Intel.
-  int gfni: 1;
-  int movdiri: 1;
-  int movdir64b: 1;
+  int gfni : 1;
+  int movdiri : 1;
+  int movdir64b : 1;
+  int fs_rep_mov : 1;          // Fast short REP MOV
+  int fz_rep_movsb : 1;        // Fast zero-length REP MOVSB
+  int fs_rep_stosb : 1;        // Fast short REP STOSB
+  int fs_rep_cmpsb_scasb : 1;  // Fast short REP CMPSB/SCASB
   // Make sure to update X86FeaturesEnum below if you add a field here.
 } X86Features;
 
@@ -262,6 +266,10 @@ typedef enum {
   X86_GFNI,
   X86_MOVDIRI,
   X86_MOVDIR64B,
+  X86_FS_REP_MOV,
+  X86_FZ_REP_MOVSB,
+  X86_FS_REP_STOSB,
+  X86_FS_REP_CMPSB_SCASB,
   X86_LAST_,
 } X86FeaturesEnum;
 
