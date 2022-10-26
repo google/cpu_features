@@ -56,8 +56,7 @@ TEST(CpustringsS390XTest, z16) {
 # processors    : 24
 bogomips per cpu: 26315.00
 max thread id   : 1
-features	: esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs te vx
-vxd vxe gs vxe2 vxp sort dflt vxp2 nnpa pcimio sie )");
+features	: esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs te vx vxd vxe gs vxe2 vxp sort dflt vxp2 nnpa pcimio sie )");
   SetPlatformPointer("z16");
   const auto strings = GetS390XPlatformStrings();
   EXPECT_EQ(strings.num_processors, 24);
@@ -72,8 +71,7 @@ TEST(CpustringsS390XTest, z15) {
 # processors    : 2
 bogomips per cpu: 24038.00
 max thread id   : 1
-features    : esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs te vx 
-vxd vxe gs vxe2 vxp sort dflt sie)");
+features    : esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs te vx vxd vxe gs vxe2 vxp sort dflt sie)");
   SetPlatformPointer("z15");
   const auto strings = GetS390XPlatformStrings();
   EXPECT_EQ(strings.num_processors, 2);
