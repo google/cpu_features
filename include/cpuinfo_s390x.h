@@ -59,7 +59,7 @@ typedef struct {
 } S390XPlatformTypeStrings;
 
 typedef struct {
-  char num_processors[64];       // in form "# processors    : <processors>"
+  int num_processors;      // -1 if N/A
   S390XPlatformTypeStrings type;
 } S390XPlatformStrings;
 

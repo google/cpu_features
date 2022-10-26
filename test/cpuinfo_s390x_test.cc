@@ -60,7 +60,7 @@ features	: esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs te vx
 vxd vxe gs vxe2 vxp sort dflt vxp2 nnpa pcimio sie )");
   SetPlatformPointer("z16");
   const auto strings = GetS390XPlatformStrings();
-  ASSERT_STREQ(strings.num_processors, "24");
+  EXPECT_EQ(strings.num_processors, 24);
   ASSERT_STREQ(strings.type.platform, "z16");
 }
 
@@ -76,7 +76,7 @@ features    : esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs te vx
 vxd vxe gs vxe2 vxp sort dflt sie)");
   SetPlatformPointer("z15");
   const auto strings = GetS390XPlatformStrings();
-  ASSERT_STREQ(strings.num_processors, "2");
+  EXPECT_EQ(strings.num_processors, 2);
   ASSERT_STREQ(strings.type.platform, "z15");
 }
 

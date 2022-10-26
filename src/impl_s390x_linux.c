@@ -68,8 +68,7 @@ static bool HandleS390XLine(const LineResult result,
   StringView key, value;
   if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
     if (CpuFeatures_StringView_IsEquals(key, str("# processors"))) {
-      CpuFeatures_StringView_CopyString(value, strings->num_processors,
-                                        sizeof(strings->num_processors));
+        strings->num_processors = CpuFeatures_StringView_ParsePositiveNumber(value);
     }
   }
   return !result.eof;

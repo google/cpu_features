@@ -419,7 +419,7 @@ static Node* CreateTree(void) {
   AddMapEntry(root, "arch", CreateString("s390x"));
   AddMapEntry(root, "platform", CreateString("zSeries"));
   AddMapEntry(root, "model", CreateString(strings.type.platform));
-  AddMapEntry(root, "# processors", CreateString(strings.num_processors));
+  AddMapEntry(root, "# processors", CreateInt(strings.num_processors));
   AddFlags(root, &info.features);
 #endif
   return root;
