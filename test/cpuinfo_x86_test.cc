@@ -1610,6 +1610,20 @@ TEST_F(CpuidX86Test, INTEL_ATOM_TMT_JASPER_LAKE) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
 }
 
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00B0671_RaptorLake_02_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_RAPTOR_LAKE) {
+    cpu().SetLeaves({
+        {{0x00000000, 0}, Leaf{0x00000020, 0x756E6547, 0x6C65746E, 0x49656E69}},
+        {{0x00000001, 0}, Leaf{0x000B0671, 0x00800800, 0x7FFAFBBF, 0xBFEBFBFF}},
+    });
+    const auto info = GetX86Info();
+
+    EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+    EXPECT_EQ(info.family, 0x06);
+    EXPECT_EQ(info.model, 0xB7);
+    EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_RPL);
+}
+
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00306F2_HaswellEP2_CPUID.txt
 TEST_F(CpuidX86Test, INTEL_HASWELL_LZCNT) {
   cpu().SetLeaves({
