@@ -63,6 +63,10 @@
 #define CPU_FEATURES_ARCH_PPC
 #endif
 
+#if defined(__s390x__)
+#define CPU_FEATURES_ARCH_S390X
+#endif
+
 #if defined(__riscv)
 #define CPU_FEATURES_ARCH_RISCV
 #endif

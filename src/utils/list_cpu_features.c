@@ -35,6 +35,8 @@
 #include "cpuinfo_mips.h"
 #elif defined(CPU_FEATURES_ARCH_PPC)
 #include "cpuinfo_ppc.h"
+#elif defined(CPU_FEATURES_ARCH_S390X)
+#include "cpuinfo_s390x.h"
 #endif
 
 // Design principles
@@ -205,6 +207,9 @@ DEFINE_ADD_FLAGS(GetMipsFeaturesEnumValue, GetMipsFeaturesEnumName,
 #elif defined(CPU_FEATURES_ARCH_PPC)
 DEFINE_ADD_FLAGS(GetPPCFeaturesEnumValue, GetPPCFeaturesEnumName, PPCFeatures,
                  PPC_LAST_)
+#elif defined(CPU_FEATURES_ARCH_S390X)
+DEFINE_ADD_FLAGS(GetS390XFeaturesEnumValue, GetS390XFeaturesEnumName, S390XFeatures,
+                 S390X_LAST_)
 #endif
 
 // Prints a json string with characters escaping.
@@ -407,6 +412,14 @@ static Node* CreateTree(void) {
   AddMapEntry(root, "instruction", CreateString(strings.type.platform));
   AddMapEntry(root, "microarchitecture",
               CreateString(strings.type.base_platform));
+  AddFlags(root, &info.features);
+#elif defined(CPU_FEATURES_ARCH_S390X)
+  const S390XInfo info = GetS390XInfo();
+  const S390XPlatformStrings strings = GetS390XPlatformStrings();
+  AddMapEntry(root, "arch", CreateString("s390x"));
+  AddMapEntry(root, "platform", CreateString("zSeries"));
+  AddMapEntry(root, "model", CreateString(strings.type.platform));
+  AddMapEntry(root, "# processors", CreateInt(strings.num_processors));
   AddFlags(root, &info.features);
 #endif
   return root;

@@ -140,6 +140,62 @@ QEMU_ARGS+=( -L "${SYSROOT_DIR}" )
 QEMU_ARGS+=( -E LD_LIBRARY_PATH=/lib )
 }
 
+function expand_bootlin_config() {
+  # ref: https://toolchains.bootlin.com/
+  local -r GCC_DIR=${ARCHIVE_DIR}/${GCC_RELATIVE_DIR}
+
+  case "${TARGET}" in
+    "s390x")
+      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/s390x-z13/tarballs/s390x-z13--glibc--stable-2022.08-1.tar.bz2"
+      local -r GCC_PREFIX="s390x"
+      ;;
+    *)
+      >&2 echo 'unknown power platform'
+      exit 1 ;;
+  esac
+
+  local -r POWER_RELATIVE_DIR="${TARGET}"
+  unpack "${POWER_URL}" "${POWER_RELATIVE_DIR}"
+  local -r EXTRACT_DIR="${ARCHIVE_DIR}/$(basename ${POWER_URL%.tar.bz2})"
+
+  local -r POWER_DIR=${ARCHIVE_DIR}/${POWER_RELATIVE_DIR}
+  if [[ -d "${EXTRACT_DIR}" ]]; then
+    mv "${EXTRACT_DIR}" "${POWER_DIR}"
+  fi
+
+  local -r SYSROOT_DIR="${POWER_DIR}/${GCC_PREFIX}-buildroot-linux-gnu/sysroot"
+  #local -r STAGING_DIR=${SYSROOT_DIR}-stage
+
+  # Write a Toolchain file
+  # note: This is manadatory to use a file in order to have the CMake variable
+  # 'CMAKE_CROSSCOMPILING' set to TRUE.
+  # ref: https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html#cross-compiling-for-linux
+  cat >"${TOOLCHAIN_FILE}" <<EOL
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR ${GCC_PREFIX})
+
+set(CMAKE_SYSROOT ${SYSROOT_DIR})
+#set(CMAKE_STAGING_PREFIX ${STAGING_DIR})
+
+set(tools ${POWER_DIR})
+
+set(CMAKE_C_COMPILER \${tools}/bin/${GCC_PREFIX}-linux-gcc)
+set(CMAKE_C_FLAGS "${POWER_FLAGS}")
+set(CMAKE_CXX_COMPILER \${tools}/bin/${GCC_PREFIX}-linux-g++)
+set(CMAKE_CXX_FLAGS "${POWER_FLAGS} -L${SYSROOT_DIR}/lib")
+
+set(CMAKE_FIND_ROOT_PATH ${POWER_DIR})
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+EOL
+
+CMAKE_ADDITIONAL_ARGS+=( -DCMAKE_TOOLCHAIN_FILE="${TOOLCHAIN_FILE}" )
+QEMU_ARGS+=( -L "${SYSROOT_DIR}" )
+QEMU_ARGS+=( -E LD_PRELOAD="${SYSROOT_DIR}/usr/lib/libstdc++.so.6:${SYSROOT_DIR}/lib/libgcc_s.so.1" )
+}
+
 function expand_codescape_config() {
   # ref: https://codescape.mips.com/components/toolchain/2020.06-01/downloads.html
   # ref: https://codescape.mips.com/components/toolchain/2019.02-04/downloads.html
@@ -269,6 +325,7 @@ DESCRIPTION
 \t\tarmeb-linux-gnueabihf armeb-linux-gnueabi
 \t\tmips32 mips32el
 \t\tmips64 mips64el
+\t\ts390x (bootlin)
 
 OPTIONS
 \t-h --help: show this help text
@@ -339,6 +396,9 @@ function main() {
     mips64el)
       expand_codescape_config
       declare -r QEMU_ARCH=mips64el ;;
+    s390x)
+      expand_bootlin_config
+      declare -r QEMU_ARCH=s390x ;;
     *)
       >&2 echo "Unknown TARGET '${TARGET}'..."
       exit 1 ;;
