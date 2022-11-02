@@ -149,6 +149,19 @@ function expand_bootlin_config() {
       local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/aarch64be/tarballs/aarch64be--glibc--stable-2021.11-1.tar.bz2"
       local -r GCC_PREFIX="aarch64_be"
       ;;
+    "ppc64le")
+      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc64le-power8/tarballs/powerpc64le-power8--glibc--stable-2021.11-1.tar.bz2"
+      local -r GCC_PREFIX="powerpc64le"
+      ;;
+    "ppc64")
+      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc64-power8/tarballs/powerpc64-power8--glibc--stable-2021.11-1.tar.bz2"
+      local -r GCC_PREFIX="powerpc64"
+      ;;
+    "ppc")
+      #local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc-e500mc/tarballs/powerpc-e500mc--glibc--stable-2021.11-1.tar.bz2"
+      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc-440fp/tarballs/powerpc-440fp--glibc--stable-2021.11-1.tar.bz2"
+      local -r GCC_PREFIX="powerpc"
+      ;;
     "s390x")
       local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/s390x-z13/tarballs/s390x-z13--glibc--stable-2022.08-1.tar.bz2"
       local -r GCC_PREFIX="s390x"
@@ -330,6 +343,8 @@ DESCRIPTION
 \t\tarmeb-linux-gnueabihf armeb-linux-gnueabi
 \t\tmips32 mips32el
 \t\tmips64 mips64el
+\t\tppc (bootlin)
+\t\tppc64 ppc64le (bootlin)
 \t\ts390x (bootlin)
 
 OPTIONS
@@ -407,6 +422,15 @@ function main() {
     mips64el)
       expand_codescape_config
       declare -r QEMU_ARCH=mips64el ;;
+    ppc64le)
+      expand_bootlin_config
+      declare -r QEMU_ARCH=ppc64le ;;
+    ppc64)
+      expand_bootlin_config
+      declare -r QEMU_ARCH=ppc64 ;;
+    ppc)
+      expand_bootlin_config
+      declare -r QEMU_ARCH=ppc ;;
     s390x)
       expand_bootlin_config
       declare -r QEMU_ARCH=s390x ;;
