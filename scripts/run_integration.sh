@@ -353,6 +353,8 @@ DESCRIPTION
 \t\taarch64-linux-gnu aarch64_be-linux-gnu (linaro)
 \t\tarm-linux-gnueabihf armv8l-linux-gnueabihf arm-linux-gnueabi (linaro)
 \t\tarmeb-linux-gnueabihf armeb-linux-gnueabi (linaro)
+\t\tmips32 mips32el (codespace)
+\t\tmips64 mips64el (codespace)
 \t\tppc (bootlin)
 \t\tppc64 ppc64le (bootlin)
 \t\ts390x (bootlin)
