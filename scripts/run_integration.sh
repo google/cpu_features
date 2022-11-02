@@ -141,6 +141,14 @@ function expand_bootlin_config() {
   local -r GCC_DIR=${ARCHIVE_DIR}/${GCC_RELATIVE_DIR}
 
   case "${TARGET}" in
+    "aarch64")
+      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/aarch64/tarballs/aarch64--glibc--stable-2021.11-1.tar.bz2"
+      local -r GCC_PREFIX="aarch64"
+      ;;
+    "aarch64be")
+      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/aarch64be/tarballs/aarch64be--glibc--stable-2021.11-1.tar.bz2"
+      local -r GCC_PREFIX="aarch64_be"
+      ;;
     "s390x")
       local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/s390x-z13/tarballs/s390x-z13--glibc--stable-2022.08-1.tar.bz2"
       local -r GCC_PREFIX="s390x"
@@ -316,6 +324,7 @@ DESCRIPTION
 \tYou MUST define the following variables before running this script:
 \t* TARGET:
 \t\tx86_64
+\t\taarch64 aarch64be (bootlin)
 \t\taarch64-linux-gnu aarch64_be-linux-gnu
 \t\tarm-linux-gnueabihf armv8l-linux-gnueabihf arm-linux-gnueabi
 \t\tarmeb-linux-gnueabihf armeb-linux-gnueabi
@@ -380,6 +389,12 @@ function main() {
     aarch64_be-linux-gnu)
       expand_linaro_config
       declare -r QEMU_ARCH=DISABLED ;;
+    aarch64)
+      expand_bootlin_config
+      declare -r QEMU_ARCH=aarch64 ;;
+    aarch64be)
+      expand_bootlin_config
+      declare -r QEMU_ARCH=aarch64_be ;;
     mips32)
       expand_codescape_config
       declare -r QEMU_ARCH=mips ;;
