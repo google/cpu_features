@@ -55,6 +55,8 @@ help:
 	@echo -e "\t\t${BOLD}ppc${RESET} (bootlin toolchain)"
 	@echo -e "\t\t${BOLD}ppc64${RESET} (bootlin toolchain)"
 	@echo -e "\t\t${BOLD}ppc64le${RESET} (bootlin toolchain)"
+	@echo -e "\t\t${BOLD}riscv32${RESET} (bootlin toolchain)"
+	@echo -e "\t\t${BOLD}riscv64${RESET} (bootlin toolchain)"
 	@echo -e "\t\t${BOLD}s390x${RESET} (bootlin toolchain)"
 	@echo
 	@echo -e "\tWith ${BOLD}<toolchain_stage>${RESET}:"
@@ -154,6 +156,7 @@ TOOLCHAIN_TARGETS = \
  aarch64-linux-gnu aarch64_be-linux-gnu \
  mips32 mips32el mips64 mips64el \
  ppc ppc64 ppc64le \
+ riscv32 riscv64 \
  s390x
 TOOLCHAIN_STAGES = env devel build test
 define toolchain-stage-target =

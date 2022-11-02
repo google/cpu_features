@@ -162,6 +162,14 @@ function expand_bootlin_config() {
       local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc-440fp/tarballs/powerpc-440fp--glibc--stable-2021.11-1.tar.bz2"
       local -r GCC_PREFIX="powerpc"
       ;;
+    "riscv32")
+      local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/riscv32-ilp32d/tarballs/riscv32-ilp32d--glibc--bleeding-edge-2022.08-1.tar.bz2"
+      local -r GCC_PREFIX="riscv32"
+      ;;
+    "riscv64")
+      local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/riscv64-lp64d/tarballs/riscv64-lp64d--glibc--stable-2022.08-1.tar.bz2"
+      local -r GCC_PREFIX="riscv64"
+      ;;
     "s390x")
       local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/s390x-z13/tarballs/s390x-z13--glibc--stable-2022.08-1.tar.bz2"
       local -r GCC_PREFIX="s390x"
@@ -362,6 +370,7 @@ DESCRIPTION
 \t\tmips64 mips64el (codespace)
 \t\tppc (bootlin)
 \t\tppc64 ppc64le (bootlin)
+\t\triscv32 riscv64 (bootlin)
 \t\ts390x (bootlin)
 
 OPTIONS
@@ -448,6 +457,12 @@ function main() {
     ppc)
       expand_bootlin_config
       declare -r QEMU_ARCH=ppc ;;
+    riscv32)
+      expand_bootlin_config
+      declare -r QEMU_ARCH=riscv32 ;;
+    riscv64)
+      expand_bootlin_config
+      declare -r QEMU_ARCH=riscv64 ;;
     s390x)
       expand_bootlin_config
       declare -r QEMU_ARCH=s390x ;;
