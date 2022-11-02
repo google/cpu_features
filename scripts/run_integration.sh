@@ -142,28 +142,28 @@ function expand_bootlin_config() {
 
   case "${TARGET}" in
     "aarch64")
-      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/aarch64/tarballs/aarch64--glibc--stable-2021.11-1.tar.bz2"
+      local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/aarch64/tarballs/aarch64--glibc--stable-2021.11-1.tar.bz2"
       local -r GCC_PREFIX="aarch64"
       ;;
     "aarch64be")
-      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/aarch64be/tarballs/aarch64be--glibc--stable-2021.11-1.tar.bz2"
+      local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/aarch64be/tarballs/aarch64be--glibc--stable-2021.11-1.tar.bz2"
       local -r GCC_PREFIX="aarch64_be"
       ;;
     "ppc64le")
-      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc64le-power8/tarballs/powerpc64le-power8--glibc--stable-2021.11-1.tar.bz2"
+      local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc64le-power8/tarballs/powerpc64le-power8--glibc--stable-2021.11-1.tar.bz2"
       local -r GCC_PREFIX="powerpc64le"
       ;;
     "ppc64")
-      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc64-power8/tarballs/powerpc64-power8--glibc--stable-2021.11-1.tar.bz2"
+      local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc64-power8/tarballs/powerpc64-power8--glibc--stable-2021.11-1.tar.bz2"
       local -r GCC_PREFIX="powerpc64"
       ;;
     "ppc")
-      #local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc-e500mc/tarballs/powerpc-e500mc--glibc--stable-2021.11-1.tar.bz2"
-      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc-440fp/tarballs/powerpc-440fp--glibc--stable-2021.11-1.tar.bz2"
+      #local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc-e500mc/tarballs/powerpc-e500mc--glibc--stable-2021.11-1.tar.bz2"
+      local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc-440fp/tarballs/powerpc-440fp--glibc--stable-2021.11-1.tar.bz2"
       local -r GCC_PREFIX="powerpc"
       ;;
     "s390x")
-      local -r POWER_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/s390x-z13/tarballs/s390x-z13--glibc--stable-2022.08-1.tar.bz2"
+      local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/s390x-z13/tarballs/s390x-z13--glibc--stable-2022.08-1.tar.bz2"
       local -r GCC_PREFIX="s390x"
       ;;
     *)
@@ -171,16 +171,16 @@ function expand_bootlin_config() {
       exit 1 ;;
   esac
 
-  local -r POWER_RELATIVE_DIR="${TARGET}"
-  unpack "${POWER_URL}" "${POWER_RELATIVE_DIR}"
-  local -r EXTRACT_DIR="${ARCHIVE_DIR}/$(basename ${POWER_URL%.tar.bz2})"
+  local -r TOOLCHAIN_RELATIVE_DIR="${TARGET}"
+  unpack "${TOOLCHAIN_URL}" "${TOOLCHAIN_RELATIVE_DIR}"
+  local -r EXTRACT_DIR="${ARCHIVE_DIR}/$(basename ${TOOLCHAIN_URL%.tar.bz2})"
 
-  local -r POWER_DIR=${ARCHIVE_DIR}/${POWER_RELATIVE_DIR}
+  local -r TOOLCHAIN_DIR=${ARCHIVE_DIR}/${TOOLCHAIN_RELATIVE_DIR}
   if [[ -d "${EXTRACT_DIR}" ]]; then
-    mv "${EXTRACT_DIR}" "${POWER_DIR}"
+    mv "${EXTRACT_DIR}" "${TOOLCHAIN_DIR}"
   fi
 
-  local -r SYSROOT_DIR="${POWER_DIR}/${GCC_PREFIX}-buildroot-linux-gnu/sysroot"
+  local -r SYSROOT_DIR="${TOOLCHAIN_DIR}/${GCC_PREFIX}-buildroot-linux-gnu/sysroot"
   #local -r STAGING_DIR=${SYSROOT_DIR}-stage
 
   # Write a Toolchain file
@@ -194,14 +194,14 @@ set(CMAKE_SYSTEM_PROCESSOR ${GCC_PREFIX})
 set(CMAKE_SYSROOT ${SYSROOT_DIR})
 #set(CMAKE_STAGING_PREFIX ${STAGING_DIR})
 
-set(tools ${POWER_DIR})
+set(tools ${TOOLCHAIN_DIR})
 
 set(CMAKE_C_COMPILER \${tools}/bin/${GCC_PREFIX}-linux-gcc)
 set(CMAKE_C_FLAGS "${POWER_FLAGS}")
 set(CMAKE_CXX_COMPILER \${tools}/bin/${GCC_PREFIX}-linux-g++)
 set(CMAKE_CXX_FLAGS "${POWER_FLAGS} -L${SYSROOT_DIR}/lib")
 
-set(CMAKE_FIND_ROOT_PATH ${POWER_DIR})
+set(CMAKE_FIND_ROOT_PATH ${TOOLCHAIN_DIR})
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
