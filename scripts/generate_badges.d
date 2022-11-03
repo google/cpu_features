@@ -17,15 +17,17 @@ enum Cpu
     amd64,
     AArch64,
     ARM,
-    MIPS
+    MIPS,
+    s390x,
+    POWER,
 }
 
 enum Os
 {
-    FreeBSD,
     Linux,
+    FreeBSD,
     MacOS,
-    Windows
+    Windows,
 }
 
 struct Badge
