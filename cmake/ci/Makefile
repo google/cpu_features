@@ -45,11 +45,16 @@ help:
 	@echo -e "\t\t${BOLD}armeb-linux-gnueabihf${RESET} (linaro toolchain)"
 	@echo -e "\t\t${BOLD}armeb-linux-gnueabi${RESET} (linaro toolchain)"
 	@echo -e "\t\t${BOLD}aarch64-linux-gnu${RESET} (linaro toolchain)"
+	@echo -e "\t\t${BOLD}aarch64${RESET} (bootlin toolchain)"
 	@echo -e "\t\t${BOLD}aarch64_be-linux-gnu${RESET} (linaro toolchain)"
+	@echo -e "\t\t${BOLD}aarch64be${RESET} (bootlin toolchain)"
 	@echo -e "\t\t${BOLD}mips32${RESET} (codespace toolchain)"
 	@echo -e "\t\t${BOLD}mips64${RESET} (codespace toolchain)"
 	@echo -e "\t\t${BOLD}mips32el${RESET} (codespace toolchain)"
 	@echo -e "\t\t${BOLD}mips64el${RESET} (codespace toolchain)"
+	@echo -e "\t\t${BOLD}ppc${RESET} (bootlin toolchain)"
+	@echo -e "\t\t${BOLD}ppc64${RESET} (bootlin toolchain)"
+	@echo -e "\t\t${BOLD}ppc64le${RESET} (bootlin toolchain)"
 	@echo -e "\t\t${BOLD}s390x${RESET} (bootlin toolchain)"
 	@echo
 	@echo -e "\tWith ${BOLD}<toolchain_stage>${RESET}:"
@@ -144,9 +149,11 @@ $(clean_targets_amd64): clean_amd64_%:
 ## TOOLCHAIN ##
 ###############
 TOOLCHAIN_TARGETS = \
+ aarch64 aarch64be \
  arm-linux-gnueabihf armv8l-linux-gnueabihf arm-linux-gnueabi armeb-linux-gnueabihf armeb-linux-gnueabi \
  aarch64-linux-gnu aarch64_be-linux-gnu \
  mips32 mips32el mips64 mips64el \
+ ppc ppc64 ppc64le \
  s390x
 TOOLCHAIN_STAGES = env devel build test
 define toolchain-stage-target =

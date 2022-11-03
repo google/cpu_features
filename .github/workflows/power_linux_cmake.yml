@@ -1,4 +1,4 @@
-name: AArch64 Linux CMake
+name: POWER Linux CMake
 
 on:
   push:
@@ -14,10 +14,9 @@ jobs:
     strategy:
       matrix:
         targets: [
-          [aarch64],
-          [aarch64be],
-          [aarch64-linux-gnu],
-          [aarch64_be-linux-gnu]
+          [ppc],
+          [ppc64],
+          [ppc64le],
         ]
       fail-fast: false
     env:
