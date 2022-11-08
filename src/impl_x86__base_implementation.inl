@@ -581,6 +581,9 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x06, 0xA7):
         // https://en.wikichip.org/wiki/intel/microarchitectures/rocket_lake
         return INTEL_RCL;
+      case CPUID(0x06, 0xB7):
+        // https://en.wikichip.org/wiki/intel/microarchitectures/raptor_lake
+        return INTEL_RPL;
       case CPUID(0x06, 0x85):
         // https://en.wikichip.org/wiki/intel/microarchitectures/knights_mill
         return INTEL_KNIGHTS_M;
@@ -1948,6 +1951,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(INTEL_SPR)                   \
   LINE(INTEL_ADL)                   \
   LINE(INTEL_RCL)                   \
+  LINE(INTEL_RPL)                   \
   LINE(INTEL_KNIGHTS_M)             \
   LINE(INTEL_KNIGHTS_L)             \
   LINE(INTEL_KNIGHTS_F)             \
