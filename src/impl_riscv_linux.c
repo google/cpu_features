@@ -56,9 +56,9 @@ static bool HandleRiscVLine(const LineResult result, RiscvInfo* const info) {
   StringView key, value;
   if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
     if (CpuFeatures_StringView_IsEquals(key, str("isa"))) {
-      // Strip "rv" prefix
-      if (!CpuFeatures_StringView_StartsWith(value, "rv")) continue;
-      value = CpuFeatures_StringView_PopFront(value, 2);
+      StringView prefix = str("rv");
+      if (!CpuFeatures_StringView_StartsWith(value, prefix)) continue;
+      value = CpuFeatures_StringView_PopFront(value, prefix.size);
       for (size_t i = 0; i < RISCV_LAST_; ++i) {
         StringView flag = str(kCpuInfoFlags[i]);
         bool is_set = CpuFeatures_StringView_IndexOf(value, flag) != -1;
