@@ -57,7 +57,7 @@ static bool HandleRiscVLine(const LineResult result, RiscvInfo* const info) {
   if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
     if (CpuFeatures_StringView_IsEquals(key, str("isa"))) {
       StringView prefix = str("rv");
-      if (!CpuFeatures_StringView_StartsWith(value, prefix)) continue;
+      if (!CpuFeatures_StringView_StartsWith(value, prefix)) return true;
       value = CpuFeatures_StringView_PopFront(value, prefix.size);
       for (size_t i = 0; i < RISCV_LAST_; ++i) {
         StringView flag = str(kCpuInfoFlags[i]);
@@ -67,7 +67,7 @@ static bool HandleRiscVLine(const LineResult result, RiscvInfo* const info) {
     }
     if (CpuFeatures_StringView_IsEquals(key, str("uarch"))) {
       int index = CpuFeatures_StringView_IndexOfChar(value, ',');
-      if (index == -1) continue;
+      if (index == -1) return true;
       StringView vendor = CpuFeatures_StringView_KeepFront(value, index);
       StringView uarch = CpuFeatures_StringView_PopFront(value, index + 1);
       CpuFeatures_StringView_CopyString(vendor, info->vendor,
