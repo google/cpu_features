@@ -19,22 +19,28 @@
 
 #include "cpuinfo_riscv.h"
 
+// According to
+// https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/riscv/cpus.yaml
+// isa string should match the following regex
+// ^rv(?:64|32)imaf?d?q?c?b?v?k?h?(?:_[hsxz](?:[a-z])+)*$
+//
+// This means we can test for features in this exact order except for Z
+// extensions.
+
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions for introspection.
 ////////////////////////////////////////////////////////////////////////////////
 #define INTROSPECTION_TABLE                            \
-  LINE(RISCV_32, riscv32, "32", RISCV_HWCAP_32, 0)     \
-  LINE(RISCV_64, riscv64, "64", RISCV_HWCAP_64, 0)     \
-  LINE(RISCV_128, riscv128, "128", RISCV_HWCAP_128, 0) \
-  LINE(RISCV_A, a, "a", RISCV_HWCAP_A, 0)              \
-  LINE(RISCV_C, c, "c", RISCV_HWCAP_C, 0)              \
-  LINE(RISCV_D, d, "d", RISCV_HWCAP_D, 0)              \
-  LINE(RISCV_E, e, "e", RISCV_HWCAP_E, 0)              \
-  LINE(RISCV_F, f, "f", RISCV_HWCAP_F, 0)              \
-  LINE(RISCV_I, i, "i", RISCV_HWCAP_I, 0)              \
-  LINE(RISCV_M, m, "m", RISCV_HWCAP_M, 0)              \
-  LINE(RISCV_V, v, "v", RISCV_HWCAP_V, 0)              \
-  LINE(RISCV_Q, q, "q", RISCV_HWCAP_Q, 0)
+  LINE(RISCV_RV32I, RV32I, "rv32i", RISCV_HWCAP_32, 0) \
+  LINE(RISCV_RV64I, RV64I, "rv64i", RISCV_HWCAP_64, 0) \
+  LINE(RISCV_M, M, "m", RISCV_HWCAP_M, 0)              \
+  LINE(RISCV_A, A, "a", RISCV_HWCAP_A, 0)              \
+  LINE(RISCV_F, F, "f", RISCV_HWCAP_F, 0)              \
+  LINE(RISCV_D, D, "d", RISCV_HWCAP_D, 0)              \
+  LINE(RISCV_Q, Q, "q", RISCV_HWCAP_Q, 0)              \
+  LINE(RISCV_C, C, "c", RISCV_HWCAP_C, 0)              \
+  LINE(RISCV_Zicsr, Zicsr, "_zicsr", 0, 0)             \
+  LINE(RISCV_Zifencei, Zifencei, "_zifencei", 0, 0)
 #define INTROSPECTION_PREFIX Riscv
 #define INTROSPECTION_ENUM_PREFIX RISCV
 #include "define_introspection_and_hwcaps.inl"
@@ -51,21 +57,24 @@
 
 static const RiscvInfo kEmptyRiscvInfo;
 
+static void HandleRiscVIsaLine(StringView line, RiscvInfo* const info) {
+  for (size_t i = 0; i < RISCV_LAST_; ++i) {
+    StringView flag = str(kCpuInfoFlags[i]);
+    bool is_set = CpuFeatures_StringView_StartsWith(value, flag);
+    kSetters[i](&info->features, is_set);
+    if (is_set) {
+      line = CpuFeatures_StringView_PopFront(line, flag.size);
+    }
+  }
+}
+
 static bool HandleRiscVLine(const LineResult result, RiscvInfo* const info) {
   StringView line = result.line;
   StringView key, value;
   if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
     if (CpuFeatures_StringView_IsEquals(key, str("isa"))) {
-      StringView prefix = str("rv");
-      if (!CpuFeatures_StringView_StartsWith(value, prefix)) return true;
-      value = CpuFeatures_StringView_PopFront(value, prefix.size);
-      for (size_t i = 0; i < RISCV_LAST_; ++i) {
-        StringView flag = str(kCpuInfoFlags[i]);
-        bool is_set = CpuFeatures_StringView_IndexOf(value, flag) != -1;
-        kSetters[i](&info->features, is_set);
-      }
-    }
-    if (CpuFeatures_StringView_IsEquals(key, str("uarch"))) {
+      HandleRiscVIsaLine();
+    } else if (CpuFeatures_StringView_IsEquals(key, str("uarch"))) {
       int index = CpuFeatures_StringView_IndexOfChar(value, ',');
       if (index == -1) return true;
       StringView vendor = CpuFeatures_StringView_KeepFront(value, index);
