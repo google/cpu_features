@@ -57,11 +57,11 @@
 
 static const RiscvInfo kEmptyRiscvInfo;
 
-static void HandleRiscVIsaLine(StringView line, RiscvInfo* const info) {
+static void HandleRiscVIsaLine(StringView line, RiscvFeatures* const features) {
   for (size_t i = 0; i < RISCV_LAST_; ++i) {
     StringView flag = str(kCpuInfoFlags[i]);
-    bool is_set = CpuFeatures_StringView_StartsWith(value, flag);
-    kSetters[i](&info->features, is_set);
+    bool is_set = CpuFeatures_StringView_StartsWith(line, flag);
+    kSetters[i](features, is_set);
     if (is_set) {
       line = CpuFeatures_StringView_PopFront(line, flag.size);
     }
@@ -73,7 +73,7 @@ static bool HandleRiscVLine(const LineResult result, RiscvInfo* const info) {
   StringView key, value;
   if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
     if (CpuFeatures_StringView_IsEquals(key, str("isa"))) {
-      HandleRiscVIsaLine();
+      HandleRiscVIsaLine(value, &info->vendor);
     } else if (CpuFeatures_StringView_IsEquals(key, str("uarch"))) {
       int index = CpuFeatures_StringView_IndexOfChar(value, ',');
       if (index == -1) return true;
