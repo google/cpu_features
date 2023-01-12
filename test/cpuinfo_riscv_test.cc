@@ -21,7 +21,7 @@
 namespace cpu_features {
 namespace {
 
-TEST(CpuinfoRiscvTest, LicheeFromCpuInfo) {
+TEST(CpuinfoRiscvTest, Sipeed_Lichee_RV_FromCpuInfo) {
   ResetHwcaps();
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(processor	: 0 
@@ -43,34 +43,73 @@ uarch : thead,c906)");
   EXPECT_TRUE(info.features.C);
 }
 
-// TEST(CpuinfoRiscvTest, KendryteFromCpuInfo) {
-//   ResetHwcaps();
-//   auto& fs = GetEmptyFilesystem();
-//   fs.CreateFile("/proc/cpuinfo", R"(
-// hart  : 0
-// isa  : rv64i2p0m2p0a2p0f2p0d2p0c2p0xv5-0p0
-// mmu	 : sv39
+// https://github.com/ThomasKaiser/sbc-bench/blob/284e82b016ec1beeac42a5fcbe556b670f68441a/results/Kendryte-K510-4.17.0.cpuinfo
+TEST(CpuinfoRiscvTest, Kendryte_K510_FromCpuInfo) {
+  ResetHwcaps();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo", R"(
+hart	: 0
+isa	: rv64i2p0m2p0a2p0f2p0d2p0c2p0xv5-0p0
+mmu	: sv39
 
-// hart : 1
-// isa	 : rv64i2p0m2p0a2p0f2p0d2p0c2p0xv5-0p0
-// mmu	 : sv39)");
-//   const auto info = GetRiscvInfo();
-//   EXPECT_STREQ(info.uarch, "");
-//   EXPECT_STREQ(info.vendor, "");
+hart	: 1
+isa	: rv64i2p0m2p0a2p0f2p0d2p0c2p0xv5-0p0
+mmu	: sv39");
+  const auto info = GetRiscvInfo();
+  EXPECT_STREQ(info.uarch, "");
+  EXPECT_STREQ(info.vendor, "");
 
-//   EXPECT_FALSE(info.features.riscv32);
-//   EXPECT_TRUE(info.features.riscv64);
-//   EXPECT_FALSE(info.features.riscv128);
-//   EXPECT_TRUE(info.features.a);
-//   EXPECT_TRUE(info.features.c);
-//   EXPECT_TRUE(info.features.d);
-//   EXPECT_FALSE(info.features.e);
-//   EXPECT_TRUE(info.features.f);
-//   EXPECT_TRUE(info.features.i);
-//   EXPECT_TRUE(info.features.m);
-//   EXPECT_FALSE(info.features.q);
-//   EXPECT_TRUE(info.features.v);
-// }
+  EXPECT_FALSE(info.features.RV32I);
+  EXPECT_TRUE(info.features.RV64I);
+  EXPECT_TRUE(info.features.M);
+  EXPECT_TRUE(info.features.A);
+  EXPECT_TRUE(info.features.F);
+  EXPECT_TRUE(info.features.D);
+  EXPECT_FALSE(info.features.Q);
+  EXPECT_TRUE(info.features.C);
+}
+
+// https://github.com/ThomasKaiser/sbc-bench/blob/284e82b016ec1beeac42a5fcbe556b670f68441a/results/T-Head-C910-5.10.4.cpuinfo
+TEST(CpuinfoRiscvTest, T_Head_C910_FromCpuInfo) {
+  ResetHwcaps();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo", R"(
+processor	: 0
+hart		: 0
+isa		: rv64imafdcsu
+mmu		: sv39
+cpu-freq	: 1.2Ghz
+cpu-icache	: 64KB
+cpu-dcache	: 64KB
+cpu-l2cache	: 2MB
+cpu-tlb		: 1024 4-ways
+cpu-cacheline	: 64Bytes
+cpu-vector	: 0.7.1
+
+processor	: 1
+hart		: 1
+isa		: rv64imafdcsu
+mmu		: sv39
+cpu-freq	: 1.2Ghz
+cpu-icache	: 64KB
+cpu-dcache	: 64KB
+cpu-l2cache	: 2MB
+cpu-tlb		: 1024 4-ways
+cpu-cacheline	: 64Bytes
+cpu-vector	: 0.7.1");
+  const auto info = GetRiscvInfo();
+  EXPECT_STREQ(info.uarch, "");
+  EXPECT_STREQ(info.vendor, "");
+
+  EXPECT_FALSE(info.features.RV32I);
+  EXPECT_TRUE(info.features.RV64I);
+  EXPECT_TRUE(info.features.M);
+  EXPECT_TRUE(info.features.A);
+  EXPECT_TRUE(info.features.F);
+  EXPECT_TRUE(info.features.D);
+  EXPECT_FALSE(info.features.Q);
+  EXPECT_TRUE(info.features.C);
+}
 
 TEST(CpuinfoRiscvTest, UnknownFromCpuInfo) {
   ResetHwcaps();

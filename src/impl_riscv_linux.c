@@ -60,11 +60,11 @@ static const RiscvInfo kEmptyRiscvInfo;
 static void HandleRiscVIsaLine(StringView line, RiscvFeatures* const features) {
   for (size_t i = 0; i < RISCV_LAST_; ++i) {
     StringView flag = str(kCpuInfoFlags[i]);
-    bool is_set = CpuFeatures_StringView_StartsWith(line, flag);
+    int index_of_flag = CpuFeatures_StringView_IndexOf(line, flag);
+    bool is_set = index_of_flag != -1;
     kSetters[i](features, is_set);
-    if (is_set) {
-      line = CpuFeatures_StringView_PopFront(line, flag.size);
-    }
+    if (is_set)
+      line = CpuFeatures_StringView_PopFront(line, index_of_flag + flag.size);
   }
 }
 
