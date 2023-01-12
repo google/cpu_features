@@ -330,7 +330,10 @@ function run_test() {
 
   cd "${BUILD_DIR}" || exit 2
   set -x
-  for test_binary in "${BUILD_DIR}"/list_cpu_feature* ; do
+  declare -a TEST_BINARIES=()
+  TEST_BINARIES+=($(find "${BUILD_DIR}"/test -executable -type f))
+  TEST_BINARIES+=($(find "${BUILD_DIR}" -maxdepth 1 -executable -type f))
+  for test_binary in ${TEST_BINARIES[*]} ; do
       ${RUN_CMD} "${test_binary}"
   done
   set +x
