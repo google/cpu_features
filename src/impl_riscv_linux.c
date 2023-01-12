@@ -73,7 +73,7 @@ static bool HandleRiscVLine(const LineResult result, RiscvInfo* const info) {
   StringView key, value;
   if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
     if (CpuFeatures_StringView_IsEquals(key, str("isa"))) {
-      HandleRiscVIsaLine(value, &info->vendor);
+      HandleRiscVIsaLine(value, &info->features);
     } else if (CpuFeatures_StringView_IsEquals(key, str("uarch"))) {
       int index = CpuFeatures_StringView_IndexOfChar(value, ',');
       if (index == -1) return true;
