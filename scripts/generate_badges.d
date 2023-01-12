@@ -18,8 +18,9 @@ enum Cpu
     AArch64,
     ARM,
     MIPS,
-    s390x,
     POWER,
+    RISCV,
+    s390x,
 }
 
 enum Os

@@ -37,6 +37,8 @@
 #include "cpuinfo_ppc.h"
 #elif defined(CPU_FEATURES_ARCH_S390X)
 #include "cpuinfo_s390x.h"
+#elif defined(CPU_FEATURES_ARCH_RISCV)
+#include "cpuinfo_riscv.h"
 #endif
 
 // Design principles
@@ -210,6 +212,9 @@ DEFINE_ADD_FLAGS(GetPPCFeaturesEnumValue, GetPPCFeaturesEnumName, PPCFeatures,
 #elif defined(CPU_FEATURES_ARCH_S390X)
 DEFINE_ADD_FLAGS(GetS390XFeaturesEnumValue, GetS390XFeaturesEnumName, S390XFeatures,
                  S390X_LAST_)
+#elif defined(CPU_FEATURES_ARCH_RISCV)
+DEFINE_ADD_FLAGS(GetRiscvFeaturesEnumValue, GetRiscvFeaturesEnumName, RiscvFeatures,
+                 RISCV_LAST_)
 #endif
 
 // Prints a json string with characters escaping.
@@ -421,6 +426,12 @@ static Node* CreateTree(void) {
   AddMapEntry(root, "model", CreateString(strings.type.platform));
   AddMapEntry(root, "# processors", CreateInt(strings.num_processors));
   AddFlags(root, &info.features);
+#elif defined(CPU_FEATURES_ARCH_RISCV)
+  const RiscvInfo info = GetRiscvInfo();
+  AddMapEntry(root, "arch", CreateString("risc-v"));
+  AddMapEntry(root, "vendor", CreateString(info.vendor));
+  AddMapEntry(root, "microarchitecture", CreateString(info.uarch));
+  AddFlags(root, &info.features); 
 #endif
   return root;
 }

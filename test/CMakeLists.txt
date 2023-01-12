@@ -96,3 +96,10 @@ if(PROCESSOR_IS_S390X)
   target_link_libraries(cpuinfo_s390x_test all_libraries)
   add_test(NAME cpuinfo_s390x_test COMMAND cpuinfo_s390x_test)
 endif()
+##------------------------------------------------------------------------------
+## cpuinfo_riscv_test
+if(PROCESSOR_IS_RISCV)
+  add_executable(cpuinfo_riscv_test cpuinfo_riscv_test.cc  ../src/impl_riscv_linux.c)
+  target_link_libraries(cpuinfo_riscv_test all_libraries)
+  add_test(NAME cpuinfo_riscv_test COMMAND cpuinfo_riscv_test)
+endif()
