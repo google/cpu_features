@@ -329,13 +329,15 @@ function run_test() {
   RUN_CMD="${QEMU_INSTALL}/bin/qemu-${QEMU_ARCH} ${QEMU_ARGS[*]}"
 
   cd "${BUILD_DIR}" || exit 2
-  set -x
   declare -a TEST_BINARIES=()
   TEST_BINARIES+=($(find "${BUILD_DIR}"/test -executable -type f))
   TEST_BINARIES+=($(find "${BUILD_DIR}" -maxdepth 1 -executable -type f))
+  set -x
+  set -e
   for test_binary in ${TEST_BINARIES[*]} ; do
       ${RUN_CMD} "${test_binary}"
   done
+  set +e
   set +x
 }
 
