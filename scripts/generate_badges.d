@@ -82,20 +82,22 @@ const:
         return format("%s: https://img.shields.io/badge/%s-N%%2FA-lightgrey", disabled_image_ref, build_system);
     }
 
-    string link_decl()
+    string filename()
     {
         import std.uni : toLower;
 
-        const filename = toLower(format("%s_%s_%s.yml", cpu, os, build_system));
-        return format("%s: https://github.com/google/cpu_features/actions/workflows/%s", link_ref, filename);
+        return toLower(format("%s_%s_%s.yml", cpu, os, build_system));
+    }
+
+    string link_decl()
+    {
+        return format("%s: https://github.com/google/cpu_features/actions/workflows/%s", link_ref, filename());
     }
 
     string image_decl()
     {
-        import std.uri : encode;
-
-        const worflow_name = encode(format("%s %s %s", cpu, os, build_system));
-        return format("%s: https://img.shields.io/github/workflow/status/google/cpu_features/%s/main?label=%s", image_ref, worflow_name, build_system);
+        return format(
+            "%s: https://img.shields.io/github/actions/workflow/status/google/cpu_features/%s?branch=main&label=%s", image_ref, filename(), build_system);
     }
 }
 
