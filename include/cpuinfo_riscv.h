@@ -36,6 +36,7 @@ typedef struct {
   int D : 1;         // Standard Extension for Double-Precision Floating-Point
   int Q : 1;         // Standard Extension for Quad-Precision Floating-Point
   int C : 1;         // Standard Extension for Compressed Instructions
+  int V : 1;         // Standard Extension for Vector Instructions
   int Zicsr : 1;     // Control and Status Register (CSR)
   int Zifencei : 1;  // Instruction-Fetch Fence
 } RiscvFeatures;
@@ -55,6 +56,7 @@ typedef enum {
   RISCV_D,
   RISCV_Q,
   RISCV_C,
+  RISCV_V,
   RISCV_Zicsr,
   RISCV_Zifencei,
   RISCV_LAST_,
