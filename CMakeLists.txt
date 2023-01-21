@@ -10,6 +10,14 @@ project(CpuFeatures VERSION 0.7.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)
 
+# when cpu_features is included as subproject (i.e. using add_subdirectory(cpu_features))
+# in the source tree of a project that uses it, test rules are disabled.
+if(NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+  option(BUILD_TESTING "Enable test rule" OFF)
+else()
+  option(BUILD_TESTING "Enable test rule" ON)
+endif()
+
 # Default Build Type to be Release
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
