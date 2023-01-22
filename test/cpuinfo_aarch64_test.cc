@@ -14,26 +14,89 @@
 
 #include "cpuinfo_aarch64.h"
 
+#include <set>
+
 #include "filesystem_for_testing.h"
 #include "gtest/gtest.h"
 #include "hwcaps_for_testing.h"
+#if defined(CPU_FEATURES_OS_WINDOWS)
+#include "internal/windows_utils.h"
+#endif  // CPU_FEATURES_OS_WINDOWS
 
 namespace cpu_features {
+class FakeCpuAarch64 {
+ public:
+#if defined(CPU_FEATURES_OS_WINDOWS)
+  bool GetWindowsIsProcessorFeaturePresent(DWORD dwProcessorFeature) {
+    return windows_isprocessorfeaturepresent_.count(dwProcessorFeature);
+  }
+
+  void SetWindowsIsProcessorFeaturePresent(DWORD dwProcessorFeature) {
+    windows_isprocessorfeaturepresent_.insert(dwProcessorFeature);
+  }
+
+  WORD GetWindowsNativeSystemInfoProcessorRevision() const {
+    return processor_revision_;
+  }
+
+  void SetWindowsNativeSystemInfoProcessorRevision(WORD wProcessorRevision) {
+    processor_revision_ = wProcessorRevision;
+  }
+#endif  // CPU_FEATURES_OS_WINDOWS
+
+ private:
+#if defined(CPU_FEATURES_OS_WINDOWS)
+  std::set<DWORD> windows_isprocessorfeaturepresent_;
+  WORD processor_revision_{};
+#endif  // CPU_FEATURES_OS_WINDOWS
+};
+
+static FakeCpuAarch64* g_fake_cpu_instance = nullptr;
+
+static FakeCpuAarch64& cpu() {
+  assert(g_fake_cpu_instance != nullptr);
+  return *g_fake_cpu_instance;
+}
+
+#if defined(CPU_FEATURES_OS_WINDOWS)
+extern "C" bool GetWindowsIsProcessorFeaturePresent(DWORD dwProcessorFeature) {
+  return cpu().GetWindowsIsProcessorFeaturePresent(dwProcessorFeature);
+}
+
+extern "C" WORD GetWindowsNativeSystemInfoProcessorRevision() {
+  return cpu().GetWindowsNativeSystemInfoProcessorRevision();
+}
+#endif  // CPU_FEATURES_OS_WINDOWS
+
 namespace {
 
-void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
+class CpuidAarch64Test : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    assert(g_fake_cpu_instance == nullptr);
+    g_fake_cpu_instance = new FakeCpuAarch64();
+  }
+  void TearDown() override {
+    delete g_fake_cpu_instance;
+    g_fake_cpu_instance = nullptr;
+  }
+};
 
 TEST(CpuinfoAarch64Test, Aarch64FeaturesEnum) {
-   const char *last_name = GetAarch64FeaturesEnumName(AARCH64_LAST_);
-   EXPECT_STREQ(last_name, "unknown_feature");
-   for (int i = static_cast<int>(AARCH64_FP); i != static_cast<int>(AARCH64_LAST_); ++i) {
-      const auto feature = static_cast<Aarch64FeaturesEnum>(i);
-      const char *name = GetAarch64FeaturesEnumName(feature);
-      ASSERT_FALSE(name == nullptr);
-      EXPECT_STRNE(name, "");
-      EXPECT_STRNE(name, last_name);
-   }
+  const char* last_name = GetAarch64FeaturesEnumName(AARCH64_LAST_);
+  EXPECT_STREQ(last_name, "unknown_feature");
+  for (int i = static_cast<int>(AARCH64_FP);
+       i != static_cast<int>(AARCH64_LAST_); ++i) {
+    const auto feature = static_cast<Aarch64FeaturesEnum>(i);
+    const char* name = GetAarch64FeaturesEnumName(feature);
+    ASSERT_FALSE(name == nullptr);
+    EXPECT_STRNE(name, "");
+    EXPECT_STRNE(name, last_name);
+  }
 }
+
+#if defined(CPU_FEATURES_OS_LINUX)
+void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
 
 TEST(CpuinfoAarch64Test, FromHardwareCap) {
   ResetHwcaps();
@@ -184,6 +247,31 @@ CPU revision    : 3)");
   EXPECT_FALSE(info.features.afp);
   EXPECT_FALSE(info.features.rpres);
 }
+#endif  // CPU_FEATURES_OS_LINUX
+
+#if defined(CPU_FEATURES_OS_WINDOWS)
+TEST_F(CpuidAarch64Test, WINDOWS_AARCH64_RPI4) {
+  cpu().SetWindowsNativeSystemInfoProcessorRevision(0x03);
+  cpu().SetWindowsIsProcessorFeaturePresent(PF_ARM_VFP_32_REGISTERS_AVAILABLE);
+  cpu().SetWindowsIsProcessorFeaturePresent(PF_ARM_NEON_INSTRUCTIONS_AVAILABLE);
+  cpu().SetWindowsIsProcessorFeaturePresent(
+      PF_ARM_V8_CRC32_INSTRUCTIONS_AVAILABLE);
+
+  const auto info = GetAarch64Info();
+
+  EXPECT_EQ(info.revision, 0x03);
+  EXPECT_TRUE(info.features.fp);
+  EXPECT_TRUE(info.features.asimd);
+  EXPECT_TRUE(info.features.crc32);
+  EXPECT_FALSE(info.features.aes);
+  EXPECT_FALSE(info.features.sha1);
+  EXPECT_FALSE(info.features.sha2);
+  EXPECT_FALSE(info.features.pmull);
+  EXPECT_FALSE(info.features.asimddp);
+  EXPECT_FALSE(info.features.jscvt);
+  EXPECT_FALSE(info.features.lrcpc);
+}
+#endif  // CPU_FEATURES_OS_WINDOWS
 
 }  // namespace
 }  // namespace cpu_features
