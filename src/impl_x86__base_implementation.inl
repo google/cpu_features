@@ -13,6 +13,76 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// A note on x86 SIMD instructions availability
+// -----------------------------------------------------------------------------
+// A number of conditions need to be met for an application to use SIMD
+// instructions:
+// 1. The CPU itself must support the instruction.
+// - we use `CPUID` to check whether the feature is supported.
+// 2. The OS must save and restore the associated SIMD register across context
+//    switches, we check that:
+// - the CPU reports supporting hardware context switching instructions via
+//   CPUID.1:ECX.XSAVE[bit 26]
+// - the OS reports supporting hardware context switching instructions via
+//   CPUID.1:ECX.OSXSAVE[bit 27]
+// - the CPU extended control register 0 (XCR0) is set to save and restore the
+//   needed SIMD registers
+//
+// Note that if `XSAVE`/`OSXSAVE` are missing, we delegate the detection to the
+// OS via the `DetectFeaturesFromOs` function or via microarchitecture
+// heuristics.
+//
+// Encoding
+// -----------------------------------------------------------------------------
+// X86Info contains fields such as vendor and brand_string that are ASCII
+// encoded strings. `vendor` length of characters is 13 and `brand_string` is 49
+// (with null terminated string). We use CPUID.1:E[D,C,B]X to get `vendor` and
+// CPUID.8000_000[4:2]:E[D,C,B,A]X to get `brand_string`
+//
+// Microarchitecture
+// -----------------------------------------------------------------------------
+// `GetX86Microarchitecture` function consists of check on vendor via
+// `IsVendorByX86Info`. We use `CPUID(family, model)` to define the vendor's
+//  microarchitecture. In cases where the `family` and `model` is the same for
+//  several microarchitectures we do a stepping check or in the worst case we
+//  rely on parsing brand_string (see HasSecondFMA for an example). Details of
+//  identification by `brand_string` can be found by reference:
+//  https://en.wikichip.org/wiki/intel/microarchitectures/cascade_lake
+//  https://www.intel.com/content/www/us/en/processors/processor-numbers.html
+
+// CacheInfo X86
+// -----------------------------------------------------------------------------
+// We use the CacheInfo struct to store information about cache levels. The
+// maximum number of levels is hardcoded but can be increased if needed. We have
+// full support of cache identification for the following processors:
+// • Intel:
+//    ◦ modern processors:
+//        we use `ParseCacheInfo` function with `leaf_id` 0x00000004.
+//    ◦ old processors:
+//        we parse descriptors via `GetCacheLevelInfo`, see Application Note
+//        485: Intel Processor Identification and CPUID Instruction.
+// • AMD:
+//    ◦ modern processors:
+//        we use `ParseCacheInfo` function with `leaf_id` 0x8000001D.
+//    ◦ old processors:
+//        we parse cache info using Fn8000_0005_E[A,B,C,D]X and
+//        Fn8000_0006_E[A,B,C,D]X. See AMD CPUID Specification:
+//        https://www.amd.com/system/files/TechDocs/25481.pdf.
+// • Hygon:
+//    we reuse AMD cache detection implementation.
+// • Zhaoxin:
+//    we reuse Intel cache detection implementation.
+//
+// Internal structures
+// -----------------------------------------------------------------------------
+// We use internal structures such as `Leaves` and `OsPreserves` to cache the
+// result of cpuid info and support of registers, since latency of CPUID
+// instruction is around ~100 cycles, see
+// https://www.agner.org/optimize/instruction_tables.pdf. Hence, we use
+// `ReadLeaves` function for `GetX86Info`, `GetCacheInfo` and
+// `FillX86BrandString` to read leaves and hold these values to avoid redundant
+// call on the same leaf.
+
 #include <stdbool.h>
 #include <string.h>
 
@@ -121,7 +191,6 @@ static Leaves ReadLeaves(void) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // OS support
-// TODO: Add documentation
 ////////////////////////////////////////////////////////////////////////////////
 
 #define MASK_XMM 0x2
