@@ -77,7 +77,7 @@
 // -----------------------------------------------------------------------------
 // We use internal structures such as `Leaves` and `OsPreserves` to cache the
 // result of cpuid info and support of registers, since latency of CPUID
-// instruction is around ~100, see
+// instruction is around ~100 cycles, see
 // https://www.agner.org/optimize/instruction_tables.pdf. Hence, we use
 // `ReadLeaves` function for `GetX86Info`, `GetCacheInfo` and
 // `FillX86BrandString` to read leaves and hold these values to avoid redundant
