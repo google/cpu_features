@@ -130,6 +130,8 @@ Aarch64Info GetAarch64Info(void) {
       PF_ARM_V83_JSCVT_INSTRUCTIONS_AVAILABLE);
   info.features.lrcpc = GetWindowsIsProcessorFeaturePresent(
       PF_ARM_V83_LRCPC_INSTRUCTIONS_AVAILABLE);
+  info.features.atomics = GetWindowsIsProcessorFeaturePresent(
+      PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE);
 
   // According to documentation Arm Architecture Reference Manual for A-profile
   // architecture. A2.3 The Armv8 Cryptographic Extension. The Armv8.0

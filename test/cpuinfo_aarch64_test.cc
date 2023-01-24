@@ -267,6 +267,7 @@ TEST_F(CpuidAarch64Test, WINDOWS_AARCH64_RPI4) {
   EXPECT_FALSE(info.features.sha1);
   EXPECT_FALSE(info.features.sha2);
   EXPECT_FALSE(info.features.pmull);
+  EXPECT_FALSE(info.features.atomics);
   EXPECT_FALSE(info.features.asimddp);
   EXPECT_FALSE(info.features.jscvt);
   EXPECT_FALSE(info.features.lrcpc);
