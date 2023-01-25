@@ -12,15 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// A note on Windows AArch64 implementation:
-// -----------------------------------------------------------
-// Since getting of cpu info via EL1 system registers is not possible.
-// Hence, we delegate detection to info via Windows API methods such
-// as `IsProcessorFeaturePresent` and `GetNativeSystemInfo`. The fields of
-// `Aarch64Info` struct such as `implementer`, `variant` and `part` are not
-// used, so they will always be 0. To get `revision` we use `wProcessorRevision`
-// from `SYSTEM_INFO`.
-
 #include "cpu_features_macros.h"
 
 #ifdef CPU_FEATURES_ARCH_AARCH64
