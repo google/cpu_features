@@ -42,10 +42,8 @@ class FakeCpuAarch64 {
   void SetWindowsNativeSystemInfoProcessorRevision(WORD wProcessorRevision) {
     processor_revision_ = wProcessorRevision;
   }
-#endif  // CPU_FEATURES_OS_WINDOWS
 
  private:
-#if defined(CPU_FEATURES_OS_WINDOWS)
   std::set<DWORD> windows_isprocessorfeaturepresent_;
   WORD processor_revision_{};
 #endif  // CPU_FEATURES_OS_WINDOWS
