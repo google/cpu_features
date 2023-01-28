@@ -179,9 +179,9 @@ if(BUILD_TESTING)
   # found.
   enable_language(CXX)
 
-  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD 14)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_EXTENSIONS OFF) # prefer use of -std11 instead of -gnustd11
+  set(CMAKE_CXX_EXTENSIONS OFF) # prefer use of -std14 instead of -gnustd14
 
   if(NOT TARGET gtest OR NOT TARGET gmock_main)
     # Download and unpack googletest at configure time.
