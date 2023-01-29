@@ -124,12 +124,7 @@ Aarch64Info GetAarch64Info(void) {
   info.features.atomics = GetWindowsIsProcessorFeaturePresent(
       PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE);
 
-  // According to documentation Arm Architecture Reference Manual for A-profile
-  // architecture. A2.3 The Armv8 Cryptographic Extension. The Armv8.0
-  // Cryptographic Extension provides instructions for the acceleration of
-  // encryption and decryption, and includes the following features: FEAT_AES,
-  // FEAT_PMULL, FEAT_SHA1, FEAT_SHA256.
-  // see: https://developer.arm.com/documentation/ddi0487/latest
+
   bool is_crypto_available = GetWindowsIsProcessorFeaturePresent(
       PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE);
   info.features.aes = is_crypto_available;
