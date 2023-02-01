@@ -76,6 +76,7 @@ if(PROCESSOR_IS_AARCH64)
     ../src/impl_aarch64_linux_or_android.c
     ../src/impl_aarch64_windows.c
     ../src/impl_aarch64_macos_or_iphone.c
+    ../src/impl_aarch64_freebsd.c
   )
   if(APPLE)
     target_compile_definitions(cpuinfo_aarch64_test PUBLIC CPU_FEATURES_MOCK_SYSCTL_AARCH64)
