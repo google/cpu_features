@@ -15,7 +15,7 @@
 #include "cpu_features_macros.h"
 
 #ifdef CPU_FEATURES_ARCH_PPC
-#ifdef CPU_FEATURES_OS_LINUX
+#if defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_FREEBSD)
 
 #include "cpuinfo_ppc.h"
 
@@ -159,5 +159,5 @@ PPCPlatformStrings GetPPCPlatformStrings(void) {
   return strings;
 }
 
-#endif  // CPU_FEATURES_OS_LINUX
+#endif  // CPU_FEATURES_OS_LINUX || CPU_FEATURES_OS_FREEBSD
 #endif  // CPU_FEATURES_ARCH_PPC
