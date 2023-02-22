@@ -175,10 +175,11 @@ typedef struct {
 
 typedef struct {
   Aarch64Features features;
-  int implementer;
-  int variant;
-  int part;
-  int revision;
+  int implementer;  // We set 0 for Windows.
+  int variant;      // We set 0 for Windows.
+  int part;         // We set 0 for Windows.
+  int revision;     // We use GetNativeSystemInfo to get processor revision for
+                    // Windows.
 } Aarch64Info;
 
 Aarch64Info GetAarch64Info(void);
