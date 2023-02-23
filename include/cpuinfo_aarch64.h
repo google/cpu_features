@@ -12,6 +12,100 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+////////////////////////////////////////////////////////////////////////////////
+// A note on Windows AArch64 implementation
+////////////////////////////////////////////////////////////////////////////////
+
+// Getting cpu info via EL1 system registers is not possible, so we delegate it
+// to the Windows API (i.e., IsProcessorFeaturePresent and GetNativeSystemInfo).
+// The `implementer`, `variant` and `part` fields of the `Aarch64Info` struct
+// are not used, so they are set to 0. To get `revision` we use
+// `wProcessorRevision` from `SYSTEM_INFO`.
+//
+// Cryptographic Extension:
+// -----------------------------------------------------------------------------
+// According to documentation Arm Architecture Reference Manual for
+// A-profile architecture. A2.3 The Armv8 Cryptographic Extension. The Armv8.0
+// Cryptographic Extension provides instructions for the acceleration of
+// encryption and decryption, and includes the following features: FEAT_AES,
+// FEAT_PMULL, FEAT_SHA1, FEAT_SHA256.
+// see: https://developer.arm.com/documentation/ddi0487/latest
+//
+// We use `PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE` to detect all Armv8.0 crypto
+// features. This value reports all features or nothing, so even if you only
+// have support FEAT_AES and FEAT_PMULL, it will still return false.
+//
+// From Armv8.2, an implementation of the Armv8.0 Cryptographic Extension can
+// include either or both of:
+//
+// • The AES functionality, including support for multiplication of 64-bit
+//   polynomials. The ID_AA64ISAR0_EL1.AES field indicates whether this
+//   functionality is supported.
+// • The SHA1 and SHA2-256 functionality. The ID_AA64ISAR0_EL1.{SHA2, SHA1}
+//   fields indicate whether this functionality is supported.
+//
+// ID_AA64ISAR0_EL1.AES, bits [7:4]:
+// Indicates support for AES instructions in AArch64 state. Defined values are:
+// - 0b0000 No AES instructions implemented.
+// - 0b0001 AESE, AESD, AESMC, and AESIMC instructions implemented.
+// - 0b0010 As for 0b0001, plus PMULL/PMULL2 instructions operating on 64-bit
+//   data quantities.
+//
+// FEAT_AES implements the functionality identified by the value 0b0001.
+// FEAT_PMULL implements the functionality identified by the value 0b0010.
+// From Armv8, the permitted values are 0b0000 and 0b0010.
+//
+// ID_AA64ISAR0_EL1.SHA1, bits [11:8]:
+// Indicates support for SHA1 instructions in AArch64 state. Defined values are:
+// - 0b0000 No SHA1 instructions implemented.
+// - 0b0001 SHA1C, SHA1P, SHA1M, SHA1H, SHA1SU0, and SHA1SU1 instructions
+//   implemented.
+//
+// FEAT_SHA1 implements the functionality identified by the value 0b0001.
+// From Armv8, the permitted values are 0b0000 and 0b0001.
+// If the value of ID_AA64ISAR0_EL1.SHA2 is 0b0000, this field must have the
+// value 0b0000.
+//
+// ID_AA64ISAR0_EL1.SHA2, bits [15:12]:
+// Indicates support for SHA2 instructions in AArch64 state. Defined values are:
+// - 0b0000 No SHA2 instructions implemented.
+// - 0b0001 Implements instructions: SHA256H, SHA256H2, SHA256SU0, and
+//   SHA256SU1.
+// - 0b0010 Implements instructions:
+//          • SHA256H, SHA256H2, SHA256SU0, and SHA256SU1.
+//          • SHA512H, SHA512H2, SHA512SU0, and SHA512SU1.
+//
+// FEAT_SHA256 implements the functionality identified by the value 0b0001.
+// FEAT_SHA512 implements the functionality identified by the value 0b0010.
+//
+// In Armv8, the permitted values are 0b0000 and 0b0001.
+// From Armv8.2, the permitted values are 0b0000, 0b0001, and 0b0010.
+//
+// If the value of ID_AA64ISAR0_EL1.SHA1 is 0b0000, this field must have the
+// value 0b0000.
+//
+// If the value of this field is 0b0010, ID_AA64ISAR0_EL1.SHA3
+// must have the value 0b0001.
+//
+// Other cryptographic features that we cannot detect such as sha512, sha3, sm3,
+// sm4, sveaes, svepmull, svesha3, svesm4 we set to 0.
+//
+// FP/SIMD:
+// -----------------------------------------------------------------------------
+// FP/SIMD must be implemented on all Armv8.0 implementations, but
+// implementations targeting specialized markets may support the following
+// combinations:
+//
+// • No NEON or floating-point.
+// • Full floating-point and SIMD support with exception trapping.
+// • Full floating-point and SIMD support without exception trapping.
+//
+// ref:
+// https://developer.arm.com/documentation/den0024/a/AArch64-Floating-point-and-NEON
+//
+// So, we use `PF_ARM_VFP_32_REGISTERS_AVAILABLE`,
+// `PF_ARM_NEON_INSTRUCTIONS_AVAILABLE` to detect `asimd` and `fp`
+
 #ifndef CPU_FEATURES_INCLUDE_CPUINFO_AARCH64_H_
 #define CPU_FEATURES_INCLUDE_CPUINFO_AARCH64_H_
 
@@ -81,10 +175,11 @@ typedef struct {
 
 typedef struct {
   Aarch64Features features;
-  int implementer;
-  int variant;
-  int part;
-  int revision;
+  int implementer;  // We set 0 for Windows.
+  int variant;      // We set 0 for Windows.
+  int part;         // We set 0 for Windows.
+  int revision;     // We use GetNativeSystemInfo to get processor revision for
+                    // Windows.
 } Aarch64Info;
 
 Aarch64Info GetAarch64Info(void);
