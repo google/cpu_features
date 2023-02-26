@@ -651,6 +651,8 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         // https://en.wikichip.org/wiki/intel/microarchitectures/rocket_lake
         return INTEL_RCL;
       case CPUID(0x06, 0xB7):
+      case CPUID(0x06, 0xBA):
+      case CPUID(0x06, 0xBF):
         // https://en.wikichip.org/wiki/intel/microarchitectures/raptor_lake
         return INTEL_RPL;
       case CPUID(0x06, 0x85):

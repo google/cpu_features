@@ -1643,6 +1643,38 @@ TEST_F(CpuidX86Test, INTEL_HASWELL_LZCNT) {
   EXPECT_TRUE(info.features.lzcnt);
 }
 
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00B06A2_RaptorLakeP_03_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_RAPTOR_LAKE_P) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000020, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000B06A3, 0x00400800, 0x7FFAFBFF, 0xBFEBFBFF}},
+      {{0x80000000, 0}, Leaf{0x80000008, 0x00000000, 0x00000000, 0x00000000}},
+      {{0x80000001, 0}, Leaf{0x00000000, 0x00000000, 0x00000121, 0x2C100000}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0xBA);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_RPL);
+}
+
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00B06F2_RaptorLakeS_02_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_RAPTOR_LAKE_S) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000020, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000B06F2, 0x00800800, 0x7FFAFBFF, 0xBFEBFBFF}},
+      {{0x80000000, 0}, Leaf{0x80000008, 0x00000000, 0x00000000, 0x00000000}},
+      {{0x80000001, 0}, Leaf{0x00000000, 0x00000000, 0x00000121, 0x2C100000}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0xBF);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_RPL);
+}
+
 // https://github.com/google/cpu_features/issues/200
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00206F2_Eagleton_CPUID.txt
 #if defined(CPU_FEATURES_OS_WINDOWS)
