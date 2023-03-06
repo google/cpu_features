@@ -265,6 +265,8 @@ Links provided here are not affiliated with Google but are kindly provided by th
    - https://github.com/toor1245/cpu_features.NET
  - Python
    - https://github.com/Narasimha1997/py_cpu
+ - Java
+   - https://github.com/aecsocket/cpu-features-java
 
 
 _Send PR to showcase your wrapper here_
