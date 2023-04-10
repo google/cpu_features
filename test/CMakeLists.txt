@@ -22,7 +22,11 @@ add_library(stack_line_reader_for_test ../src/stack_line_reader.c)
 target_compile_definitions(stack_line_reader_for_test PUBLIC STACK_LINE_READER_BUFFER_SIZE=16)
 target_link_libraries(stack_line_reader_for_test string_view filesystem_for_testing)
 ##------------------------------------------------------------------------------
-add_library(all_libraries ../src/hwcaps.c  ../src/stack_line_reader.c)
+add_library(all_libraries
+        ../src/hwcaps.c
+        ../src/hwcaps_linux_or_android.c
+        ../src/hwcaps_freebsd.c
+        ../src/stack_line_reader.c)
 target_link_libraries(all_libraries hwcaps_for_testing stack_line_reader string_view)
 
 #

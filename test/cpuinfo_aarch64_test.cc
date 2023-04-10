@@ -127,11 +127,8 @@ TEST_F(CpuidAarch64Test, Aarch64FeaturesEnum) {
   }
 }
 
-#if defined(CPU_FEATURES_OS_LINUX)
-void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
-
-// OS dependent tests
-#if defined(CPU_FEATURES_OS_LINUX)
+// AT_HWCAP tests
+#if defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_FREEBSD)
 TEST_F(CpuidAarch64Test, FromHardwareCap) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_AES, 0);
@@ -199,7 +196,10 @@ TEST_F(CpuidAarch64Test, FromHardwareCap2) {
   EXPECT_FALSE(info.features.dgh);
   EXPECT_FALSE(info.features.rng);
 }
+#endif  // defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_FREEBSD)
 
+// OS dependent tests
+#if defined(CPU_FEATURES_OS_LINUX)
 TEST_F(CpuidAarch64Test, ARMCortexA53) {
   ResetHwcaps();
   auto& fs = GetEmptyFilesystem();
@@ -386,7 +386,6 @@ TEST_F(CpuidAarch64Test, WINDOWS_AARCH64_RPI4) {
   EXPECT_FALSE(info.features.jscvt);
   EXPECT_FALSE(info.features.lrcpc);
 }
-#endif
 #endif  // CPU_FEATURES_OS_WINDOWS
 }  // namespace
 }  // namespace cpu_features

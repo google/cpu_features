@@ -18,7 +18,6 @@
 #ifdef CPU_FEATURES_OS_FREEBSD
 
 #include "cpuinfo_aarch64.h"
-
 #include "impl_aarch64__base_implementation.inl"
 
 static const Aarch64Info kEmptyAarch64Info;

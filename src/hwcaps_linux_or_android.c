@@ -14,16 +14,14 @@
 
 #include "cpu_features_macros.h"
 
-#ifdef CPU_FEATURES_ARCH_AARCH64
 #if defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
-
-#include "internal/hwcaps_linux_or_android.h"
 
 #include <stdlib.h>
 #include <string.h>
 
 #include "cpu_features_macros.h"
 #include "internal/filesystem.h"
+#include "internal/hwcaps.h"
 #include "internal/string_view.h"
 
 #ifdef CPU_FEATURES_TEST
@@ -157,4 +155,3 @@ const char *CpuFeatures_GetBasePlatformPointer(void) {
 
 #endif  // CPU_FEATURES_TEST
 #endif  // defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
-#endif  // CPU_FEATURES_ARCH_AARCH64
