@@ -41,6 +41,7 @@ uarch : thead,c906)");
   EXPECT_TRUE(info.features.D);
   EXPECT_FALSE(info.features.Q);
   EXPECT_TRUE(info.features.C);
+  EXPECT_FALSE(info.features.V);
 }
 
 // https://github.com/ThomasKaiser/sbc-bench/blob/284e82b016ec1beeac42a5fcbe556b670f68441a/results/Kendryte-K510-4.17.0.cpuinfo
@@ -67,6 +68,7 @@ mmu	: sv39");
   EXPECT_TRUE(info.features.D);
   EXPECT_FALSE(info.features.Q);
   EXPECT_TRUE(info.features.C);
+  EXPECT_FALSE(info.features.V);
 }
 
 // https://github.com/ThomasKaiser/sbc-bench/blob/284e82b016ec1beeac42a5fcbe556b670f68441a/results/T-Head-C910-5.10.4.cpuinfo
@@ -109,6 +111,7 @@ cpu-vector	: 0.7.1");
   EXPECT_TRUE(info.features.D);
   EXPECT_FALSE(info.features.Q);
   EXPECT_TRUE(info.features.C);
+  EXPECT_FALSE(info.features.V);
 }
 
 TEST(CpuinfoRiscvTest, UnknownFromCpuInfo) {
@@ -150,6 +153,27 @@ uarch     : sifive,bullet0)");
   EXPECT_TRUE(info.features.D);
   EXPECT_FALSE(info.features.Q);
   EXPECT_TRUE(info.features.C);
+  EXPECT_FALSE(info.features.V);
+}
+
+TEST(CpuinfoRiscvTest, QemuCpuInfo) {
+  ResetHwcaps();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo", R"(
+processor	: 0
+hart		: 0
+isa		: rv64imafdcvh_zba_zbb_zbc_zbs
+mmu		: sv48)");
+  const auto info = GetRiscvInfo();
+  EXPECT_FALSE(info.features.RV32I);
+  EXPECT_TRUE(info.features.RV64I);
+  EXPECT_TRUE(info.features.M);
+  EXPECT_TRUE(info.features.A);
+  EXPECT_TRUE(info.features.F);
+  EXPECT_TRUE(info.features.D);
+  EXPECT_FALSE(info.features.Q);
+  EXPECT_TRUE(info.features.C);
+  EXPECT_TRUE(info.features.V);
 }
 
 }  // namespace

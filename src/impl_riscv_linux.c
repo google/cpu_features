@@ -39,6 +39,7 @@
   LINE(RISCV_D, D, "d", RISCV_HWCAP_D, 0)              \
   LINE(RISCV_Q, Q, "q", RISCV_HWCAP_Q, 0)              \
   LINE(RISCV_C, C, "c", RISCV_HWCAP_C, 0)              \
+  LINE(RISCV_V, V, "v", RISCV_HWCAP_V, 0)              \
   LINE(RISCV_Zicsr, Zicsr, "_zicsr", 0, 0)             \
   LINE(RISCV_Zifencei, Zifencei, "_zifencei", 0, 0)
 #define INTROSPECTION_PREFIX Riscv
