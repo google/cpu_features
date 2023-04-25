@@ -813,6 +813,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x17, 0x71):
       case CPUID(0x17, 0x90):
       case CPUID(0x17, 0x98):
+      case CPUID(0x17, 0xA0):
         // https://en.wikichip.org/wiki/amd/microarchitectures/zen_2
         return AMD_ZEN2;
       case CPUID(0x19, 0x00):
