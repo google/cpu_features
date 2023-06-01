@@ -244,6 +244,27 @@ CPU revision    : 3)");
   EXPECT_FALSE(info.features.ecv);
   EXPECT_FALSE(info.features.afp);
   EXPECT_FALSE(info.features.rpres);
+  EXPECT_FALSE(info.features.mte3);
+  EXPECT_FALSE(info.features.sme);
+  EXPECT_FALSE(info.features.smei16i64);
+  EXPECT_FALSE(info.features.smef64f64);
+  EXPECT_FALSE(info.features.smei8i32);
+  EXPECT_FALSE(info.features.smef16f32);
+  EXPECT_FALSE(info.features.smeb16f32);
+  EXPECT_FALSE(info.features.smef32f32);
+  EXPECT_FALSE(info.features.smefa64);
+  EXPECT_FALSE(info.features.wfxt);
+  EXPECT_FALSE(info.features.ebf16);
+  EXPECT_FALSE(info.features.sveebf16);
+  EXPECT_FALSE(info.features.cssc);
+  EXPECT_FALSE(info.features.rprfm);
+  EXPECT_FALSE(info.features.sve2p1);
+  EXPECT_FALSE(info.features.sme2);
+  EXPECT_FALSE(info.features.sme2p1);
+  EXPECT_FALSE(info.features.smei16i32);
+  EXPECT_FALSE(info.features.smebi32i32);
+  EXPECT_FALSE(info.features.smeb16b16);
+  EXPECT_FALSE(info.features.smef16f16);
 }
 #endif  // CPU_FEATURES_OS_LINUX
 

@@ -169,6 +169,27 @@ typedef struct {
   int ecv : 1;         // Enhanced counter virtualization.
   int afp : 1;         // Alternate floating-point behaviour.
   int rpres : 1;       // 12-bit reciprocal (square root) estimate precision.
+  int mte3 : 1;        // MTE asymmetric fault handling.
+  int sme : 1;         // Scalable Matrix Extension.
+  int smei16i64 : 1;   // 16-bit to 64-bit integer widening outer product.
+  int smef64f64 : 1;   // FP64 to FP64 outer product.
+  int smei8i32 : 1;    // 8-bit to 32-bit integer widening outer product.
+  int smef16f32 : 1;   // FP16 to FP32 outer product.
+  int smeb16f32 : 1;   // BFloat16 to FP32 outper product.
+  int smef32f32 : 1;   // FP32 to FP32 outer product.
+  int smefa64 : 1;     // Full A64 support for SME in streaming mode.
+  int wfxt : 1;        // WFE and WFI with timeout.
+  int ebf16 : 1;       // Extended BFloat16 instructions.
+  int sveebf16 : 1;    // SVE BFloat16 instructions.
+  int cssc : 1;        // Common short sequence compression instructions.
+  int rprfm : 1;       // Range Prefetch Memory hint instruction.
+  int sve2p1 : 1;      // Scalable Vector Extension (version 2.1).
+  int sme2 : 1;        // Scalable Matrix Extension (version 2).
+  int sme2p1 : 1;      // Scalable Matrix Extension (version 2.1).
+  int smei16i32 : 1;   // 16-bit to 64-bit integer widening outer product.
+  int smebi32i32 : 1;  // 1-bit binary to 32-bit integer outer product.
+  int smeb16b16 : 1;   // SME2.1 BFloat16 instructions.
+  int smef16f16 : 1;   // FP16 to FP16 outer product.
 
   // Make sure to update Aarch64FeaturesEnum below if you add a field here.
 } Aarch64Features;
@@ -242,6 +263,27 @@ typedef enum {
   AARCH64_ECV,
   AARCH64_AFP,
   AARCH64_RPRES,
+  AARCH64_MTE3,
+  AARCH64_SME,
+  AARCH64_SME_I16I64,
+  AARCH64_SME_F64F64,
+  AARCH64_SME_I8I32,
+  AARCH64_SME_F16F32,
+  AARCH64_SME_B16F32,
+  AARCH64_SME_F32F32,
+  AARCH64_SME_FA64,
+  AARCH64_WFXT,
+  AARCH64_EBF16,
+  AARCH64_SVE_EBF16,
+  AARCH64_CSSC,
+  AARCH64_RPRFM,
+  AARCH64_SVE2P1,
+  AARCH64_SME2,
+  AARCH64_SME2P1,
+  AARCH64_SME_I16I32,
+  AARCH64_SME_BI32I32,
+  AARCH64_SME_B16B16,
+  AARCH64_SME_F16F16,
   AARCH64_LAST_,
 } Aarch64FeaturesEnum;
 
