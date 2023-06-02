@@ -332,7 +332,7 @@ cc_library(
     name = "ndk_compat",
     srcs = ["ndk_compat/cpu-features.c"],
     copts = C99_FLAGS,
-    includes = INCLUDES,
+    includes = INCLUDES + ["ndk_compat"],
     textual_hdrs = ["ndk_compat/cpu-features.h"],
     deps = [
         ":cpu_features_macros",
