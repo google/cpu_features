@@ -327,3 +327,18 @@ cc_binary(
         ":cpuinfo",
     ],
 )
+
+cc_library(
+    name = "ndk_compat",
+    srcs = ["ndk_compat/cpu-features.c"],
+    copts = C99_FLAGS,
+    includes = INCLUDES,
+    textual_hdrs = ["ndk_compat/cpu-features.h"],
+    deps = [
+        ":cpu_features_macros",
+        ":cpuinfo",
+        ":filesystem",
+        ":stack_line_reader",
+        ":string_view",
+    ],
+)
