@@ -1,7 +1,7 @@
 # cpu_features, a cross platform C99 library to get cpu features at runtime.
 
 load("@bazel_skylib//lib:selects.bzl", "selects")
-load("//:bazel/platforms.bzl", "PLATFORM_CPU_ARM", "PLATFORM_CPU_ARM64", "PLATFORM_CPU_MIPS", "PLATFORM_CPU_PPC", "PLATFORM_CPU_X86_64")
+load("//:bazel/platforms.bzl", "PLATFORM_CPU_ARM", "PLATFORM_CPU_ARM64", "PLATFORM_CPU_MIPS", "PLATFORM_CPU_PPC", "PLATFORM_CPU_RISCV32", "PLATFORM_CPU_RISCV64", "PLATFORM_CPU_X86_64")
 
 package(
     default_visibility = ["//visibility:public"],
@@ -216,6 +216,8 @@ cc_library(
         PLATFORM_CPU_ARM64: ["src/impl_aarch64_linux_or_android.c"],
         PLATFORM_CPU_MIPS: ["src/impl_mips_linux_or_android.c"],
         PLATFORM_CPU_PPC: ["src/impl_ppc_linux.c"],
+        PLATFORM_CPU_RISCV32: ["src/impl_riscv_linux.c"],
+        PLATFORM_CPU_RISCV64: ["src/impl_riscv_linux.c"],
     }),
     copts = C99_FLAGS,
     includes = INCLUDES,
@@ -230,6 +232,8 @@ cc_library(
         PLATFORM_CPU_ARM64: ["include/cpuinfo_aarch64.h"],
         PLATFORM_CPU_MIPS: ["include/cpuinfo_mips.h"],
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
+        PLATFORM_CPU_RISCV32: ["include/cpuinfo_riscv.h"],
+        PLATFORM_CPU_RISCV64: ["include/cpuinfo_riscv.h"],
     }) + [
         "src/define_introspection.inl",
         "src/define_introspection_and_hwcaps.inl",
@@ -260,6 +264,8 @@ cc_library(
         PLATFORM_CPU_ARM64: ["src/impl_aarch64_linux_or_android.c"],
         PLATFORM_CPU_MIPS: ["src/impl_mips_linux_or_android.c"],
         PLATFORM_CPU_PPC: ["src/impl_ppc_linux.c"],
+        PLATFORM_CPU_RISCV32: ["src/impl_riscv_linux.c"],
+        PLATFORM_CPU_RISCV64: ["src/impl_riscv_linux.c"],
     }),
     hdrs = selects.with_or({
         PLATFORM_CPU_X86_64: [
@@ -271,6 +277,8 @@ cc_library(
         PLATFORM_CPU_ARM64: ["include/cpuinfo_aarch64.h"],
         PLATFORM_CPU_MIPS: ["include/cpuinfo_mips.h"],
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
+        PLATFORM_CPU_RISCV32: ["include/cpuinfo_riscv.h"],
+        PLATFORM_CPU_RISCV64: ["include/cpuinfo_riscv.h"],
     }),
     copts = C99_FLAGS,
     defines = selects.with_or({
@@ -304,6 +312,8 @@ cc_test(
         PLATFORM_CPU_ARM: ["test/cpuinfo_arm_test.cc"],
         PLATFORM_CPU_MIPS: ["test/cpuinfo_mips_test.cc"],
         PLATFORM_CPU_PPC: ["test/cpuinfo_ppc_test.cc"],
+        PLATFORM_CPU_RISCV32: ["test/cpuinfo_riscv_test.cc"],
+        PLATFORM_CPU_RISCV64: ["test/cpuinfo_riscv_test.cc"],
         PLATFORM_CPU_X86_64: ["test/cpuinfo_x86_test.cc"],
     }),
     includes = INCLUDES,
