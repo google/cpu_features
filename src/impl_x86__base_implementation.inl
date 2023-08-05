@@ -166,6 +166,7 @@ typedef struct {
   Leaf leaf_80000002;  // brand string
   Leaf leaf_80000003;  // brand string
   Leaf leaf_80000004;  // brand string
+  Leaf leaf_80000021;  // AMD Extended Feature Identification 2
 } Leaves;
 
 static Leaves ReadLeaves(void) {
@@ -186,6 +187,7 @@ static Leaves ReadLeaves(void) {
       .leaf_80000002 = SafeCpuIdEx(max_cpuid_leaf_ext, 0x80000002, 0),
       .leaf_80000003 = SafeCpuIdEx(max_cpuid_leaf_ext, 0x80000003, 0),
       .leaf_80000004 = SafeCpuIdEx(max_cpuid_leaf_ext, 0x80000004, 0),
+      .leaf_80000021 = SafeCpuIdEx(max_cpuid_leaf_ext, 0x80000021, 0),
   };
 }
 
@@ -390,6 +392,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
   features->fs_rep_cmpsb_scasb = IsBitSet(leaf_7_1.eax, 12);
   features->adx = IsBitSet(leaf_7.ebx, 19);
   features->lzcnt = IsBitSet(leaf_80000001.ecx, 5);
+  features->lam = IsBitSet(leaf_7_1.eax, 26);
 
   /////////////////////////////////////////////////////////////////////////////
   // The following section is devoted to Vector Extensions.
@@ -462,6 +465,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
 static void ParseExtraAMDCpuId(const Leaves* leaves, X86Info* info,
                                OsPreserves os_preserves) {
   const Leaf leaf_80000001 = leaves->leaf_80000001;
+  const Leaf leaf_80000021 = leaves->leaf_80000021;
 
   X86Features* const features = &info->features;
 
@@ -472,6 +476,8 @@ static void ParseExtraAMDCpuId(const Leaves* leaves, X86Info* info,
   if (os_preserves.avx_registers) {
     features->fma4 = IsBitSet(leaf_80000001.ecx, 16);
   }
+
+  features->lam = IsBitSet(leaf_80000021.eax, 7);
 }
 
 static const X86Info kEmptyX86Info;
@@ -1984,7 +1990,8 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_FS_REP_MOV, fs_rep_mov, , , )                   \
   LINE(X86_FZ_REP_MOVSB, fz_rep_movsb, , , )               \
   LINE(X86_FS_REP_STOSB, fs_rep_stosb, , , )               \
-  LINE(X86_FS_REP_CMPSB_SCASB, fs_rep_cmpsb_scasb, , , )
+  LINE(X86_FS_REP_CMPSB_SCASB, fs_rep_cmpsb_scasb, , , )   \
+  LINE(X86_LAM, lam, , , )
 #define INTROSPECTION_PREFIX X86
 #define INTROSPECTION_ENUM_PREFIX X86
 #include "define_introspection.inl"

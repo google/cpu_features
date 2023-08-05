@@ -184,6 +184,7 @@ TEST_F(CpuidX86Test, SandyBridge) {
   EXPECT_FALSE(features.movbe);
   EXPECT_FALSE(features.rdrnd);
   EXPECT_FALSE(features.adx);
+  EXPECT_FALSE(features.lam);
 }
 
 const int UNDEF = -1;
