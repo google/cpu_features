@@ -477,7 +477,7 @@ static void ParseExtraAMDCpuId(const Leaves* leaves, X86Info* info,
     features->fma4 = IsBitSet(leaf_80000001.ecx, 16);
   }
 
-  features->lam = IsBitSet(leaf_80000021.eax, 7);
+  features->uai = IsBitSet(leaf_80000021.eax, 7);
 }
 
 static const X86Info kEmptyX86Info;
@@ -1991,7 +1991,8 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_FZ_REP_MOVSB, fz_rep_movsb, , , )               \
   LINE(X86_FS_REP_STOSB, fs_rep_stosb, , , )               \
   LINE(X86_FS_REP_CMPSB_SCASB, fs_rep_cmpsb_scasb, , , )   \
-  LINE(X86_LAM, lam, , , )
+  LINE(X86_LAM, lam, , , )                                 \
+  LINE(X86_UAI, uai, , , )
 #define INTROSPECTION_PREFIX X86
 #define INTROSPECTION_ENUM_PREFIX X86
 #include "define_introspection.inl"

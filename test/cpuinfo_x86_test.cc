@@ -185,6 +185,7 @@ TEST_F(CpuidX86Test, SandyBridge) {
   EXPECT_FALSE(features.rdrnd);
   EXPECT_FALSE(features.adx);
   EXPECT_FALSE(features.lam);
+  EXPECT_FALSE(features.uai);
 }
 
 const int UNDEF = -1;
@@ -904,7 +905,7 @@ TEST_F(CpuidX86Test, AMD_K19_ZEN4_RAPHAEL) {
   EXPECT_EQ(info.model, 0x61);
   EXPECT_STREQ(info.brand_string,
                "AMD Ryzen 5 7600X 6-Core Processor             ");
-  EXPECT_TRUE(info.features.lam);
+  EXPECT_TRUE(info.features.uai);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN4);
 }
 
