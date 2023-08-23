@@ -107,3 +107,11 @@ if(PROCESSOR_IS_RISCV)
   target_link_libraries(cpuinfo_riscv_test all_libraries)
   add_test(NAME cpuinfo_riscv_test COMMAND cpuinfo_riscv_test)
 endif()
+##------------------------------------------------------------------------------
+## cpuinfo_loongarch_test
+if(PROCESSOR_IS_LOONGARCH)
+  add_executable(cpuinfo_loongarch_test cpuinfo_loongarch_test.cc  ../src/impl_loongarch_linux.c)
+  target_link_libraries(cpuinfo_loongarch_test all_libraries)
+  add_test(NAME cpuinfo_loongarch_test COMMAND cpuinfo_loongarch_test)
+endif()
+

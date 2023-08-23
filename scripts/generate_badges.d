@@ -20,6 +20,7 @@ enum Cpu
     MIPS,
     POWER,
     RISCV,
+    LOONGARCH,
     s390x,
 }
 
