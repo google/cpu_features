@@ -96,6 +96,7 @@ Hardware Watchpoint	: yes, iwatch count: 8, dwatch count: 8)");
   EXPECT_TRUE(info.features.CRC32);
   EXPECT_TRUE(info.features.COMPLEX);
   EXPECT_TRUE(info.features.CRYPTO);
+  EXPECT_TRUE(info.features.LVZ);
   EXPECT_TRUE(info.features.LBT_X86);
   EXPECT_TRUE(info.features.LBT_ARM);
   EXPECT_TRUE(info.features.LBT_MIPS);
