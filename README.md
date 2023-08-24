@@ -178,14 +178,14 @@ flags           : aes,avx,cx16,smx,sse4_1,sse4_2,ssse3
 <a name="support"></a>
 ## What's supported
 
-|         | x86³ | AArch64 | ARM     | MIPS⁴   | POWER   | RISCV   | s390x   |
-|---------|:----:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
-| Linux   | yes² | yes¹    | yes¹    | yes¹    | yes¹    | yes¹    | yes¹    |
-| FreeBSD | yes² | not yet | not yet | not yet | not yet | N/A     | not yet |
-| MacOs   | yes² | not yet | N/A     | N/A     | no      | N/A     | no      |
-| Windows | yes² | not yet | not yet | N/A     | N/A     | N/A     | N/A     |
-| Android | yes² | yes¹    | yes¹    | yes¹    | N/A     | N/A     | N/A     |
-| iOS     | N/A  | not yet | not yet | N/A     | N/A     | N/A     | N/A     |
+|         | x86³ | AArch64 | ARM     | MIPS⁴   | POWER   | RISCV   | s390x   | LoongArch |
+|---------|:----:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:---------:|
+| Linux   | yes² | yes¹    | yes¹    | yes¹    | yes¹    | yes¹    | yes¹    | yes¹      |
+| FreeBSD | yes² | not yet | not yet | not yet | not yet | N/A     | not yet | N/A       |
+| MacOs   | yes² | not yet | N/A     | N/A     | no      | N/A     | no      | N/A       |
+| Windows | yes² | not yet | not yet | N/A     | N/A     | N/A     | N/A     | N/A       |
+| Android | yes² | yes¹    | yes¹    | yes¹    | N/A     | N/A     | N/A     | N/A       |
+| iOS     | N/A  | not yet | not yet | N/A     | N/A     | N/A     | N/A     | N/A       |
 
 1.  **Features revealed from Linux.** We gather data from several sources
     depending on availability:
