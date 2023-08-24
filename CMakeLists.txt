@@ -160,10 +160,9 @@ target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
 target_include_directories(cpu_features
   PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cpu_features>
 )
-if(PROCESSOR_IS_X86 OR PROCESSOR_IS_AARCH64)
-  if(APPLE)
-    target_compile_definitions(cpu_features PRIVATE HAVE_SYSCTLBYNAME)
-  endif()
+
+if(APPLE)
+  target_compile_definitions(cpu_features PRIVATE HAVE_SYSCTLBYNAME)
 endif()
 add_library(CpuFeature::cpu_features ALIAS cpu_features)
 
