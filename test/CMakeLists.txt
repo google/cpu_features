@@ -74,8 +74,15 @@ if(PROCESSOR_IS_AARCH64)
   add_executable(cpuinfo_aarch64_test
     cpuinfo_aarch64_test.cc
     ../src/impl_aarch64_linux_or_android.c
-    ../src/impl_aarch64_windows.c)
-  target_compile_definitions(cpuinfo_aarch64_test PUBLIC CPU_FEATURES_MOCK_CPUID_AARCH64)
+    ../src/impl_aarch64_windows.c
+    ../src/impl_aarch64_macos_or_iphone.c
+  )
+  if(APPLE)
+    target_compile_definitions(cpuinfo_aarch64_test PUBLIC CPU_FEATURES_MOCK_SYSCTL_AARCH64)
+    target_compile_definitions(cpuinfo_aarch64_test PRIVATE HAVE_SYSCTLBYNAME)
+  else()
+    target_compile_definitions(cpuinfo_aarch64_test PUBLIC CPU_FEATURES_MOCK_CPUID_AARCH64)
+  endif()
   target_link_libraries(cpuinfo_aarch64_test all_libraries)
   add_test(NAME cpuinfo_aarch64_test COMMAND cpuinfo_aarch64_test)
 endif()
