@@ -129,8 +129,6 @@ TEST_F(CpuidAarch64Test, Aarch64FeaturesEnum) {
 
 // OS dependent tests
 #if defined(CPU_FEATURES_OS_LINUX)
-void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
-
 TEST_F(CpuidAarch64Test, FromHardwareCap) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_AES, 0);
