@@ -25,6 +25,9 @@ if(NOT CMAKE_BUILD_TYPE)
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
+# An option to enable/disable the executable target list_cpu_features.
+option(BUILD_EXECUTABLE "Build list_cpu_features executable." ON)
+
 # BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to make
 # it prominent in the GUI.
 # cpu_features uses bit-fields which are - to some extends - implementation-defined (see https://en.cppreference.com/w/c/language/bit_field).
@@ -63,11 +66,11 @@ set(PROCESSOR_IS_LOONGARCH FALSE)
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "^mips")
   set(PROCESSOR_IS_MIPS TRUE)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(^aarch64)|(^arm64)")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(^aarch64)|(^arm64)|(^ARM64)")
   set(PROCESSOR_IS_AARCH64 TRUE)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
   set(PROCESSOR_IS_ARM TRUE)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(AMD64|amd64)|(^i.86$)")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(x86_64)|(AMD64|amd64)|(^i.86$)")
   set(PROCESSOR_IS_X86 TRUE)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
   set(PROCESSOR_IS_POWER TRUE)
@@ -170,9 +173,11 @@ add_library(CpuFeature::cpu_features ALIAS cpu_features)
 # program : list_cpu_features
 #
 
-add_executable(list_cpu_features ${PROJECT_SOURCE_DIR}/src/utils/list_cpu_features.c)
-target_link_libraries(list_cpu_features PRIVATE cpu_features)
-add_executable(CpuFeature::list_cpu_features ALIAS list_cpu_features)
+if(BUILD_EXECUTABLE)
+  add_executable(list_cpu_features ${PROJECT_SOURCE_DIR}/src/utils/list_cpu_features.c)
+  target_link_libraries(list_cpu_features PRIVATE cpu_features)
+  add_executable(CpuFeature::list_cpu_features ALIAS list_cpu_features)
+endif()
 
 #
 # ndk_compat
@@ -240,7 +245,7 @@ endif()
 #
 
 include(GNUInstallDirs)
-install(TARGETS cpu_features list_cpu_features
+install(TARGETS cpu_features
   EXPORT CpuFeaturesTargets
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cpu_features
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -248,6 +253,16 @@ install(TARGETS cpu_features list_cpu_features
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+if(BUILD_EXECUTABLE)
+  install(TARGETS list_cpu_features
+    EXPORT CpuFeaturesTargets
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cpu_features
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR}
+  )
+endif()
 install(EXPORT CpuFeaturesTargets
   NAMESPACE CpuFeatures::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CpuFeatures
