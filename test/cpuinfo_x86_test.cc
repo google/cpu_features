@@ -184,6 +184,8 @@ TEST_F(CpuidX86Test, SandyBridge) {
   EXPECT_FALSE(features.movbe);
   EXPECT_FALSE(features.rdrnd);
   EXPECT_FALSE(features.adx);
+  EXPECT_FALSE(features.lam);
+  EXPECT_FALSE(features.uai);
 }
 
 const int UNDEF = -1;
@@ -894,6 +896,7 @@ TEST_F(CpuidX86Test, AMD_K19_ZEN4_RAPHAEL) {
       {{0x80000002, 0}, Leaf{0x20444D41, 0x657A7952, 0x2035206E, 0x30303637}},
       {{0x80000003, 0}, Leaf{0x2D362058, 0x65726F43, 0x6F725020, 0x73736563}},
       {{0x80000004, 0}, Leaf{0x2020726F, 0x20202020, 0x20202020, 0x00202020}},
+      {{0x80000021, 0}, Leaf{0x00062FCF, 0x0000015C, 0x00000000, 0x00000000}},
   });
   const auto info = GetX86Info();
 
@@ -902,6 +905,7 @@ TEST_F(CpuidX86Test, AMD_K19_ZEN4_RAPHAEL) {
   EXPECT_EQ(info.model, 0x61);
   EXPECT_STREQ(info.brand_string,
                "AMD Ryzen 5 7600X 6-Core Processor             ");
+  EXPECT_TRUE(info.features.uai);
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN4);
 }
 
