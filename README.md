@@ -202,6 +202,8 @@ flags           : aes,avx,cx16,smx,sse4_1,sse4_2,ssse3
     microarchitecture allows the client to reject particular microarchitectures.
 4.  All flavors of Mips are supported, little and big endian as well as 32/64
     bits.
+5.  **Features revealed from sysctl.** features are retrieved by the `sysctl`
+    instruction.
 
 <a name="ndk"></a>
 ## Android NDK's drop in replacement

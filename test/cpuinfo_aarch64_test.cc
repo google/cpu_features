@@ -25,8 +25,35 @@
 
 namespace cpu_features {
 class FakeCpuAarch64 {
+#if defined(CPU_FEATURES_OS_LINUX)
+  // No particular implementation for Linux as we use /proc/cpuinfo
+#elif defined(CPU_FEATURES_OS_MACOS)
+  std::set<std::string> darwin_sysctlbyname_;
+  std::map<std::string, int> darwin_sysctlbynamevalue_;
+
  public:
-#if defined(CPU_FEATURES_OS_WINDOWS)
+  bool GetDarwinSysCtlByName(std::string name) const {
+    return darwin_sysctlbyname_.count(name);
+  }
+
+  int GetDarwinSysCtlByNameValue(std::string name) const {
+    const auto iter = darwin_sysctlbynamevalue_.find(name);
+    if (iter != darwin_sysctlbynamevalue_.end()) return iter->second;
+    return 0;
+  }
+
+  void SetDarwinSysCtlByName(std::string name) {
+    darwin_sysctlbyname_.insert(name);
+  }
+
+  void SetDarwinSysCtlByNameValue(std::string name, int value) {
+    darwin_sysctlbynamevalue_[name] = value;
+  }
+#elif defined(CPU_FEATURES_OS_WINDOWS)
+  std::set<DWORD> windows_isprocessorfeaturepresent_;
+  WORD processor_revision_{};
+
+ public:
   bool GetWindowsIsProcessorFeaturePresent(DWORD dwProcessorFeature) {
     return windows_isprocessorfeaturepresent_.count(dwProcessorFeature);
   }
@@ -42,11 +69,7 @@ class FakeCpuAarch64 {
   void SetWindowsNativeSystemInfoProcessorRevision(WORD wProcessorRevision) {
     processor_revision_ = wProcessorRevision;
   }
-
- private:
-  std::set<DWORD> windows_isprocessorfeaturepresent_;
-  WORD processor_revision_{};
-#endif  // CPU_FEATURES_OS_WINDOWS
+#endif
 };
 
 static FakeCpuAarch64* g_fake_cpu_instance = nullptr;
@@ -56,7 +79,18 @@ static FakeCpuAarch64& cpu() {
   return *g_fake_cpu_instance;
 }
 
-#if defined(CPU_FEATURES_OS_WINDOWS)
+// Define OS dependent mock functions
+#if defined(CPU_FEATURES_OS_LINUX)
+// No particular functions to implement for Linux as we use /proc/cpuinfo
+#elif defined(CPU_FEATURES_OS_MACOS)
+extern "C" bool GetDarwinSysCtlByName(const char* name) {
+  return cpu().GetDarwinSysCtlByName(name);
+}
+
+extern "C" int GetDarwinSysCtlByNameValue(const char* name) {
+  return cpu().GetDarwinSysCtlByNameValue(name);
+}
+#elif defined(CPU_FEATURES_OS_WINDOWS)
 extern "C" bool GetWindowsIsProcessorFeaturePresent(DWORD dwProcessorFeature) {
   return cpu().GetWindowsIsProcessorFeaturePresent(dwProcessorFeature);
 }
@@ -64,7 +98,7 @@ extern "C" bool GetWindowsIsProcessorFeaturePresent(DWORD dwProcessorFeature) {
 extern "C" WORD GetWindowsNativeSystemInfoProcessorRevision() {
   return cpu().GetWindowsNativeSystemInfoProcessorRevision();
 }
-#endif  // CPU_FEATURES_OS_WINDOWS
+#endif
 
 namespace {
 
@@ -80,7 +114,7 @@ class CpuidAarch64Test : public ::testing::Test {
   }
 };
 
-TEST(CpuinfoAarch64Test, Aarch64FeaturesEnum) {
+TEST_F(CpuidAarch64Test, Aarch64FeaturesEnum) {
   const char* last_name = GetAarch64FeaturesEnumName(AARCH64_LAST_);
   EXPECT_STREQ(last_name, "unknown_feature");
   for (int i = static_cast<int>(AARCH64_FP);
@@ -93,10 +127,9 @@ TEST(CpuinfoAarch64Test, Aarch64FeaturesEnum) {
   }
 }
 
+// OS dependent tests
 #if defined(CPU_FEATURES_OS_LINUX)
-void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
-
-TEST(CpuinfoAarch64Test, FromHardwareCap) {
+TEST_F(CpuidAarch64Test, FromHardwareCap) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_AES, 0);
   GetEmptyFilesystem();  // disabling /proc/cpuinfo
@@ -135,7 +168,7 @@ TEST(CpuinfoAarch64Test, FromHardwareCap) {
   EXPECT_FALSE(info.features.pacg);
 }
 
-TEST(CpuinfoAarch64Test, FromHardwareCap2) {
+TEST_F(CpuidAarch64Test, FromHardwareCap2) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP,
                           AARCH64_HWCAP2_SVE2 | AARCH64_HWCAP2_BTI);
@@ -164,7 +197,7 @@ TEST(CpuinfoAarch64Test, FromHardwareCap2) {
   EXPECT_FALSE(info.features.rng);
 }
 
-TEST(CpuinfoAarch64Test, ARMCortexA53) {
+TEST_F(CpuidAarch64Test, ARMCortexA53) {
   ResetHwcaps();
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo",
@@ -266,9 +299,68 @@ CPU revision    : 3)");
   EXPECT_FALSE(info.features.smeb16b16);
   EXPECT_FALSE(info.features.smef16f16);
 }
-#endif  // CPU_FEATURES_OS_LINUX
+#elif defined(CPU_FEATURES_OS_MACOS)
+TEST_F(CpuidAarch64Test, FromDarwinSysctlFromName) {
+  cpu().SetDarwinSysCtlByName("hw.optional.floatingpoint");
+  cpu().SetDarwinSysCtlByName("hw.optional.neon");
+  cpu().SetDarwinSysCtlByName("hw.optional.AdvSIMD_HPFPCvt");
+  cpu().SetDarwinSysCtlByName("hw.optional.arm.FEAT_FP16");
+  cpu().SetDarwinSysCtlByName("hw.optional.arm.FEAT_LSE");
+  cpu().SetDarwinSysCtlByName("hw.optional.armv8_crc32");
+  cpu().SetDarwinSysCtlByName("hw.optional.arm.FEAT_FHM");
+  cpu().SetDarwinSysCtlByName("hw.optional.arm.FEAT_SHA512");
+  cpu().SetDarwinSysCtlByName("hw.optional.arm.FEAT_SHA3");
+  cpu().SetDarwinSysCtlByName("hw.optional.amx_version");
+  cpu().SetDarwinSysCtlByName("hw.optional.ucnormal_mem");
+  cpu().SetDarwinSysCtlByName("hw.optional.arm64");
 
-#if defined(CPU_FEATURES_OS_WINDOWS)
+  cpu().SetDarwinSysCtlByNameValue("hw.cputype", 16777228);
+  cpu().SetDarwinSysCtlByNameValue("hw.cpusubtype", 2);
+  cpu().SetDarwinSysCtlByNameValue("hw.cpu64bit", 1);
+  cpu().SetDarwinSysCtlByNameValue("hw.cpufamily", 458787763);
+  cpu().SetDarwinSysCtlByNameValue("hw.cpusubfamily", 2);
+
+  const auto info = GetAarch64Info();
+
+  EXPECT_EQ(info.implementer, 0x100000C);
+  EXPECT_EQ(info.variant, 2);
+  EXPECT_EQ(info.part, 0x1B588BB3);
+  EXPECT_EQ(info.revision, 2);
+
+  EXPECT_TRUE(info.features.fp);
+  EXPECT_FALSE(info.features.asimd);
+  EXPECT_FALSE(info.features.evtstrm);
+  EXPECT_FALSE(info.features.aes);
+  EXPECT_FALSE(info.features.pmull);
+  EXPECT_FALSE(info.features.sha1);
+  EXPECT_FALSE(info.features.sha2);
+  EXPECT_TRUE(info.features.crc32);
+  EXPECT_TRUE(info.features.atomics);
+  EXPECT_TRUE(info.features.fphp);
+  EXPECT_FALSE(info.features.asimdhp);
+  EXPECT_FALSE(info.features.cpuid);
+  EXPECT_FALSE(info.features.asimdrdm);
+  EXPECT_FALSE(info.features.jscvt);
+  EXPECT_FALSE(info.features.fcma);
+  EXPECT_FALSE(info.features.lrcpc);
+  EXPECT_FALSE(info.features.dcpop);
+  EXPECT_TRUE(info.features.sha3);
+  EXPECT_FALSE(info.features.sm3);
+  EXPECT_FALSE(info.features.sm4);
+  EXPECT_FALSE(info.features.asimddp);
+  EXPECT_TRUE(info.features.sha512);
+  EXPECT_FALSE(info.features.sve);
+  EXPECT_TRUE(info.features.asimdfhm);
+  EXPECT_FALSE(info.features.dit);
+  EXPECT_FALSE(info.features.uscat);
+  EXPECT_FALSE(info.features.ilrcpc);
+  EXPECT_FALSE(info.features.flagm);
+  EXPECT_FALSE(info.features.ssbs);
+  EXPECT_FALSE(info.features.sb);
+  EXPECT_FALSE(info.features.paca);
+  EXPECT_FALSE(info.features.pacg);
+}
+#elif defined(CPU_FEATURES_OS_WINDOWS)
 TEST_F(CpuidAarch64Test, WINDOWS_AARCH64_RPI4) {
   cpu().SetWindowsNativeSystemInfoProcessorRevision(0x03);
   cpu().SetWindowsIsProcessorFeaturePresent(PF_ARM_VFP_32_REGISTERS_AVAILABLE);
@@ -292,6 +384,5 @@ TEST_F(CpuidAarch64Test, WINDOWS_AARCH64_RPI4) {
   EXPECT_FALSE(info.features.lrcpc);
 }
 #endif  // CPU_FEATURES_OS_WINDOWS
-
 }  // namespace
 }  // namespace cpu_features
