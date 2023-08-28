@@ -14,13 +14,10 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Install Bazel
+      - name: Install Bazel through bazelisk
         run: |
-          curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
-          sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
-          echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
-          sudo apt-get update
-          sudo apt-get install bazel
-          bazel --version
+          wget  https://github.com/bazelbuild/bazelisk/releases/download/v1.18.0/bazelisk-linux-amd64
+          chmod +x bazelisk-linux-amd64
+          ./bazelisk-linux-amd64 --version
       - name: Test
-        run: bazel test -s --verbose_failures //...
+        run: ./bazelisk-linux-amd64 test -s --verbose_failures //...
