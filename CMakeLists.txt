@@ -63,7 +63,7 @@ set(PROCESSOR_IS_LOONGARCH FALSE)
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "^mips")
   set(PROCESSOR_IS_MIPS TRUE)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(^aarch64)|(^arm64)")
   set(PROCESSOR_IS_AARCH64 TRUE)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
   set(PROCESSOR_IS_ARM TRUE)
@@ -160,10 +160,9 @@ target_link_libraries(cpu_features PUBLIC ${CMAKE_DL_LIBS})
 target_include_directories(cpu_features
   PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cpu_features>
 )
-if(PROCESSOR_IS_X86)
-  if(APPLE)
-    target_compile_definitions(cpu_features PRIVATE HAVE_SYSCTLBYNAME)
-  endif()
+
+if(APPLE)
+  target_compile_definitions(cpu_features PRIVATE HAVE_SYSCTLBYNAME)
 endif()
 add_library(CpuFeature::cpu_features ALIAS cpu_features)
 
