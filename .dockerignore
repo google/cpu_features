@@ -1,8 +1,4 @@
 # Project Files unneeded by docker
-cmake/ci/Makefile
-cmake/ci/docker
-cmake/ci/doc
-cmake/ci/cache
 .git
 .gitignore
 .github
@@ -15,6 +11,15 @@ CONTRIBUTING.md
 CONTRIBUTORS
 LICENSE
 README.md
+
+bazel/ci/Makefile
+bazel/ci/docker
+bazel/ci/doc
+
+cmake/ci/Makefile
+cmake/ci/docker
+cmake/ci/doc
+cmake/ci/cache
 
 build/
 cmake_build/
