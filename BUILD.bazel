@@ -223,24 +223,25 @@ cc_library(
         PLATFORM_CPU_RISCV32: ["src/impl_riscv_linux.c"],
         PLATFORM_CPU_RISCV64: ["src/impl_riscv_linux.c"],
     }),
-    copts = C99_FLAGS,
-    includes = INCLUDES,
-    textual_hdrs = selects.with_or({
+    hdrs = selects.with_or({
         PLATFORM_CPU_X86_64: [
-            "src/impl_x86__base_implementation.inl",
             "include/cpuinfo_x86.h",
             "include/internal/cpuid_x86.h",
             "include/internal/windows_utils.h",
         ],
         PLATFORM_CPU_ARM: ["include/cpuinfo_arm.h"],
-        PLATFORM_CPU_ARM64: [
-            "src/impl_aarch64__base_implementation.inl",
-            "include/cpuinfo_aarch64.h",
-        ],
+        PLATFORM_CPU_ARM64: ["include/cpuinfo_aarch64.h"],
         PLATFORM_CPU_MIPS: ["include/cpuinfo_mips.h"],
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
         PLATFORM_CPU_RISCV32: ["include/cpuinfo_riscv.h"],
         PLATFORM_CPU_RISCV64: ["include/cpuinfo_riscv.h"],
+    }),
+    copts = C99_FLAGS,
+    includes = INCLUDES,
+    textual_hdrs = selects.with_or({
+        PLATFORM_CPU_X86_64: ["src/impl_x86__base_implementation.inl"],
+        PLATFORM_CPU_ARM64: ["src/impl_aarch64__base_implementation.inl"],
+        "//conditions:default": [],
     }) + [
         "src/define_introspection.inl",
         "src/define_introspection_and_hwcaps.inl",
@@ -285,10 +286,7 @@ cc_library(
             "include/internal/windows_utils.h",
         ],
         PLATFORM_CPU_ARM: ["include/cpuinfo_arm.h"],
-        PLATFORM_CPU_ARM64: [
-            "src/impl_aarch64__base_implementation.inl",
-            "include/cpuinfo_aarch64.h",
-        ],
+        PLATFORM_CPU_ARM64: ["include/cpuinfo_aarch64.h"],
         PLATFORM_CPU_MIPS: ["include/cpuinfo_mips.h"],
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
         PLATFORM_CPU_RISCV32: ["include/cpuinfo_riscv.h"],
@@ -302,6 +300,7 @@ cc_library(
     includes = INCLUDES,
     textual_hdrs = selects.with_or({
         PLATFORM_CPU_X86_64: ["src/impl_x86__base_implementation.inl"],
+        PLATFORM_CPU_ARM64: ["src/impl_aarch64__base_implementation.inl"],
         "//conditions:default": [],
     }) + [
         "src/define_introspection.inl",
