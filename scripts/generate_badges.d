@@ -78,7 +78,8 @@ const:
         case BuildSystem.CMake:
             return os == Os.Linux || cpu == Cpu.amd64;
         case BuildSystem.Bazel:
-            return os == Os.Linux && (cpu == Cpu.amd64 || cpu == Cpu.AArch64);
+            return (os == Os.Linux && (cpu == Cpu.amd64 || cpu == Cpu.AArch64))
+              || (os == Os.MacOS && cpu == Cpu.amd64);
         }
     }
 
