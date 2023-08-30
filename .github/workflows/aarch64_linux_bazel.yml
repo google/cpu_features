@@ -13,11 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: Install Bazel through bazelisk
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Check docker
         run: |
-          wget  https://github.com/bazelbuild/bazelisk/releases/download/v1.18.0/bazelisk-linux-arm64
-          chmod +x bazelisk-linux-arm64
-          ./bazelisk-linux-arm64 --version
+          docker info
+          docker buildx ls
+      - name: Build
+        run: make --directory=bazel/ci arm64_build
       - name: Test
-        run: ./bazelisk-linux-arm64 test -s --verbose_failures //...
+        run: make --directory=bazel/ci arm64_test
