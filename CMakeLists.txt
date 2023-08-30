@@ -26,7 +26,20 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # An option to enable/disable the executable target list_cpu_features.
-option(BUILD_EXECUTABLE "Build list_cpu_features executable." ON)
+# Disable it by default if the project is included as a subproject.
+if(NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+  option(BUILD_EXECUTABLE "Build list_cpu_features executable." OFF)
+else()
+  option(BUILD_EXECUTABLE "Build list_cpu_features executable." ON)
+endif()
+
+# An option which allows to switch off install steps. Useful for embedding.
+# Disable it by default if the project is included as a subproject.
+if(NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+  option(ENABLE_INSTALL "Enable install targets" OFF)
+else()
+  option(ENABLE_INSTALL "Enable install targets" ON)
+endif()
 
 # BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to make
 # it prominent in the GUI.
@@ -243,18 +256,9 @@ endif()
 #
 # Install cpu_features and list_cpu_features
 #
-
-include(GNUInstallDirs)
-install(TARGETS cpu_features
-  EXPORT CpuFeaturesTargets
-  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cpu_features
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-if(BUILD_EXECUTABLE)
-  install(TARGETS list_cpu_features
+if(ENABLE_INSTALL)
+  include(GNUInstallDirs)
+  install(TARGETS cpu_features
     EXPORT CpuFeaturesTargets
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cpu_features
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -262,27 +266,37 @@ if(BUILD_EXECUTABLE)
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR}
   )
-endif()
-install(EXPORT CpuFeaturesTargets
-  NAMESPACE CpuFeatures::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CpuFeatures
-  COMPONENT Devel
-)
-include(CMakePackageConfigHelpers)
-configure_package_config_file(cmake/CpuFeaturesConfig.cmake.in
-  "${PROJECT_BINARY_DIR}/CpuFeaturesConfig.cmake"
-  INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/CpuFeatures"
-  NO_SET_AND_CHECK_MACRO
-  NO_CHECK_REQUIRED_COMPONENTS_MACRO
-)
-write_basic_package_version_file(
-  "${PROJECT_BINARY_DIR}/CpuFeaturesConfigVersion.cmake"
-  COMPATIBILITY SameMajorVersion
-)
-install(
-  FILES
+  if(BUILD_EXECUTABLE)
+    install(TARGETS list_cpu_features
+      EXPORT CpuFeaturesTargets
+      PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/cpu_features
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+  endif()
+  install(EXPORT CpuFeaturesTargets
+    NAMESPACE CpuFeatures::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CpuFeatures
+    COMPONENT Devel
+  )
+  include(CMakePackageConfigHelpers)
+  configure_package_config_file(cmake/CpuFeaturesConfig.cmake.in
     "${PROJECT_BINARY_DIR}/CpuFeaturesConfig.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/CpuFeatures"
+    NO_SET_AND_CHECK_MACRO
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
+  )
+  write_basic_package_version_file(
     "${PROJECT_BINARY_DIR}/CpuFeaturesConfigVersion.cmake"
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/CpuFeatures"
-  COMPONENT Devel
-)
+    COMPATIBILITY SameMajorVersion
+  )
+  install(
+    FILES
+      "${PROJECT_BINARY_DIR}/CpuFeaturesConfig.cmake"
+      "${PROJECT_BINARY_DIR}/CpuFeaturesConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/CpuFeatures"
+    COMPONENT Devel
+  )
+endif()
