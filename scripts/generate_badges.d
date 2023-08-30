@@ -127,14 +127,14 @@ const:
 
 }
 
-auto tableHeader(in Cpu[] cpus)
+auto tableHeader(in Os[] oses)
 {
-    return chain(only("Os"), cpus.map!(to!string)).array;
+    return chain(only(""), oses.map!(to!string)).array;
 }
 
-auto tableAlignment(in Cpu[] cpus)
+auto tableAlignment(in Os[] oses)
 {
-    return chain(only(":--"), cpus.map!(v => "--:")).array;
+    return chain(only(":--"), oses.map!(v => "--:")).array;
 }
 
 auto tableCell(Range)(in Os os, in Cpu cpu, Range badges)
@@ -144,19 +144,19 @@ auto tableCell(Range)(in Os os, in Cpu cpu, Range badges)
         .joiner("<br/>").to!string;
 }
 
-auto tableRow(Range)(in Os os, in Cpu[] cpus, Range badges)
+auto tableRow(Range)(in Cpu cpu, in Os[] oses, Range badges)
 {
-    return chain(only(os.to!string), cpus.map!(cpu => tableCell(os, cpu, badges))).array;
+    return chain(only(cpu.to!string), oses.map!(os => tableCell(os, cpu, badges))).array;
 }
 
 auto tableRows(Range)(in Os[] oses, in Cpu[] cpus, Range badges)
 {
-    return oses.map!(os => tableRow(os, cpus, badges)).array;
+    return cpus.map!(cpu => tableRow(cpu, oses, badges)).array;
 }
 
 auto table(Range)(in Os[] oses, in Cpu[] cpus, Range badges)
 {
-    return chain(only(tableHeader(cpus)), only(tableAlignment(cpus)),
+    return chain(only(tableHeader(oses)), only(tableAlignment(oses)),
         tableRows(oses, cpus, badges));
 }
 
