@@ -2,6 +2,7 @@
 
 load("@bazel_skylib//lib:selects.bzl", "selects")
 load("//:bazel/platforms.bzl", "PLATFORM_CPU_ARM", "PLATFORM_CPU_ARM64", "PLATFORM_CPU_MIPS", "PLATFORM_CPU_PPC", "PLATFORM_CPU_RISCV32", "PLATFORM_CPU_RISCV64", "PLATFORM_CPU_X86_64")
+load("//:bazel/platforms.bzl", "PLATFORM_OS_MACOS")
 
 package(
     default_visibility = ["//visibility:public"],
@@ -170,7 +171,10 @@ cc_library(
     name = "hwcaps",
     srcs = ["src/hwcaps.c"],
     copts = C99_FLAGS,
-    defines = ["HAVE_STRONG_GETAUXVAL"],
+    defines = selects.with_or({
+        PLATFORM_OS_MACOS: ["HAVE_DLFCN_H"],
+        "//conditions:default": ["HAVE_STRONG_GETAUXVAL"],
+    }),
     includes = INCLUDES,
     textual_hdrs = ["include/internal/hwcaps.h"],
     deps = [
@@ -237,6 +241,10 @@ cc_library(
         PLATFORM_CPU_RISCV64: ["include/cpuinfo_riscv.h"],
     }),
     copts = C99_FLAGS,
+    defines = selects.with_or({
+        PLATFORM_OS_MACOS: ["HAVE_SYSCTLBYNAME"],
+        "//conditions:default": [],
+    }),
     includes = INCLUDES,
     textual_hdrs = selects.with_or({
         PLATFORM_CPU_X86_64: ["src/impl_x86__base_implementation.inl"],
@@ -295,6 +303,9 @@ cc_library(
     copts = C99_FLAGS,
     defines = selects.with_or({
         PLATFORM_CPU_X86_64: ["CPU_FEATURES_MOCK_CPUID_X86"],
+        "//conditions:default": [],
+    }) + selects.with_or({
+        PLATFORM_OS_MACOS: ["HAVE_SYSCTLBYNAME"],
         "//conditions:default": [],
     }),
     includes = INCLUDES,
