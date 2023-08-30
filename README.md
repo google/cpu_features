@@ -9,26 +9,25 @@ instructions) at runtime.
 
 | Os | amd64 | AArch64 | ARM | MIPS | POWER | RISCV | LOONGARCH | s390x |
 | :-- | --: | --: | --: | --: | --: | --: | --: | --: |
-| Linux | [![][i1a0]][l1a0]<br/>[![][i1a1]][l1a1] | [![][i1b0]][l1b0]<br/>[![][i1b1]][l1b1] | [![][i1c0]][l1c0]<br/>![][d1] | [![][i1d0]][l1d0]<br/>![][d1] | [![][i1e0]][l1e0]<br/>![][d1] | [![][i1f0]][l1f0]<br/>![][d1] | [![][i1g0]][l1g0]<br/>![][d1] | [![][i1h0]][l1h0]<br/>![][d1] |
+| Linux | [![][i1a0]][l1a0]<br/>[![][i1a1]][l1a1] | [![][i1b0]][l1b0]<br/>[![][i1b1]][l1b1] | [![][i1c0]][l1c0]<br/>![][d1] | [![][i1d0]][l1d0]<br/>![][d1] | [![][i1e0]][l1e0]<br/>![][d1] | [![][i1f0]][l1f0]<br/>![][d1] | ![][d0]<br/>![][d1] | [![][i1h0]][l1h0]<br/>![][d1] |
 | FreeBSD | [![][i2a0]][l2a0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] |
 | MacOS | [![][i3a0]][l3a0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] |
 | Windows | [![][i4a0]][l4a0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] |
 
-[d0]: https://img.shields.io/badge/CMake-N%2FA-lightgrey
-[d1]: https://img.shields.io/badge/Bazel-N%2FA-lightgrey
-[i1a0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_linux_cmake.yml?branch=main&label=CMake
-[i1a1]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_linux_bazel.yml?branch=main&label=Bazel
-[i1b0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/aarch64_linux_cmake.yml?branch=main&label=CMake
-[i1b1]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/aarch64_linux_bazel.yml?branch=main&label=Bazel
-[i1c0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/arm_linux_cmake.yml?branch=main&label=CMake
-[i1d0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/mips_linux_cmake.yml?branch=main&label=CMake
-[i1e0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/power_linux_cmake.yml?branch=main&label=CMake
-[i1f0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/riscv_linux_cmake.yml?branch=main&label=CMake
-[i1g0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/loongarch_linux_cmake.yml?branch=main&label=CMake
-[i1h0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/s390x_linux_cmake.yml?branch=main&label=CMake
-[i2a0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_freebsd_cmake.yml?branch=main&label=CMake
-[i3a0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_macos_cmake.yml?branch=main&label=CMake
-[i4a0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_windows_cmake.yml?branch=main&label=CMake
+[d0]: https://img.shields.io/badge/n%2Fa-lightgrey?&logo=cmake
+[d1]: https://img.shields.io/badge/n%2Fa-lightgrey?&logo=data:image/svg%2bxml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAuMTZsNS43ODYgNS43ODZMNiAxMS43MzIuMjE0IDUuOTQ2IDYgLjE2MXpNMCA2LjIxNFYxMmw1Ljc4NiA1Ljc4NlYxMkwwIDYuMjE0ek0xOCAuMTZsNS43ODYgNS43ODZMMTggMTEuNzMybC01Ljc4Ni01Ljc4NkwxOCAuMTYxek0yNCA2LjIxNFYxMmwtNS43ODYgNS43ODZWMTJMMjQgNi4yMTR6TTEyIDYuMTZsNS43ODYgNS43ODZMMTIgMTcuNzMybC01Ljc4Ni01Ljc4NkwxMiA2LjE2MXpNMTEuODQgMTguMDU0djUuNzg1bC01Ljc4Ni01Ljc4NXYtNS43ODZsNS43ODUgNS43ODZ6TTEyLjE2IDE4LjA1NGw1Ljc4Ni01Ljc4NnY1Ljc4NmwtNS43ODUgNS43ODV2LTUuNzg1eiIgc3Ryb2tlPSJ0cmFuc3BhcmVudCIgZmlsbD0id2hpdGUiLz48L3N2Zz4=
+[i1a0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_linux_cmake.yml?branch=main&event=push&label=&logo=cmake
+[i1a1]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_linux_bazel.yml?branch=main&event=push&label=&logo=data:image/svg%2bxml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAuMTZsNS43ODYgNS43ODZMNiAxMS43MzIuMjE0IDUuOTQ2IDYgLjE2MXpNMCA2LjIxNFYxMmw1Ljc4NiA1Ljc4NlYxMkwwIDYuMjE0ek0xOCAuMTZsNS43ODYgNS43ODZMMTggMTEuNzMybC01Ljc4Ni01Ljc4NkwxOCAuMTYxek0yNCA2LjIxNFYxMmwtNS43ODYgNS43ODZWMTJMMjQgNi4yMTR6TTEyIDYuMTZsNS43ODYgNS43ODZMMTIgMTcuNzMybC01Ljc4Ni01Ljc4NkwxMiA2LjE2MXpNMTEuODQgMTguMDU0djUuNzg1bC01Ljc4Ni01Ljc4NXYtNS43ODZsNS43ODUgNS43ODZ6TTEyLjE2IDE4LjA1NGw1Ljc4Ni01Ljc4NnY1Ljc4NmwtNS43ODUgNS43ODV2LTUuNzg1eiIgc3Ryb2tlPSJ0cmFuc3BhcmVudCIgZmlsbD0id2hpdGUiLz48L3N2Zz4=
+[i1b0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/aarch64_linux_cmake.yml?branch=main&event=push&label=&logo=cmake
+[i1b1]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/aarch64_linux_bazel.yml?branch=main&event=push&label=&logo=data:image/svg%2bxml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAuMTZsNS43ODYgNS43ODZMNiAxMS43MzIuMjE0IDUuOTQ2IDYgLjE2MXpNMCA2LjIxNFYxMmw1Ljc4NiA1Ljc4NlYxMkwwIDYuMjE0ek0xOCAuMTZsNS43ODYgNS43ODZMMTggMTEuNzMybC01Ljc4Ni01Ljc4NkwxOCAuMTYxek0yNCA2LjIxNFYxMmwtNS43ODYgNS43ODZWMTJMMjQgNi4yMTR6TTEyIDYuMTZsNS43ODYgNS43ODZMMTIgMTcuNzMybC01Ljc4Ni01Ljc4NkwxMiA2LjE2MXpNMTEuODQgMTguMDU0djUuNzg1bC01Ljc4Ni01Ljc4NXYtNS43ODZsNS43ODUgNS43ODZ6TTEyLjE2IDE4LjA1NGw1Ljc4Ni01Ljc4NnY1Ljc4NmwtNS43ODUgNS43ODV2LTUuNzg1eiIgc3Ryb2tlPSJ0cmFuc3BhcmVudCIgZmlsbD0id2hpdGUiLz48L3N2Zz4=
+[i1c0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/arm_linux_cmake.yml?branch=main&event=push&label=&logo=cmake
+[i1d0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/mips_linux_cmake.yml?branch=main&event=push&label=&logo=cmake
+[i1e0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/power_linux_cmake.yml?branch=main&event=push&label=&logo=cmake
+[i1f0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/riscv_linux_cmake.yml?branch=main&event=push&label=&logo=cmake
+[i1h0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/s390x_linux_cmake.yml?branch=main&event=push&label=&logo=cmake
+[i2a0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_freebsd_cmake.yml?branch=main&event=push&label=&logo=cmake
+[i3a0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_macos_cmake.yml?branch=main&event=push&label=&logo=cmake
+[i4a0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_windows_cmake.yml?branch=main&event=push&label=&logo=cmake
 [l1a0]: https://github.com/google/cpu_features/actions/workflows/amd64_linux_cmake.yml
 [l1a1]: https://github.com/google/cpu_features/actions/workflows/amd64_linux_bazel.yml
 [l1b0]: https://github.com/google/cpu_features/actions/workflows/aarch64_linux_cmake.yml
@@ -37,7 +36,6 @@ instructions) at runtime.
 [l1d0]: https://github.com/google/cpu_features/actions/workflows/mips_linux_cmake.yml
 [l1e0]: https://github.com/google/cpu_features/actions/workflows/power_linux_cmake.yml
 [l1f0]: https://github.com/google/cpu_features/actions/workflows/riscv_linux_cmake.yml
-[l1g0]: https://github.com/google/cpu_features/actions/workflows/loongarch_linux_cmake.yml
 [l1h0]: https://github.com/google/cpu_features/actions/workflows/s390x_linux_cmake.yml
 [l2a0]: https://github.com/google/cpu_features/actions/workflows/amd64_freebsd_cmake.yml
 [l3a0]: https://github.com/google/cpu_features/actions/workflows/amd64_macos_cmake.yml
