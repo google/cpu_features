@@ -1,3 +1,6 @@
+// usage:
+// 1. copy paste the whole code to https://run.dlang.io/ then click `run`
+// 2. `docker run --rm -it -v $(pwd):/src dlanguage/dmd dmd -run generate_badges.d`
 import std.algorithm : each, map, cartesianProduct, filter, joiner, sort, uniq;
 import std.array : array;
 import std.conv : to;
@@ -67,7 +70,7 @@ const:
         case BuildSystem.CMake:
             return os == Os.Linux || cpu == Cpu.amd64;
         case BuildSystem.Bazel:
-            return os == Os.Linux && cpu == Cpu.amd64;
+            return os == Os.Linux && (cpu == Cpu.amd64 || cpu == Cpu.AArch64);
         }
     }
 
