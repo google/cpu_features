@@ -2,7 +2,6 @@
 
 // To run this script:
 // cd /path/to/cpu_features
-// chmod +x scripts/generate_badges.d
 // ./scripts/generate_badges.d
 
 import std.algorithm : each, map, cartesianProduct, filter, joiner, sort, uniq;
