@@ -1,4 +1,4 @@
-#!/usr/bin/docker run --rm -it -v $(pwd):/src dlanguage/dmd dmd -run generate_badges.d
+#!/usr/bin/env -S docker run --rm -it -v .:/src dlanguage/dmd dmd -run generate_badges.d
 import std.algorithm : each, map, cartesianProduct, filter, joiner, sort, uniq;
 import std.array;
 import std.conv : to;
