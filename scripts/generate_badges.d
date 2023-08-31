@@ -1,6 +1,4 @@
-// usage:
-// 1. copy paste the whole code to https://run.dlang.io/ then click `run`
-// 2. `docker run --rm -it -v $(pwd):/src dlanguage/dmd dmd -run generate_badges.d`
+#!/usr/bin/docker run --rm -it -v $(pwd):/src dlanguage/dmd dmd -run generate_badges.d
 import std.algorithm : each, map, cartesianProduct, filter, joiner, sort, uniq;
 import std.array;
 import std.conv : to;
@@ -48,15 +46,11 @@ const:
     Os os;
     BuildSystem build_system;
 
+private:
     string id()
     {
         return format("%d%c%d", cast(uint)(os) + 1, cast(char)('a' + cpu),
             cast(uint)(build_system));
-    }
-
-    string disabled_image_ref()
-    {
-        return format("[d%d]", cast(uint)(build_system));
     }
 
     string link_ref()
@@ -83,11 +77,11 @@ const:
         }
     }
 
-    string text()
+    string filename()
     {
-        if (enabled())
-            return format("[![]%s]%s", image_ref, link_ref);
-        return format("![]%s", disabled_image_ref);
+        import std.uni : toLower;
+
+        return toLower(format("%s_%s_%s.yml", cpu, os, build_system));
     }
 
     string append_logo(string url)
@@ -101,17 +95,24 @@ const:
         }
     }
 
+public:
+
+    string disabled_image_ref()
+    {
+        return format("[d%d]", cast(uint)(build_system));
+    }
+
+    string text()
+    {
+        if (enabled())
+            return format("[![%s]%s]%s", build_system, image_ref, link_ref);
+        return format("![%s]%s", build_system, disabled_image_ref);
+    }
+
     string disabled_image_link()
     {
         return append_logo(format("%s: https://img.shields.io/badge/n%%2Fa-lightgrey?",
                 disabled_image_ref));
-    }
-
-    string filename()
-    {
-        import std.uni : toLower;
-
-        return toLower(format("%s_%s_%s.yml", cpu, os, build_system));
     }
 
     string link_decl()

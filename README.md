@@ -9,14 +9,14 @@ instructions) at runtime.
 
 |  | Linux | FreeBSD | MacOS | Windows |
 | :-- | --: | --: | --: | --: |
-| amd64 | [![][i1a0]][l1a0]<br/>[![][i1a1]][l1a1] | [![][i2a0]][l2a0]<br/>![][d1] | [![][i3a0]][l3a0]<br/>[![][i3a1]][l3a1] | [![][i4a0]][l4a0]<br/>![][d1] |
-| AArch64 | [![][i1b0]][l1b0]<br/>[![][i1b1]][l1b1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] |
-| ARM | [![][i1c0]][l1c0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] |
-| MIPS | [![][i1d0]][l1d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] |
-| POWER | [![][i1e0]][l1e0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] |
-| RISCV | [![][i1f0]][l1f0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] |
-| LOONGARCH | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] |
-| s390x | [![][i1h0]][l1h0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] | ![][d0]<br/>![][d1] |
+| amd64 | [![CMake][i1a0]][l1a0]<br/>[![Bazel][i1a1]][l1a1] | [![CMake][i2a0]][l2a0]<br/>![Bazel][d1] | [![CMake][i3a0]][l3a0]<br/>[![Bazel][i3a1]][l3a1] | [![CMake][i4a0]][l4a0]<br/>![Bazel][d1] |
+| AArch64 | [![CMake][i1b0]][l1b0]<br/>[![Bazel][i1b1]][l1b1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] |
+| ARM | [![CMake][i1c0]][l1c0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] |
+| MIPS | [![CMake][i1d0]][l1d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] |
+| POWER | [![CMake][i1e0]][l1e0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] |
+| RISCV | [![CMake][i1f0]][l1f0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] |
+| LOONGARCH | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] |
+| s390x | [![CMake][i1h0]][l1h0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] |
 
 [d0]: https://img.shields.io/badge/n%2Fa-lightgrey?&logo=cmake
 [d1]: https://img.shields.io/badge/n%2Fa-lightgrey?&logo=data:image/svg%2bxml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAuMTZsNS43ODYgNS43ODZMNiAxMS43MzIuMjE0IDUuOTQ2IDYgLjE2MXpNMCA2LjIxNFYxMmw1Ljc4NiA1Ljc4NlYxMkwwIDYuMjE0ek0xOCAuMTZsNS43ODYgNS43ODZMMTggMTEuNzMybC01Ljc4Ni01Ljc4NkwxOCAuMTYxek0yNCA2LjIxNFYxMmwtNS43ODYgNS43ODZWMTJMMjQgNi4yMTR6TTEyIDYuMTZsNS43ODYgNS43ODZMMTIgMTcuNzMybC01Ljc4Ni01Ljc4NkwxMiA2LjE2MXpNMTEuODQgMTguMDU0djUuNzg1bC01Ljc4Ni01Ljc4NXYtNS43ODZsNS43ODUgNS43ODZ6TTEyLjE2IDE4LjA1NGw1Ljc4Ni01Ljc4NnY1Ljc4NmwtNS43ODUgNS43ODV2LTUuNzg1eiIgc3Ryb2tlPSJ0cmFuc3BhcmVudCIgZmlsbD0id2hpdGUiLz48L3N2Zz4=
