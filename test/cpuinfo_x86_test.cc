@@ -772,6 +772,20 @@ TEST_F(CpuidX86Test, AMD_K17_ZEN2_XBOX_SERIES_X) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN2);
 }
 
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0880F40_K17_CPUID.txt
+TEST_F(CpuidX86Test, AMD_K17_ZEN2_4800S) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000010, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x00000001, 0}, Leaf{0x00880F40, 0x00100800, 0x7ED8320B, 0x178BFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
+  EXPECT_EQ(info.family, 0x17);
+  EXPECT_EQ(info.model, 0x84);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN2);
+}
+
 // http://users.atw.hu/instlatx64/HygonGenuine/HygonGenuine0900F02_Hygon_CPUID3.txt
 TEST_F(CpuidX86Test, AMD_K18_ZEN_DHYANA) {
   cpu().SetLeaves({
