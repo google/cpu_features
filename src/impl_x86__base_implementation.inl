@@ -834,6 +834,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         return AMD_ZEN3;
       case CPUID(0x19, 0x10):
       case CPUID(0x19, 0x61):
+      case CPUID(0x19, 0x74):
         // https://en.wikichip.org/wiki/amd/microarchitectures/zen_4
         return AMD_ZEN4;
       default:
