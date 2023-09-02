@@ -86,6 +86,7 @@ typedef struct {
   int amx_bf16 : 1;
   int amx_tile : 1;
   int amx_int8 : 1;
+  int amx_fp16 : 1;
 
   int pclmulqdq : 1;
   int smx : 1;
@@ -254,6 +255,7 @@ typedef enum {
   X86_AMX_BF16,
   X86_AMX_TILE,
   X86_AMX_INT8,
+  X86_AMX_FP16,
   X86_PCLMULQDQ,
   X86_SMX,
   X86_SGX,

@@ -450,6 +450,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
       features->amx_bf16 = IsBitSet(leaf_7.edx, 22);
       features->amx_tile = IsBitSet(leaf_7.edx, 24);
       features->amx_int8 = IsBitSet(leaf_7.edx, 25);
+      features->amx_fp16 = IsBitSet(leaf_7_1.eax, 21);
     }
   } else {
     // When XCR0 is not available (Atom based or older cpus) we need to defer to
@@ -1972,6 +1973,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_AMX_BF16, amx_bf16, , , )                       \
   LINE(X86_AMX_TILE, amx_tile, , , )                       \
   LINE(X86_AMX_INT8, amx_int8, , , )                       \
+  LINE(X86_AMX_FP16, amx_fp16, , , )                       \
   LINE(X86_PCLMULQDQ, pclmulqdq, , , )                     \
   LINE(X86_SMX, smx, , , )                                 \
   LINE(X86_SGX, sgx, , , )                                 \
