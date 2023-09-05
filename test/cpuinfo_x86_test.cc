@@ -959,6 +959,20 @@ TEST_F(CpuidX86Test, AMD_ZEN2_MENDOCINO) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN2);
 }
 
+// http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0A10F11_K19_Genoa_02_CPUID.txt
+TEST_F(CpuidX86Test, AMD_K19_ZEN4_GENOA) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000010, 0x68747541, 0x444D4163, 0x69746E65}},
+      {{0x00000001, 0}, Leaf{0x00A10F11, 0x00200800, 0x7EFA320B, 0x178BFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_EQ(info.model, 0x11);
+  EXPECT_EQ(info.family, 0x19);
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_ZEN4);
+}
+
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00906A4_AlderLakeP_00_CPUID.txt
 TEST_F(CpuidX86Test, INTEL_ALDER_LAKE_AVX_VNNI) {
   cpu().SetOsBackupsExtendedRegisters(true);
