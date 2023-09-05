@@ -818,6 +818,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x17, 0x60):
       case CPUID(0x17, 0x68):
       case CPUID(0x17, 0x71):
+      case CPUID(0x17, 0x84):
       case CPUID(0x17, 0x90):
       case CPUID(0x17, 0x98):
       case CPUID(0x17, 0xA0):
