@@ -1722,6 +1722,20 @@ TEST_F(CpuidX86Test, INTEL_RAPTOR_LAKE_S) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_RPL);
 }
 
+// http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00B06E0_AlderLakeN_03_CPUID.txt
+TEST_F(CpuidX86Test, INTEL_ALDER_LAKE_N) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000020, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000B06E0, 0x00800800, 0x7FFAFBBF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0xBE);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ADL);
+}
+
 // https://github.com/google/cpu_features/issues/200
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00206F2_Eagleton_CPUID.txt
 #if defined(CPU_FEATURES_OS_WINDOWS)

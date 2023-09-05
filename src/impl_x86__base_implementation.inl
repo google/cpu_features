@@ -647,6 +647,7 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
         }
       case CPUID(0x06, 0x97):
       case CPUID(0x06, 0x9A):
+      case CPUID(0x06, 0xBE):
         // https://en.wikichip.org/wiki/intel/microarchitectures/alder_lake
         return INTEL_ADL;
       case CPUID(0x06, 0xA5):
