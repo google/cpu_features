@@ -113,170 +113,6 @@ class CpuidAarch64Test : public ::testing::Test {
     g_fake_cpu_instance = nullptr;
   }
 };
-#if defined(CPU_FEATURES_OS_FREEBSD)
-// https://people.freebsd.org/~dch/posts/2021-07-02-oci-bringup.html
-TEST(CpuinfoAarch64Test, FREEBSD_NEOVERSE_N1) {
-  auto& fs = GetEmptyFilesystem();
-  fs.CreateFile("/var/run/dmesg.boot", R"(
-CPU  0: ARM Neoverse-N1 r3p1 affinity:  0
-                   Cache Type = <64 byte D-cacheline,64 byte I-cacheline,PIPT ICache,64 byte ERG,64 byte CWG,IDC>
- Instruction Set Attributes 0 = <DP,RDM,Atomic,CRC32,SHA2,SHA1,AES+PMULL>
- Instruction Set Attributes 1 = <RCPC-8.3,DCPoP>
-         Processor Features 0 = <CSV3,CSV2,RASv1,GIC,AdvSIMD+HP,FP+HP,EL3,EL2,EL1,EL0 32>
-         Processor Features 1 = <PSTATE.SSBS MSR>
-      Memory Model Features 0 = <TGran4,TGran64,TGran16,SNSMem,BigEnd,16bit ASID,256TB PA>
-      Memory Model Features 1 = <PAN+ATS1E1,LO,HPD+TTPBHA,VH,16bit VMID,HAF+DS>
-      Memory Model Features 2 = <32bit CCIDX,48bit VA,UAO,CnP>
-             Debug Features 0 = <SPE,2 CTX BKPTs,4 Watchpoints,6 Breakpoints,PMUv3+16 bit evtCount,Debugv8.2>
-             Debug Features 1 = <>
-         Auxiliary Features 0 = <>
-         Auxiliary Features 1 = <>
-)");
-  const auto info = GetAarch64Info();
-
-  EXPECT_TRUE(info.features.fp);
-  EXPECT_TRUE(info.features.asimd);
-  EXPECT_TRUE(info.features.aes);
-  EXPECT_TRUE(info.features.pmull);
-  EXPECT_TRUE(info.features.sha1);
-  EXPECT_TRUE(info.features.sha2);
-  EXPECT_TRUE(info.features.crc32);
-  EXPECT_TRUE(info.features.asimdrdm);
-  EXPECT_TRUE(info.features.asimdhp);
-  EXPECT_TRUE(info.features.atomics);
-  EXPECT_TRUE(info.features.fphp);
-  EXPECT_TRUE(info.features.lrcpc);
-  EXPECT_TRUE(info.features.asimddp);
-  EXPECT_TRUE(info.features.ssbs);
-  EXPECT_TRUE(info.features.dcpop);
-
-  EXPECT_FALSE(info.features.evtstrm);
-  EXPECT_FALSE(info.features.cpuid);
-  EXPECT_FALSE(info.features.jscvt);
-  EXPECT_FALSE(info.features.fcma);
-  EXPECT_FALSE(info.features.sha3);
-  EXPECT_FALSE(info.features.sm3);
-  EXPECT_FALSE(info.features.sm4);
-  EXPECT_FALSE(info.features.sha512);
-  EXPECT_FALSE(info.features.sve);
-  EXPECT_FALSE(info.features.asimdfhm);
-  EXPECT_FALSE(info.features.dit);
-  EXPECT_FALSE(info.features.uscat);
-  EXPECT_FALSE(info.features.ilrcpc);
-  EXPECT_FALSE(info.features.flagm);
-  EXPECT_FALSE(info.features.sb);
-  EXPECT_FALSE(info.features.paca);
-  EXPECT_FALSE(info.features.pacg);
-  EXPECT_FALSE(info.features.dcpodp);
-  EXPECT_FALSE(info.features.sve2);
-  EXPECT_FALSE(info.features.sveaes);
-  EXPECT_FALSE(info.features.svepmull);
-  EXPECT_FALSE(info.features.svebitperm);
-  EXPECT_FALSE(info.features.svesha3);
-  EXPECT_FALSE(info.features.svesm4);
-  EXPECT_FALSE(info.features.flagm2);
-  EXPECT_FALSE(info.features.frint);
-  EXPECT_FALSE(info.features.svei8mm);
-  EXPECT_FALSE(info.features.svef32mm);
-  EXPECT_FALSE(info.features.svef64mm);
-  EXPECT_FALSE(info.features.svebf16);
-  EXPECT_FALSE(info.features.i8mm);
-  EXPECT_FALSE(info.features.bf16);
-  EXPECT_FALSE(info.features.dgh);
-  EXPECT_FALSE(info.features.rng);
-  EXPECT_FALSE(info.features.bti);
-  EXPECT_FALSE(info.features.mte);
-  EXPECT_FALSE(info.features.ecv);
-  EXPECT_FALSE(info.features.afp);
-  EXPECT_FALSE(info.features.rpres);
-}
-
-TEST(CpuinfoAarch64Test, FREEBSD_RPI4) {
-  auto& fs = GetEmptyFilesystem();
-  fs.CreateFile("/var/run/dmesg.boot", R"(
-CPU  0: ARM Cortex-A72 r0p3 affinity:  0
-                   Cache Type = <64 byte D-cacheline,64 byte I-cacheline,PIPT ICache,64 byte ERG,64 byte CWG>
- Instruction Set Attributes 0 = <CRC32>
- Instruction Set Attributes 1 = <>
- Instruction Set Attributes 2 = <>
-         Processor Features 0 = <AdvSIMD,FP,EL3 32,EL2 32,EL1 32,EL0 32>
-         Processor Features 1 = <>
-      Memory Model Features 0 = <TGran4,TGran64,SNSMem,BigEnd,16bit ASID,16TB PA>
-      Memory Model Features 1 = <8bit VMID>
-      Memory Model Features 2 = <32bit CCIDX,48bit VA>
-             Debug Features 0 = <DoubleLock,2 CTX BKPTs,4 Watchpoints,6 Breakpoints,PMUv3,Debugv8>
-             Debug Features 1 = <>
-         Auxiliary Features 0 = <>
-         Auxiliary Features 1 = <>
-AArch32 Instruction Set Attributes 5 = <CRC32,SEVL>
-AArch32 Media and VFP Features 0 = <FPRound,FPSqrt,FPDivide,DP VFPv3+v4,SP VFPv3+v4,AdvSIMD>
-AArch32 Media and VFP Features 1 = <SIMDFMAC,FPHP DP Conv,SIMDHP SP Conv,SIMDSP,SIMDInt,SIMDLS,FPDNaN,FPFtZ>
-CPU  1: ARM Cortex-A72 r0p3 affinity:  1
-CPU  2: ARM Cortex-A72 r0p3 affinity:  2
-CPU  3: ARM Cortex-A72 r0p3 affinity:  3
-)");
-  const auto info = GetAarch64Info();
-
-  EXPECT_TRUE(info.features.fp);
-  EXPECT_TRUE(info.features.asimd);
-  EXPECT_TRUE(info.features.crc32);
-
-  EXPECT_FALSE(info.features.aes);
-  EXPECT_FALSE(info.features.pmull);
-  EXPECT_FALSE(info.features.sha1);
-  EXPECT_FALSE(info.features.sha2);
-  EXPECT_FALSE(info.features.asimdrdm);
-  EXPECT_FALSE(info.features.asimdhp);
-  EXPECT_FALSE(info.features.atomics);
-  EXPECT_FALSE(info.features.fphp);
-  EXPECT_FALSE(info.features.lrcpc);
-  EXPECT_FALSE(info.features.asimddp);
-  EXPECT_FALSE(info.features.ssbs);
-  EXPECT_FALSE(info.features.dcpop);
-  EXPECT_FALSE(info.features.evtstrm);
-  EXPECT_FALSE(info.features.cpuid);
-  EXPECT_FALSE(info.features.jscvt);
-  EXPECT_FALSE(info.features.fcma);
-  EXPECT_FALSE(info.features.sha3);
-  EXPECT_FALSE(info.features.sm3);
-  EXPECT_FALSE(info.features.sm4);
-  EXPECT_FALSE(info.features.sha512);
-  EXPECT_FALSE(info.features.sve);
-  EXPECT_FALSE(info.features.asimdfhm);
-  EXPECT_FALSE(info.features.dit);
-  EXPECT_FALSE(info.features.uscat);
-  EXPECT_FALSE(info.features.ilrcpc);
-  EXPECT_FALSE(info.features.flagm);
-  EXPECT_FALSE(info.features.sb);
-  EXPECT_FALSE(info.features.paca);
-  EXPECT_FALSE(info.features.pacg);
-  EXPECT_FALSE(info.features.dcpodp);
-  EXPECT_FALSE(info.features.sve2);
-  EXPECT_FALSE(info.features.sveaes);
-  EXPECT_FALSE(info.features.svepmull);
-  EXPECT_FALSE(info.features.svebitperm);
-  EXPECT_FALSE(info.features.svesha3);
-  EXPECT_FALSE(info.features.svesm4);
-  EXPECT_FALSE(info.features.flagm2);
-  EXPECT_FALSE(info.features.frint);
-  EXPECT_FALSE(info.features.svei8mm);
-  EXPECT_FALSE(info.features.svef32mm);
-  EXPECT_FALSE(info.features.svef64mm);
-  EXPECT_FALSE(info.features.svebf16);
-  EXPECT_FALSE(info.features.i8mm);
-  EXPECT_FALSE(info.features.bf16);
-  EXPECT_FALSE(info.features.dgh);
-  EXPECT_FALSE(info.features.rng);
-  EXPECT_FALSE(info.features.bti);
-  EXPECT_FALSE(info.features.mte);
-  EXPECT_FALSE(info.features.ecv);
-  EXPECT_FALSE(info.features.afp);
-  EXPECT_FALSE(info.features.rpres);
-}
-#endif  // CPU_FEATURES_OS_FREEBSD
-
-#if defined(CPU_FEATURES_OS_LINUX)
-void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
 
 TEST_F(CpuidAarch64Test, Aarch64FeaturesEnum) {
   const char* last_name = GetAarch64FeaturesEnumName(AARCH64_LAST_);
@@ -290,6 +126,9 @@ TEST_F(CpuidAarch64Test, Aarch64FeaturesEnum) {
     EXPECT_STRNE(name, last_name);
   }
 }
+
+#if defined(CPU_FEATURES_OS_LINUX)
+void DisableHardwareCapabilities() { SetHardwareCapabilities(0, 0); }
 
 // OS dependent tests
 #if defined(CPU_FEATURES_OS_LINUX)
@@ -547,6 +386,7 @@ TEST_F(CpuidAarch64Test, WINDOWS_AARCH64_RPI4) {
   EXPECT_FALSE(info.features.jscvt);
   EXPECT_FALSE(info.features.lrcpc);
 }
+#endif
 #endif  // CPU_FEATURES_OS_WINDOWS
 }  // namespace
 }  // namespace cpu_features

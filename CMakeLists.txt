@@ -146,6 +146,9 @@ setup_include_and_definitions(utils)
 if(UNIX)
   add_library(unix_based_hardware_detection OBJECT
     ${PROJECT_SOURCE_DIR}/include/internal/hwcaps.h
+    ${PROJECT_SOURCE_DIR}/include/internal/hwcaps_linux_or_android.h
+    ${PROJECT_SOURCE_DIR}/src/hwcaps_linux_or_android.c
+    ${PROJECT_SOURCE_DIR}/src/hwcaps_freebsd.c
     ${PROJECT_SOURCE_DIR}/src/hwcaps.c
   )
   setup_include_and_definitions(unix_based_hardware_detection)
@@ -154,8 +157,12 @@ if(UNIX)
     target_compile_definitions(unix_based_hardware_detection PRIVATE HAVE_DLFCN_H)
   endif()
   check_symbol_exists(getauxval "sys/auxv.h" HAVE_STRONG_GETAUXVAL)
+  check_symbol_exists(elf_aux_info "sys/auxv.h" HAVE_STRONG_ELF_AUX_INFO)
   if(HAVE_STRONG_GETAUXVAL)
     target_compile_definitions(unix_based_hardware_detection PRIVATE HAVE_STRONG_GETAUXVAL)
+  endif()
+  if(HAVE_STRONG_ELF_AUX_INFO)
+    target_compile_definitions(unix_based_hardware_detection PUBLIC HAVE_STRONG_ELF_AUX_INFO)
   endif()
 endif()
 
@@ -163,7 +170,8 @@ endif()
 # library : cpu_features
 #
 set (CPU_FEATURES_HDRS)
-set (CPU_FEATURES_SRCS)
+set (CPU_FEATURES_SRCS
+        include/internal/hwcaps_linux_or_android.h)
 add_cpu_features_headers_and_sources(CPU_FEATURES_HDRS CPU_FEATURES_SRCS)
 list(APPEND CPU_FEATURES_SRCS $<TARGET_OBJECTS:utils>)
 if(NOT PROCESSOR_IS_X86 AND UNIX)

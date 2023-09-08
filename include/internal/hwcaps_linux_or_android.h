@@ -1,4 +1,4 @@
-// Copyright 2017 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef CPU_FEATURES_HWCAPS_LINUX_OR_ANDROID_H_
+#define CPU_FEATURES_HWCAPS_LINUX_OR_ANDROID_H_
+
 #include "internal/hwcaps.h"
 
-static bool IsSet(const uint32_t mask, const uint32_t value) {
-  if (mask == 0) return false;
-  return (value & mask) == mask;
-}
+// Get pointer for the AT_PLATFORM type.
+const char* CpuFeatures_GetPlatformPointer(void);
+// Get pointer for the AT_BASE_PLATFORM type.
+const char* CpuFeatures_GetBasePlatformPointer(void);
 
-bool CpuFeatures_IsHwCapsSet(const HardwareCapabilities hwcaps_mask,
-                             const HardwareCapabilities hwcaps) {
-  return IsSet(hwcaps_mask.hwcaps, hwcaps.hwcaps) ||
-         IsSet(hwcaps_mask.hwcaps2, hwcaps.hwcaps2);
-}
+#endif  // CPU_FEATURES_HWCAPS_LINUX_OR_ANDROID_H_
