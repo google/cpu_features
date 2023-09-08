@@ -58,7 +58,7 @@
 
 #include "internal/bit_utils.h"
 #include "internal/filesystem.h"
-#include "internal/hwcaps.h"
+#include "internal/hwcaps_linux_or_android.h"
 #include "internal/stack_line_reader.h"
 #include "internal/string_view.h"
 
