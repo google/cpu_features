@@ -17,7 +17,7 @@ or add cpu_features as a git-submodule in your project
 2- You can then use the cmake command `add_subdirectory()` to include
 cpu_features directly and use the `cpu_features` target in your project.
 
-3- Add the `CpuFeature::cpu_features` target to the `target_link_libraries()` section of
+3- Add the `CpuFeatures::cpu_features` target to the `target_link_libraries()` section of
 your executable or of your library.
 
 ## Disabling tests
