@@ -3,3 +3,4 @@
 FROM alpine:edge
 # Install system build dependencies
 RUN apk add --no-cache git clang-extra-tools
+RUN git config --global --add safe.directory /repo
