@@ -70,6 +70,9 @@ echo -e "${ACTION}Create new tag${NOCOLOR}"
 git tag ${GIT_TAG}
 
 echo -e "${FINISHED}Manual steps:${NOCOLOR}"
-echo -e "${FINISHED} - Push the tag upstream 'git push origin ${GIT_TAG}'${NOCOLOR}"
+echo -e "${FINISHED} - Push the branch and tag upstream 'git push --atomic origin main ${GIT_TAG}'${NOCOLOR}"
 echo -e "${FINISHED} - Create a new release https://github.com/google/cpu_features/releases/new${NOCOLOR}"
-echo -e "${FINISHED} - Update the Release Notes 'gren release --override'${NOCOLOR}"
+echo -e "${FINISHED} - Click "Choose a tag" -> ${GIT_TAG}${NOCOLOR}"
+echo -e "${FINISHED} - Click "Generate the release notes"${NOCOLOR}"
+echo -e "${FINISHED} - Edit description as needed${NOCOLOR}"
+echo -e "${FINISHED} - Click "Publish release"${NOCOLOR}"
