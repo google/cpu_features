@@ -180,7 +180,7 @@ target_include_directories(cpu_features
 if(APPLE)
   target_compile_definitions(cpu_features PRIVATE HAVE_SYSCTLBYNAME)
 endif()
-add_library(CpuFeature::cpu_features ALIAS cpu_features)
+add_library(CpuFeatures::cpu_features ALIAS cpu_features)
 
 #
 # program : list_cpu_features
@@ -189,7 +189,7 @@ add_library(CpuFeature::cpu_features ALIAS cpu_features)
 if(BUILD_EXECUTABLE)
   add_executable(list_cpu_features ${PROJECT_SOURCE_DIR}/src/utils/list_cpu_features.c)
   target_link_libraries(list_cpu_features PRIVATE cpu_features)
-  add_executable(CpuFeature::list_cpu_features ALIAS list_cpu_features)
+  add_executable(CpuFeatures::list_cpu_features ALIAS list_cpu_features)
 endif()
 
 #
