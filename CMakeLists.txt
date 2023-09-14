@@ -6,7 +6,7 @@ if(POLICY CMP0077)
   cmake_policy(SET CMP0077 NEW)
 endif()
 
-project(CpuFeatures VERSION 0.8.0 LANGUAGES C)
+project(CpuFeatures VERSION 0.9.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)
 
