@@ -198,32 +198,32 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #endif
 
 // https://elixir.bootlin.com/linux/v6.0-rc6/source/arch/s390/include/asm/elf.h
-#define HWCAP_S390_ESAN3        1
-#define HWCAP_S390_ZARCH        2
-#define HWCAP_S390_STFLE        4
-#define HWCAP_S390_MSA          8
-#define HWCAP_S390_LDISP        16
-#define HWCAP_S390_EIMM         32
-#define HWCAP_S390_DFP          64
-#define HWCAP_S390_HPAGE        128
-#define HWCAP_S390_ETF3EH       256
-#define HWCAP_S390_HIGH_GPRS    512
-#define HWCAP_S390_TE           1024
-#define HWCAP_S390_VX           2048
-#define HWCAP_S390_VXRS         HWCAP_S390_VX
-#define HWCAP_S390_VXD          4096
-#define HWCAP_S390_VXRS_BCD     HWCAP_S390_VXD
-#define HWCAP_S390_VXE          8192
-#define HWCAP_S390_VXRS_EXT     HWCAP_S390_VXE
-#define HWCAP_S390_GS           16384
-#define HWCAP_S390_VXRS_EXT2    32768
-#define HWCAP_S390_VXRS_PDE     65536
-#define HWCAP_S390_SORT         131072
-#define HWCAP_S390_DFLT         262144
-#define HWCAP_S390_VXRS_PDE2    524288
-#define HWCAP_S390_NNPA         1048576
-#define HWCAP_S390_PCI_MIO      2097152
-#define HWCAP_S390_SIE          4194304
+#define HWCAP_S390_ESAN3 1
+#define HWCAP_S390_ZARCH 2
+#define HWCAP_S390_STFLE 4
+#define HWCAP_S390_MSA 8
+#define HWCAP_S390_LDISP 16
+#define HWCAP_S390_EIMM 32
+#define HWCAP_S390_DFP 64
+#define HWCAP_S390_HPAGE 128
+#define HWCAP_S390_ETF3EH 256
+#define HWCAP_S390_HIGH_GPRS 512
+#define HWCAP_S390_TE 1024
+#define HWCAP_S390_VX 2048
+#define HWCAP_S390_VXRS HWCAP_S390_VX
+#define HWCAP_S390_VXD 4096
+#define HWCAP_S390_VXRS_BCD HWCAP_S390_VXD
+#define HWCAP_S390_VXE 8192
+#define HWCAP_S390_VXRS_EXT HWCAP_S390_VXE
+#define HWCAP_S390_GS 16384
+#define HWCAP_S390_VXRS_EXT2 32768
+#define HWCAP_S390_VXRS_PDE 65536
+#define HWCAP_S390_SORT 131072
+#define HWCAP_S390_DFLT 262144
+#define HWCAP_S390_VXRS_PDE2 524288
+#define HWCAP_S390_NNPA 1048576
+#define HWCAP_S390_PCI_MIO 2097152
+#define HWCAP_S390_SIE 4194304
 
 // https://elixir.bootlin.com/linux/latest/source/arch/riscv/include/uapi/asm/hwcap.h
 #define RISCV_HWCAP_32 0x32
@@ -238,20 +238,20 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #define RISCV_HWCAP_V (1UL << ('V' - 'A'))
 
 // https://github.com/torvalds/linux/blob/master/arch/loongarch/include/uapi/asm/hwcap.h
-#define HWCAP_LOONGARCH_CPUCFG   (1 << 0)
-#define HWCAP_LOONGARCH_LAM      (1 << 1)
-#define HWCAP_LOONGARCH_UAL      (1 << 2)
-#define HWCAP_LOONGARCH_FPU      (1 << 3)
-#define HWCAP_LOONGARCH_LSX      (1 << 4)
-#define HWCAP_LOONGARCH_LASX     (1 << 5)
-#define HWCAP_LOONGARCH_CRC32    (1 << 6)
-#define HWCAP_LOONGARCH_COMPLEX  (1 << 7)
-#define HWCAP_LOONGARCH_CRYPTO   (1 << 8)
-#define HWCAP_LOONGARCH_LVZ      (1 << 9)
-#define HWCAP_LOONGARCH_LBT_X86  (1 << 10)
-#define HWCAP_LOONGARCH_LBT_ARM  (1 << 11)
+#define HWCAP_LOONGARCH_CPUCFG (1 << 0)
+#define HWCAP_LOONGARCH_LAM (1 << 1)
+#define HWCAP_LOONGARCH_UAL (1 << 2)
+#define HWCAP_LOONGARCH_FPU (1 << 3)
+#define HWCAP_LOONGARCH_LSX (1 << 4)
+#define HWCAP_LOONGARCH_LASX (1 << 5)
+#define HWCAP_LOONGARCH_CRC32 (1 << 6)
+#define HWCAP_LOONGARCH_COMPLEX (1 << 7)
+#define HWCAP_LOONGARCH_CRYPTO (1 << 8)
+#define HWCAP_LOONGARCH_LVZ (1 << 9)
+#define HWCAP_LOONGARCH_LBT_X86 (1 << 10)
+#define HWCAP_LOONGARCH_LBT_ARM (1 << 11)
 #define HWCAP_LOONGARCH_LBT_MIPS (1 << 12)
-#define HWCAP_LOONGARCH_PTW      (1 << 13)
+#define HWCAP_LOONGARCH_PTW (1 << 13)
 
 typedef struct {
   unsigned long hwcaps;
