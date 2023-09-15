@@ -12,17 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <printf.h>
-
 #include "cpu_features_macros.h"
 
 #ifdef CPU_FEATURES_ARCH_AARCH64
 #ifdef CPU_FEATURES_OS_FREEBSD
 
 #include "cpuinfo_aarch64.h"
-#include "internal/cpuid_aarch64.h"
 #include "impl_aarch64__base_implementation.inl"
-#include "sys/auxv.h"
+#include "internal/cpuid_aarch64.h"
+#include "internal/hwcaps.h"
 
 static const Aarch64Info kEmptyAarch64Info;
 
@@ -34,17 +32,12 @@ Aarch64Info GetAarch64Info(void) {
       kSetters[i](&info.features, true);
     }
   }
-
-  unsigned long hwcap_cpuid;
-  elf_aux_info(HWCAP_CPUID, &hwcap_cpuid, sizeof(hwcap_cpuid));
-
-  if (hwcap_cpuid) {
-    info.features.cpuid = true;
+  if (info.features.cpuid) {
     const uint64_t midr_el1 = GetMidrEl1();
-    info.implementer = (int) ExtractBitRange(midr_el1, 31, 24);
-    info.variant = (int) ExtractBitRange(midr_el1, 23, 20);
-    info.part = (int) ExtractBitRange(midr_el1, 15, 4);
-    info.revision = (int) ExtractBitRange(midr_el1, 3, 0);
+    info.implementer = (int)ExtractBitRange(midr_el1, 31, 24);
+    info.variant = (int)ExtractBitRange(midr_el1, 23, 20);
+    info.part = (int)ExtractBitRange(midr_el1, 15, 4);
+    info.revision = (int)ExtractBitRange(midr_el1, 3, 0);
   }
   return info;
 }

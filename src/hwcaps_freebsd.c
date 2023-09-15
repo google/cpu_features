@@ -14,7 +14,6 @@
 
 #include "cpu_features_macros.h"
 
-#ifdef CPU_FEATURES_ARCH_AARCH64
 #ifdef CPU_FEATURES_OS_FREEBSD
 
 #include "internal/hwcaps.h"
@@ -46,10 +45,10 @@ HardwareCapabilities CpuFeatures_GetHardwareCapabilities(void) {
 const char *CpuFeatures_GetPlatformPointer(void) { return NULL; }
 
 const char *CpuFeatures_GetBasePlatformPointer(void) { return NULL; }
+
 #else
 #error "FreeBSD needs support for elf_aux_info"
 #endif  // HAVE_STRONG_ELF_AUX_INFO
 
 #endif  // CPU_FEATURES_TEST
 #endif  // CPU_FEATURES_OS_FREEBSD
-#endif  // CPU_FEATURES_ARCH_AARCH64
