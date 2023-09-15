@@ -244,7 +244,10 @@ cc_library(
             "include/internal/windows_utils.h",
         ],
         PLATFORM_CPU_ARM: ["include/cpuinfo_arm.h"],
-        PLATFORM_CPU_ARM64: ["include/cpuinfo_aarch64.h"],
+        PLATFORM_CPU_ARM64: [
+            "include/cpuinfo_aarch64.h",
+            "include/internal/cpuid_aarch64.h",
+        ],
         PLATFORM_CPU_MIPS: ["include/cpuinfo_mips.h"],
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
         PLATFORM_CPU_RISCV32: ["include/cpuinfo_riscv.h"],
@@ -288,6 +291,7 @@ cc_library(
         ],
         PLATFORM_CPU_ARM: ["src/impl_arm_linux_or_android.c"],
         PLATFORM_CPU_ARM64: [
+            "src/impl_aarch64_cpuid.c",
             "src/impl_aarch64_linux_or_android.c",
             "src/impl_aarch64_macos_or_iphone.c",
             "src/impl_aarch64_windows.c",
