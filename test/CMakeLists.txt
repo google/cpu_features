@@ -77,6 +77,7 @@ endif()
 if(PROCESSOR_IS_AARCH64)
   add_executable(cpuinfo_aarch64_test
     cpuinfo_aarch64_test.cc
+    ../src/impl_aarch64_cpuid.c
     ../src/impl_aarch64_linux_or_android.c
     ../src/impl_aarch64_windows.c
     ../src/impl_aarch64_macos_or_iphone.c

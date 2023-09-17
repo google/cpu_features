@@ -21,7 +21,7 @@
 
 CPU_FEATURES_START_CPP_NAMESPACE
 
-uint64_t GetMidrEl1();
+uint64_t GetMidrEl1(void);
 
 CPU_FEATURES_END_CPP_NAMESPACE
 
