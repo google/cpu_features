@@ -106,6 +106,7 @@ macro(add_cpu_features_headers_and_sources HDRS_LIST_NAME SRCS_LIST_NAME)
       list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpuinfo_arm.h)
   elseif(PROCESSOR_IS_AARCH64)
       list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpuinfo_aarch64.h)
+      list(APPEND ${SRCS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/internal/cpuid_aarch64.h)
       list(APPEND ${SRCS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/internal/windows_utils.h)
   elseif(PROCESSOR_IS_X86)
       list(APPEND ${HDRS_LIST_NAME} ${PROJECT_SOURCE_DIR}/include/cpuinfo_x86.h)
@@ -146,6 +147,8 @@ setup_include_and_definitions(utils)
 if(UNIX)
   add_library(unix_based_hardware_detection OBJECT
     ${PROJECT_SOURCE_DIR}/include/internal/hwcaps.h
+    ${PROJECT_SOURCE_DIR}/src/hwcaps_linux_or_android.c
+    ${PROJECT_SOURCE_DIR}/src/hwcaps_freebsd.c
     ${PROJECT_SOURCE_DIR}/src/hwcaps.c
   )
   setup_include_and_definitions(unix_based_hardware_detection)
@@ -154,8 +157,12 @@ if(UNIX)
     target_compile_definitions(unix_based_hardware_detection PRIVATE HAVE_DLFCN_H)
   endif()
   check_symbol_exists(getauxval "sys/auxv.h" HAVE_STRONG_GETAUXVAL)
+  check_symbol_exists(elf_aux_info "sys/auxv.h" HAVE_STRONG_ELF_AUX_INFO)
   if(HAVE_STRONG_GETAUXVAL)
     target_compile_definitions(unix_based_hardware_detection PRIVATE HAVE_STRONG_GETAUXVAL)
+  endif()
+  if(HAVE_STRONG_ELF_AUX_INFO)
+    target_compile_definitions(unix_based_hardware_detection PUBLIC HAVE_STRONG_ELF_AUX_INFO)
   endif()
 endif()
 

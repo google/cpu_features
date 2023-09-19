@@ -22,11 +22,20 @@
 #if defined(CPU_FEATURES_OS_WINDOWS)
 #include "internal/windows_utils.h"
 #endif  // CPU_FEATURES_OS_WINDOWS
+#if defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_LINUX)
+#include "internal/cpuid_aarch64.h"
+#endif  // defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_LINUX)
 
 namespace cpu_features {
 class FakeCpuAarch64 {
-#if defined(CPU_FEATURES_OS_LINUX)
-  // No particular implementation for Linux as we use /proc/cpuinfo
+#if defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_LINUX)
+ public:
+  uint64_t GetMidrEl1() const { return _midr_el1; }
+
+  void SetMidrEl1(uint64_t midr_el1) { _midr_el1 = midr_el1; }
+
+ private:
+  uint64_t _midr_el1;
 #elif defined(CPU_FEATURES_OS_MACOS)
   std::set<std::string> darwin_sysctlbyname_;
   std::map<std::string, int> darwin_sysctlbynamevalue_;
@@ -80,8 +89,8 @@ static FakeCpuAarch64& cpu() {
 }
 
 // Define OS dependent mock functions
-#if defined(CPU_FEATURES_OS_LINUX)
-// No particular functions to implement for Linux as we use /proc/cpuinfo
+#if defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_LINUX)
+extern "C" uint64_t GetMidrEl1(void) { return cpu().GetMidrEl1(); }
 #elif defined(CPU_FEATURES_OS_MACOS)
 extern "C" bool GetDarwinSysCtlByName(const char* name) {
   return cpu().GetDarwinSysCtlByName(name);
@@ -127,8 +136,8 @@ TEST_F(CpuidAarch64Test, Aarch64FeaturesEnum) {
   }
 }
 
-// OS dependent tests
-#if defined(CPU_FEATURES_OS_LINUX)
+// AT_HWCAP tests
+#if defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_FREEBSD)
 TEST_F(CpuidAarch64Test, FromHardwareCap) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_AES, 0);
@@ -196,7 +205,10 @@ TEST_F(CpuidAarch64Test, FromHardwareCap2) {
   EXPECT_FALSE(info.features.dgh);
   EXPECT_FALSE(info.features.rng);
 }
+#endif  // defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_FREEBSD)
 
+// OS dependent tests
+#if defined(CPU_FEATURES_OS_LINUX)
 TEST_F(CpuidAarch64Test, ARMCortexA53) {
   ResetHwcaps();
   auto& fs = GetEmptyFilesystem();
@@ -383,6 +395,37 @@ TEST_F(CpuidAarch64Test, WINDOWS_AARCH64_RPI4) {
   EXPECT_FALSE(info.features.jscvt);
   EXPECT_FALSE(info.features.lrcpc);
 }
-#endif  // CPU_FEATURES_OS_WINDOWS
+#elif defined(CPU_FEATURES_OS_FREEBSD)
+TEST_F(CpuidAarch64Test, MrsMidrEl1_RPI4) {
+  ResetHwcaps();
+  SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_CPUID, 0);
+  cpu().SetMidrEl1(0x410FD083);
+  const auto info = GetAarch64Info();
+
+  EXPECT_EQ(info.implementer, 0x41);
+  EXPECT_EQ(info.variant, 0);
+  EXPECT_EQ(info.part, 0xD08);
+  EXPECT_EQ(info.revision, 0x3);
+
+  EXPECT_TRUE(info.features.fp);
+
+  EXPECT_FALSE(info.features.dcpodp);
+  EXPECT_FALSE(info.features.sveaes);
+  EXPECT_FALSE(info.features.svepmull);
+  EXPECT_FALSE(info.features.svebitperm);
+  EXPECT_FALSE(info.features.svesha3);
+  EXPECT_FALSE(info.features.svesm4);
+  EXPECT_FALSE(info.features.flagm2);
+  EXPECT_FALSE(info.features.frint);
+  EXPECT_FALSE(info.features.svei8mm);
+  EXPECT_FALSE(info.features.svef32mm);
+  EXPECT_FALSE(info.features.svef64mm);
+  EXPECT_FALSE(info.features.svebf16);
+  EXPECT_FALSE(info.features.i8mm);
+  EXPECT_FALSE(info.features.bf16);
+  EXPECT_FALSE(info.features.dgh);
+  EXPECT_FALSE(info.features.rng);
+}
+#endif  // CPU_FEATURES_OS_FREEBSD
 }  // namespace
 }  // namespace cpu_features

@@ -2,7 +2,7 @@
 
 load("@bazel_skylib//lib:selects.bzl", "selects")
 load("//:bazel/platforms.bzl", "PLATFORM_CPU_ARM", "PLATFORM_CPU_ARM64", "PLATFORM_CPU_MIPS", "PLATFORM_CPU_PPC", "PLATFORM_CPU_RISCV32", "PLATFORM_CPU_RISCV64", "PLATFORM_CPU_X86_64")
-load("//:bazel/platforms.bzl", "PLATFORM_OS_MACOS")
+load("//:bazel/platforms.bzl", "PLATFORM_OS_MACOS", "PLATFORM_OS_LINUX", "PLATFORM_OS_FREEBSD", "PLATFORM_OS_ANDROID")
 
 package(
     default_visibility = ["//visibility:public"],
@@ -169,11 +169,18 @@ cc_library(
 
 cc_library(
     name = "hwcaps",
-    srcs = ["src/hwcaps.c"],
+    srcs = [
+        "src/hwcaps.c",
+        "src/hwcaps_freebsd.c",
+        "src/hwcaps_linux_or_android.c",
+    ],
     copts = C99_FLAGS,
     defines = selects.with_or({
         PLATFORM_OS_MACOS: ["HAVE_DLFCN_H"],
-        "//conditions:default": ["HAVE_STRONG_GETAUXVAL"],
+        PLATFORM_OS_FREEBSD: ["HAVE_STRONG_ELF_AUX_INFO"],
+        PLATFORM_OS_LINUX: ["HAVE_STRONG_GETAUXVAL"],
+        PLATFORM_OS_ANDROID: ["HAVE_STRONG_GETAUXVAL"],
+        "//conditions:default": [],
     }),
     includes = INCLUDES,
     textual_hdrs = ["include/internal/hwcaps.h"],
@@ -189,6 +196,8 @@ cc_library(
     testonly = 1,
     srcs = [
         "src/hwcaps.c",
+        "src/hwcaps_freebsd.c",
+        "src/hwcaps_linux_or_android.c",
         "test/hwcaps_for_testing.cc",
     ],
     hdrs = [
@@ -218,9 +227,11 @@ cc_library(
         ],
         PLATFORM_CPU_ARM: ["src/impl_arm_linux_or_android.c"],
         PLATFORM_CPU_ARM64: [
+            "src/impl_aarch64_cpuid.c",
             "src/impl_aarch64_linux_or_android.c",
             "src/impl_aarch64_macos_or_iphone.c",
             "src/impl_aarch64_windows.c",
+            "src/impl_aarch64_freebsd.c",
         ],
         PLATFORM_CPU_MIPS: ["src/impl_mips_linux_or_android.c"],
         PLATFORM_CPU_PPC: ["src/impl_ppc_linux.c"],
@@ -234,7 +245,10 @@ cc_library(
             "include/internal/windows_utils.h",
         ],
         PLATFORM_CPU_ARM: ["include/cpuinfo_arm.h"],
-        PLATFORM_CPU_ARM64: ["include/cpuinfo_aarch64.h"],
+        PLATFORM_CPU_ARM64: [
+            "include/cpuinfo_aarch64.h",
+            "include/internal/cpuid_aarch64.h",
+        ],
         PLATFORM_CPU_MIPS: ["include/cpuinfo_mips.h"],
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
         PLATFORM_CPU_RISCV32: ["include/cpuinfo_riscv.h"],
@@ -278,9 +292,11 @@ cc_library(
         ],
         PLATFORM_CPU_ARM: ["src/impl_arm_linux_or_android.c"],
         PLATFORM_CPU_ARM64: [
+            "src/impl_aarch64_cpuid.c",
             "src/impl_aarch64_linux_or_android.c",
             "src/impl_aarch64_macos_or_iphone.c",
             "src/impl_aarch64_windows.c",
+            "src/impl_aarch64_freebsd.c",
         ],
         PLATFORM_CPU_MIPS: ["src/impl_mips_linux_or_android.c"],
         PLATFORM_CPU_PPC: ["src/impl_ppc_linux.c"],
@@ -294,7 +310,10 @@ cc_library(
             "include/internal/windows_utils.h",
         ],
         PLATFORM_CPU_ARM: ["include/cpuinfo_arm.h"],
-        PLATFORM_CPU_ARM64: ["include/cpuinfo_aarch64.h"],
+        PLATFORM_CPU_ARM64: [
+            "include/cpuinfo_aarch64.h",
+            "include/internal/cpuid_aarch64.h"
+        ],
         PLATFORM_CPU_MIPS: ["include/cpuinfo_mips.h"],
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
         PLATFORM_CPU_RISCV32: ["include/cpuinfo_riscv.h"],

@@ -1,4 +1,4 @@
-// Copyright 2017 Google LLC
+// Copyright 2023 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "internal/hwcaps.h"
+#ifndef CPU_FEATURES_INCLUDE_CPUID_AARCH64_H_
+#define CPU_FEATURES_INCLUDE_CPUID_AARCH64_H_
 
-#include <stdbool.h>
+#include <stdint.h>
 
-static bool IsSet(const uint32_t mask, const uint32_t value) {
-  if (mask == 0) return false;
-  return (value & mask) == mask;
-}
+#include "cpu_features_macros.h"
 
-bool CpuFeatures_IsHwCapsSet(const HardwareCapabilities hwcaps_mask,
-                             const HardwareCapabilities hwcaps) {
-  return IsSet(hwcaps_mask.hwcaps, hwcaps.hwcaps) ||
-         IsSet(hwcaps_mask.hwcaps2, hwcaps.hwcaps2);
-}
+CPU_FEATURES_START_CPP_NAMESPACE
+
+uint64_t GetMidrEl1(void);
+
+CPU_FEATURES_END_CPP_NAMESPACE
+
+#endif  // CPU_FEATURES_INCLUDE_CPUID_AARCH64_H_
