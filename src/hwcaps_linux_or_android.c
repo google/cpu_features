@@ -153,9 +153,5 @@ const char *CpuFeatures_GetBasePlatformPointer(void) {
   return (const char *)GetHardwareCapabilitiesFor(AT_BASE_PLATFORM);
 }
 
-bool CpuFeatures_IsHwCapCpuidSupported(void) {
-  return GetElfHwcapFromGetauxval(AARCH64_HWCAP_CPUID);
-}
-
 #endif  // CPU_FEATURES_TEST
 #endif  // defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_ANDROID)
