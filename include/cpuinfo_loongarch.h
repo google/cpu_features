@@ -26,7 +26,7 @@ CPU_FEATURES_START_CPP_NAMESPACE
 
 typedef struct {
   // Base
-  int CPUCFG : 1;    // Instruction for Identify CPU Features 
+  int CPUCFG : 1;  // Instruction for Identify CPU Features
 
   // Extension
   int LAM : 1;       // Extension for Atomic Memory Access Instructions
@@ -36,7 +36,8 @@ typedef struct {
   int LASX : 1;      // Extension for Loongson Advanced SIMD eXtension
   int CRC32 : 1;     // Extension for Cyclic Redundancy Check Instructions
   int COMPLEX : 1;   // Extension for Complex Vector Operation Instructions
-  int CRYPTO : 1;    // Extension for Encryption And Decryption Vector Instructions
+  int CRYPTO : 1;    // Extension for Encryption And Decryption Vector
+                     // Instructions
   int LVZ : 1;       // Extension for Virtualization
   int LBT_X86 : 1;   // Extension for X86 Binary Translation Extension
   int LBT_ARM : 1;   // Extension for ARM Binary Translation Extension
@@ -69,7 +70,7 @@ typedef enum {
 
 LoongArchInfo GetLoongArchInfo(void);
 int GetLoongArchFeaturesEnumValue(const LoongArchFeatures* features,
-                              LoongArchFeaturesEnum value);
+                                  LoongArchFeaturesEnum value);
 const char* GetLoongArchFeaturesEnumName(LoongArchFeaturesEnum);
 
 CPU_FEATURES_END_CPP_NAMESPACE

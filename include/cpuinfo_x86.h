@@ -109,8 +109,8 @@ typedef struct {
   int fs_rep_stosb : 1;        // Fast short REP STOSB
   int fs_rep_cmpsb_scasb : 1;  // Fast short REP CMPSB/SCASB
 
-  int lam: 1; // Intel Linear Address Mask
-  int uai: 1; // AMD Upper Address Ignore
+  int lam : 1;  // Intel Linear Address Mask
+  int uai : 1;  // AMD Upper Address Ignore
   // Make sure to update X86FeaturesEnum below if you add a field here.
 } X86Features;
 

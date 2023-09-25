@@ -22,19 +22,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions for introspection.
 ////////////////////////////////////////////////////////////////////////////////
-#define INTROSPECTION_TABLE                            \
-  LINE(LOONGARCH_CPUCFG, CPUCFG, "cfg", HWCAP_LOONGARCH_CPUCFG, 0) \
-  LINE(LOONGARCH_LAM, LAM, "lam", HWCAP_LOONGARCH_LAM, 0) \
-  LINE(LOONGARCH_UAL, UAL, "ual", HWCAP_LOONGARCH_UAL, 0) \
-  LINE(LOONGARCH_FPU, FPU, "fpu", HWCAP_LOONGARCH_FPU, 0) \
-  LINE(LOONGARCH_LSX, LSX, "lsx", HWCAP_LOONGARCH_LSX, 0) \
-  LINE(LOONGARCH_LASX, LASX, "lasx", HWCAP_LOONGARCH_LASX, 0) \
-  LINE(LOONGARCH_CRC32, CRC32, "crc32", HWCAP_LOONGARCH_CRC32, 0) \
-  LINE(LOONGARCH_COMPLEX, COMPLEX, "complex", HWCAP_LOONGARCH_COMPLEX, 0) \
-  LINE(LOONGARCH_CRYPTO, CRYPTO, "crypto", HWCAP_LOONGARCH_CRYPTO, 0) \
-  LINE(LOONGARCH_LVZ, LVZ, "lvz", HWCAP_LOONGARCH_LVZ, 0) \
-  LINE(LOONGARCH_LBT_X86, LBT_X86, "lbt_x86", HWCAP_LOONGARCH_LBT_X86, 0) \
-  LINE(LOONGARCH_LBT_ARM, LBT_ARM, "lbt_arm", HWCAP_LOONGARCH_LBT_ARM, 0) \
+#define INTROSPECTION_TABLE                                                   \
+  LINE(LOONGARCH_CPUCFG, CPUCFG, "cfg", HWCAP_LOONGARCH_CPUCFG, 0)            \
+  LINE(LOONGARCH_LAM, LAM, "lam", HWCAP_LOONGARCH_LAM, 0)                     \
+  LINE(LOONGARCH_UAL, UAL, "ual", HWCAP_LOONGARCH_UAL, 0)                     \
+  LINE(LOONGARCH_FPU, FPU, "fpu", HWCAP_LOONGARCH_FPU, 0)                     \
+  LINE(LOONGARCH_LSX, LSX, "lsx", HWCAP_LOONGARCH_LSX, 0)                     \
+  LINE(LOONGARCH_LASX, LASX, "lasx", HWCAP_LOONGARCH_LASX, 0)                 \
+  LINE(LOONGARCH_CRC32, CRC32, "crc32", HWCAP_LOONGARCH_CRC32, 0)             \
+  LINE(LOONGARCH_COMPLEX, COMPLEX, "complex", HWCAP_LOONGARCH_COMPLEX, 0)     \
+  LINE(LOONGARCH_CRYPTO, CRYPTO, "crypto", HWCAP_LOONGARCH_CRYPTO, 0)         \
+  LINE(LOONGARCH_LVZ, LVZ, "lvz", HWCAP_LOONGARCH_LVZ, 0)                     \
+  LINE(LOONGARCH_LBT_X86, LBT_X86, "lbt_x86", HWCAP_LOONGARCH_LBT_X86, 0)     \
+  LINE(LOONGARCH_LBT_ARM, LBT_ARM, "lbt_arm", HWCAP_LOONGARCH_LBT_ARM, 0)     \
   LINE(LOONGARCH_LBT_MIPS, LBT_MIPS, "lbt_mips", HWCAP_LOONGARCH_LBT_MIPS, 0) \
   LINE(LOONGARCH_PTW, PTW, "ptw", HWCAP_LOONGARCH_PTW, 0)
 #define INTROSPECTION_PREFIX LoongArch
@@ -53,7 +53,8 @@
 
 static const LoongArchInfo kEmptyLoongArchInfo;
 
-static bool HandleLoongArchLine(const LineResult result, LoongArchInfo* const info) {
+static bool HandleLoongArchLine(const LineResult result,
+                                LoongArchInfo* const info) {
   StringView line = result.line;
   StringView key, value;
   if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {

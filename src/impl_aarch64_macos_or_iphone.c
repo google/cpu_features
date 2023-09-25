@@ -60,7 +60,8 @@ Aarch64Info GetAarch64Info(void) {
   info.features.crc32 = GetDarwinSysCtlByName("hw.optional.armv8_crc32");
   info.features.atomics = GetDarwinSysCtlByName("hw.optional.arm.FEAT_LSE");
   info.features.fphp = GetDarwinSysCtlByName("hw.optional.arm.FEAT_FP16");
-  info.features.asimdhp = GetDarwinSysCtlByName("hw.optional.arm.AdvSIMD_HPFPCvt");
+  info.features.asimdhp =
+      GetDarwinSysCtlByName("hw.optional.arm.AdvSIMD_HPFPCvt");
   info.features.asimdrdm = GetDarwinSysCtlByName("hw.optional.arm.FEAT_RDM");
   info.features.jscvt = GetDarwinSysCtlByName("hw.optional.arm.FEAT_JSCVT");
   info.features.fcma = GetDarwinSysCtlByName("hw.optional.arm.FEAT_FCMA");

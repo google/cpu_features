@@ -124,7 +124,6 @@ Aarch64Info GetAarch64Info(void) {
   info.features.atomics = GetWindowsIsProcessorFeaturePresent(
       PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE);
 
-
   bool is_crypto_available = GetWindowsIsProcessorFeaturePresent(
       PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE);
   info.features.aes = is_crypto_available;
