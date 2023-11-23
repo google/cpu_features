@@ -310,6 +310,8 @@ CPU revision    : 3)");
   EXPECT_FALSE(info.features.smebi32i32);
   EXPECT_FALSE(info.features.smeb16b16);
   EXPECT_FALSE(info.features.smef16f16);
+  EXPECT_FALSE(info.features.mops);
+  EXPECT_FALSE(info.features.hbc);
 }
 #elif defined(CPU_FEATURES_OS_MACOS)
 TEST_F(CpuidAarch64Test, FromDarwinSysctlFromName) {

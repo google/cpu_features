@@ -112,7 +112,10 @@
        AARCH64_HWCAP2_SME_BI32I32)                                           \
   LINE(AARCH64_SME_B16B16, smeb16b16, "smeb16b16", 0,                        \
        AARCH64_HWCAP2_SME_B16B16)                                            \
-  LINE(AARCH64_SME_F16F16, smef16f16, "smef16f16", 0, AARCH64_HWCAP2_SME_F16F16)
+  LINE(AARCH64_SME_F16F16, smef16f16, "smef16f16", 0,                        \
+       AARCH64_HWCAP2_SME_F16F16)                                            \
+  LINE(AARCH64_MOPS, mops, "mops", 0, AARCH64_HWCAP2_MOPS)                   \
+  LINE(AARCH64_HBC, hbc, "hbc", 0, AARCH64_HWCAP2_HBC)
 #define INTROSPECTION_PREFIX Aarch64
 #define INTROSPECTION_ENUM_PREFIX AARCH64
 #include "define_introspection_and_hwcaps.inl"
