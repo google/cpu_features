@@ -190,6 +190,8 @@ typedef struct {
   int smebi32i32 : 1;  // 1-bit binary to 32-bit integer outer product.
   int smeb16b16 : 1;   // SME2.1 BFloat16 instructions.
   int smef16f16 : 1;   // FP16 to FP16 outer product.
+  int mops : 1;        // Standardized memory operations.
+  int hbc : 1;         // Hinted conditional branches.
 
   // Make sure to update Aarch64FeaturesEnum below if you add a field here.
 } Aarch64Features;
@@ -284,6 +286,8 @@ typedef enum {
   AARCH64_SME_BI32I32,
   AARCH64_SME_B16B16,
   AARCH64_SME_F16F16,
+  AARCH64_MOPS,
+  AARCH64_HBC,
   AARCH64_LAST_,
 } Aarch64FeaturesEnum;
 
