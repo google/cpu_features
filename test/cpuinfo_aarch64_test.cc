@@ -373,6 +373,7 @@ TEST_F(CpuidAarch64Test, FromDarwinSysctlFromName) {
   EXPECT_FALSE(info.features.sb);
   EXPECT_FALSE(info.features.paca);
   EXPECT_FALSE(info.features.pacg);
+  EXPECT_FALSE(info.features.ecv);
 }
 #elif defined(CPU_FEATURES_OS_WINDOWS)
 TEST_F(CpuidAarch64Test, WINDOWS_AARCH64_RPI4) {
