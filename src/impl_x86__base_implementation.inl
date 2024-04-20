@@ -393,6 +393,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
   features->adx = IsBitSet(leaf_7.ebx, 19);
   features->lzcnt = IsBitSet(leaf_80000001.ecx, 5);
   features->lam = IsBitSet(leaf_7_1.eax, 26);
+  features->lm = IsBitSet(leaf_80000001.edx, 29);
 
   /////////////////////////////////////////////////////////////////////////////
   // The following section is devoted to Vector Extensions.
@@ -1998,7 +1999,8 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_FS_REP_STOSB, fs_rep_stosb, , , )               \
   LINE(X86_FS_REP_CMPSB_SCASB, fs_rep_cmpsb_scasb, , , )   \
   LINE(X86_LAM, lam, , , )                                 \
-  LINE(X86_UAI, uai, , , )
+  LINE(X86_UAI, uai, , , )                                 \
+  LINE(X86_LM, lm, , , )
 #define INTROSPECTION_PREFIX X86
 #define INTROSPECTION_ENUM_PREFIX X86
 #include "define_introspection.inl"
