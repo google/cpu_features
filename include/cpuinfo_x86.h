@@ -62,6 +62,7 @@ typedef struct {
   int avx : 1;
   int avx_vnni : 1;
   int avx2 : 1;
+  int avxifma : 1;
 
   int avx512f : 1;
   int avx512cd : 1;
@@ -232,6 +233,7 @@ typedef enum {
   X86_AVX,
   X86_AVX_VNNI,
   X86_AVX2,
+  X86_AVXIFMA,
   X86_AVX512F,
   X86_AVX512CD,
   X86_AVX512ER,

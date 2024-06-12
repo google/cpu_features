@@ -423,6 +423,7 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
       features->avx = IsBitSet(leaf_1.ecx, 28);
       features->avx_vnni = IsBitSet(leaf_7_1.eax, 4);
       features->avx2 = IsBitSet(leaf_7.ebx, 5);
+      features->avxifma = IsBitSet(leaf_7_1.eax, 23);
     }
     if (os_preserves->avx512_registers) {
       features->avx512f = IsBitSet(leaf_7.ebx, 16);
@@ -1954,6 +1955,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(X86_AVX, avx, , , )                                 \
   LINE(X86_AVX_VNNI, avx_vnni, , , )                       \
   LINE(X86_AVX2, avx2, , , )                               \
+  LINE(X86_AVXIFMA, avxifma, , , )                         \
   LINE(X86_AVX512F, avx512f, , , )                         \
   LINE(X86_AVX512CD, avx512cd, , , )                       \
   LINE(X86_AVX512ER, avx512er, , , )                       \
