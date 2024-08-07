@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 
+# see: https://cmake.org/cmake/help/latest/policy/CMP0057.html
+cmake_policy(SET CMP0057 NEW)
+
 # option() honors normal variables.
 # see: https://cmake.org/cmake/help/git-stage/policy/CMP0077.html
 if(POLICY CMP0077)
