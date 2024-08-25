@@ -10,7 +10,7 @@ on:
 jobs:
   # Building using the github runner environement directly.
   bazel:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3

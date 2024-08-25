@@ -10,7 +10,7 @@ on:
 jobs:
   # Building using the github runner environement directly.
   xcode:
-    runs-on: macos-latest
+    runs-on: macos-13
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
