@@ -47,7 +47,7 @@ function install_qemu() {
   rm -rf "${QEMU_INSTALL}"
 
   # Checking for a tarball before downloading makes testing easier :-)
-  local -r QEMU_URL="http://wiki.qemu-project.org/download/qemu-${QEMU_VERSION}.tar.xz"
+  local -r QEMU_URL="https://download.qemu.org/qemu-${QEMU_VERSION}.tar.xz"
   local -r QEMU_DIR="qemu-${QEMU_VERSION}"
   unpack ${QEMU_URL} ${QEMU_DIR}
   cd ${QEMU_DIR} || exit 2
