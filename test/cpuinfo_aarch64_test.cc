@@ -312,6 +312,24 @@ CPU revision    : 3)");
   EXPECT_FALSE(info.features.smef16f16);
   EXPECT_FALSE(info.features.mops);
   EXPECT_FALSE(info.features.hbc);
+  EXPECT_FALSE(info.features.sveb16b16);
+  EXPECT_FALSE(info.features.lrcpc3);
+  EXPECT_FALSE(info.features.lse128);
+  EXPECT_FALSE(info.features.fpmr);
+  EXPECT_FALSE(info.features.lut);
+  EXPECT_FALSE(info.features.faminmax);
+  EXPECT_FALSE(info.features.f8cvt);
+  EXPECT_FALSE(info.features.f8fma);
+  EXPECT_FALSE(info.features.f8dp4);
+  EXPECT_FALSE(info.features.f8dp2);
+  EXPECT_FALSE(info.features.f8e4m3);
+  EXPECT_FALSE(info.features.f8e5m2);
+  EXPECT_FALSE(info.features.smelutv2);
+  EXPECT_FALSE(info.features.smef8f16);
+  EXPECT_FALSE(info.features.smef8f32);
+  EXPECT_FALSE(info.features.smesf8fma);
+  EXPECT_FALSE(info.features.smesf8dp4);
+  EXPECT_FALSE(info.features.smesf8dp2);
 }
 #elif defined(CPU_FEATURES_OS_MACOS)
 TEST_F(CpuidAarch64Test, FromDarwinSysctlFromName) {
