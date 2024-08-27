@@ -115,7 +115,29 @@
   LINE(AARCH64_SME_F16F16, smef16f16, "smef16f16", 0,                        \
        AARCH64_HWCAP2_SME_F16F16)                                            \
   LINE(AARCH64_MOPS, mops, "mops", 0, AARCH64_HWCAP2_MOPS)                   \
-  LINE(AARCH64_HBC, hbc, "hbc", 0, AARCH64_HWCAP2_HBC)
+  LINE(AARCH64_HBC, hbc, "hbc", 0, AARCH64_HWCAP2_HBC)                       \
+  LINE(AARCH64_SVE_B16B16, sveb16b16, "sveb16b16", 0,                        \
+       AARCH64_HWCAP2_SVE_B16B16)                                            \
+  LINE(AARCH64_LRCPC3, lrcpc3, "lrcpc3", 0, AARCH64_HWCAP2_LRCPC3)           \
+  LINE(AARCH64_LSE128, lse128, "lse128", 0, AARCH64_HWCAP2_LSE128)           \
+  LINE(AARCH64_FPMR, fpmr, "fpmr", 0, AARCH64_HWCAP2_FPMR)                   \
+  LINE(AARCH64_LUT, lut, "lut", 0, AARCH64_HWCAP2_LUT)                       \
+  LINE(AARCH64_FAMINMAX, faminmax, "faminmax", 0, AARCH64_HWCAP2_FAMINMAX)   \
+  LINE(AARCH64_F8CVT, f8cvt, "f8cvt", 0, AARCH64_HWCAP2_F8CVT)               \
+  LINE(AARCH64_F8FMA, f8fma, "f8fma", 0, AARCH64_HWCAP2_F8FMA)               \
+  LINE(AARCH64_F8DP4, f8dp4, "f8dp4", 0, AARCH64_HWCAP2_F8DP4)               \
+  LINE(AARCH64_F8DP2, f8dp2, "f8dp2", 0, AARCH64_HWCAP2_F8DP2)               \
+  LINE(AARCH64_F8E4M3, f8e4m3, "f8e4m3", 0, AARCH64_HWCAP2_F8E4M3)           \
+  LINE(AARCH64_F8E5M2, f8e5m2, "f8e5m2", 0, AARCH64_HWCAP2_F8E5M2)           \
+  LINE(AARCH64_SME_LUTV2, smelutv2, "smelutv1", 0, AARCH64_HWCAP2_SME_LUTV2) \
+  LINE(AARCH64_SME_F8F16, smef8f16, "smef8f16", 0, AARCH64_HWCAP2_SME_F8F16) \
+  LINE(AARCH64_SME_F8F32, smef8f32, "smef8f32", 0, AARCH64_HWCAP2_SME_F8F32) \
+  LINE(AARCH64_SME_SF8FMA, smesf8fma, "smesf8fma", 0,                        \
+       AARCH64_HWCAP2_SME_SF8FMA)                                            \
+  LINE(AARCH64_SME_SF8DP4, smesf8dp4, "smesf8dp4", 0,                        \
+       AARCH64_HWCAP2_SME_SF8DP4)                                            \
+  LINE(AARCH64_SME_SF8DP2, smesf8dp2, "smesf8dp2", 0, AARCH64_HWCAP2_SME_SF8DP2)
+
 #define INTROSPECTION_PREFIX Aarch64
 #define INTROSPECTION_ENUM_PREFIX AARCH64
 #include "define_introspection_and_hwcaps.inl"
