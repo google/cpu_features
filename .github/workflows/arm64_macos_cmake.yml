@@ -1,4 +1,5 @@
-name: AArch64 MacOS CMake
+# ref: https://github.com/actions/runner-images
+name: Arm64 MacOS CMake
 
 on:
   push:
