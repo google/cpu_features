@@ -66,12 +66,6 @@ help:
 	@echo -e "\t\t${BOLD}test${RESET}"
 	@echo -e "\te.g. 'make aarch64_test'"
 	@echo
-	@echo -e "\t${BOLD}<VM>${RESET}: build the vagrant <VM> virtual machine."
-	@echo -e "\t${BOLD}clean_<VM>${RESET}: Remove virtual machine for the specified vm."
-	@echo
-	@echo -e "\t${BOLD}<VM>${RESET}:"
-	@echo -e "\t\t${BOLD}freebsd${RESET} (FreeBSD)"
-	@echo
 	@echo -e "\t${BOLD}clean${RESET}: Remove cache and ALL docker images."
 	@echo
 	@echo -e "\t${BOLD}NOCACHE=1${RESET}: use 'docker build --no-cache' when building container (default use cache)."
@@ -218,29 +212,11 @@ install_devel: amd64_install_devel
 install_build: amd64_install_build
 install_test: amd64_install_test
 
-#############
-## VAGRANT ##
-#############
-VMS = freebsd
-
-vms_targets = $(addsuffix _build, $(VMS))
-.PHONY: $(vms_targets)
-$(vms_targets): %_build: vagrant/%/Vagrantfile
-	@cd vagrant/$* && vagrant destroy -f
-	cd vagrant/$* && vagrant up
-
-clean_vms_targets = $(addprefix clean_, $(VMS))
-.PHONY: clean_vms $(clean_vms_targets)
-clean_vms: $(clean_vms_targets)
-$(clean_vms_targets): clean_%:
-	cd vagrant/$* && vagrant destroy -f
-	-rm -rf vagrant/$*/.vagrant
-
 ###########
 ## CLEAN ##
 ###########
 .PHONY: clean
-clean: clean_amd64 clean_toolchain clean_vms
+clean: clean_amd64 clean_toolchain
 	docker container prune -f
 	docker image prune -f
 	-rmdir cache
@@ -249,4 +225,3 @@ clean: clean_amd64 clean_toolchain clean_vms
 distclean: clean
 	-docker container rm -f $$(docker container ls -aq)
 	-docker image rm -f $$(docker image ls -aq)
-	-vagrant box remove -f generic/freebsd12

@@ -32,9 +32,3 @@ Dockerfile is splitted in several stages.
 
 ![docker](doc/docker.svg)
 
-
-## Makefile/Vagrant testing
-To test build for FreeBSD we are using Vagrant and VirtualBox box.
-
-This is similar to the docker stuff but use `vagrant` as `docker` cli and
-VirtuaBox to replace the docker engine daemon.

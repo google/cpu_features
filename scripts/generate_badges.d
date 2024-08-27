@@ -39,7 +39,6 @@ enum Cpu
 enum Os
 {
     Linux,
-    FreeBSD,
     MacOS,
     Windows,
 }
