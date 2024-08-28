@@ -11,7 +11,7 @@ on:
 jobs:
   # Building using the github runner environement directly.
   bazel:
-    runs-on: macos-latest
+    runs-on: macos-latest # Using M1 processors, ref: https://github.com/actions/runner-images
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3

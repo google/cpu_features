@@ -11,7 +11,7 @@ on:
 jobs:
   # Building using the github runner environement directly.
   xcode:
-    runs-on: macos-latest
+    runs-on: macos-latest # Using M1 processors, ref: https://github.com/actions/runner-images
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
@@ -27,7 +27,7 @@ jobs:
     - name: Install
       run: cmake --build build --config Release --target install -v
   make:
-    runs-on: macos-latest
+    runs-on: macos-latest # Using M1 processors, ref: https://github.com/actions/runner-images
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
