@@ -322,6 +322,10 @@ cc_library(
     copts = C99_FLAGS,
     defines = selects.with_or({
         PLATFORM_CPU_X86_64: ["CPU_FEATURES_MOCK_CPUID_X86"],
+	PLATFORM_CPU_ARM64: [
+	    "CPU_FEATURES_MOCK_CPUID_AARCH64",
+	    "CPU_FEATURES_MOCK_SYSCTL_AARCH64",
+	],
         "//conditions:default": [],
     }) + selects.with_or({
         PLATFORM_OS_MACOS: ["HAVE_SYSCTLBYNAME"],
