@@ -235,7 +235,7 @@
 #endif  // defined(CPU_FEATURES_ARCH_X86)
 
 #if defined(CPU_FEATURES_ARCH_ANY_ARM)
-#if defined(__ARM_NEON)
+#if defined(__ARM_NEON) || defined(_MSC_VER)
 #define CPU_FEATURES_COMPILED_ANY_ARM_NEON 1
 #else
 #define CPU_FEATURES_COMPILED_ANY_ARM_NEON 0
