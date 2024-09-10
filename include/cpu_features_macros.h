@@ -234,14 +234,15 @@
 
 #endif  // defined(CPU_FEATURES_ARCH_X86)
 
+#if defined(CPU_FEATURES_ARCH_ANY_ARM)
 // Note: MSVC targeting ARM does not define `__ARM_NEON` but Windows on ARM
 // requires it. In that case we force NEON detection.
-#if defined(__ARM_NEON) || \
-    (defined(CPU_FEATURES_COMPILER_MSC) && defined(CPU_FEATURES_ARCH_ANY_ARM))
+#if defined(__ARM_NEON) || defined(CPU_FEATURES_COMPILER_MSC)
 #define CPU_FEATURES_COMPILED_ANY_ARM_NEON 1
 #else
 #define CPU_FEATURES_COMPILED_ANY_ARM_NEON 0
-#endif
+#endif  //  defined(__ARM_NEON) || defined(CPU_FEATURES_COMPILER_MSC)
+#endif  //  defined(CPU_FEATURES_ARCH_ANY_ARM)
 
 #if defined(CPU_FEATURES_ARCH_MIPS)
 #if defined(__mips_msa)
