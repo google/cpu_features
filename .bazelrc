@@ -17,7 +17,7 @@ build:ci --sandbox_base=/dev/shm
 build:ci --keep_going
 
 # Show subcommands when building
-build:ci --subcommands=true 
+build:ci --subcommands=true
 
 # Make sure we test for C99 compliance when building the library
 build:ci --conlyopt=-std=c99
