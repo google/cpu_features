@@ -55,7 +55,7 @@ cc_test(
     includes = INCLUDES,
     deps = [
         ":bit_utils",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -89,7 +89,7 @@ cc_test(
     includes = INCLUDES,
     deps = [
         ":string_view",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -147,7 +147,7 @@ cc_test(
         ":cpu_features_macros",
         ":filesystem_for_testing",
         ":string_view",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -311,7 +311,7 @@ cc_library(
         PLATFORM_CPU_ARM: ["include/cpuinfo_arm.h"],
         PLATFORM_CPU_ARM64: [
             "include/cpuinfo_aarch64.h",
-            "include/internal/cpuid_aarch64.h"
+            "include/internal/cpuid_aarch64.h",
         ],
         PLATFORM_CPU_MIPS: ["include/cpuinfo_mips.h"],
         PLATFORM_CPU_PPC: ["include/cpuinfo_ppc.h"],
@@ -321,10 +321,10 @@ cc_library(
     copts = C99_FLAGS,
     defines = selects.with_or({
         PLATFORM_CPU_X86_64: ["CPU_FEATURES_MOCK_CPUID_X86"],
-	PLATFORM_CPU_ARM64: [
-	    "CPU_FEATURES_MOCK_CPUID_AARCH64",
-	    "CPU_FEATURES_MOCK_SYSCTL_AARCH64",
-	],
+        PLATFORM_CPU_ARM64: [
+            "CPU_FEATURES_MOCK_CPUID_AARCH64",
+            "CPU_FEATURES_MOCK_SYSCTL_AARCH64",
+        ],
         "//conditions:default": [],
     }) + selects.with_or({
         PLATFORM_OS_MACOS: ["HAVE_SYSCTLBYNAME"],
@@ -368,7 +368,7 @@ cc_test(
         ":filesystem_for_testing",
         ":hwcaps_for_testing",
         ":string_view",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main",
     ],
 )
 
