@@ -25,13 +25,7 @@ COPY . .
 
 FROM devel AS build
 RUN bazel version
-RUN bazel build \
- -c opt \
- --subcommands=true \
- ...
+RUN bazel build --config=ci ...
 
 FROM build AS test
-RUN bazel test \
- -c opt \
- --test_output=errors \
- ...
+RUN bazel test  --config=ci ...
