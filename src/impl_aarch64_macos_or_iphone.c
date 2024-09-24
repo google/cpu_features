@@ -81,6 +81,7 @@ Aarch64Info GetAarch64Info(void) {
   info.features.i8mm = GetDarwinSysCtlByName("hw.optional.arm.FEAT_I8MM");
   info.features.bf16 = GetDarwinSysCtlByName("hw.optional.arm.FEAT_BF16");
   info.features.bti = GetDarwinSysCtlByName("hw.optional.arm.FEAT_BTI");
+  info.features.ecv = GetDarwinSysCtlByName("hw.optional.arm.FEAT_ECV");
 
   return info;
 }
