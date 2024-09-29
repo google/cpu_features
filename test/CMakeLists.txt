@@ -25,7 +25,7 @@ target_link_libraries(stack_line_reader_for_test string_view filesystem_for_test
 add_library(all_libraries
         ../src/hwcaps.c
         ../src/hwcaps_linux_or_android.c
-        ../src/hwcaps_freebsd.c
+        ../src/hwcaps_freebsd_or_openbsd.c
         ../src/stack_line_reader.c)
 target_link_libraries(all_libraries hwcaps_for_testing stack_line_reader string_view)
 
@@ -81,7 +81,7 @@ if(PROCESSOR_IS_AARCH64)
     ../src/impl_aarch64_linux_or_android.c
     ../src/impl_aarch64_windows.c
     ../src/impl_aarch64_macos_or_iphone.c
-    ../src/impl_aarch64_freebsd.c
+    ../src/impl_aarch64_freebsd_or_openbsd.c
   )
   if(APPLE)
     target_compile_definitions(cpuinfo_aarch64_test PUBLIC CPU_FEATURES_MOCK_SYSCTL_AARCH64)

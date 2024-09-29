@@ -95,6 +95,10 @@
 #define CPU_FEATURES_OS_FREEBSD
 #endif
 
+#if defined(__OpenBSD__)
+#define CPU_FEATURES_OS_OPENBSD
+#endif
+
 #if defined(__ANDROID__)
 #define CPU_FEATURES_OS_ANDROID
 #endif

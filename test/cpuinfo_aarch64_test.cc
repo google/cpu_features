@@ -22,13 +22,13 @@
 #if defined(CPU_FEATURES_OS_WINDOWS)
 #include "internal/windows_utils.h"
 #endif  // CPU_FEATURES_OS_WINDOWS
-#if defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_LINUX)
+#if defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_OPENBSD) || defined(CPU_FEATURES_OS_LINUX)
 #include "internal/cpuid_aarch64.h"
-#endif  // defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_LINUX)
+#endif  // defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_OPENBSD) || defined(CPU_FEATURES_OS_LINUX)
 
 namespace cpu_features {
 class FakeCpuAarch64 {
-#if defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_LINUX)
+#if defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_OPENBSD) || defined(CPU_FEATURES_OS_LINUX)
  public:
   uint64_t GetMidrEl1() const { return _midr_el1; }
 
@@ -89,7 +89,7 @@ static FakeCpuAarch64& cpu() {
 }
 
 // Define OS dependent mock functions
-#if defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_LINUX)
+#if defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_OPENBSD) || defined(CPU_FEATURES_OS_LINUX)
 extern "C" uint64_t GetMidrEl1(void) { return cpu().GetMidrEl1(); }
 #elif defined(CPU_FEATURES_OS_MACOS)
 extern "C" bool GetDarwinSysCtlByName(const char* name) {
@@ -137,7 +137,7 @@ TEST_F(CpuidAarch64Test, Aarch64FeaturesEnum) {
 }
 
 // AT_HWCAP tests
-#if defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_FREEBSD)
+#if defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_OPENBSD)
 TEST_F(CpuidAarch64Test, FromHardwareCap) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_AES, 0);
@@ -205,7 +205,7 @@ TEST_F(CpuidAarch64Test, FromHardwareCap2) {
   EXPECT_FALSE(info.features.dgh);
   EXPECT_FALSE(info.features.rng);
 }
-#endif  // defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_FREEBSD)
+#endif  // defined(CPU_FEATURES_OS_LINUX) || defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_OPENBSD)
 
 // OS dependent tests
 #if defined(CPU_FEATURES_OS_LINUX)
@@ -415,7 +415,7 @@ TEST_F(CpuidAarch64Test, WINDOWS_AARCH64_RPI4) {
   EXPECT_FALSE(info.features.jscvt);
   EXPECT_FALSE(info.features.lrcpc);
 }
-#elif defined(CPU_FEATURES_OS_FREEBSD)
+#elif defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_OPENBSD)
 TEST_F(CpuidAarch64Test, MrsMidrEl1_RPI4) {
   ResetHwcaps();
   SetHardwareCapabilities(AARCH64_HWCAP_FP | AARCH64_HWCAP_CPUID, 0);
