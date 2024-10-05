@@ -57,7 +57,8 @@ typedef enum {
   RISCV_Q,
   RISCV_C,
   RISCV_V,
-  RISCV_Zicsr,
+  RISCV_FIRST_UNORDERED_,
+  RISCV_Zicsr = RISCV_FIRST_UNORDERED_,
   RISCV_Zifencei,
   RISCV_LAST_,
 } RiscvFeaturesEnum;

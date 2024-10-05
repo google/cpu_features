@@ -58,14 +58,37 @@
 
 static const RiscvInfo kEmptyRiscvInfo;
 
-static void HandleRiscVIsaLine(StringView line, RiscvFeatures* const features) {
-  for (size_t i = 0; i < RISCV_LAST_; ++i) {
+static void HandleRiscVIsaLineOrdered(StringView line,
+                                      RiscvFeatures* const features) {
+  for (size_t i = 0; i < RISCV_FIRST_UNORDERED_; ++i) {
     StringView flag = str(kCpuInfoFlags[i]);
     int index_of_flag = CpuFeatures_StringView_IndexOf(line, flag);
     bool is_set = index_of_flag != -1;
     kSetters[i](features, is_set);
     if (is_set)
       line = CpuFeatures_StringView_PopFront(line, index_of_flag + flag.size);
+  }
+}
+
+static void HandleRiscVIsaLineUnordered(StringView line,
+                                        RiscvFeatures* const features) {
+  for (size_t i = RISCV_FIRST_UNORDERED_; i < RISCV_LAST_; ++i) {
+    bool is_set = CpuFeatures_StringView_HasWord(line, kCpuInfoFlags[i], '_');
+    kSetters[i](features, is_set);
+  }
+}
+
+static void HandleRiscVIsaLine(StringView line, RiscvFeatures* const features) {
+  int idx_underscore = CpuFeatures_StringView_IndexOfChar(line, '_');
+  if (idx_underscore == -1) {
+    HandleRiscVIsaLineOrdered(line, features);
+  } else {
+    StringView ordered =
+        CpuFeatures_StringView_PopBack(line, line.size - idx_underscore);
+    StringView unordered =
+        CpuFeatures_StringView_PopFront(line, idx_underscore);
+    HandleRiscVIsaLineOrdered(ordered, features);
+    HandleRiscVIsaLineUnordered(unordered, features);
   }
 }
 
