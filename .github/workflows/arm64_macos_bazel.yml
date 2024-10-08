@@ -1,5 +1,5 @@
 # ref: https://github.com/actions/runner-images
-name: amd64 MacOS Bazel
+name: Arm64 MacOS Bazel
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
 jobs:
   # Building using the github runner environement directly.
   bazel:
-    runs-on: macos-13 # Using x86 processors, ref: https://github.com/actions/runner-images
+    runs-on: macos-latest # Using M1 processors, ref: https://github.com/actions/runner-images
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3

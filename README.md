@@ -9,7 +9,7 @@ instructions) at runtime.
 
 |  | Linux | FreeBSD | MacOS | Windows |
 | :-- | --: | --: | --: | --: |
-| amd64 | [![CMake][i1a0]][l1a0]<br/>[![Bazel][i1a1]][l1a1] | [![CMake][i2a0]][l2a0]<br/>![Bazel][d1] | [![CMake][i3a0]][l3a0]<br/>[![Bazel][i3a1]][l3a1] | [![CMake][i4a0]][l4a0]<br/>![Bazel][d1] |
+| amd64 | [![CMake][i1a0]][l1a0]<br/>[![Bazel][i1a1]][l1a1] | ![CMake][d0]<br/>![Bazel][d1] | [![CMake][i3a0]][l3a0]<br/>[![Bazel][i3a1]][l3a1] | [![CMake][i4a0]][l4a0]<br/>![Bazel][d1] |
 | AArch64 | [![CMake][i1b0]][l1b0]<br/>[![Bazel][i1b1]][l1b1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] |
 | ARM | [![CMake][i1c0]][l1c0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] |
 | MIPS | [![CMake][i1d0]][l1d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] | ![CMake][d0]<br/>![Bazel][d1] |
@@ -29,7 +29,6 @@ instructions) at runtime.
 [i1e0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/power_linux_cmake.yml?branch=main&event=push&label=&logo=cmake
 [i1f0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/riscv_linux_cmake.yml?branch=main&event=push&label=&logo=cmake
 [i1h0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/s390x_linux_cmake.yml?branch=main&event=push&label=&logo=cmake
-[i2a0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_freebsd_cmake.yml?branch=main&event=push&label=&logo=cmake
 [i3a0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_macos_cmake.yml?branch=main&event=push&label=&logo=cmake
 [i3a1]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_macos_bazel.yml?branch=main&event=push&label=&logo=data:image/svg%2bxml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAuMTZsNS43ODYgNS43ODZMNiAxMS43MzIuMjE0IDUuOTQ2IDYgLjE2MXpNMCA2LjIxNFYxMmw1Ljc4NiA1Ljc4NlYxMkwwIDYuMjE0ek0xOCAuMTZsNS43ODYgNS43ODZMMTggMTEuNzMybC01Ljc4Ni01Ljc4NkwxOCAuMTYxek0yNCA2LjIxNFYxMmwtNS43ODYgNS43ODZWMTJMMjQgNi4yMTR6TTEyIDYuMTZsNS43ODYgNS43ODZMMTIgMTcuNzMybC01Ljc4Ni01Ljc4NkwxMiA2LjE2MXpNMTEuODQgMTguMDU0djUuNzg1bC01Ljc4Ni01Ljc4NXYtNS43ODZsNS43ODUgNS43ODZ6TTEyLjE2IDE4LjA1NGw1Ljc4Ni01Ljc4NnY1Ljc4NmwtNS43ODUgNS43ODV2LTUuNzg1eiIgc3Ryb2tlPSJ0cmFuc3BhcmVudCIgZmlsbD0id2hpdGUiLz48L3N2Zz4=
 [i4a0]: https://img.shields.io/github/actions/workflow/status/google/cpu_features/amd64_windows_cmake.yml?branch=main&event=push&label=&logo=cmake
@@ -42,7 +41,6 @@ instructions) at runtime.
 [l1e0]: https://github.com/google/cpu_features/actions/workflows/power_linux_cmake.yml
 [l1f0]: https://github.com/google/cpu_features/actions/workflows/riscv_linux_cmake.yml
 [l1h0]: https://github.com/google/cpu_features/actions/workflows/s390x_linux_cmake.yml
-[l2a0]: https://github.com/google/cpu_features/actions/workflows/amd64_freebsd_cmake.yml
 [l3a0]: https://github.com/google/cpu_features/actions/workflows/amd64_macos_cmake.yml
 [l3a1]: https://github.com/google/cpu_features/actions/workflows/amd64_macos_bazel.yml
 [l4a0]: https://github.com/google/cpu_features/actions/workflows/amd64_windows_cmake.yml

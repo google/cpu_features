@@ -14,6 +14,7 @@ out/
 
 # Bazel artifacts
 **/bazel-*
+MODULE.bazel.lock
 
 # Per-user bazelrc files
 user.bazelrc
