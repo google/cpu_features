@@ -166,6 +166,7 @@ typedef enum {
   INTEL_ADL,            // ALDER LAKE
   INTEL_RCL,            // ROCKET LAKE
   INTEL_RPL,            // RAPTOR LAKE
+  INTEL_SRF,            // SIERRA FOREST
   INTEL_KNIGHTS_M,      // KNIGHTS MILL
   INTEL_KNIGHTS_L,      // KNIGHTS LANDING
   INTEL_KNIGHTS_F,      // KNIGHTS FERRY

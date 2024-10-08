@@ -683,6 +683,9 @@ X86Microarchitecture GetX86Microarchitecture(const X86Info* info) {
       case CPUID(0x0F, 0x06):
         // https://en.wikichip.org/wiki/intel/microarchitectures/netburst
         return INTEL_NETBURST;
+      case CPUID(0x06, 0xAF):
+        // SierraForest
+	return INTEL_SRF;
       default:
         return X86_UNKNOWN;
     }
@@ -2040,6 +2043,7 @@ CacheInfo GetX86CacheInfo(void) {
   LINE(INTEL_ADL)                   \
   LINE(INTEL_RCL)                   \
   LINE(INTEL_RPL)                   \
+  LINE(INTEL_SRF)                   \
   LINE(INTEL_KNIGHTS_M)             \
   LINE(INTEL_KNIGHTS_L)             \
   LINE(INTEL_KNIGHTS_F)             \
