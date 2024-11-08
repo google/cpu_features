@@ -15,7 +15,7 @@
 #include "cpu_features_macros.h"
 
 #ifdef CPU_FEATURES_ARCH_AARCH64
-#ifdef CPU_FEATURES_OS_FREEBSD
+#if defined(CPU_FEATURES_OS_FREEBSD) || defined(CPU_FEATURES_OS_OPENBSD)
 
 #include "cpuinfo_aarch64.h"
 #include "impl_aarch64__base_implementation.inl"
@@ -42,5 +42,5 @@ Aarch64Info GetAarch64Info(void) {
   return info;
 }
 
-#endif  // CPU_FEATURES_OS_FREEBSD
+#endif  // CPU_FEATURES_OS_FREEBSD || CPU_FEATURES_OS_OPENBSD
 #endif  // CPU_FEATURES_ARCH_AARCH64

@@ -148,7 +148,7 @@ if(UNIX)
   add_library(unix_based_hardware_detection OBJECT
     ${PROJECT_SOURCE_DIR}/include/internal/hwcaps.h
     ${PROJECT_SOURCE_DIR}/src/hwcaps_linux_or_android.c
-    ${PROJECT_SOURCE_DIR}/src/hwcaps_freebsd.c
+    ${PROJECT_SOURCE_DIR}/src/hwcaps_freebsd_or_openbsd.c
     ${PROJECT_SOURCE_DIR}/src/hwcaps.c
   )
   setup_include_and_definitions(unix_based_hardware_detection)
