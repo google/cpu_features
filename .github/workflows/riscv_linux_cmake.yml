@@ -21,7 +21,7 @@ jobs:
     env:
       TARGET: ${{ matrix.targets[0] }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Build
       run: make --directory=cmake/ci ${TARGET}_build
     - name: Test
