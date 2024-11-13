@@ -48,6 +48,7 @@ static void DetectFeaturesFromOs(X86Info* info, X86Features* features) {
       features->ssse3 = CpuFeatures_StringView_HasWord(value, "ssse3", ' ');
       features->sse4_1 = CpuFeatures_StringView_HasWord(value, "sse4_1", ' ');
       features->sse4_2 = CpuFeatures_StringView_HasWord(value, "sse4_2", ' ');
+      features->lm = CpuFeatures_StringView_HasWord(value, "lm", ' ');
       break;
     }
     CpuFeatures_CloseFile(fd);
