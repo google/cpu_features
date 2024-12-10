@@ -155,7 +155,8 @@ TOOLCHAIN_TARGETS = \
  arm-linux-gnueabihf armv8l-linux-gnueabihf arm-linux-gnueabi armeb-linux-gnueabihf armeb-linux-gnueabi \
  aarch64-linux-gnu aarch64_be-linux-gnu \
  mips32 mips32el mips64 mips64el \
- ppc ppc64 ppc64le \
+ ppc ppc-440fp ppc-e500mc \
+ ppc64 ppc64le \
  riscv32 riscv64 \
  s390x
 TOOLCHAIN_STAGES = env devel build test
