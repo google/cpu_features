@@ -393,6 +393,10 @@ cc_library(
     srcs = ["ndk_compat/cpu-features.c"],
     copts = C99_FLAGS,
     includes = INCLUDES + ["ndk_compat"],
+    target_compatible_with = select({
+        "@platforms//os:windows": ["@platforms//:incompatible"],
+        "//conditions:default": [],
+    }),
     textual_hdrs = ["ndk_compat/cpu-features.h"],
     deps = [
         ":cpu_features_macros",
