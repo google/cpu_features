@@ -13,18 +13,21 @@ exports_files(["LICENSE"])
 
 INCLUDES = ["include"]
 
-C99_FLAGS = [
-    "-Wall",
-    "-Wextra",
-    "-Wmissing-declarations",
-    "-Wmissing-prototypes",
-    "-Wno-implicit-fallthrough",
-    "-Wno-unused-function",
-    "-Wold-style-definition",
-    "-Wshadow",
-    "-Wsign-compare",
-    "-Wstrict-prototypes",
-]
+C99_FLAGS = select({
+    "@platforms//os:windows": [],
+    "//conditions:default": [
+        "-Wall",
+        "-Wextra",
+        "-Wmissing-declarations",
+        "-Wmissing-prototypes",
+        "-Wno-implicit-fallthrough",
+        "-Wno-unused-function",
+        "-Wold-style-definition",
+        "-Wshadow",
+        "-Wsign-compare",
+        "-Wstrict-prototypes",
+    ],
+})
 
 cc_library(
     name = "cpu_features_macros",
