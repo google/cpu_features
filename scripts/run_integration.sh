@@ -165,6 +165,7 @@ function expand_bootlin_config() {
       local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc-440fp/tarballs/powerpc-440fp--glibc--stable-2024.05-1.tar.xz"
       local -r GCC_PREFIX="powerpc"
       local -r GCC_SUFFIX=""
+      QEMU_ARGS+=( -cpu "440epx" )
       ;;
     "ppc-e500mc")
       local -r TOOLCHAIN_URL="https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc-e500mc/tarballs/powerpc-e500mc--glibc--stable-2024.05-1.tar.xz"
