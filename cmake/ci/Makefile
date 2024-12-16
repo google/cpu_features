@@ -39,20 +39,16 @@ help:
 	@echo -e "\t${BOLD}clean_<target>_<toolchain_stage>${RESET}: Remove cache and docker image."
 	@echo
 	@echo -e "\tWith ${BOLD}<target>${RESET}:"
-	@echo -e "\t\t${BOLD}arm-linux-gnueabihf${RESET} (linaro toolchain)"
-	@echo -e "\t\t${BOLD}armv8l-linux-gnueabihf${RESET} (linaro toolchain)"
-	@echo -e "\t\t${BOLD}arm-linux-gnueabi${RESET} (linaro toolchain)"
-	@echo -e "\t\t${BOLD}armeb-linux-gnueabihf${RESET} (linaro toolchain)"
-	@echo -e "\t\t${BOLD}armeb-linux-gnueabi${RESET} (linaro toolchain)"
-	@echo -e "\t\t${BOLD}aarch64-linux-gnu${RESET} (linaro toolchain)"
-	@echo -e "\t\t${BOLD}aarch64${RESET} (bootlin toolchain)"
-	@echo -e "\t\t${BOLD}aarch64_be-linux-gnu${RESET} (linaro toolchain)"
-	@echo -e "\t\t${BOLD}aarch64be${RESET} (bootlin toolchain)"
+	@echo -e "\t\t${BOLD}armv7-eabihf(arm)${RESET} (bootlin toolchain)"
+	@echo -e "\t\t${BOLD}armebv7-eabihf(armeb)${RESET} (bootlin toolchain)"
+	@echo -e "\t\t${BOLD}aarch64(arm64)${RESET} (bootlin toolchain)"
+	@echo -e "\t\t${BOLD}aarch64be(arm64be)${RESET} (bootlin toolchain)"
 	@echo -e "\t\t${BOLD}mips32${RESET} (codespace toolchain)"
 	@echo -e "\t\t${BOLD}mips64${RESET} (codespace toolchain)"
 	@echo -e "\t\t${BOLD}mips32el${RESET} (codespace toolchain)"
 	@echo -e "\t\t${BOLD}mips64el${RESET} (codespace toolchain)"
-	@echo -e "\t\t${BOLD}ppc${RESET} (bootlin toolchain)"
+	@echo -e "\t\t${BOLD}ppc-440fp(ppc)${RESET} (bootlin toolchain)"
+	@echo -e "\t\t${BOLD}ppc-e500mc${RESET} (bootlin toolchain)"
 	@echo -e "\t\t${BOLD}ppc64${RESET} (bootlin toolchain)"
 	@echo -e "\t\t${BOLD}ppc64le${RESET} (bootlin toolchain)"
 	@echo -e "\t\t${BOLD}riscv32${RESET} (bootlin toolchain)"
@@ -151,9 +147,10 @@ $(clean_targets_amd64): clean_amd64_%:
 ## TOOLCHAIN ##
 ###############
 TOOLCHAIN_TARGETS = \
+ arm armeb \
+ armv7-eabihf armebv7-eabihf \
+ arm64 arm64be \
  aarch64 aarch64be \
- arm-linux-gnueabihf armv8l-linux-gnueabihf arm-linux-gnueabi armeb-linux-gnueabihf armeb-linux-gnueabi \
- aarch64-linux-gnu aarch64_be-linux-gnu \
  mips32 mips32el mips64 mips64el \
  ppc ppc-440fp ppc-e500mc \
  ppc64 ppc64le \
