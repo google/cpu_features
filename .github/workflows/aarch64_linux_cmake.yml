@@ -16,8 +16,6 @@ jobs:
         targets: [
           [aarch64],
           [aarch64be],
-          [aarch64-linux-gnu],
-          [aarch64_be-linux-gnu]
         ]
       fail-fast: false
     env:
