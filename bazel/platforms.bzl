@@ -24,3 +24,5 @@ PLATFORM_OS_ANDROID = ("@platforms//os:android")
 PLATFORM_OS_FREEBSD = ("@platforms//os:freebsd")
 
 PLATFORM_OS_OPENBSD = ("@platforms//os:openbsd")
+
+PLATFORM_OS_WINDOWS = ("@platforms//os:windows")

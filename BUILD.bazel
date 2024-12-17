@@ -2,7 +2,7 @@
 
 load("@bazel_skylib//lib:selects.bzl", "selects")
 load("//:bazel/platforms.bzl", "PLATFORM_CPU_ARM", "PLATFORM_CPU_ARM64", "PLATFORM_CPU_MIPS", "PLATFORM_CPU_PPC", "PLATFORM_CPU_RISCV32", "PLATFORM_CPU_RISCV64", "PLATFORM_CPU_X86_64")
-load("//:bazel/platforms.bzl", "PLATFORM_OS_MACOS", "PLATFORM_OS_LINUX", "PLATFORM_OS_FREEBSD", "PLATFORM_OS_OPENBSD", "PLATFORM_OS_ANDROID")
+load("//:bazel/platforms.bzl", "PLATFORM_OS_MACOS", "PLATFORM_OS_LINUX", "PLATFORM_OS_FREEBSD", "PLATFORM_OS_OPENBSD", "PLATFORM_OS_ANDROID", "PLATFORM_OS_WINDOWS")
 
 package(
     default_visibility = ["//visibility:public"],
@@ -14,7 +14,7 @@ exports_files(["LICENSE"])
 INCLUDES = ["include"]
 
 C99_FLAGS = select({
-    "@platforms//os:windows": [],
+    PLATFORM_OS_WINDOWS: [],
     "//conditions:default": [
         "-Wall",
         "-Wextra",
@@ -394,7 +394,7 @@ cc_library(
     copts = C99_FLAGS,
     includes = INCLUDES + ["ndk_compat"],
     target_compatible_with = select({
-        "@platforms//os:windows": ["@platforms//:incompatible"],
+        PLATFORM_OS_WINDOWS: ["@platforms//:incompatible"],
         "//conditions:default": [],
     }),
     textual_hdrs = ["ndk_compat/cpu-features.h"],
