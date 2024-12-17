@@ -14,7 +14,7 @@
 
 #include "internal/string_view.h"
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 namespace cpu_features {
 

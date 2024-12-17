@@ -14,7 +14,7 @@
 
 #include "internal/bit_utils.h"
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 namespace cpu_features {
 namespace {
