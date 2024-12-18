@@ -12,7 +12,7 @@ exports_files(["LICENSE"])
 INCLUDES = ["include"]
 
 C99_FLAGS = select({
-    PLATFORM_OS_WINDOWS: [],
+    "@platforms//os:windows": [],
     "//conditions:default": [
         "-Wall",
         "-Wextra",
