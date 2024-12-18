@@ -17,7 +17,7 @@
 #include <set>
 
 #include "filesystem_for_testing.h"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "hwcaps_for_testing.h"
 #if defined(CPU_FEATURES_OS_WINDOWS)
 #include "internal/windows_utils.h"
