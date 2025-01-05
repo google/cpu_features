@@ -215,7 +215,8 @@ if(BUILD_TESTING)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(CMAKE_CXX_EXTENSIONS OFF) # prefer use of -std14 instead of -gnustd14
 
-  if(NOT TARGET gtest OR NOT TARGET gmock_main)
+  find_package(GTest REQUIRED)
+  if(NOT TARGET GTest::gtest OR NOT TARGET GTest::gmock_main)
     # Download and unpack googletest at configure time.
     configure_file(
       cmake/googletest.CMakeLists.txt.in
