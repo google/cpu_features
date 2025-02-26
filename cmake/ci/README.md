@@ -28,7 +28,7 @@ make mips32_test
 ```
 
 ### Docker layers
-Dockerfile is splitted in several stages.
+Dockerfile is split in several stages.
 
 ![docker](doc/docker.svg)
 

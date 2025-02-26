@@ -45,7 +45,7 @@ option(BUILD_SHARED_LIBS "Build library as shared." OFF)
 # Force PIC on unix when building shared libs
 # see: https://en.wikipedia.org/wiki/Position-independent_code
 if(BUILD_SHARED_LIBS AND UNIX)
-  option(CMAKE_POSITION_INDEPENDENT_CODE "Build with Position Independant Code." ON)
+  option(CMAKE_POSITION_INDEPENDENT_CODE "Build with Position Independent Code." ON)
 endif()
 
 include(CheckIncludeFile)

@@ -126,7 +126,7 @@ typedef struct {
 // Calls cpuid and returns an initialized X86info.
 X86Info GetX86Info(void);
 
-// Returns cache hierarchy informations.
+// Returns cache hierarchy information.
 // Can call cpuid multiple times.
 CacheInfo GetX86CacheInfo(void);
 

@@ -122,7 +122,7 @@ TEST(CpuinfoMipsTest, Goldfish) {
   auto& fs = GetEmptyFilesystem();
   fs.CreateFile("/proc/cpuinfo", R"(system type		: MIPS-Goldfish
 Hardware		: goldfish
-Revison		: 1
+Revision		: 1
 processor		: 0
 cpu model		: MIPS 24Kc V0.0  FPU V0.0
 BogoMIPS		: 1042.02

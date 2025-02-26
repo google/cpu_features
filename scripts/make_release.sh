@@ -8,7 +8,7 @@ FINISHED='\033[1;96m'
 NOCOLOR='\033[0m'
 ERROR='\033[0;31m'
 
-echo -e "${ACTION}Checking environnement${NOCOLOR}"
+echo -e "${ACTION}Checking environment${NOCOLOR}"
 if [[ ! $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
 then
     echo -e "${ERROR}Invalid version number. Aborting. ${NOCOLOR}"
@@ -40,7 +40,7 @@ fi
 git update-index -q --refresh
 if ! git diff-index --quiet HEAD --
 then
-    echo -e "${ERROR}Branch has uncommited changes. Aborting.${NOCOLOR}"
+    echo -e "${ERROR}Branch has uncommitted changes. Aborting.${NOCOLOR}"
     exit 1
 fi
 

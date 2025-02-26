@@ -99,7 +99,7 @@ typedef enum {
   PPC_HAS_MMU,     /* Memory management unit */
   PPC_HAS_4xxMAC,
   PPC_UNIFIED_CACHE,  /* Unified instruction and data cache */
-  PPC_HAS_SPE,        /* Signal processing extention unit */
+  PPC_HAS_SPE,        /* Signal processing extension unit */
   PPC_HAS_EFP_SINGLE, /* SPE single precision fpu */
   PPC_HAS_EFP_DOUBLE, /* SPE double precision fpu */
   PPC_NO_TB,          /* No timebase */
@@ -116,7 +116,7 @@ typedef enum {
   PPC_POWER6_EXT,
   PPC_ARCH_2_06,              /* ISA 2.06 - POWER7 */
   PPC_HAS_VSX,                /* Vector-scalar extension */
-  PPC_PSERIES_PERFMON_COMPAT, /* Set of backwards compatibile performance
+  PPC_PSERIES_PERFMON_COMPAT, /* Set of backwards compatible performance
                                  monitoring events */
   PPC_TRUE_LE,
   PPC_PPC_LE,

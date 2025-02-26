@@ -127,7 +127,7 @@ static const PPCInfo kEmptyPPCInfo;
 PPCInfo GetPPCInfo(void) {
   /*
    * On Power feature flags aren't currently in cpuinfo so we only look at
-   * the auxilary vector.
+   * the auxiliary vector.
    */
   PPCInfo info = kEmptyPPCInfo;
   const HardwareCapabilities hwcaps = CpuFeatures_GetHardwareCapabilities();
