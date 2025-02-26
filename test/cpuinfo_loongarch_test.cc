@@ -15,7 +15,7 @@
 #include "cpuinfo_loongarch.h"
 
 #include "filesystem_for_testing.h"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "hwcaps_for_testing.h"
 
 namespace cpu_features {
