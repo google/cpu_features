@@ -277,6 +277,7 @@ Links provided here are not affiliated with Google but are kindly provided by th
    - https://github.com/Narasimha1997/py_cpu
  - Java
    - https://github.com/aecsocket/cpu-features-java
-
+- Node.JS (and [Bun](https://bun.sh/blog/bun-v1.2#c-addons-using-v8-apis))
+  - https://github.com/mscdex/cpu-features
 
 _Send PR to showcase your wrapper here_
