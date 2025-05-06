@@ -66,8 +66,11 @@ echo -e "${ACTION}Modifying MODULE.bazel${NOCOLOR}"
 sed -i "s/CPU_FEATURES_VERSION = \"${LATEST_VERSION}\"/CPU_FEATURES_VERSION = \"${VERSION}\"/g" MODULE.bazel
 
 echo -e "${ACTION}Commit new revision${NOCOLOR}"
-git add CMakeLists.txt
+git add CMakeLists.txt MODULE.bazel
 git commit -m"Release ${GIT_TAG}"
+
+echo -e "${ACTION}Check for unstaged or uncommited changes${NOCOLOR}"
+git diff --quiet && git diff --quiet --cached
 
 echo -e "${ACTION}Create new tag${NOCOLOR}"
 git tag ${GIT_TAG}
