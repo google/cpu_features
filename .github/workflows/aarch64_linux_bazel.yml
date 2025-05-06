@@ -8,18 +8,12 @@ on:
     - cron: '0 0 7,22 * *'
 
 jobs:
-  # Building using the github runner environement directly.
+  # Building using the GitHub runner environement directly.
   bazel:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Check docker
-        run: |
-          docker info
-          docker buildx ls
       - name: Build
         run: make --directory=bazel/ci arm64_build
       - name: Test
