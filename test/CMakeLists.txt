@@ -7,20 +7,25 @@ add_definitions(-DCPU_FEATURES_TEST)
 
 ##------------------------------------------------------------------------------
 add_library(string_view ../src/string_view.c)
+target_compile_features(string_view PUBLIC cxx_std_14)
 ##------------------------------------------------------------------------------
 add_library(filesystem_for_testing filesystem_for_testing.cc)
 target_compile_definitions(filesystem_for_testing PUBLIC CPU_FEATURES_MOCK_FILESYSTEM)
+target_compile_features(filesystem_for_testing PUBLIC cxx_std_14)
 ##------------------------------------------------------------------------------
 add_library(hwcaps_for_testing hwcaps_for_testing.cc)
 target_link_libraries(hwcaps_for_testing filesystem_for_testing)
+target_compile_features(hwcaps_for_testing PUBLIC cxx_std_14)
 ##------------------------------------------------------------------------------
 add_library(stack_line_reader ../src/stack_line_reader.c)
 target_compile_definitions(stack_line_reader PUBLIC STACK_LINE_READER_BUFFER_SIZE=1024)
 target_link_libraries(stack_line_reader string_view)
+target_compile_features(stack_line_reader PUBLIC cxx_std_14)
 ##------------------------------------------------------------------------------
 add_library(stack_line_reader_for_test ../src/stack_line_reader.c)
 target_compile_definitions(stack_line_reader_for_test PUBLIC STACK_LINE_READER_BUFFER_SIZE=16)
 target_link_libraries(stack_line_reader_for_test string_view filesystem_for_testing)
+target_compile_features(stack_line_reader_for_test PUBLIC cxx_std_14)
 ##------------------------------------------------------------------------------
 add_library(all_libraries
         ../src/hwcaps.c
@@ -28,6 +33,7 @@ add_library(all_libraries
         ../src/hwcaps_freebsd_or_openbsd.c
         ../src/stack_line_reader.c)
 target_link_libraries(all_libraries hwcaps_for_testing stack_line_reader string_view)
+target_compile_features(all_libraries PUBLIC cxx_std_14)
 
 #
 # tests
@@ -37,16 +43,19 @@ link_libraries(gtest gmock_main)
 ## bit_utils_test
 add_executable(bit_utils_test bit_utils_test.cc)
 target_link_libraries(bit_utils_test)
+target_compile_features(bit_utils_test PUBLIC cxx_std_14)
 add_test(NAME bit_utils_test COMMAND bit_utils_test)
 ##------------------------------------------------------------------------------
 ## string_view_test
 add_executable(string_view_test string_view_test.cc ../src/string_view.c)
 target_link_libraries(string_view_test string_view)
+target_compile_features(string_view_test PUBLIC cxx_std_14)
 add_test(NAME string_view_test COMMAND string_view_test)
 ##------------------------------------------------------------------------------
 ## stack_line_reader_test
 add_executable(stack_line_reader_test stack_line_reader_test.cc)
 target_link_libraries(stack_line_reader_test stack_line_reader_for_test)
+target_compile_features(stack_line_reader_test PUBLIC cxx_std_14)
 add_test(NAME stack_line_reader_test COMMAND stack_line_reader_test)
 ##------------------------------------------------------------------------------
 ## cpuinfo_x86_test
@@ -59,6 +68,7 @@ if(PROCESSOR_IS_X86)
     ../src/impl_x86_windows.c
   )
   target_compile_definitions(cpuinfo_x86_test PUBLIC CPU_FEATURES_MOCK_CPUID_X86)
+  target_compile_features(cpuinfo_x86_test PUBLIC cxx_std_14)
   if(APPLE)
     target_compile_definitions(cpuinfo_x86_test PRIVATE HAVE_SYSCTLBYNAME)
   endif()
@@ -70,6 +80,7 @@ endif()
 if(PROCESSOR_IS_ARM)
   add_executable(cpuinfo_arm_test cpuinfo_arm_test.cc ../src/impl_arm_linux_or_android.c)
   target_link_libraries(cpuinfo_arm_test all_libraries)
+  target_compile_features(cpuinfo_arm_test PUBLIC cxx_std_14)
   add_test(NAME cpuinfo_arm_test COMMAND cpuinfo_arm_test)
 endif()
 ##------------------------------------------------------------------------------
@@ -90,6 +101,7 @@ if(PROCESSOR_IS_AARCH64)
     target_compile_definitions(cpuinfo_aarch64_test PUBLIC CPU_FEATURES_MOCK_CPUID_AARCH64)
   endif()
   target_link_libraries(cpuinfo_aarch64_test all_libraries)
+  target_compile_features(cpuinfo_aarch64_test PUBLIC cxx_std_14)
   add_test(NAME cpuinfo_aarch64_test COMMAND cpuinfo_aarch64_test)
 endif()
 ##------------------------------------------------------------------------------
@@ -97,6 +109,7 @@ endif()
 if(PROCESSOR_IS_MIPS)
   add_executable(cpuinfo_mips_test cpuinfo_mips_test.cc  ../src/impl_mips_linux_or_android.c)
   target_link_libraries(cpuinfo_mips_test all_libraries)
+  target_compile_features(cpuinfo_mips_test PUBLIC cxx_std_14)
   add_test(NAME cpuinfo_mips_test COMMAND cpuinfo_mips_test)
 endif()
 ##------------------------------------------------------------------------------
@@ -104,6 +117,7 @@ endif()
 if(PROCESSOR_IS_POWER)
   add_executable(cpuinfo_ppc_test cpuinfo_ppc_test.cc  ../src/impl_ppc_linux.c)
   target_link_libraries(cpuinfo_ppc_test all_libraries)
+  target_compile_features(cpuinfo_ppc_test PUBLIC cxx_std_14)
   add_test(NAME cpuinfo_ppc_test COMMAND cpuinfo_ppc_test)
 endif()
 ##------------------------------------------------------------------------------
@@ -111,6 +125,7 @@ endif()
 if(PROCESSOR_IS_S390X)
   add_executable(cpuinfo_s390x_test cpuinfo_s390x_test.cc  ../src/impl_s390x_linux.c)
   target_link_libraries(cpuinfo_s390x_test all_libraries)
+  target_compile_features(cpuinfo_s390x_test PUBLIC cxx_std_14)
   add_test(NAME cpuinfo_s390x_test COMMAND cpuinfo_s390x_test)
 endif()
 ##------------------------------------------------------------------------------
@@ -118,6 +133,7 @@ endif()
 if(PROCESSOR_IS_RISCV)
   add_executable(cpuinfo_riscv_test cpuinfo_riscv_test.cc  ../src/impl_riscv_linux.c)
   target_link_libraries(cpuinfo_riscv_test all_libraries)
+  target_compile_features(cpuinfo_riscv_test PUBLIC cxx_std_14)
   add_test(NAME cpuinfo_riscv_test COMMAND cpuinfo_riscv_test)
 endif()
 ##------------------------------------------------------------------------------
@@ -125,6 +141,7 @@ endif()
 if(PROCESSOR_IS_LOONGARCH)
   add_executable(cpuinfo_loongarch_test cpuinfo_loongarch_test.cc  ../src/impl_loongarch_linux.c)
   target_link_libraries(cpuinfo_loongarch_test all_libraries)
+  target_compile_features(cpuinfo_loongarch_test PUBLIC cxx_std_14)
   add_test(NAME cpuinfo_loongarch_test COMMAND cpuinfo_loongarch_test)
 endif()
 
