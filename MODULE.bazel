@@ -5,7 +5,7 @@
 # For more details, please check https://github.com/bazelbuild/bazel/issues/18958
 ###############################################################################
 
-CPU_FEATURES_VERSION = "0.10.0"
+CPU_FEATURES_VERSION = "0.10.1"
 
 module(
     name = "cpu_features",
