@@ -23,7 +23,7 @@
 #endif  // CPU_FEATURES_OS_WINDOWS
 
 #include "filesystem_for_testing.h"
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "internal/cpuid_x86.h"
 
 namespace cpu_features {
