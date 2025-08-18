@@ -14,7 +14,7 @@ jobs:
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Configure
       run: cmake -S. -Bbuild -G "Visual Studio 17 2022" -DCMAKE_CONFIGURATION_TYPES=Release
     - name: Build

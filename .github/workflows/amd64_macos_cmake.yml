@@ -15,7 +15,7 @@ jobs:
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Check cmake
       run: cmake --version
     - name: Configure
@@ -31,7 +31,7 @@ jobs:
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Check cmake
       run: cmake --version
     - name: Configure
