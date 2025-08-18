@@ -1750,6 +1750,27 @@ TEST_F(CpuidX86Test, INTEL_ALDER_LAKE_N) {
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ADL);
 }
 
+// SierraForest
+TEST_F(CpuidX86Test, INTEL_SIERRA_FOREST) {
+  cpu().SetOsBackupsExtendedRegisters(true);
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000023, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000A06F3, 0x66FF0800, 0x7FFEFBFF, 0xBFEBFBFF}},
+      // 0x00000007 0x00: eax=0x00000002 ebx=0x239cb7ef ecx=0xfb4027bc edx=0xfc1c4432
+      // 0x00000007 0x01: eax=0x4c8809d0 ebx=0x00000001 ecx=0x00000000 edx=0x00060030
+      {{0x00000007, 0}, Leaf{0x00000002, 0x239CB7EF, 0xFB4027BC, 0xFC1C4432}},
+      {{0x00000007, 1}, Leaf{0x4C8809D0, 0x00000001, 0x00000000, 0x00060030}},
+  });
+  const auto info = GetX86Info();
+
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0xAF);
+  EXPECT_TRUE(info.features.avxifma);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_SRF);
+}
+
+
 // https://github.com/google/cpu_features/issues/200
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00206F2_Eagleton_CPUID.txt
 #if defined(CPU_FEATURES_OS_WINDOWS)
