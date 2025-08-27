@@ -115,10 +115,10 @@
 #if (defined(__apple__) || defined(__APPLE__) || defined(__MACH__))
 // From https://stackoverflow.com/a/49560690
 #include "TargetConditionals.h"
-#if defined(TARGET_OS_OSX)
+#if TARGET_OS_OSX
 #define CPU_FEATURES_OS_MACOS
 #endif
-#if defined(TARGET_OS_IPHONE)
+#if TARGET_OS_IPHONE
 // This is set for any non-Mac Apple products (IOS, TV, WATCH)
 #define CPU_FEATURES_OS_IPHONE
 #endif
