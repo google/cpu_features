@@ -136,7 +136,9 @@
        AARCH64_HWCAP2_SME_SF8FMA)                                            \
   LINE(AARCH64_SME_SF8DP4, smesf8dp4, "smesf8dp4", 0,                        \
        AARCH64_HWCAP2_SME_SF8DP4)                                            \
-  LINE(AARCH64_SME_SF8DP2, smesf8dp2, "smesf8dp2", 0, AARCH64_HWCAP2_SME_SF8DP2)
+  LINE(AARCH64_SME_SF8DP2, smesf8dp2, "smesf8dp2", 0,                        \
+       AARCH64_HWCAP2_SME_SF8DP2)                                            \
+  LINE(AARCH64_POE, poe, "poe", 0, AARCH64_HWCAP2_POE)
 
 #define INTROSPECTION_PREFIX Aarch64
 #define INTROSPECTION_ENUM_PREFIX AARCH64
