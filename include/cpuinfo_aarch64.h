@@ -217,6 +217,7 @@ typedef struct {
                       // (4-way) instructions.
   int smesf8dp2 : 1;  // SVE2 FP8 to half-precision 2-way dot product FDOT
                       // (2-way) instructions.
+  int poe : 1;        // Stage 1 Permission Overlay.
 
   // Make sure to update Aarch64FeaturesEnum below if you add a field here.
 } Aarch64Features;
@@ -331,6 +332,7 @@ typedef enum {
   AARCH64_SME_SF8FMA,
   AARCH64_SME_SF8DP4,
   AARCH64_SME_SF8DP2,
+  AARCH64_POE,
   AARCH64_LAST_,
 } Aarch64FeaturesEnum;
 

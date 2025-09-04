@@ -124,6 +124,7 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #define AARCH64_HWCAP2_SME_SF8FMA (1UL << 60)
 #define AARCH64_HWCAP2_SME_SF8DP4 (1UL << 61)
 #define AARCH64_HWCAP2_SME_SF8DP2 (1UL << 62)
+#define AARCH64_HWCAP2_POE (1UL << 63)
 
 // http://elixir.free-electrons.com/linux/latest/source/arch/arm/include/uapi/asm/hwcap.h
 #define ARM_HWCAP_SWP (1UL << 0)
