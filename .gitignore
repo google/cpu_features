@@ -18,3 +18,7 @@ MODULE.bazel.lock
 
 # Per-user bazelrc files
 user.bazelrc
+
+# Zig build artifacts
+.zig-cache
+zig-out
