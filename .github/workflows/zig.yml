@@ -1,0 +1,51 @@
+name: Zig build
+
+on:
+  pull_request:
+    branches: [ main ]
+
+env:
+  ZIG_VERSION: 0.15.1
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: ${{ env.ZIG_VERSION }}
+          mirror: 'https://zigmirror.com'
+      - run: zig fmt --check .
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: ${{ env.ZIG_VERSION }}
+          mirror: 'https://zigmirror.com'
+      - run: zig build
+
+  run:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-linux-musl
+          - os: ubuntu-latest
+            target: x86_64-linux-gnu
+          - os: ubuntu-24.04-arm64
+            target: aarch64-linux-musl
+          - os: ubuntu-24.04-arm64
+            target: aarch64-linux-gnu
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: ${{ env.ZIG_VERSION }}
+          mirror: 'https://zigmirror.com'
+      - name: Run list_cpu_features
+        run: zig build run -Dtarget=${{ matrix.target }} -- --json
