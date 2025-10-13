@@ -65,6 +65,9 @@ sed -i "s/CpuFeatures VERSION ${LATEST_VERSION}/CpuFeatures VERSION ${VERSION}/g
 echo -e "${ACTION}Modifying MODULE.bazel${NOCOLOR}"
 sed -i "s/CPU_FEATURES_VERSION = \"${LATEST_VERSION}\"/CPU_FEATURES_VERSION = \"${VERSION}\"/g" MODULE.bazel
 
+echo -e "${ACTION}Modifying build.zig.zon${NOCOLOR}" 
+sed -i "s/.version = \"${LATEST_VERSION}\"/.version = \"${VERSION}\"/g" build.zig.zon 
+
 echo -e "${ACTION}Commit new revision${NOCOLOR}"
 git add CMakeLists.txt MODULE.bazel
 git commit -m"Release ${GIT_TAG}"
