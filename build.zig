@@ -32,6 +32,10 @@ pub fn build(b: *std.Build) void {
 
     if (os_tag.isDarwin()) {
         cpu_features.root_module.addCMacro("HAVE_SYSCTLBYNAME", "1");
+    } else if (os_tag == .linux) {
+        // Linux (including musl) provides getauxval() for hardware capability detection
+        cpu_features.root_module.addCMacro("HAVE_STRONG_GETAUXVAL", "1");
+        cpu_features.root_module.addCMacro("HAVE_DLFCN_H", "1");
     }
 
     // Utility sources (always included)
