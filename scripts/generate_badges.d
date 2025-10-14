@@ -18,10 +18,14 @@ import std.traits : EnumMembers;
 immutable string bazel_svg = `<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 .16l5.786 5.786L6 11.732.214 5.946 6 .161zM0 6.214V12l5.786 5.786V12L0 6.214zM18 .16l5.786 5.786L18 11.732l-5.786-5.786L18 .161zM24 6.214V12l-5.786 5.786V12L24 6.214zM12 6.16l5.786 5.786L12 17.732l-5.786-5.786L12 6.161zM11.84 18.054v5.785l-5.786-5.785v-5.786l5.785 5.786zM12.16 18.054l5.786-5.786v5.786l-5.785 5.785v-5.785z" stroke="transparent" fill="white"/></svg>`;
 const string bazel_svg_base64 = Base64.encode(representation(bazel_svg));
 
+immutable string zig_svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 153 140"><g fill="white"><g><polygon points="46,22 28,44 19,30"/><polygon points="46,22 33,33 28,44 22,44 22,95 31,95 20,100 12,117 0,117 0,22" shape-rendering="crispEdges"/><polygon points="31,95 12,117 4,106"/></g><g><polygon points="56,22 62,36 37,44"/><polygon points="56,22 111,22 111,44 37,44 56,32" shape-rendering="crispEdges"/><polygon points="116,95 97,117 90,104"/><polygon points="116,95 100,104 97,117 42,117 42,95" shape-rendering="crispEdges"/><polygon points="150,0 52,117 3,140 101,22"/></g><g><polygon points="141,22 140,40 122,45"/><polygon points="153,22 153,117 106,117 120,105 125,95 131,95 131,45 122,45 132,36 141,22" shape-rendering="crispEdges"/><polygon points="125,95 130,110 106,117"/></g></g></svg>`;
+const string zig_svg_base64 = Base64.encode(representation(zig_svg));
+
 enum BuildSystem
 {
     CMake,
-    Bazel
+    Bazel,
+    Zig
 }
 
 enum Cpu
@@ -89,6 +93,8 @@ private:
             return url ~ "&logo=cmake";
         case BuildSystem.Bazel:
             return url ~ "&logo=data:image/svg%2bxml;base64," ~ bazel_svg_base64;
+        case BuildSystem.Zig:
+            return url ~ "&logo=data:image/svg%2bxml;base64," ~ zig_svg_base64;
         }
     }
 
