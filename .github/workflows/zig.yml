@@ -1,0 +1,13 @@
+name: Zig Check
+
+on: [push, pull_request]
+
+jobs:
+  zig-fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: latest
+      - run: zig fmt --check .
