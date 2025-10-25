@@ -8,7 +8,7 @@ jobs:
       matrix:
         target:
           - x86_64-macos-none
-    runs-on: macos-13  # Using x86 processors
+    runs-on: macos-15-intel  # Using x86 processors
     steps:
       - uses: actions/checkout@v5
       - uses: mlugg/setup-zig@v2
