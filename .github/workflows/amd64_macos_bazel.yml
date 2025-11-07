@@ -11,7 +11,7 @@ on:
 jobs:
   # Building using the github runner environement directly.
   bazel:
-    runs-on: macos-13 # Using x86 processors, ref: https://github.com/actions/runner-images
+    runs-on: macos-15-intel  # Using x86 processors
     steps:
       - name: Check out repository code
         uses: actions/checkout@v5
