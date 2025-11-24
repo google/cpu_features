@@ -11,7 +11,7 @@ jobs:
           - aarch64-linux-gnu
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: mlugg/setup-zig@v2
         with:
           version: latest
