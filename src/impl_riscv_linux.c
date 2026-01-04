@@ -39,9 +39,14 @@
   LINE(RISCV_D, D, "d", RISCV_HWCAP_D, 0)              \
   LINE(RISCV_Q, Q, "q", RISCV_HWCAP_Q, 0)              \
   LINE(RISCV_C, C, "c", RISCV_HWCAP_C, 0)              \
+  LINE(RISCV_B, B, "b", RISCV_HWCAP_B, 0)              \
   LINE(RISCV_V, V, "v", RISCV_HWCAP_V, 0)              \
   LINE(RISCV_Zicsr, Zicsr, "_zicsr", 0, 0)             \
-  LINE(RISCV_Zifencei, Zifencei, "_zifencei", 0, 0)
+  LINE(RISCV_Zifencei, Zifencei, "_zifencei", 0, 0)    \
+  LINE(RISCV_Zba, Zba, "_zba", 0, 0)                   \
+  LINE(RISCV_Zbb, Zbb, "_zbb", 0, 0)                   \
+  LINE(RISCV_Zbs, Zbs, "_zbs", 0, 0)                   \
+  LINE(RISCV_Zbc, Zbc, "_zbc", 0, 0)
 #define INTROSPECTION_PREFIX Riscv
 #define INTROSPECTION_ENUM_PREFIX RISCV
 #include "define_introspection_and_hwcaps.inl"
@@ -64,8 +69,7 @@ static void HandleRiscVIsaLine(StringView line, RiscvFeatures* const features) {
     int index_of_flag = CpuFeatures_StringView_IndexOf(line, flag);
     bool is_set = index_of_flag != -1;
     kSetters[i](features, is_set);
-    if (is_set)
-      line = CpuFeatures_StringView_PopFront(line, index_of_flag + flag.size);
+    line = CpuFeatures_StringView_PopFront(line, index_of_flag + flag.size);
   }
 }
 
@@ -104,6 +108,13 @@ static void FillProcCpuInfoData(RiscvInfo* const info) {
 RiscvInfo GetRiscvInfo(void) {
   RiscvInfo info = kEmptyRiscvInfo;
   FillProcCpuInfoData(&info);
+  RiscvFeatures f = info.features;
+  // B <-> Zba + Zbb + Zbs
+  f.B = f.B || (f.Zba && f.Zbb && f.Zbs);
+  f.Zba = f.Zba || f.B;
+  f.Zbb = f.Zbb || f.B;
+  f.Zbs = f.Zbs || f.B;
+  info.features = f;
   return info;
 }
 
