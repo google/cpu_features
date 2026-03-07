@@ -15,8 +15,14 @@
 #include "define_introspection.inl"
 #include "internal/hwcaps.h"
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#define LINE(ENUM, NAME, CPUINFO_FLAG, HWCAP, HWCAP2) \
+  [ENUM] = {HWCAP, HWCAP2},
+#else
 #define LINE(ENUM, NAME, CPUINFO_FLAG, HWCAP, HWCAP2) \
   [ENUM] = (HardwareCapabilities){HWCAP, HWCAP2},
+#endif
+
 static const HardwareCapabilities kHardwareCapabilities[] = {
     INTROSPECTION_TABLE};
 #undef LINE
