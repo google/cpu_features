@@ -15,7 +15,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v6
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Check docker
         run: |
           docker info
