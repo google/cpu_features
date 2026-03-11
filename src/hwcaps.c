@@ -15,6 +15,7 @@
 #include "internal/hwcaps.h"
 
 #include <stdbool.h>
+#include <stdint.h>
 
 static bool IsSet(const uint64_t mask, const uint64_t value) {
   if (mask == 0) return false;
