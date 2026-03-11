@@ -16,7 +16,8 @@
 #include "internal/hwcaps.h"
 
 #define LINE(ENUM, NAME, CPUINFO_FLAG, HWCAP, HWCAP2) \
-  [ENUM] = (HardwareCapabilities){HWCAP, HWCAP2},
+  [ENUM] = {HWCAP, HWCAP2},
+
 static const HardwareCapabilities kHardwareCapabilities[] = {
     INTROSPECTION_TABLE};
 #undef LINE
