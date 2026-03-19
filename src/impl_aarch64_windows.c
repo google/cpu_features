@@ -17,12 +17,10 @@
 #ifdef CPU_FEATURES_ARCH_AARCH64
 #ifdef CPU_FEATURES_OS_WINDOWS
 
-#include "cpuinfo_aarch64.h"
-
-#include "impl_aarch64__base_implementation.inl"
-
 #include <stdbool.h>
 
+#include "cpuinfo_aarch64.h"
+#include "impl_aarch64__base_implementation.inl"
 #include "internal/windows_utils.h"
 
 #ifdef CPU_FEATURES_MOCK_CPUID_AARCH64
