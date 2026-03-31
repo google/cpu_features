@@ -108,6 +108,8 @@ pub fn build(b: *std.Build) void {
                     .flags = &c_flags,
                 });
             }
+
+            cpu_features.installHeader(b.path("include/cpuinfo_x86.h"), "cpuinfo_x86.h");
         },
         .aarch64, .aarch64_be => {
             // AArch64 architecture - always needs cpuid
@@ -133,6 +135,8 @@ pub fn build(b: *std.Build) void {
                     .flags = &c_flags,
                 });
             }
+
+            cpu_features.installHeader(b.path("include/cpuinfo_aarch64.h"), "cpuinfo_aarch64.h");
         },
         .arm, .armeb, .thumb, .thumbeb => {
             // ARM (32-bit) architecture
@@ -151,6 +155,7 @@ pub fn build(b: *std.Build) void {
                     .flags = &c_flags,
                 });
             }
+            cpu_features.installHeader(b.path("include/cpuinfo_mips.h"), "cpuinfo_mips.h");
         },
         .powerpc, .powerpcle, .powerpc64, .powerpc64le => {
             // PowerPC architecture
@@ -160,6 +165,7 @@ pub fn build(b: *std.Build) void {
                     .flags = &c_flags,
                 });
             }
+            cpu_features.installHeader(b.path("include/cpuinfo_ppc.h"), "cpuinfo_ppc.h");
         },
         .riscv32, .riscv64 => {
             // RISC-V architecture
@@ -169,6 +175,7 @@ pub fn build(b: *std.Build) void {
                     .flags = &c_flags,
                 });
             }
+            cpu_features.installHeader(b.path("include/cpuinfo_riscv.h"), "cpuinfo_riscv.h");
         },
         .s390x => {
             // s390x architecture
@@ -178,6 +185,7 @@ pub fn build(b: *std.Build) void {
                     .flags = &c_flags,
                 });
             }
+            cpu_features.installHeader(b.path("include/cpuinfo_s390x.h"), "cpuinfo_s390x.h");
         },
         .loongarch64 => {
             // LoongArch architecture
@@ -187,11 +195,15 @@ pub fn build(b: *std.Build) void {
                     .flags = &c_flags,
                 });
             }
+            cpu_features.installHeader(b.path("include/cpuinfo_loongarch.h"), "cpuinfo_loongarch.h");
         },
         else => {
             std.debug.print("Warning: Unsupported architecture {s}\n", .{@tagName(cpu_arch)});
         },
     }
+
+    cpu_features.installHeader(b.path("include/cpu_features_cache_info.h"), "cpu_features_cache_info.h");
+    cpu_features.installHeader(b.path("include/cpu_features_macros.h"), "cpu_features_macros.h");
 
     // Link against dl library on Unix-like systems
     if (os_tag != .windows and os_tag != .wasi) {
@@ -201,15 +213,6 @@ pub fn build(b: *std.Build) void {
     // Install the library if enabled
     if (enable_install) {
         b.installArtifact(cpu_features);
-
-        // Install headers
-        const install_headers = b.addInstallDirectory(.{
-            .source_dir = b.path("include"),
-            .install_dir = .header,
-            .install_subdir = "cpu_features",
-            .exclude_extensions = &.{},
-        });
-        b.getInstallStep().dependOn(&install_headers.step);
     }
 
     // Build list_cpu_features executable if requested
@@ -224,7 +227,6 @@ pub fn build(b: *std.Build) void {
         });
 
         list_cpu_features.linkLibrary(cpu_features);
-        list_cpu_features.addIncludePath(b.path("include"));
 
         list_cpu_features.addCSourceFile(.{
             .file = b.path("src/utils/list_cpu_features.c"),
