@@ -256,6 +256,7 @@ CPU_FEATURES_START_CPP_NAMESPACE
 #define RISCV_HWCAP_D (UINT64_C(1) << ('D' - 'A'))
 #define RISCV_HWCAP_Q (UINT64_C(1) << ('Q' - 'A'))
 #define RISCV_HWCAP_C (UINT64_C(1) << ('C' - 'A'))
+#define RISCV_HWCAP_B (UINT64_C(1) << ('B' - 'A'))
 #define RISCV_HWCAP_V (UINT64_C(1) << ('V' - 'A'))
 
 // https://github.com/torvalds/linux/blob/master/arch/loongarch/include/uapi/asm/hwcap.h

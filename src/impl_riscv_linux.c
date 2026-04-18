@@ -41,7 +41,21 @@
   LINE(RISCV_C, C, "c", RISCV_HWCAP_C, 0)              \
   LINE(RISCV_V, V, "v", RISCV_HWCAP_V, 0)              \
   LINE(RISCV_Zicsr, Zicsr, "_zicsr", 0, 0)             \
-  LINE(RISCV_Zifencei, Zifencei, "_zifencei", 0, 0)
+  LINE(RISCV_Zifencei, Zifencei, "_zifencei", 0, 0)    \
+  LINE(RISCV_Zfa, Zfa, "_zfa", 0, 0)                   \
+  LINE(RISCV_Zfh, Zfh, "_zfh", 0, 0)                   \
+  LINE(RISCV_Zfhmin, Zfhmin, "_zfhmin", 0, 0)          \
+  LINE(RISCV_Zca, Zca, "_zca", 0, 0)                   \
+  LINE(RISCV_Zcb, Zcb, "_zcb", 0, 0)                   \
+  LINE(RISCV_Zcd, Zcd, "_zcd", 0, 0)                   \
+  LINE(RISCV_Zba, Zba, "_zba", 0, 0)                   \
+  LINE(RISCV_Zbb, Zbb, "_zbb", 0, 0)                   \
+  LINE(RISCV_Zbc, Zbc, "_zbc", 0, 0)                   \
+  LINE(RISCV_Zbs, Zbs, "_zbs", 0, 0)                   \
+  LINE(RISCV_Zvbb, Zvbb, "_zvbb", 0, 0)                \
+  LINE(RISCV_Zvbc, Zvbc, "_zvbc", 0, 0)                \
+  LINE(RISCV_Zvfh, Zvfh, "_zvfh", 0, 0)                \
+  LINE(RISCV_Zvfhmin, Zvfhmin, "_zvfhmin", 0, 0)
 #define INTROSPECTION_PREFIX Riscv
 #define INTROSPECTION_ENUM_PREFIX RISCV
 #include "define_introspection_and_hwcaps.inl"
