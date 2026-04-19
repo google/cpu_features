@@ -9,33 +9,35 @@ pub fn build(b: *std.Build) void {
     const build_executable = b.option(bool, "BUILD_EXECUTABLE", "Build list_cpu_features executable") orelse true;
     const enable_install = b.option(bool, "ENABLE_INSTALL", "Enable install targets") orelse true;
 
+    const cpu_mod = b.createModule(.{
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+
     // Create the cpu_features static library
     const cpu_features = b.addLibrary(.{
         .name = "cpu_features",
         .linkage = .static,
-        .root_module = b.createModule(.{
-            .target = target,
-            .optimize = optimize,
-            .link_libc = true,
-        }),
+        .root_module = cpu_mod,
     });
 
-    cpu_features.addIncludePath(b.path("include"));
-    cpu_features.addIncludePath(b.path("include/internal"));
+    cpu_mod.addIncludePath(b.path("include"));
+    cpu_mod.addIncludePath(b.path("include/internal"));
 
     // Public compile definitions
-    cpu_features.root_module.addCMacro("STACK_LINE_READER_BUFFER_SIZE", "1024");
+    cpu_mod.addCMacro("STACK_LINE_READER_BUFFER_SIZE", "1024");
 
     // Platform-specific defines
     const os_tag = target.result.os.tag;
     const cpu_arch = target.result.cpu.arch;
 
     if (os_tag.isDarwin()) {
-        cpu_features.root_module.addCMacro("HAVE_SYSCTLBYNAME", "1");
+        cpu_mod.addCMacro("HAVE_SYSCTLBYNAME", "1");
     } else if (os_tag == .linux) {
         // Linux (including musl) provides getauxval() for hardware capability detection
-        cpu_features.root_module.addCMacro("HAVE_STRONG_GETAUXVAL", "1");
-        cpu_features.root_module.addCMacro("HAVE_DLFCN_H", "1");
+        cpu_mod.addCMacro("HAVE_STRONG_GETAUXVAL", "1");
+        cpu_mod.addCMacro("HAVE_DLFCN_H", "1");
     }
 
     // Utility sources (always included)
@@ -62,7 +64,7 @@ pub fn build(b: *std.Build) void {
     };
 
     for (utility_sources) |source| {
-        cpu_features.addCSourceFile(.{
+        cpu_mod.addCSourceFile(.{
             .file = b.path(source),
             .flags = &c_flags,
         });
@@ -78,7 +80,7 @@ pub fn build(b: *std.Build) void {
         };
 
         for (hwcaps_sources) |source| {
-            cpu_features.addCSourceFile(.{
+            cpu_mod.addCSourceFile(.{
                 .file = b.path(source),
                 .flags = &c_flags,
             });
@@ -103,7 +105,7 @@ pub fn build(b: *std.Build) void {
                 null;
 
             if (source) |s| {
-                cpu_features.addCSourceFile(.{
+                cpu_mod.addCSourceFile(.{
                     .file = b.path(s),
                     .flags = &c_flags,
                 });
@@ -113,7 +115,7 @@ pub fn build(b: *std.Build) void {
         },
         .aarch64, .aarch64_be => {
             // AArch64 architecture - always needs cpuid
-            cpu_features.addCSourceFile(.{
+            cpu_mod.addCSourceFile(.{
                 .file = b.path("src/impl_aarch64_cpuid.c"),
                 .flags = &c_flags,
             });
@@ -130,7 +132,7 @@ pub fn build(b: *std.Build) void {
                 null;
 
             if (source) |s| {
-                cpu_features.addCSourceFile(.{
+                cpu_mod.addCSourceFile(.{
                     .file = b.path(s),
                     .flags = &c_flags,
                 });
@@ -141,7 +143,7 @@ pub fn build(b: *std.Build) void {
         .arm, .armeb, .thumb, .thumbeb => {
             // ARM (32-bit) architecture
             if (os_tag == .linux) {
-                cpu_features.addCSourceFile(.{
+                cpu_mod.addCSourceFile(.{
                     .file = b.path("src/impl_arm_linux_or_android.c"),
                     .flags = &c_flags,
                 });
@@ -150,7 +152,7 @@ pub fn build(b: *std.Build) void {
         .mips, .mipsel, .mips64, .mips64el => {
             // MIPS architecture
             if (os_tag == .linux) {
-                cpu_features.addCSourceFile(.{
+                cpu_mod.addCSourceFile(.{
                     .file = b.path("src/impl_mips_linux_or_android.c"),
                     .flags = &c_flags,
                 });
@@ -160,7 +162,7 @@ pub fn build(b: *std.Build) void {
         .powerpc, .powerpcle, .powerpc64, .powerpc64le => {
             // PowerPC architecture
             if (os_tag == .linux) {
-                cpu_features.addCSourceFile(.{
+                cpu_mod.addCSourceFile(.{
                     .file = b.path("src/impl_ppc_linux.c"),
                     .flags = &c_flags,
                 });
@@ -170,7 +172,7 @@ pub fn build(b: *std.Build) void {
         .riscv32, .riscv64 => {
             // RISC-V architecture
             if (os_tag == .linux) {
-                cpu_features.addCSourceFile(.{
+                cpu_mod.addCSourceFile(.{
                     .file = b.path("src/impl_riscv_linux.c"),
                     .flags = &c_flags,
                 });
@@ -180,7 +182,7 @@ pub fn build(b: *std.Build) void {
         .s390x => {
             // s390x architecture
             if (os_tag == .linux) {
-                cpu_features.addCSourceFile(.{
+                cpu_mod.addCSourceFile(.{
                     .file = b.path("src/impl_s390x_linux.c"),
                     .flags = &c_flags,
                 });
@@ -190,7 +192,7 @@ pub fn build(b: *std.Build) void {
         .loongarch64 => {
             // LoongArch architecture
             if (os_tag == .linux) {
-                cpu_features.addCSourceFile(.{
+                cpu_mod.addCSourceFile(.{
                     .file = b.path("src/impl_loongarch_linux.c"),
                     .flags = &c_flags,
                 });
@@ -207,7 +209,7 @@ pub fn build(b: *std.Build) void {
 
     // Link against dl library on Unix-like systems
     if (os_tag != .windows and os_tag != .wasi) {
-        cpu_features.linkSystemLibrary("dl");
+        cpu_mod.linkSystemLibrary("dl", .{});
     }
 
     // Install the library if enabled
@@ -215,20 +217,21 @@ pub fn build(b: *std.Build) void {
         b.installArtifact(cpu_features);
     }
 
+    const list_cpu_mod = b.createModule(.{
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
     // Build list_cpu_features executable if requested
     if (build_executable) {
         const list_cpu_features = b.addExecutable(.{
             .name = "list_cpu_features",
-            .root_module = b.createModule(.{
-                .target = target,
-                .optimize = optimize,
-                .link_libc = true,
-            }),
+            .root_module = list_cpu_mod,
         });
 
-        list_cpu_features.linkLibrary(cpu_features);
+        list_cpu_mod.linkLibrary(cpu_features);
 
-        list_cpu_features.addCSourceFile(.{
+        list_cpu_mod.addCSourceFile(.{
             .file = b.path("src/utils/list_cpu_features.c"),
             .flags = &c_flags,
         });
