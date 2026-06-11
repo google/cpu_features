@@ -7,13 +7,15 @@ on:
     # min hours day(month) month day(week)
     - cron: '0 0 7,22 * *'
 
+permissions: read-all
+
 jobs:
   # Building using the GitHub runner environement directly.
   bazel:
     runs-on: ubuntu-24.04-arm
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6
       - name: Build
         run: make --directory=bazel/ci arm64_build
       - name: Test

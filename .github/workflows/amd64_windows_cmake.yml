@@ -7,6 +7,8 @@ on:
     # min hours day(month) month day(week)
     - cron: '0 0 7,22 * *'
 
+permissions: read-all
+
 jobs:
   # Building using the github runner environement directly.
   msvc:
@@ -14,7 +16,7 @@ jobs:
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6
     - name: Configure
       run: cmake -S. -Bbuild -G "Visual Studio 17 2022" -DCMAKE_CONFIGURATION_TYPES=Release
     - name: Build

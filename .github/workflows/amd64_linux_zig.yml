@@ -2,6 +2,8 @@ name: amd64 Linux Zig
 
 on: [push, pull_request]
 
+permissions: read-all
+
 jobs:
   run:
     strategy:
@@ -11,8 +13,8 @@ jobs:
           - x86_64-linux-gnu
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: mlugg/setup-zig@v2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6
+      - uses: mlugg/setup-zig@d1434d08867e3ee9daa34448df10607b98908d29  # v2
         with:
           version: 0.16.0
       - name: Build
