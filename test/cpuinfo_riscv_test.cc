@@ -176,5 +176,26 @@ mmu		: sv48)");
   EXPECT_TRUE(info.features.V);
 }
 
+TEST(CpuinfoRiscvTest, ParsingOrderCpuInfo) {
+  ResetHwcaps();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo", R"(
+processor	: 0
+hart		: 0
+isa		: rv64im_zicsr_zba_zbb_zbc_zbs
+mmu		: sv48)");
+  const auto info = GetRiscvInfo();
+  EXPECT_FALSE(info.features.RV32I);
+  EXPECT_TRUE(info.features.RV64I);
+  EXPECT_TRUE(info.features.M);
+  EXPECT_FALSE(info.features.A);
+  EXPECT_FALSE(info.features.F);
+  EXPECT_FALSE(info.features.D);
+  EXPECT_FALSE(info.features.Q);
+  EXPECT_FALSE(info.features.C);
+  EXPECT_FALSE(info.features.V);
+  EXPECT_TRUE(info.features.Zicsr);
+}
+
 }  // namespace
 }  // namespace cpu_features
