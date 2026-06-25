@@ -1,6 +1,6 @@
 module(
     name = "cpu_features",
-    version = "0.11.0",  # CPU_FEATURES_VERSION
+    version = "0.11.0",
 )
 
 bazel_dep(name = "bazel_skylib", version = "1.9.0")

@@ -63,7 +63,7 @@ echo -e "${ACTION}Modifying CMakeLists.txt${NOCOLOR}"
 sed -i "s/CpuFeatures VERSION ${LATEST_VERSION}/CpuFeatures VERSION ${VERSION}/g" CMakeLists.txt
 
 echo -e "${ACTION}Modifying MODULE.bazel${NOCOLOR}"
-sed -i "s/version = \"${LATEST_VERSION}\",  # CPU_FEATURES_VERSION/version = \"${VERSION}\",  # CPU_FEATURES_VERSION/g" MODULE.bazel
+buildozer "set version ${LATEST_VERSION}" //MODULE.bazel:cpu_features
 
 echo -e "${ACTION}Modifying build.zig.zon${NOCOLOR}" 
 sed -i "s/.version = \"${LATEST_VERSION}\"/.version = \"${VERSION}\"/g" build.zig.zon 
