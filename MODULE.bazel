@@ -1,16 +1,6 @@
-###############################################################################
-# Bazel now uses Bzlmod by default to manage external dependencies.
-# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
-#
-# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
-###############################################################################
-
-CPU_FEATURES_VERSION = "0.11.0"
-
 module(
     name = "cpu_features",
-    repo_name = "com_google_cpufeatures",
-    version = CPU_FEATURES_VERSION,
+    version = "0.11.0",
 )
 
 bazel_dep(name = "bazel_skylib", version = "1.9.0")
