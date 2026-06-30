@@ -1870,7 +1870,8 @@ static void ParseLeaf2(const Leaves* leaves, CacheInfo* info) {
   _Static_assert(sizeof(Leaf) == sizeof(data), "Leaf must be 16 bytes");
 #endif
   copy((char*)(data), (const char*)(&leaf), sizeof(data));
-  for (size_t i = 0; i < sizeof(data); ++i) {
+  for (size_t i = 0;
+       i < sizeof(data) && info->size < CPU_FEATURES_MAX_CACHE_LEVEL; ++i) {
     const uint8_t descriptor = data[i];
     if (descriptor == 0) continue;
     info->levels[info->size] = GetCacheLevelInfo(descriptor);
