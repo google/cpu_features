@@ -1399,6 +1399,24 @@ flags           : fpu mmx sse sse2 pni ssse3 sse4_1 sse4_2
 }
 
 // https://www.felixcloutier.com/x86/cpuid#example-3-1--example-of-cache-and-tlb-interpretation
+// Regression test: a CPUID leaf 2 advertising the maximum number of cache/TLB
+// descriptors must not overflow CacheInfo::levels.
+TEST_F(CpuidX86Test, Leaf2_TooManyDescriptors_DoesNotOverflow) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000002, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x00000F0A, 0x00010808, 0x00000000, 0x3FEBFBFF}},
+      // Leaf 2 encodes one descriptor per byte across its four registers (16
+      // bytes total). AL, the low byte of EAX, is the ignored count byte, so
+      // these all-0x01 registers forge 15 non-zero descriptors -- more than the
+      // old 10-entry CacheInfo::levels array and exactly filling the new 16.
+      {{0x00000002, 0}, Leaf{0x01010101, 0x01010101, 0x01010101, 0x01010101}},
+  });
+
+  const auto info = GetX86CacheInfo();
+  // All 15 descriptors are recorded, saturating the resized levels array.
+  EXPECT_EQ(info.size, 15);
+}
+
 TEST_F(CpuidX86Test, P4_CacheInfo) {
   cpu().SetLeaves({
       {{0x00000000, 0}, Leaf{0x00000002, 0x756E6547, 0x6C65746E, 0x49656E69}},
