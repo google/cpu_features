@@ -182,6 +182,14 @@ TEST(StringViewTest, CpuFeatures_StringView_HasWord) {
       CpuFeatures_StringView_HasWord(str("first middle last"), "mid", ' '));
   EXPECT_FALSE(
       CpuFeatures_StringView_HasWord(str("first middle last"), "las", ' '));
+  // Regression: the searched word appears as a real token, but an earlier
+  // non-boundary partial occurrence forces a second loop iteration. HasWord
+  // used to run the separator checks with a remainder-relative index against
+  // the whole line, producing a false negative on the real token.
+  EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("foox foo"), "foo", ' '));
+  EXPECT_TRUE(CpuFeatures_StringView_HasWord(str("xvme vme"), "vme", ' '));
+  // A repeated prefix that is never its own token must still not match.
+  EXPECT_FALSE(CpuFeatures_StringView_HasWord(str("foofoo bar"), "foo", ' '));
 }
 
 TEST(StringViewTest, CpuFeatures_StringView_GetAttributeKeyValue) {
