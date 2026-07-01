@@ -30,8 +30,11 @@ const char* CpuFeatures_GetBasePlatformPointer(void);
 #include <sys/auxv.h>
 
 static unsigned long GetElfHwcapFromElfAuxInfo(int hwcap_type) {
-  unsigned long hwcap;
-  elf_aux_info(hwcap_type, &hwcap, sizeof(hwcap));
+  unsigned long hwcap = 0;
+  // elf_aux_info() leaves the output buffer untouched and returns non-zero when
+  // the requested entry is absent (e.g. AT_HWCAP2 on some arch/kernel combos),
+  // so return 0 instead of an indeterminate value.
+  if (elf_aux_info(hwcap_type, &hwcap, sizeof(hwcap)) != 0) return 0;
   return hwcap;
 }
 
