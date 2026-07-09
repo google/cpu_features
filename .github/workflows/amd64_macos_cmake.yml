@@ -8,6 +8,9 @@ on:
     # min hours day(month) month day(week)
     - cron: '0 0 7,22 * *'
 
+permissions:
+  contents: read
+
 jobs:
   # Building using the github runner environement directly.
   xcode:
