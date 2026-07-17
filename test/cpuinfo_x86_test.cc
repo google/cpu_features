@@ -1398,7 +1398,6 @@ flags           : fpu mmx sse sse2 pni ssse3 sse4_1 sse4_2
   EXPECT_TRUE(info.features.sse4_2);
 }
 
-// https://www.felixcloutier.com/x86/cpuid#example-3-1--example-of-cache-and-tlb-interpretation
 // Regression test: a CPUID leaf 2 advertising the maximum number of cache/TLB
 // descriptors must not overflow CacheInfo::levels.
 TEST_F(CpuidX86Test, Leaf2_TooManyDescriptors_DoesNotOverflow) {
@@ -1417,6 +1416,7 @@ TEST_F(CpuidX86Test, Leaf2_TooManyDescriptors_DoesNotOverflow) {
   EXPECT_EQ(info.size, 15);
 }
 
+// https://www.felixcloutier.com/x86/cpuid#example-3-1--example-of-cache-and-tlb-interpretation
 TEST_F(CpuidX86Test, P4_CacheInfo) {
   cpu().SetLeaves({
       {{0x00000000, 0}, Leaf{0x00000002, 0x756E6547, 0x6C65746E, 0x49656E69}},
