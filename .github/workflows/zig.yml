@@ -2,6 +2,9 @@ name: Zig Check
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   zig-fmt:
     runs-on: ubuntu-latest

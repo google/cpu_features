@@ -2,6 +2,9 @@ name: Arm64 MacOS Zig
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   run:
     strategy:
