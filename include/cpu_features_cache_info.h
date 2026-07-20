@@ -40,9 +40,12 @@ typedef struct {
   int partitioning;  // number of lines per sector
 } CacheLevelInfo;
 
-// Increase this value if more cache levels are needed.
+// This structure is CPU-agnostic; increase CPU_FEATURES_MAX_CACHE_LEVEL if a
+// backend needs to report more cache levels. On x86 it must be at least 15 so
+// that ParseLeaf2 cannot overflow CacheInfo::levels: a single CPUID leaf 2 can
+// report up to 15 descriptors (the AL count byte is ignored).
 #ifndef CPU_FEATURES_MAX_CACHE_LEVEL
-#define CPU_FEATURES_MAX_CACHE_LEVEL 10
+#define CPU_FEATURES_MAX_CACHE_LEVEL 16
 #endif
 typedef struct {
   int size;
