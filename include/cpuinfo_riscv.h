@@ -39,6 +39,20 @@ typedef struct {
   int V : 1;         // Standard Extension for Vector Instructions
   int Zicsr : 1;     // Control and Status Register (CSR)
   int Zifencei : 1;  // Instruction-Fetch Fence
+  int Zfa : 1;       // Additional Floating-Point
+  int Zfh : 1;       // Half-Word Floating-Point
+  int Zfhmin : 1;    // Minimal Half-Word Floating-Point
+  int Zca : 1;       // Compressed Instructions A
+  int Zcb : 1;       // Compressed Instructions B
+  int Zcd : 1;       // Compressed Double Precision Instructions
+  int Zba : 1;       // Address Generation
+  int Zbb : 1;       // Bit Manipulation
+  int Zbc : 1;       // Carryless Multiply
+  int Zbs : 1;       // Single Bit Instructions
+  int Zvbb : 1;      // Vector Bit Manipulation
+  int Zvbc : 1;      // Vector Carryless Multiply
+  int Zvfh : 1;      // Vector Half-Word Floating-Point
+  int Zvfhmin : 1;   // Vector Minimal Half-Word Floating-Point
 } RiscvFeatures;
 
 typedef struct {
@@ -59,6 +73,20 @@ typedef enum {
   RISCV_V,
   RISCV_Zicsr,
   RISCV_Zifencei,
+  RISCV_Zfa,
+  RISCV_Zfh,
+  RISCV_Zfhmin,
+  RISCV_Zca,
+  RISCV_Zcb,
+  RISCV_Zcd,
+  RISCV_Zba,
+  RISCV_Zbb,
+  RISCV_Zbc,
+  RISCV_Zbs,
+  RISCV_Zvbb,
+  RISCV_Zvbc,
+  RISCV_Zvfh,
+  RISCV_Zvfhmin,
   RISCV_LAST_,
 } RiscvFeaturesEnum;
 

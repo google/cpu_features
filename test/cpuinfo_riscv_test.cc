@@ -154,6 +154,17 @@ uarch     : sifive,bullet0)");
   EXPECT_FALSE(info.features.Q);
   EXPECT_TRUE(info.features.C);
   EXPECT_FALSE(info.features.V);
+  EXPECT_FALSE(info.features.Zfa);
+  EXPECT_FALSE(info.features.Zfh);
+  EXPECT_FALSE(info.features.Zfhmin);
+  EXPECT_FALSE(info.features.Zba);
+  EXPECT_FALSE(info.features.Zbb);
+  EXPECT_FALSE(info.features.Zbc);
+  EXPECT_FALSE(info.features.Zbs);
+  EXPECT_FALSE(info.features.Zvbb);
+  EXPECT_FALSE(info.features.Zvbc);
+  EXPECT_FALSE(info.features.Zvfh);
+  EXPECT_FALSE(info.features.Zvfhmin);
 }
 
 TEST(CpuinfoRiscvTest, QemuCpuInfo) {
@@ -174,6 +185,44 @@ mmu		: sv48)");
   EXPECT_FALSE(info.features.Q);
   EXPECT_TRUE(info.features.C);
   EXPECT_TRUE(info.features.V);
+  EXPECT_TRUE(info.features.Zba);
+  EXPECT_TRUE(info.features.Zbb);
+  EXPECT_TRUE(info.features.Zbc);
+  EXPECT_TRUE(info.features.Zbs);
+}
+
+TEST(CpuinfoRiscvTest, SpacemitCpuInfo) {
+  ResetHwcaps();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo", R"(
+processor       : 0
+hart            : 0
+model name      : Spacemit(R) X60
+isa             : rv64imafdcv_zicbom_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zfhmin_zca_zcd_zba_zbb_zbc_zbs_zkt_zve32f_zve32x_zve64d_zve64f_zve64x_zvfh_zvfhmin_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt
+mmu             : sv39
+mvendorid       : 0x710
+marchid         : 0x8000000058000001
+mimpid          : 0x1000000049772200)");
+  const auto info = GetRiscvInfo();
+  EXPECT_FALSE(info.features.RV32I);
+  EXPECT_TRUE(info.features.RV64I);
+  EXPECT_TRUE(info.features.M);
+  EXPECT_TRUE(info.features.A);
+  EXPECT_TRUE(info.features.F);
+  EXPECT_TRUE(info.features.D);
+  EXPECT_FALSE(info.features.Q);
+  EXPECT_TRUE(info.features.C);
+  EXPECT_TRUE(info.features.V);
+  EXPECT_TRUE(info.features.Zfh);
+  EXPECT_TRUE(info.features.Zfhmin);
+  EXPECT_TRUE(info.features.Zba);
+  EXPECT_TRUE(info.features.Zbb);
+  EXPECT_TRUE(info.features.Zbc);
+  EXPECT_TRUE(info.features.Zbs);
+  EXPECT_FALSE(info.features.Zvbb);
+  EXPECT_FALSE(info.features.Zvbc);
+  EXPECT_TRUE(info.features.Zvfh);
+  EXPECT_TRUE(info.features.Zvfhmin);
 }
 
 }  // namespace
