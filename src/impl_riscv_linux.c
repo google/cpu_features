@@ -22,10 +22,14 @@
 // According to
 // https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/riscv/cpus.yaml
 // isa string should match the following regex
-// ^rv(?:64|32)imaf?d?q?c?b?v?k?h?(?:_[hsxz](?:[a-z])+)*$
+// ^rv(?:64|32)imaf?d?q?c?b?k?j?p?v?h?(?:[hsxz](?:[a-z])+)?(?:_[hsxz](?:[a-z])+)*$
 //
 // This means we can test for features in this exact order except for Z
 // extensions.
+//
+// Note that the first multi-letter extension may omit its leading underscore
+// (e.g. "rv64imafdczicsr_zifencei"), so Z extensions are matched without the
+// underscore to catch both spellings.
 
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions for introspection.
@@ -40,8 +44,8 @@
   LINE(RISCV_Q, Q, "q", RISCV_HWCAP_Q, 0)              \
   LINE(RISCV_C, C, "c", RISCV_HWCAP_C, 0)              \
   LINE(RISCV_V, V, "v", RISCV_HWCAP_V, 0)              \
-  LINE(RISCV_Zicsr, Zicsr, "_zicsr", 0, 0)             \
-  LINE(RISCV_Zifencei, Zifencei, "_zifencei", 0, 0)
+  LINE(RISCV_Zicsr, Zicsr, "zicsr", 0, 0)              \
+  LINE(RISCV_Zifencei, Zifencei, "zifencei", 0, 0)
 #define INTROSPECTION_PREFIX Riscv
 #define INTROSPECTION_ENUM_PREFIX RISCV
 #include "define_introspection_and_hwcaps.inl"
