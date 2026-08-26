@@ -22,7 +22,7 @@
 
 static const char* CpuFeatures_memchr(const char* const ptr, const size_t size,
                                       const char c) {
-  for (size_t i = 0; ptr && ptr[i] != '\0' && i < size; ++i)
+  for (size_t i = 0; ptr && i < size && ptr[i] != '\0'; ++i)
     if (ptr[i] == c) return ptr + i;
   return NULL;
 }
