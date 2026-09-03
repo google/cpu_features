@@ -21,6 +21,7 @@
 
 static bool HandleAarch64Line(const LineResult result,
                               Aarch64Info* const info) {
+  if (!result.full_line) return !result.eof;
   StringView line = result.line;
   StringView key, value;
   if (CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value)) {
