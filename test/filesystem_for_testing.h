@@ -32,6 +32,7 @@ class FakeFile {
   void Open();
   void Close();
   int Read(int fd, void* buf, size_t count);
+  void SetReadError(bool read_error) { read_error_ = read_error; }
 
   int GetFileDescriptor() const { return file_descriptor_; }
 
@@ -39,6 +40,7 @@ class FakeFile {
   const int file_descriptor_;
   const std::string content_;
   bool opened_ = false;
+  bool read_error_ = false;
   size_t head_index_ = 0;
 };
 
@@ -48,6 +50,7 @@ class FakeFilesystem {
   FakeFile* CreateFile(const std::string& filename, const char* content);
   FakeFile* FindFileOrDie(const int file_descriptor) const;
   FakeFile* FindFileOrNull(const std::string& filename) const;
+  FakeFile* FindFileOrNull(const int file_descriptor) const;
 
  private:
   int next_file_descriptor_ = 0;

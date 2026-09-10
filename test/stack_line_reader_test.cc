@@ -128,5 +128,58 @@ Another line that is too long)");
   }
 }
 
+TEST(StackLineReaderTest, ReadErrorInvalidFd) {
+  StackLineReader reader;
+  StackLineReader_Initialize(&reader, -1);
+  const auto result = StackLineReader_NextLine(&reader);
+  EXPECT_TRUE(result.eof);
+  EXPECT_TRUE(result.full_line);
+  EXPECT_EQ(result.line, str(""));
+}
+
+TEST(StackLineReaderTest, ReadErrorMidStream) {
+  auto& fs = GetEmptyFilesystem();
+  auto* file = fs.CreateFile("/proc/cpuinfo", "First line\nSecond line\n");
+
+  StackLineReader reader;
+  StackLineReader_Initialize(&reader, file->GetFileDescriptor());
+  {
+    const auto result = StackLineReader_NextLine(&reader);
+    EXPECT_FALSE(result.eof);
+    EXPECT_TRUE(result.full_line);
+    EXPECT_EQ(result.line, str("First line"));
+  }
+  // Simulate read error on subsequent read.
+  file->SetReadError(true);
+  {
+    const auto result = StackLineReader_NextLine(&reader);
+    EXPECT_TRUE(result.eof);
+    EXPECT_TRUE(result.full_line);
+  }
+}
+
+TEST(StackLineReaderTest, ReadErrorInSkipMode) {
+  auto& fs = GetEmptyFilesystem();
+  auto* file =
+      fs.CreateFile("/proc/cpuinfo", "More than 16 characters\nSecond line");
+
+  StackLineReader reader;
+  StackLineReader_Initialize(&reader, file->GetFileDescriptor());
+  {
+    const auto result = StackLineReader_NextLine(&reader);
+    EXPECT_FALSE(result.eof);
+    EXPECT_FALSE(result.full_line);
+    EXPECT_EQ(result.line, str("More than 16 cha"));
+  }
+  // Simulate read error during skip_mode.
+  file->SetReadError(true);
+  {
+    const auto result = StackLineReader_NextLine(&reader);
+    EXPECT_TRUE(result.eof);
+    EXPECT_TRUE(result.full_line);
+    EXPECT_EQ(result.line, str(""));
+  }
+}
+
 }  // namespace
 }  // namespace cpu_features

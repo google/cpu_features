@@ -31,9 +31,12 @@ void StackLineReader_Initialize(StackLineReader* reader, int fd) {
 static int LoadFullBuffer(StackLineReader* reader) {
   const int read = CpuFeatures_ReadFile(reader->fd, reader->buffer,
                                         STACK_LINE_READER_BUFFER_SIZE);
-  assert(read >= 0);
   reader->view.ptr = reader->buffer;
-  reader->view.size = read;
+  if (read <= 0) {
+    reader->view.size = 0;
+    return read < 0 ? -1 : 0;
+  }
+  reader->view.size = (size_t)read;
   return read;
 }
 
@@ -42,9 +45,11 @@ static int LoadMore(StackLineReader* reader) {
   char* const ptr = reader->buffer + reader->view.size;
   const size_t size_to_read = STACK_LINE_READER_BUFFER_SIZE - reader->view.size;
   const int read = CpuFeatures_ReadFile(reader->fd, ptr, size_to_read);
-  assert(read >= 0);
+  if (read <= 0) {
+    return read < 0 ? -1 : 0;
+  }
   assert(read <= (int)size_to_read);
-  reader->view.size += read;
+  reader->view.size += (size_t)read;
   return read;
 }
 
@@ -67,7 +72,7 @@ static int BringToFrontAndLoadMore(StackLineReader* reader) {
 static void SkipToNextLine(StackLineReader* reader) {
   for (;;) {
     const int read = LoadFullBuffer(reader);
-    if (read == 0) {
+    if (read <= 0) {
       break;
     } else {
       const int eol_index = IndexOfEol(reader);
@@ -112,7 +117,7 @@ LineResult StackLineReader_NextLine(StackLineReader* reader) {
     int eol_index = IndexOfEol(reader);
     if (eol_index < 0 && can_load_more) {
       const int read = BringToFrontAndLoadMore(reader);
-      if (read == 0) {
+      if (read <= 0) {
         return CreateEOFLineResult(reader->view);
       }
       eol_index = IndexOfEol(reader);
