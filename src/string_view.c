@@ -16,6 +16,7 @@
 
 #include <assert.h>
 #include <ctype.h>
+#include <limits.h>
 
 #include "copy.inl"
 #include "equals.inl"
@@ -101,9 +102,11 @@ char CpuFeatures_StringView_Back(const StringView view) {
 }
 
 StringView CpuFeatures_StringView_TrimWhitespace(StringView view) {
-  while (view.size && isspace(CpuFeatures_StringView_Front(view)))
+  while (view.size &&
+         isspace((unsigned char)CpuFeatures_StringView_Front(view)))
     view = CpuFeatures_StringView_PopFront(view, 1);
-  while (view.size && isspace(CpuFeatures_StringView_Back(view)))
+  while (view.size &&
+         isspace((unsigned char)CpuFeatures_StringView_Back(view)))
     view = CpuFeatures_StringView_PopBack(view, 1);
   return view;
 }
@@ -115,14 +118,16 @@ static int HexValue(const char c) {
   return -1;
 }
 
-// Returns -1 if view contains non digits.
+// Returns -1 if view contains non digits, is empty, or overflows.
 static int ParsePositiveNumberWithBase(const StringView view, int base) {
+  if (view.size == 0) return -1;
   int result = 0;
   StringView remainder = view;
   for (; remainder.size;
        remainder = CpuFeatures_StringView_PopFront(remainder, 1)) {
     const int value = HexValue(CpuFeatures_StringView_Front(remainder));
     if (value < 0 || value >= base) return -1;
+    if (result > (INT_MAX - value) / base) return -1;
     result = (result * base) + value;
   }
   return result;

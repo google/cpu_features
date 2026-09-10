@@ -124,19 +124,37 @@ TEST(StringViewTest, CpuFeatures_StringView_TrimWhitespace) {
             str("first middle last"));
   EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("first middle last")),
             str("first middle last"));
+  EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("")), str(""));
+  EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str("   ")), str(""));
+  // Ensure non-ASCII characters (with high bit set) do not cause undefined behavior in isspace().
+  EXPECT_EQ(CpuFeatures_StringView_TrimWhitespace(str(" \xff abc \x80 ")),
+            str("\xff abc \x80"));
 }
 
 TEST(StringViewTest, CpuFeatures_StringView_ParsePositiveNumber) {
   EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("42")), 42);
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("0")), 0);
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("0x0")), 0);
   EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("0x2a")), 42);
   EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("0x2A")), 42);
   EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("0x2A2a")), 10794);
   EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("0x2a2A")), 10794);
 
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("0x")), -1);
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("0x ")), -1);
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("0xG")), -1);
   EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("-10")), -1);
   EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("-0x2A")), -1);
   EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("abc")), -1);
   EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(str("")), -1);
+
+  // Overflow handling
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(
+                str("999999999999999999999999999999")),
+            -1);
+  EXPECT_EQ(CpuFeatures_StringView_ParsePositiveNumber(
+                str("0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")),
+            -1);
 }
 
 TEST(StringViewTest, CpuFeatures_StringView_CopyString) {
