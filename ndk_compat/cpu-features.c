@@ -103,7 +103,7 @@ static void android_cpuInit(void) {
   }
 #if defined(CPU_FEATURES_ARCH_ARM)
   ArmInfo info = GetArmInfo();
-  if (info.architecture == 7) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_ARMv7;
+  if (info.architecture >= 7) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_ARMv7;
   if (info.features.vfpv3) g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_VFPv3;
   if (info.features.neon) {
     g_cpuFeatures |= ANDROID_CPU_ARM_FEATURE_NEON;
