@@ -119,27 +119,30 @@ class CpuidX86Test : public ::testing::Test {
 };
 
 TEST_F(CpuidX86Test, X86MicroarchitectureEnum) {
-   const char *last_name = GetX86MicroarchitectureName(X86_MICROARCHITECTURE_LAST_);
-   EXPECT_STREQ(last_name, "unknown microarchitecture");
-   for (int i = static_cast<int>(X86_UNKNOWN); i != static_cast<int>(X86_MICROARCHITECTURE_LAST_); ++i) {
-      const auto micro = static_cast<X86Microarchitecture>(i);
-      const char *name = GetX86MicroarchitectureName(micro);
-      ASSERT_FALSE(name == nullptr);
-      EXPECT_STRNE(name, "");
-      EXPECT_STRNE(name, last_name);
-   }
+  const char* last_name =
+      GetX86MicroarchitectureName(X86_MICROARCHITECTURE_LAST_);
+  EXPECT_STREQ(last_name, "unknown microarchitecture");
+  for (int i = static_cast<int>(X86_UNKNOWN);
+       i != static_cast<int>(X86_MICROARCHITECTURE_LAST_); ++i) {
+    const auto micro = static_cast<X86Microarchitecture>(i);
+    const char* name = GetX86MicroarchitectureName(micro);
+    ASSERT_FALSE(name == nullptr);
+    EXPECT_STRNE(name, "");
+    EXPECT_STRNE(name, last_name);
+  }
 }
 
 TEST_F(CpuidX86Test, X86FeaturesEnum) {
-   const char *last_name = GetX86FeaturesEnumName(X86_LAST_);
-   EXPECT_STREQ(last_name, "unknown_feature");
-   for (int i = static_cast<int>(X86_FPU); i != static_cast<int>(X86_LAST_); ++i) {
-      const auto feature = static_cast<X86FeaturesEnum>(i);
-      const char *name = GetX86FeaturesEnumName(feature);
-      ASSERT_FALSE(name == nullptr);
-      EXPECT_STRNE(name, "");
-      EXPECT_STRNE(name, last_name);
-   }
+  const char* last_name = GetX86FeaturesEnumName(X86_LAST_);
+  EXPECT_STREQ(last_name, "unknown_feature");
+  for (int i = static_cast<int>(X86_FPU); i != static_cast<int>(X86_LAST_);
+       ++i) {
+    const auto feature = static_cast<X86FeaturesEnum>(i);
+    const char* name = GetX86FeaturesEnumName(feature);
+    ASSERT_FALSE(name == nullptr);
+    EXPECT_STRNE(name, "");
+    EXPECT_STRNE(name, last_name);
+  }
 }
 
 TEST_F(CpuidX86Test, SandyBridge) {
@@ -206,6 +209,24 @@ TEST_F(CpuidX86Test, SandyBridgeTestOsSupport) {
   EXPECT_TRUE(GetX86Info().features.avx);
 }
 
+TEST_F(CpuidX86Test, VexFeaturesRequireOsSupport) {
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000000D, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      // XSAVE, OSXSAVE, AVX, and F16C.
+      {{0x00000001, 0}, Leaf{0, 0, 0x3C000000, 0}},
+      // VAES and VPCLMULQDQ.
+      {{0x00000007, 0}, Leaf{0, 0, 0x00000600, 0}},
+  });
+  cpu().SetOsBackupsExtendedRegisters(false);
+  EXPECT_FALSE(GetX86Info().features.f16c);
+  EXPECT_FALSE(GetX86Info().features.vaes);
+  EXPECT_FALSE(GetX86Info().features.vpclmulqdq);
+  cpu().SetOsBackupsExtendedRegisters(true);
+  EXPECT_TRUE(GetX86Info().features.f16c);
+  EXPECT_TRUE(GetX86Info().features.vaes);
+  EXPECT_TRUE(GetX86Info().features.vpclmulqdq);
+}
+
 TEST_F(CpuidX86Test, SkyLake) {
   cpu().SetOsBackupsExtendedRegisters(true);
   cpu().SetLeaves({
@@ -223,10 +244,10 @@ TEST_F(CpuidX86Test, SkyLake) {
 
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel0050654_SkylakeXeon_CPUID8.txt
 TEST_F(CpuidX86Test, SkyLakeXeon) {
-  cpu().SetLeaves({
-      {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
-      {{0x00000001, 0}, Leaf{0x00050654, 0x00100800, 0x7FFEFBFF, 0xBFEBFBFF}}
-  });
+  cpu().SetLeaves(
+      {{{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
+       {{0x00000001, 0},
+        Leaf{0x00050654, 0x00100800, 0x7FFEFBFF, 0xBFEBFBFF}}});
   const auto info = GetX86Info();
   EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
@@ -237,10 +258,10 @@ TEST_F(CpuidX86Test, SkyLakeXeon) {
 
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel0050657_CascadeLakeXeon_CPUID.txt
 TEST_F(CpuidX86Test, CascadeLake) {
-  cpu().SetLeaves({
-      {{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
-      {{0x00000001, 0}, Leaf{0x00050657, 0x00400800, 0x7FFEFBFF, 0xBFEBFBFF}}
-  });
+  cpu().SetLeaves(
+      {{{0x00000000, 0}, Leaf{0x00000016, 0x756E6547, 0x6C65746E, 0x49656E69}},
+       {{0x00000001, 0},
+        Leaf{0x00050657, 0x00400800, 0x7FFEFBFF, 0xBFEBFBFF}}});
   const auto info = GetX86Info();
   EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
@@ -497,7 +518,8 @@ TEST_F(CpuidX86Test, AMD_K15_PILEDRIVER_ABU_DHABI) {
   EXPECT_EQ(GetX86Microarchitecture(&info),
             X86Microarchitecture::AMD_PILEDRIVER);
 
-  EXPECT_STREQ(info.brand_string, "AMD Opteron(tm) Processor 6376                 ");
+  EXPECT_STREQ(info.brand_string,
+               "AMD Opteron(tm) Processor 6376                 ");
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0600F20_K15_AbuDhabi_CPUID0.txt
@@ -702,8 +724,7 @@ TEST_F(CpuidX86Test, AMD_K16_CATO) {
   EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_AUTHENTIC_AMD);
   EXPECT_EQ(info.family, 0x16);
   EXPECT_EQ(info.model, 0x26);
-  EXPECT_STREQ(info.brand_string,
-               "AMD A9-9820 Processor");
+  EXPECT_STREQ(info.brand_string, "AMD A9-9820 Processor");
   EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::AMD_JAGUAR);
 }
 
@@ -1074,62 +1095,63 @@ TEST_F(CpuidX86Test, INTEL_TIGER_LAKE_AVX512) {
 
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00706E5_IceLakeY_CPUID.txt
 TEST_F(CpuidX86Test, INTEL_ICE_LAKE_GFNI) {
-    cpu().SetLeaves({
-        {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
-        {{0x00000001, 0}, Leaf{0x000706E5, 0x00100800, 0x7FFAFBBF, 0xBFEBFBFF}},
-        {{0x00000007, 0}, Leaf{0x00000000, 0xF2BF27EF, 0x40405F4E, 0xBC000410}},
-    });
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000706E5, 0x00100800, 0x7FFAFBBF, 0xBFEBFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000000, 0xF2BF27EF, 0x40405F4E, 0xBC000410}},
+  });
 
-    const auto info = GetX86Info();
+  const auto info = GetX86Info();
 
-    EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
-    EXPECT_EQ(info.family, 0x06);
-    EXPECT_EQ(info.model, 0x7E);
-    EXPECT_TRUE(info.features.gfni);
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x7E);
+  EXPECT_TRUE(info.features.gfni);
 
-    EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ICL);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ICL);
 }
 
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00906C0_JasperLake_CPUID01.txt
 TEST_F(CpuidX86Test, INTEL_TREMONT_JASPER_LAKE_MOVDR) {
-    cpu().SetLeaves({
-        {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
-        {{0x00000001, 0}, Leaf{0x00090661, 0x00800800, 0x4FF8EBBF, 0xBFEBFBFF}},
-        {{0x00000007, 0}, Leaf{0x00000000, 0x2394A2C3, 0x18400124, 0xFC000400}},
-    });
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x0000001B, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x00090661, 0x00800800, 0x4FF8EBBF, 0xBFEBFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000000, 0x2394A2C3, 0x18400124, 0xFC000400}},
+  });
 
-    const auto info = GetX86Info();
+  const auto info = GetX86Info();
 
-    EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
-    EXPECT_EQ(info.family, 0x06);
-    EXPECT_EQ(info.model, 0x96);
-    EXPECT_TRUE(info.features.movdiri);
-    EXPECT_TRUE(info.features.movdir64b);
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x96);
+  EXPECT_TRUE(info.features.movdiri);
+  EXPECT_TRUE(info.features.movdir64b);
 
-    EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::INTEL_ATOM_TMT);
 }
 
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel0090672_AlderLake_LC_BC_CPUID01.txt
 TEST_F(CpuidX86Test, INTEL_ALDER_LAKE_REP) {
-    cpu().SetLeaves({
-        {{0x00000000, 0}, Leaf{0x00000020, 0x756E6547, 0x6C65746E, 0x49656E69}},
-        {{0x00000001, 0}, Leaf{0x00090672, 0x00800800, 0x7FFAFBFF, 0xBFEBFBFF}},
-        {{0x00000007, 0}, Leaf{0x00000001, 0x239CA7EB, 0x98C027AC, 0xFC1CC410}},
-        {{0x00000007, 1}, Leaf{0x00400810, 0x00000000, 0x00000000, 0x00000000}},
-    });
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000020, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x00090672, 0x00800800, 0x7FFAFBFF, 0xBFEBFBFF}},
+      {{0x00000007, 0}, Leaf{0x00000001, 0x239CA7EB, 0x98C027AC, 0xFC1CC410}},
+      {{0x00000007, 1}, Leaf{0x00400810, 0x00000000, 0x00000000, 0x00000000}},
+  });
 
-    const auto info = GetX86Info();
+  const auto info = GetX86Info();
 
-    EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
-    EXPECT_EQ(info.family, 0x06);
-    EXPECT_EQ(info.model, 0x97);
-    EXPECT_TRUE(info.features.erms);
-    EXPECT_TRUE(info.features.fs_rep_mov);
-    EXPECT_FALSE(info.features.fz_rep_movsb);
-    EXPECT_TRUE(info.features.fs_rep_stosb);
-    EXPECT_FALSE(info.features.fs_rep_cmpsb_scasb);
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0x97);
+  EXPECT_TRUE(info.features.erms);
+  EXPECT_TRUE(info.features.fs_rep_mov);
+  EXPECT_FALSE(info.features.fz_rep_movsb);
+  EXPECT_TRUE(info.features.fs_rep_stosb);
+  EXPECT_FALSE(info.features.fs_rep_cmpsb_scasb);
 
-    EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ADL);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ADL);
 }
 
 // http://users.atw.hu/instlatx64/AuthenticAMD/AuthenticAMD0100FA0_K10_Thuban_CPUID.txt
@@ -1658,7 +1680,8 @@ TEST_F(CpuidX86Test, INTEL_ATOM_TMT_LAKEFIELD) {
   EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x8A);
-  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::INTEL_ATOM_TMT);
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel0090661_ElkhartLake_CPUID01.txt
@@ -1672,7 +1695,8 @@ TEST_F(CpuidX86Test, INTEL_ATOM_TMT_ELKHART_LAKE) {
   EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x96);
-  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::INTEL_ATOM_TMT);
 }
 
 // https://github.com/InstLatx64/InstLatx64/blob/master/GenuineIntel/GenuineIntel00906C0_JasperLake_01_CPUID.txt
@@ -1686,21 +1710,22 @@ TEST_F(CpuidX86Test, INTEL_ATOM_TMT_JASPER_LAKE) {
   EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
   EXPECT_EQ(info.family, 0x06);
   EXPECT_EQ(info.model, 0x9C);
-  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_ATOM_TMT);
+  EXPECT_EQ(GetX86Microarchitecture(&info),
+            X86Microarchitecture::INTEL_ATOM_TMT);
 }
 
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00B0671_RaptorLake_02_CPUID.txt
 TEST_F(CpuidX86Test, INTEL_RAPTOR_LAKE) {
-    cpu().SetLeaves({
-        {{0x00000000, 0}, Leaf{0x00000020, 0x756E6547, 0x6C65746E, 0x49656E69}},
-        {{0x00000001, 0}, Leaf{0x000B0671, 0x00800800, 0x7FFAFBBF, 0xBFEBFBFF}},
-    });
-    const auto info = GetX86Info();
+  cpu().SetLeaves({
+      {{0x00000000, 0}, Leaf{0x00000020, 0x756E6547, 0x6C65746E, 0x49656E69}},
+      {{0x00000001, 0}, Leaf{0x000B0671, 0x00800800, 0x7FFAFBBF, 0xBFEBFBFF}},
+  });
+  const auto info = GetX86Info();
 
-    EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
-    EXPECT_EQ(info.family, 0x06);
-    EXPECT_EQ(info.model, 0xB7);
-    EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_RPL);
+  EXPECT_STREQ(info.vendor, CPU_FEATURES_VENDOR_GENUINE_INTEL);
+  EXPECT_EQ(info.family, 0x06);
+  EXPECT_EQ(info.model, 0xB7);
+  EXPECT_EQ(GetX86Microarchitecture(&info), X86Microarchitecture::INTEL_RPL);
 }
 
 // http://users.atw.hu/instlatx64/GenuineIntel/GenuineIntel00306F2_HaswellEP2_CPUID.txt
