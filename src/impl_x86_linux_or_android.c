@@ -37,6 +37,7 @@ static void DetectFeaturesFromOs(X86Info* info, X86Features* features) {
     for (bool stop = false; !stop;) {
       const LineResult result = StackLineReader_NextLine(&reader);
       if (result.eof) stop = true;
+      if (!result.full_line) continue;
       const StringView line = result.line;
       StringView key, value;
       if (!CpuFeatures_StringView_GetAttributeKeyValue(line, &key, &value))
