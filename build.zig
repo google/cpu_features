@@ -243,9 +243,7 @@ pub fn build(b: *std.Build) void {
         // Add a run step for convenience
         const run_cmd = b.addRunArtifact(list_cpu_features);
         run_cmd.step.dependOn(b.getInstallStep());
-        if (b.args) |args| {
-            run_cmd.addArgs(args);
-        }
+        run_cmd.addPassthruArgs();
 
         const run_step = b.step("run", "Run list_cpu_features");
         run_step.dependOn(&run_cmd.step);
