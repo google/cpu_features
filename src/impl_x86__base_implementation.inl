@@ -370,7 +370,6 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
   features->movbe = IsBitSet(leaf_1.ecx, 22);
   features->popcnt = IsBitSet(leaf_1.ecx, 23);
   features->aes = IsBitSet(leaf_1.ecx, 25);
-  features->f16c = IsBitSet(leaf_1.ecx, 29);
   features->rdrnd = IsBitSet(leaf_1.ecx, 30);
   features->sgx = IsBitSet(leaf_7.ebx, 2);
   features->bmi1 = IsBitSet(leaf_7.ebx, 3);
@@ -383,8 +382,6 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
   features->clwb = IsBitSet(leaf_7.ebx, 24);
   features->sha = IsBitSet(leaf_7.ebx, 29);
   features->gfni = IsBitSet(leaf_7.ecx, 8);
-  features->vaes = IsBitSet(leaf_7.ecx, 9);
-  features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
   features->movdiri = IsBitSet(leaf_7.ecx, 27);
   features->movdir64b = IsBitSet(leaf_7.ecx, 28);
   features->fs_rep_mov = IsBitSet(leaf_7.edx, 4);
@@ -420,10 +417,13 @@ static void ParseCpuId(const Leaves* leaves, X86Info* info,
       features->sse4_2 = IsBitSet(leaf_1.ecx, 20);
     }
     if (os_preserves->avx_registers) {
+      features->f16c = IsBitSet(leaf_1.ecx, 29);
       features->fma3 = IsBitSet(leaf_1.ecx, 12);
       features->avx = IsBitSet(leaf_1.ecx, 28);
       features->avx_vnni = IsBitSet(leaf_7_1.eax, 4);
       features->avx2 = IsBitSet(leaf_7.ebx, 5);
+      features->vaes = IsBitSet(leaf_7.ecx, 9);
+      features->vpclmulqdq = IsBitSet(leaf_7.ecx, 10);
     }
     if (os_preserves->avx512_registers) {
       features->avx512f = IsBitSet(leaf_7.ebx, 16);
