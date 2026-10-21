@@ -121,6 +121,23 @@ uint32_t GetXCR0Eax(void) {
   return eax;
 }
 
+#elif defined(CPU_FEATURES_COMPILER_TCC)
+
+Leaf GetCpuidLeaf(uint32_t leaf_id, int ecx) {
+  Leaf leaf;
+  __asm__ __volatile__(
+      "cpuid"
+      : "=a"(leaf.eax), "=b"(leaf.ebx), "=c"(leaf.ecx), "=d"(leaf.edx)
+      : "a"(leaf_id), "c"(ecx));
+  return leaf;
+}
+
+uint32_t GetXCR0Eax(void) {
+  uint32_t eax, edx;
+  __asm__ __volatile__(".byte 0x0F, 0x01, 0xd0" : "=a"(eax), "=d"(edx) : "c"(0));
+  return eax;
+}
+
 #elif defined(CPU_FEATURES_COMPILER_MSC)
 
 #include <immintrin.h>

@@ -130,13 +130,11 @@
 
 #if defined(__clang__)
 #define CPU_FEATURES_COMPILER_CLANG
-#endif
-
-#if defined(__GNUC__) && !defined(__clang__)
+#elif defined(__TINYC__)
+#define CPU_FEATURES_COMPILER_TCC
+#elif defined(__GNUC__)
 #define CPU_FEATURES_COMPILER_GCC
-#endif
-
-#if defined(_MSC_VER)
+#elif defined(_MSC_VER)
 #define CPU_FEATURES_COMPILER_MSC
 #endif
 
