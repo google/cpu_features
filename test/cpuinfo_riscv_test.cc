@@ -176,5 +176,74 @@ mmu		: sv48)");
   EXPECT_TRUE(info.features.V);
 }
 
+// The first multi-letter extension may omit its leading underscore
+// (https://github.com/google/cpu_features/issues/301). Make sure Z
+// extensions are still detected in both spellings.
+TEST(CpuinfoRiscvTest, ZicsrZifenceiWithoutUnderscore) {
+  ResetHwcaps();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo", R"(
+processor : 0
+hart      : 0
+isa       : rv64imafdczicsr_zifencei
+mmu       : sv39)");
+  const auto info = GetRiscvInfo();
+  EXPECT_FALSE(info.features.RV32I);
+  EXPECT_TRUE(info.features.RV64I);
+  EXPECT_TRUE(info.features.M);
+  EXPECT_TRUE(info.features.A);
+  EXPECT_TRUE(info.features.F);
+  EXPECT_TRUE(info.features.D);
+  EXPECT_FALSE(info.features.Q);
+  EXPECT_TRUE(info.features.C);
+  EXPECT_FALSE(info.features.V);
+  EXPECT_TRUE(info.features.Zicsr);
+  EXPECT_TRUE(info.features.Zifencei);
+}
+
+TEST(CpuinfoRiscvTest, ZifenceiWithoutUnderscore) {
+  ResetHwcaps();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo", R"(
+processor : 0
+hart      : 0
+isa       : rv64imafdczifencei
+mmu       : sv39)");
+  const auto info = GetRiscvInfo();
+  EXPECT_FALSE(info.features.RV32I);
+  EXPECT_TRUE(info.features.RV64I);
+  EXPECT_TRUE(info.features.M);
+  EXPECT_TRUE(info.features.A);
+  EXPECT_TRUE(info.features.F);
+  EXPECT_TRUE(info.features.D);
+  EXPECT_FALSE(info.features.Q);
+  EXPECT_TRUE(info.features.C);
+  EXPECT_FALSE(info.features.V);
+  EXPECT_FALSE(info.features.Zicsr);
+  EXPECT_TRUE(info.features.Zifencei);
+}
+
+TEST(CpuinfoRiscvTest, ZicsrZifenceiWithUnderscore) {
+  ResetHwcaps();
+  auto& fs = GetEmptyFilesystem();
+  fs.CreateFile("/proc/cpuinfo", R"(
+processor : 0
+hart      : 0
+isa       : rv64imafdc_zicsr_zifencei
+mmu       : sv39)");
+  const auto info = GetRiscvInfo();
+  EXPECT_FALSE(info.features.RV32I);
+  EXPECT_TRUE(info.features.RV64I);
+  EXPECT_TRUE(info.features.M);
+  EXPECT_TRUE(info.features.A);
+  EXPECT_TRUE(info.features.F);
+  EXPECT_TRUE(info.features.D);
+  EXPECT_FALSE(info.features.Q);
+  EXPECT_TRUE(info.features.C);
+  EXPECT_FALSE(info.features.V);
+  EXPECT_TRUE(info.features.Zicsr);
+  EXPECT_TRUE(info.features.Zifencei);
+}
+
 }  // namespace
 }  // namespace cpu_features
