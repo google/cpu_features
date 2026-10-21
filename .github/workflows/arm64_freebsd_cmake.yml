@@ -1,0 +1,31 @@
+name: Arm64 FreeBSD CMake
+
+on:
+  push:
+  pull_request:
+  schedule:
+    # min hours day(month) month day(week)
+    - cron: '0 0 7,22 * *'
+
+jobs:
+  make:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and run tests
+        uses: cross-platform-actions/action@v0.25.0
+        with:
+          operating_system: freebsd
+          architecture: arm64
+          version: '14.1'
+          shell: bash
+          memory: 5G
+          cpu_count: 4
+          run: |
+            sudo pkg install -y cmake git
+            sudo cmake --version
+            sudo cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
+            sudo cmake --build build --target all -v
+            sudo cmake --build build --target test -v
+            sudo cmake --build build --target install -v
+           
