@@ -87,7 +87,7 @@ ISA			: loongarch32 loongarch64
 Features		: cpucfg lam ual fpu lsx lasx crc32 complex crypto lvz lbt_x86 lbt_arm lbt_mips
 Hardware Watchpoint	: yes, iwatch count: 8, dwatch count: 8)");
   const auto info = GetLoongArchInfo();
-  EXPECT_FALSE(info.features.CPUCFG);
+  EXPECT_TRUE(info.features.CPUCFG);
   EXPECT_TRUE(info.features.LAM);
   EXPECT_TRUE(info.features.UAL);
   EXPECT_TRUE(info.features.FPU);
@@ -168,7 +168,7 @@ ISA			: loongarch32 loongarch64
 Features		: cpucfg lam ual fpu crc32
 Hardware Watchpoint	: yes, iwatch count: 0, dwatch count: 0)");
   const auto info = GetLoongArchInfo();
-  EXPECT_FALSE(info.features.CPUCFG);
+  EXPECT_TRUE(info.features.CPUCFG);
   EXPECT_TRUE(info.features.LAM);
   EXPECT_TRUE(info.features.UAL);
   EXPECT_TRUE(info.features.FPU);
