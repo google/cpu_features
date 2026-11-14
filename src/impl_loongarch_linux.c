@@ -23,7 +23,7 @@
 // Definitions for introspection.
 ////////////////////////////////////////////////////////////////////////////////
 #define INTROSPECTION_TABLE                                                   \
-  LINE(LOONGARCH_CPUCFG, CPUCFG, "cfg", HWCAP_LOONGARCH_CPUCFG, 0)            \
+  LINE(LOONGARCH_CPUCFG, CPUCFG, "cpucfg", HWCAP_LOONGARCH_CPUCFG, 0)         \
   LINE(LOONGARCH_LAM, LAM, "lam", HWCAP_LOONGARCH_LAM, 0)                     \
   LINE(LOONGARCH_UAL, UAL, "ual", HWCAP_LOONGARCH_UAL, 0)                     \
   LINE(LOONGARCH_FPU, FPU, "fpu", HWCAP_LOONGARCH_FPU, 0)                     \
