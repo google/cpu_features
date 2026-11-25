@@ -161,26 +161,24 @@ bool CpuFeatures_StringView_HasWord(const StringView line,
     const int index_of_word = CpuFeatures_StringView_IndexOf(remainder, word);
     if (index_of_word < 0) {
       return false;
-    } else {
-      // index_of_word is relative to `remainder`; convert it to an absolute
-      // index into `line` so the boundary checks see the real neighbours.
-      // (On later iterations `remainder` no longer starts at `line`.)
-      const size_t absolute_index =
-          (line.size - remainder.size) + (size_t)index_of_word;
-      const StringView before =
-          CpuFeatures_StringView_KeepFront(line, absolute_index);
-      const StringView after =
-          CpuFeatures_StringView_PopFront(line, absolute_index + word.size);
-      const bool valid_before =
-          before.size == 0 || CpuFeatures_StringView_Back(before) == separator;
-      const bool valid_after =
-          after.size == 0 || CpuFeatures_StringView_Front(after) == separator;
-      if (valid_before && valid_after) return true;
-      remainder =
-          CpuFeatures_StringView_PopFront(remainder, index_of_word + word.size);
     }
+    // index_of_word is relative to `remainder`; convert it to an absolute
+    // index into `line` so the boundary checks see the real neighbours.
+    // (On later iterations `remainder` no longer starts at `line`.)
+    const size_t absolute_index =
+        (line.size - remainder.size) + (size_t)index_of_word;
+    const StringView before =
+        CpuFeatures_StringView_KeepFront(line, absolute_index);
+    const StringView after =
+        CpuFeatures_StringView_PopFront(line, absolute_index + word.size);
+    const bool valid_before =
+        before.size == 0 || CpuFeatures_StringView_Back(before) == separator;
+    const bool valid_after =
+        after.size == 0 || CpuFeatures_StringView_Front(after) == separator;
+    if (valid_before && valid_after) return true;
+    remainder =
+        CpuFeatures_StringView_PopFront(remainder, index_of_word + word.size);
   }
-  return false;
 }
 
 bool CpuFeatures_StringView_GetAttributeKeyValue(const StringView line,
